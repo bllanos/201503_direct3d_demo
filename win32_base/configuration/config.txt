@@ -1,0 +1,2 @@
+# This line instructs the program to output a text file containing its global configuration data before exiting
+BOOL -- main::outputConfigFlag = true

@@ -1,0 +1,263 @@
+# Testing a blank line below
+
+		 # Another comment, with whitespace preceding it
+# Testing the BOOL data type
+  BOOL --	s p a c e  ::	one		= true 
+# Testing an empty scope name
+BOOL--::two=false
+
+# Testing the WSTRING data type
+# Empty string
+WSTRING -- strings :: 01 = L""
+WSTRING -- strings :: 011 = L" "
+WSTRING -- strings :: 02 = L"Invalid string \"
+WSTRING -- strings :: 03 = L"Double backslash \\"
+WSTRING -- strings :: 04 = L"Invalid string \\\"
+WSTRING -- strings :: 05 = L"\b Not a recognized \b escape sequence \b"
+WSTRING -- strings :: 06 = L"\\b Not a recognized \\b escape sequence \\b"
+WSTRING -- strings :: 07 = L"\\\b Not a recognized \\\b escape sequence \\\b"
+WSTRING -- strings :: 08 = L"\ string "
+WSTRING -- strings :: 09 = L"\\ Double backslash"
+WSTRING -- strings :: 10 = L"\\\ Triple backslash"
+WSTRING -- strings :: 11 = L"\n Escape \n sequence \n"
+WSTRING -- strings :: 12 = L"\\" Results \\" in entire line not being parsed \\""
+WSTRING -- strings :: 121 = L"\" Escape \" sequence \""
+WSTRING -- strings :: 13 = L"\\\t Escape \\\t sequence \\\t"
+WSTRING -- strings :: 14 = L"\\t No escape \\t sequences \\t"
+
+# Testing some additional invalid data
+BOOL -- no::value = felse
+WSTRING -- no::value = "none"
+WSTRING -- no::value = Lnone"
+WSTRING -- no::value = L"none
+WSTRING -- no::value = none
+
+# Testing the INT data type
+INT -- ints :: 01 = 3.14
+INT -- ints :: 02 = 3.0
+INT -- ints :: 03 = 33
+INT -- ints :: 04 = 45e2
+INT -- ints :: 05 = e45e2
+INT -- ints :: 06 = 0
+
+# Testing the DOUBLE data type
+DOUBLE -- doubles :: 01 = 1.23456789123456789
+DOUBLE -- doubles :: 02 = 3.0.1
+DOUBLE -- doubles :: 03 = 33e4
+DOUBLE -- doubles :: 04 = -2e-2
+DOUBLE -- doubles :: 05 = e4.5e2
+DOUBLE -- doubles :: 06 = 0
+
+# Testing the FLOAT4 data type
+FLOAT4 -- float4s :: 01 = (1, 0.1f, -3e2, 54.0)
+FLOAT4 -- float4s :: 02 = ( 2, 0.1, -3e2, 54.0 )
+FLOAT4 -- float4s :: 03 = (3, 0.1 -3e2, 54.0)
+FLOAT4 -- float4s :: 04 = (4, 0.1, -3e2, 54.0,)
+FLOAT4 -- float4s :: 05 = ( 4, 1.23456789123456789, -3e2, 54.0)
+FLOAT4 -- float4s :: 06 = ( 4, 1.2348e5, -3e2, 54.0, 0.0)
+FLOAT4 -- float4s :: 07 = ( 4, 1.2348e5, 0.0)
+
+# Testing the COLOR data type
+COLOR -- colors :: 01 = (255, 255, 255, 255)
+COLOR -- colors :: 02 = (0, 0, 0, 0)
+COLOR -- colors :: 03 = (-0, 0.0, 0, 0)
+COLOR -- colors :: 04 = (255.0, 256, 254, 30.5)
+COLOR -- colors :: 05 = (-1, 0.01e-3, 254, 30.5)
+COLOR -- colors :: 06 = (2, 0.01e-3, 254, 30.5)
+
+# Testing the FILENAME data type
+# Improperly formatted literals
+FILENAME -- filenames :: 01 = L".\invalid.txt"
+FILENAME -- filenames :: 02 = .\invalid.txt"
+FILENAME -- filenames :: 03 = ".\invalid.txt
+
+FILENAME -- filenames :: 04 = ""
+FILENAME -- filenames :: 05 = "."
+FILENAME -- filenames :: 06 = ".."
+FILENAME -- filenames :: 07 = ".\logger_output\test"
+
+# Bad filepath because of "\\"? - Apparently not
+FILENAME -- filenames :: 08 = ".\logger_output\\test"
+
+FILENAME -- filenames :: 09 = ".\logger_output\none"
+FILENAME -- filenames :: 10 = ".\logger_output\log.txt"
+FILENAME -- filenames :: 11 = ".\logger_output\none.txt"
+FILENAME -- filenames :: 12 = ".\.gitignore"
+FILENAME -- filenames :: 13 = ".\.git"
+
+# Path does not exist
+FILENAME -- filenames :: 14 = ".\logger_output\none\text.txt"
+FILENAME -- filenames :: 15 = ".\logger_output\none\test"
+
+# Testing absolute paths
+FILENAME -- filenames :: 16 = "C:\WORK"
+
+# Unusual characters in the path
+FILENAME -- filenames :: 17 = "C:\WORK\Bernard\Bernard's work\..\..\Bernard\Bernard's work"
+
+# File or directory name without path
+FILENAME -- filenames :: 18 = "text_1.txt"
+FILENAME -- filenames :: 19 = "text_1"
+
+# Invalid file or directory name without path
+FILENAME -- filenames :: 20 = "text 1.txt"
+
+# Possible system paths
+FILENAME -- filenames :: 21 = "C:"
+FILENAME -- filenames :: 22 = "C:\Users"
+FILENAME -- filenames :: 23 = "C:\Users\Public\none"
+FILENAME -- filenames :: 24 = "C:\Users\Public\none.txt"
+FILENAME -- filenames :: 25 = "C:\Users\Public\desktop.ini"
+
+# Testing the DIRECTORY data type
+# Improperly formatted literals
+DIRECTORY -- directories :: 01 = L".\invalid.txt"
+DIRECTORY -- directories :: 02 = .\invalid.txt"
+DIRECTORY -- directories :: 03 = ".\invalid.txt
+
+DIRECTORY -- directories :: 04 = ""
+DIRECTORY -- directories :: 05 = "."
+DIRECTORY -- directories :: 06 = ".."
+DIRECTORY -- directories :: 07 = ".\logger_output\test"
+
+# Bad filepath because of "\\"? - Apparently not
+DIRECTORY -- directories :: 08 = ".\logger_output\\test"
+
+DIRECTORY -- directories :: 09 = ".\logger_output\none"
+DIRECTORY -- directories :: 10 = ".\logger_output\log.txt"
+DIRECTORY -- directories :: 11 = ".\logger_output\none.txt"
+DIRECTORY -- directories :: 12 = ".\.gitignore"
+DIRECTORY -- directories :: 13 = ".\.git"
+
+# Path does not exist
+DIRECTORY -- directories :: 14 = ".\logger_output\none\text.txt"
+DIRECTORY -- directories :: 15 = ".\logger_output\none\test"
+
+# Testing absolute paths
+DIRECTORY -- directories :: 16 = "C:\WORK"
+
+# Unusual characters in the path
+DIRECTORY -- directories :: 17 = "C:\WORK\Bernard\Bernard's work\..\..\Bernard\Bernard's work"
+
+# File or directory name without path
+DIRECTORY -- directories :: 18 = "text_1.txt"
+DIRECTORY -- directories :: 19 = "text_1"
+
+# Invalid file or directory name without path
+DIRECTORY -- directories :: 20 = "text 1"
+
+# System paths
+DIRECTORY -- directories :: 21 = "C:"
+DIRECTORY -- directories :: 22 = "C:\Users"
+DIRECTORY -- directories :: 23 = "C:\Users\Public\none"
+DIRECTORY -- directories :: 24 = "C:\Users\Public\none.txt"
+DIRECTORY -- directories :: 25 = "C:\Users\Public\desktop.ini"
+
+# Testing a duplicate key
+  BOOL --	space  ::	one		= false
+
+# Testing some improperly formatted data
+BOOL - no::value = false
+BOL -- no::value = false
+BOOL -- no:value = false
+BOOL -- no::value ! false
+BOOL -- no:: = false
+
+# Testing a line which is too long Testing a line which is too long Testing a line which is too long Testing a line which is too long Testing a line which is too long Testing a line which is too long Testing a line which is too long Testing a line which is too long
+# The following data should not be parsed
+BOOL--	::afterLongLine=false 
+
+# <<-- FlatAtomicConfigIO instance parsing report ( Fri Aug 29 16:49:35 2014 ) begins --
+# Line 13: the function for parsing the data value section of the line did not find a valid data value.
+# Line 15: the function for parsing the data value section of the line did not find a valid data value.
+# Line 23: (scope = strings, field = 12, DataType = WSTRING) the function for parsing the data value section of the line did not convert the entire rest of the line into a data value.
+# Line 29: the function for parsing the data value section of the line did not find a valid data value.
+# Line 30: the function for parsing the data value section of the line did not find a valid data value.
+# Line 31: the function for parsing the data value section of the line did not find a valid data value.
+# Line 32: the function for parsing the data value section of the line did not find a valid data value.
+# Line 33: the function for parsing the data value section of the line did not find a valid data value.
+# Line 36: (scope = ints, field = 01, DataType = INT) the function for parsing the data value section of the line did not convert the entire rest of the line into a data value.
+# Line 37: (scope = ints, field = 02, DataType = INT) the function for parsing the data value section of the line did not convert the entire rest of the line into a data value.
+# Line 39: (scope = ints, field = 04, DataType = INT) the function for parsing the data value section of the line did not convert the entire rest of the line into a data value.
+# Line 40: the function for parsing the data value section of the line did not find a valid data value.
+# Line 45: (scope = doubles, field = 02, DataType = DOUBLE) the function for parsing the data value section of the line did not convert the entire rest of the line into a data value.
+# Line 48: the function for parsing the data value section of the line did not find a valid data value.
+# Line 52: the function for parsing the data value section of the line did not find a valid data value.
+# Line 54: the function for parsing the data value section of the line did not find a valid data value.
+# Line 55: the function for parsing the data value section of the line did not find a valid data value.
+# Line 57: the function for parsing the data value section of the line did not find a valid data value.
+# Line 58: the function for parsing the data value section of the line did not find a valid data value.
+# Line 64: the function for parsing the data value section of the line did not find a valid data value.
+# Line 65: the function for parsing the data value section of the line did not find a valid data value.
+# Line 70: the function for parsing the data value section of the line did not find a valid data value.
+# Line 71: the function for parsing the data value section of the line did not find a valid data value.
+# Line 72: the function for parsing the data value section of the line did not find a valid data value.
+# Line 74: the function for parsing the data value section of the line did not find a valid data value.
+# Line 75: the function for parsing the FILENAME data value reported "Found an existing directory, but was asked for a file."
+# Line 75: the function for parsing the data value section of the line did not find a valid data value.
+# Line 76: the function for parsing the FILENAME data value reported "Found an existing directory, but was asked for a file."
+# Line 76: the function for parsing the data value section of the line did not find a valid data value.
+# Line 77: the function for parsing the FILENAME data value reported "Found an existing directory, but was asked for a file."
+# Line 77: the function for parsing the data value section of the line did not find a valid data value.
+# Line 80: the function for parsing the FILENAME data value reported "Found an existing directory, but was asked for a file."
+# Line 80: the function for parsing the data value section of the line did not find a valid data value.
+# Line 82: the function for parsing the FILENAME data value reported "Filename does not contain '.'"
+# Line 82: the function for parsing the data value section of the line did not find a valid data value.
+# Line 86: the function for parsing the FILENAME data value reported "Found an existing directory, but was asked for a file."
+# Line 86: the function for parsing the data value section of the line did not find a valid data value.
+# Line 89: the function for parsing the FILENAME data value reported "File or directory's path is not an existing location."
+# Line 89: the function for parsing the data value section of the line did not find a valid data value.
+# Line 90: the function for parsing the FILENAME data value reported "File or directory's path is not an existing location."
+# Line 90: the function for parsing the data value section of the line did not find a valid data value.
+# Line 93: the function for parsing the FILENAME data value reported "Found an existing directory, but was asked for a file."
+# Line 93: the function for parsing the data value section of the line did not find a valid data value.
+# Line 96: the function for parsing the FILENAME data value reported "Found an existing directory, but was asked for a file."
+# Line 96: the function for parsing the data value section of the line did not find a valid data value.
+# Line 100: the function for parsing the FILENAME data value reported "Filename does not contain '.'"
+# Line 100: the function for parsing the data value section of the line did not find a valid data value.
+# Line 103: the function for parsing the FILENAME data value reported "Filename has a non-alphanumeric character other than '.' or '_'"
+# Line 103: the function for parsing the data value section of the line did not find a valid data value.
+# Line 106: the function for parsing the FILENAME data value reported "Found an existing directory, but was asked for a file."
+# Line 106: the function for parsing the data value section of the line did not find a valid data value.
+# Line 107: the function for parsing the FILENAME data value reported "Attempt to inspect an existing system folder."
+# Line 107: the function for parsing the data value section of the line did not find a valid data value.
+# Line 108: the function for parsing the FILENAME data value reported "Attempt to inspect either an existing file in a system folder, or a non-existing file or folder with a path that is a system folder."
+# Line 108: the function for parsing the data value section of the line did not find a valid data value.
+# Line 109: the function for parsing the FILENAME data value reported "Attempt to inspect either an existing file in a system folder, or a non-existing file or folder with a path that is a system folder."
+# Line 109: the function for parsing the data value section of the line did not find a valid data value.
+# Line 110: the function for parsing the FILENAME data value reported "Attempt to inspect either an existing file in a system folder, or a non-existing file or folder with a path that is a system folder."
+# Line 110: the function for parsing the data value section of the line did not find a valid data value.
+# Line 114: the function for parsing the data value section of the line did not find a valid data value.
+# Line 115: the function for parsing the data value section of the line did not find a valid data value.
+# Line 116: the function for parsing the data value section of the line did not find a valid data value.
+# Line 118: the function for parsing the data value section of the line did not find a valid data value.
+# Line 127: the function for parsing the DIRECTORY data value reported "Found an existing file, but was asked for a directory."
+# Line 127: the function for parsing the data value section of the line did not find a valid data value.
+# Line 128: the function for parsing the DIRECTORY data value reported "Directory name has a non-alphanumeric character other than '_'"
+# Line 128: the function for parsing the data value section of the line did not find a valid data value.
+# Line 129: the function for parsing the DIRECTORY data value reported "Found an existing file, but was asked for a directory."
+# Line 129: the function for parsing the data value section of the line did not find a valid data value.
+# Line 133: the function for parsing the DIRECTORY data value reported "File or directory's path is not an existing location."
+# Line 133: the function for parsing the data value section of the line did not find a valid data value.
+# Line 134: the function for parsing the DIRECTORY data value reported "File or directory's path is not an existing location."
+# Line 134: the function for parsing the data value section of the line did not find a valid data value.
+# Line 143: the function for parsing the DIRECTORY data value reported "Directory name has a non-alphanumeric character other than '_'"
+# Line 143: the function for parsing the data value section of the line did not find a valid data value.
+# Line 147: the function for parsing the DIRECTORY data value reported "Directory name has a non-alphanumeric character other than '_'"
+# Line 147: the function for parsing the data value section of the line did not find a valid data value.
+# Line 151: the function for parsing the DIRECTORY data value reported "Attempt to inspect an existing system folder."
+# Line 151: the function for parsing the data value section of the line did not find a valid data value.
+# Line 152: the function for parsing the DIRECTORY data value reported "Attempt to inspect either an existing file in a system folder, or a non-existing file or folder with a path that is a system folder."
+# Line 152: the function for parsing the data value section of the line did not find a valid data value.
+# Line 153: the function for parsing the DIRECTORY data value reported "Attempt to inspect either an existing file in a system folder, or a non-existing file or folder with a path that is a system folder."
+# Line 153: the function for parsing the data value section of the line did not find a valid data value.
+# Line 154: the function for parsing the DIRECTORY data value reported "Attempt to inspect either an existing file in a system folder, or a non-existing file or folder with a path that is a system folder."
+# Line 154: the function for parsing the data value section of the line did not find a valid data value.
+# Line 157: (scope = space, field = one, DataType = BOOL) There is already a value stored in the Config object under the given key scope and field. Either this key was repeated in the file, or was already present in the Config object before this file was read.
+# Line 160: no separator found to mark the end of the datatype specifier.
+# Line 161: no datatype found that corresponds to the datatype specifier.
+# Line 162: no separator found to mark the end of the key scope (needed even if the scope is empty).
+# Line 163: no separator found to mark the end of the key field.
+# Line 164: found empty key field specifier (not allowed).
+# Line 166: Allowed line length of 255 exceeded - Aborting read operation.
+# -- FlatAtomicConfigIO instance parsing report ends -->>

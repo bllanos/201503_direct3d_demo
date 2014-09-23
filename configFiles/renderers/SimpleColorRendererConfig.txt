@@ -1,0 +1,22 @@
+# Configuration file for the SimpleColorRenderer class
+
+# LogUser configuration
+# ---------------------
+BOOL -- SimpleColorRenderer_LogUser::enableLogging = true
+WSTRING -- SimpleColorRenderer_LogUser::msgPrefix = L"SimpleColorRenderer"
+BOOL -- SimpleColorRenderer_LogUser::useGlobalLog = true
+# BOOL -- SimpleColorRenderer_LogUser::timestampEnable = true
+
+# ConfigUser configuration
+# ------------------------
+BOOL -- SimpleColorRenderer_ConfigUser::enableConfigUseLogging = true
+
+# Shader setup
+# ------------
+DIRECTORY -- SimpleColorRenderer::shaderFilePath = "..\shaderCode"
+FILENAME -- SimpleColorRenderer::vsFileName = "color.vs"
+WSTRING -- SimpleColorRenderer::vsShaderModel = L"vs_5_0"
+WSTRING -- SimpleColorRenderer::vsEntryPoint = L"ColorVertexShader"
+FILENAME -- SimpleColorRenderer::psFileName = "color.ps"
+WSTRING -- SimpleColorRenderer::psShaderModel = L"ps_5_0"
+WSTRING -- SimpleColorRenderer::psEntryPoint = L"ColorPixelShader"

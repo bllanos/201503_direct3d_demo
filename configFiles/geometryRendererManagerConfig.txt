@@ -1,0 +1,10 @@
+# Configuration file for the GeometryRendererManager class
+
+# Determine which renderers the system will attempt to initialize
+# ---------------------------------------------------------------
+BOOL -- GeometryRendererManager::SimpleColorRenderer = true
+
+# Where to find configuration data for the SimpleColorRenderer
+# ------------------------------------------------------------
+FILENAME -- GeometryRendererManager::SimpleColorRenderer_inputConfigFileName = "SimpleColorRendererConfig.txt"
+DIRECTORY -- GeometryRendererManager::SimpleColorRenderer_inputConfigFilePath = "..\configFiles\renderers"

@@ -1,0 +1,10 @@
+*.opensdf
+*.sdf
+*.suo
+*/Debug/
+Debug/
+logFiles/
+configFiles/output_gitIgnored/
+win32_base/logger_output/
+win32_base/configuration/test/output/
+win32_base/configuration/output/

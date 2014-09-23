@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="header\BasicWindow.h" />
+    <ClInclude Include="header\Config.h" />
+    <ClInclude Include="header\ConfigUser.h" />
+    <ClInclude Include="header\defs.h" />
+    <ClInclude Include="header\FlatAtomicConfigIO.h" />
+    <ClInclude Include="header\globals.h" />
+    <ClInclude Include="header\interface\IConfigIO.h" />
+    <ClInclude Include="header\util\higherLevelIO.h" />
+    <ClInclude Include="test\header\testFileUtil.h" />
+    <ClInclude Include="header\util\fileUtil.h" />
+    <ClInclude Include="header\util\textProcessing.h" />
+    <ClInclude Include="test\header\testConfig_IConfigManager.h" />
+    <ClInclude Include="header\Logger.h" />
+    <ClInclude Include="header\LogUser.h" />
+    <ClInclude Include="test\header\testBasicWindow.h" />
+    <ClInclude Include="test\header\testLogger_LogUser.h" />
+    <ClInclude Include="test\header\testTextProcessing.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cpp\BasicWindow.cpp" />
+    <ClCompile Include="cpp\Config.cpp" />
+    <ClCompile Include="cpp\ConfigUser.cpp" />
+    <ClCompile Include="cpp\FlatAtomicConfigIO.cpp" />
+    <ClCompile Include="cpp\globals.cpp" />
+    <ClCompile Include="cpp\Logger.cpp" />
+    <ClCompile Include="cpp\LogUser.cpp" />
+    <ClCompile Include="cpp\main.cpp" />
+    <ClCompile Include="cpp\util\higherLevelIO.cpp" />
+    <ClCompile Include="test\cpp\testFileUtil.cpp" />
+    <ClCompile Include="cpp\util\fileUtil.cpp" />
+    <ClCompile Include="cpp\util\textProcessing.cpp" />
+    <ClCompile Include="test\cpp\testBasicWindow.cpp" />
+    <ClCompile Include="test\cpp\testConfig_IConfigManager.cpp" />
+    <ClCompile Include="test\cpp\testLogger_LogUser.cpp" />
+    <ClCompile Include="test\cpp\testTextProcessing.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\engine\engine.vcxproj">
+      <Project>{ee9c0e97-8193-496b-8c61-41698f8ab67b}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{DED9B489-36FB-47FB-80C0-17A373A22637}</ProjectGuid>
+    <RootNamespace>My20140517_Win32</RootNamespace>
+    <ProjectName>win32_base</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(ProjectDir)\header;$(ProjectDir)\header\interface;$(ProjectDir)\..\engine\header;$(ProjectDir)\..\engine\header\rendering;$(ProjectDir)\..\engine\header\physics;$(ProjectDir)\..\engine\header\input;$(ProjectDir)\..\engine\header\geometry;$(ProjectDir)\header\util;$(ProjectDir)\test\header;$(IncludePath);$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(ProjectDir)\header;$(ProjectDir)\header\interface;$(ProjectDir)\..\engine\header;$(ProjectDir)\..\engine\header\rendering;$(ProjectDir)\..\engine\header\physics;$(ProjectDir)\..\engine\header\input;$(ProjectDir)\..\engine\header\geometry;$(ProjectDir)\header\util;$(IncludePath);$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

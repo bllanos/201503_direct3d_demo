@@ -1,0 +1,14 @@
+BOOL -- BasicWindow_LogUser::enableLogging = true
+DIRECTORY -- BasicWindow_LogUser::logFilePath = "..\win32_base IO Files"
+FILENAME -- BasicWindow_LogUser::logFileName = "basicWindowLog.txt"
+BOOL -- BasicWindow_LogUser::overwriteFile = false
+BOOL -- BasicWindow_ConfigUser::enableConfigUseLogging = true
+WSTRING -- BasicWindow::windowTitle = L"myWindow"
+
+# Where to load configuration data for the second BasicWindow object
+DIRECTORY -- config::pathIn = ".\configuration\test"
+FILENAME -- config::filenameIn = "testBasicWindowConfig2.txt"
+
+# Where to write configuration data for the second BasicWindow object
+DIRECTORY -- config::pathOut = ".\configuration\test\output"
+FILENAME -- config::filenameOut = "testBasicWindowConfigOut2_externalConfig.txt"

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="header">
+      <UniqueIdentifier>{ff7aa9ff-012b-49c1-8c47-d4c71dc88944}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\rendering">
+      <UniqueIdentifier>{545fec13-1c39-4750-9a0a-992e302de629}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\geometry">
+      <UniqueIdentifier>{27306e5a-9964-44db-b3c6-42c7487422eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\physics">
+      <UniqueIdentifier>{822cfe14-868d-48e6-9f7a-e4516854fa51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\input">
+      <UniqueIdentifier>{b492321c-aff2-40af-b65f-8ae4764af487}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{063eacc8-60e6-41e5-8888-12cf5ce5706b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\rendering">
+      <UniqueIdentifier>{aa063488-3bba-4a6f-8c8b-3304a3679667}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unprocessed Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Unprocessed Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="source\geometry">
+      <UniqueIdentifier>{778bb804-9868-4364-8487-cc2de902f0f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{34b8c309-e7ee-4378-bc34-5743382ba8d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\header">
+      <UniqueIdentifier>{c764e86c-9ef4-48fc-b3fd-f4775d1b53f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\source">
+      <UniqueIdentifier>{d8e4676c-b3ec-45eb-90e2-3a4211ded724}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cinecameraclass.cpp">
+      <Filter>Unprocessed Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="inputclass.cpp">
+      <Filter>Unprocessed Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>Unprocessed Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\rendering\SimpleColorRenderer.cpp">
+      <Filter>source\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\geometry\SimpleColorGeometry.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\geometry\CubeModel.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\d3dclass.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\StateControl.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\GeometryRendererManager.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\engineMain.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\Phase1TestTransformable.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\Phase1TestState.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cinecameraclass.h">
+      <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inputclass.h">
+      <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\rendering\IGeometryRenderer.h">
+      <Filter>header\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\IGeometry.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\GeometryRendererManager.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="header\rendering\SimpleColorRenderer.h">
+      <Filter>header\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\SimpleColorGeometry.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\vertexTypes.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\physics\ITransformable.h">
+      <Filter>header\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\CubeModel.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\d3dclass.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="header\engineGlobals.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="header\input\IInteractive.h">
+      <Filter>header\input</Filter>
+    </ClInclude>
+    <ClInclude Include="header\State.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="header\StateControl.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\Phase1TestState.h">
+      <Filter>test\header</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\Phase1TestTransformable.h">
+      <Filter>test\header</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

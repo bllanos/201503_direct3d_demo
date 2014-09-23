@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{d5290289-094d-4bb3-aabf-4789ab2483b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\Header Files">
+      <UniqueIdentifier>{d9f86027-a03e-4cae-a43f-c65783c01e3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\Source Files">
+      <UniqueIdentifier>{5421f37b-f692-4b59-931b-b58745abc93d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\interface">
+      <UniqueIdentifier>{464433d6-f8eb-4f1e-b7bf-dbfb3c32dded}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{c007f27d-8948-4aaf-8999-d654c282a13e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{e6618216-d2ed-44e9-934d-e68e4bec9f71}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="header\BasicWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\LogUser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\testBasicWindow.h">
+      <Filter>test\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\testConfig_IConfigManager.h">
+      <Filter>test\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\FlatAtomicConfigIO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\interface\IConfigIO.h">
+      <Filter>Header Files\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="header\util\textProcessing.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\testLogger_LogUser.h">
+      <Filter>test\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\testTextProcessing.h">
+      <Filter>test\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\util\fileUtil.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="header\util\higherLevelIO.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\testFileUtil.h">
+      <Filter>test\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="header\ConfigUser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cpp\BasicWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\globals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\LogUser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\testBasicWindow.cpp">
+      <Filter>test\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\Config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\testConfig_IConfigManager.cpp">
+      <Filter>test\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\testLogger_LogUser.cpp">
+      <Filter>test\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\util\textProcessing.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\testTextProcessing.cpp">
+      <Filter>test\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\FlatAtomicConfigIO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\util\fileUtil.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\util\higherLevelIO.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\testFileUtil.cpp">
+      <Filter>test\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\ConfigUser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
+</Project>
