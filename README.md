@@ -23,6 +23,26 @@ by removing the files in question from the project using the 'Solution Explorer'
 using the `Project > Add Existing Item` wizard to reinsert them into the project under the
 correct file paths.
 
+### Running a clone of the repository
+_(Hopefully not applicable to any submitted versions of the code)_
+
+In the event that the code is a direct clone of the repository, it should build properly,
+but will not execute normally. The reason for the abnormal execution is the lack
+of several folders which are not part of the repository, but which the program
+expects to exist (depending on the configuration data passed to it).
+
+To allow for normal execution, create the following (empty) folders:
+- `logFiles`
+- `logFiles\test`
+- `configFiles\output_gitIgnored`
+
+Note that the above folder paths are relative to the solution directory
+(the directory containing `game.sln`).
+
+In contrast, with the current Visual Studio project settings,
+when the program is executed, its working directory is the `win32_base` folder.
+(All configuration data must be written with this in mind.)
+
 ## Code References
 The main project code, the Visual Studio 'engine' project,
 was adapted from the following sources:
@@ -46,3 +66,17 @@ The following works were consulted for ideas during development:
 
 ## Sources of Assets
 There are no assets, currently.
+
+## Development Policies
+- Please add each new file to the system under a path that is relative to the
+  containing Visual Studio project's folder. File paths used by Visual Studio
+  can be adjusted manually by modifying `*.vcxproj` and `*.vcxproj.filters`
+  with a text editor.
+
+- Please push work frequently to the repository so that others can see
+  progress made between project milestones. However, do not
+  alter the 'master' branch except to merge in code from working
+  branches that has been tested at least superficially.
+  (i.e. Keep features not yet fully developed on branches
+  other than 'master'.) The 'master' branch should ideally be demo-worthy at
+  all times.
