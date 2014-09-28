@@ -76,7 +76,7 @@ public:
 	void GetClipDistances(XMFLOAT2& nearFarClipDistances) const; // Not needed if the Mouse class uses XMVector3Unproject()
 	float GetAspectRatio(void) const;
 
-	virtual HRESULT poll(InputClass& input, Mouse& mouse) override;
+	virtual HRESULT poll(Keyboard& input, Mouse& mouse) override;
 
 private:
 	bool checkOrthogonality(void);

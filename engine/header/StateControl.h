@@ -30,7 +30,7 @@ Description
 
 #include "BasicWindow.h"
 #include "State.h"
-#include "inputclass.h"
+#include "Keyboard.h"
 #include "Mouse.h"
 #include "d3dclass.h"
 #include "GeometryRendererManager.h"
@@ -46,7 +46,7 @@ class StateControl : public LogUser
 	// Data members
 private:
 	BasicWindow* m_mainWindow;
-	InputClass* m_Input;
+	Keyboard* m_Keyboard;
 	Mouse* m_Mouse;
 	D3DClass* m_D3D;
 	GeometryRendererManager* m_GeometryRendererManager;

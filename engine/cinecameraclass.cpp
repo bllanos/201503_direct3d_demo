@@ -403,7 +403,7 @@ void CineCameraClass::GetFieldOfView(float& fov) const
 	fov = fieldOfView;
 }
 
-HRESULT CineCameraClass::poll(InputClass& input, Mouse& mouse)
+HRESULT CineCameraClass::poll(Keyboard& input, Mouse& mouse)
 {
 	/*
 	We will combinations for a key + arrow keys to control the camera
@@ -436,7 +436,7 @@ HRESULT CineCameraClass::poll(InputClass& input, Mouse& mouse)
 		if (input.IsKeyDown(VK_DOWN)) //Tilt Camera Upward
 			TiltUp();
 	}
-	else if (input.IsKeyDown(InputClass::ascii_C)){
+	else if (input.IsKeyDown(Keyboard::ascii_C)){
 
 		if (input.IsKeyDown(VK_UP)) //Crane Up
 			CraneUp();
@@ -444,7 +444,7 @@ HRESULT CineCameraClass::poll(InputClass& input, Mouse& mouse)
 		if (input.IsKeyDown(VK_DOWN)) //Crane Down
 			CraneDown();
 	}
-	else if (input.IsKeyDown(InputClass::ascii_R)){
+	else if (input.IsKeyDown(Keyboard::ascii_R)){
 
 		if (input.IsKeyDown(VK_LEFT)) //Roll Left
 			RollLeft();
@@ -452,7 +452,7 @@ HRESULT CineCameraClass::poll(InputClass& input, Mouse& mouse)
 		if (input.IsKeyDown(VK_RIGHT)) //Roll Right
 			RollRight();
 	}
-	else if (input.IsKeyDown(InputClass::ascii_Z)){
+	else if (input.IsKeyDown(Keyboard::ascii_Z)){
 
 		if (input.IsKeyDown(VK_UP)) //Zoom In
 			ZoomIn();

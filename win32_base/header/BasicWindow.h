@@ -40,6 +40,7 @@ Issues
 #include <vector>
 #include "defs.h"
 #include "ConfigUser.h"
+#include "IWinMessageHandler.h"
 
 // Preprocessor Definitions
 #define WIN32_LEAN_AND_MEAN
@@ -85,6 +86,7 @@ private:
 	unsigned int	m_height; // Pixel height of the window
 	std::vector<BasicWindow>::size_type	m_id; // Unique id of this window, managed by this class
 	bool			m_opened; // True if this window has been opened at least once
+	std::vector<IWinMessageHandler*> m_msgHandlers; // a list of classes that extend IWinMessageHandler
 
 	// Public Constructors
 	// -------------------
@@ -197,6 +199,12 @@ public:
 	(Note that "all windows" refers to all windows created by this class.)
 	*/
 	static HRESULT updateAll(bool& quit, WPARAM& msg_wParam);
+
+	// Add a class that extends IWinMessageHandler to the list of classes that need to handle Windows messages.
+	void addMessageHandler(IWinMessageHandler*);
+
+	// Allow all classes that extend IWinMessageHandler to process their Windows messages. Returns 0 if a message is handled, non-zero if not.
+	LRESULT CALLBACK processMessageHandlers(UINT, WPARAM, LPARAM);
 
 private:
 	/* It seems that only static functions can be registered as window procedures.

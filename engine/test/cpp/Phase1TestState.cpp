@@ -105,7 +105,7 @@ HRESULT Phase1TestState::update(const DWORD currentTime, const DWORD updateTimeI
 	return ERROR_SUCCESS;
 }
 
-HRESULT Phase1TestState::poll(InputClass& input, Mouse& mouse) {
+HRESULT Phase1TestState::poll(Keyboard& input, Mouse& mouse) {
 	if( FAILED(m_camera->poll(input, mouse)) ) {
 		logMessage(L"Call to CineCameraClass poll() function failed.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);

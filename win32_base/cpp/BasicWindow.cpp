@@ -44,7 +44,7 @@ BasicWindow::BasicWindow(
 	) :
 	ConfigUser(true, BASICWINDOW_START_MSG_PREFIX, usage),
 	m_title(title), m_hwnd(0), m_exitAble(exitAble),
-	m_width(width), m_height(height), m_id(0), m_opened(false)
+	m_width(width), m_height(height), m_id(0), m_opened(false), m_msgHandlers(0)
 {
 	if( initFromGlobalConfig && (usage != Usage::GLOBAL) ) {
 		// This is a Microsoft-specific constructor
@@ -61,7 +61,7 @@ BasicWindow::BasicWindow(
 BasicWindow::BasicWindow(Config* sharedConfig) :
 ConfigUser(true, BASICWINDOW_START_MSG_PREFIX, sharedConfig),
 m_title(), m_hwnd(0), m_exitAble(BASICWINDOW_DEFAULT_EXITABLE),
-m_width(0), m_height(0), m_id(0), m_opened(false)
+m_width(0), m_height(0), m_id(0), m_opened(false), m_msgHandlers(0)
 {
 	configure();
 }
@@ -315,12 +315,32 @@ HRESULT BasicWindow::updateAll(bool& quit, WPARAM& msg_wParam) {
 	return ERROR_SUCCESS;
 }
 
+void BasicWindow::addMessageHandler(IWinMessageHandler* msgHandler) {
+	m_msgHandlers.push_back(msgHandler);
+}
+
+LRESULT CALLBACK BasicWindow::processMessageHandlers(UINT umsg, WPARAM wparam, LPARAM lparam) {
+	for (size_t i = 0; i < m_msgHandlers.size(); ++i) {
+		LRESULT msgHandlerResult = m_msgHandlers[i]->winProc(this->getHWND(), umsg, wparam, lparam);
+		if (msgHandlerResult == 0) {
+			return msgHandlerResult;
+		}
+	}
+	return -1;
+}
+
 LRESULT CALLBACK BasicWindow::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
 
 	// Check for requests to terminate
 	/* See http://msdn.microsoft.com/en-us/library/windows/desktop/ms632598%28v=vs.85%29.aspx#destroying_win
 	     for more information on WM_CLOSE and WM_DESTROY messages.
 	 */
+
+	// let the classes that implement IWinMessageHandler handle their messages first.
+	if (processMessageHandlers(umsg, wparam, lparam) == 0) {
+		return 0;
+	}
+
 	if (umsg == WM_CLOSE || (umsg == WM_KEYDOWN && wparam == VK_ESCAPE) ) {
 		
 		if (m_exitAble) {

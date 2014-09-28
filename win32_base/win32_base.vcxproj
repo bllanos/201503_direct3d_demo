@@ -18,6 +18,7 @@
     <ClInclude Include="header\FlatAtomicConfigIO.h" />
     <ClInclude Include="header\globals.h" />
     <ClInclude Include="header\interface\IConfigIO.h" />
+    <ClInclude Include="header\interface\IWinMessageHandler.h" />
     <ClInclude Include="header\util\higherLevelIO.h" />
     <ClInclude Include="test\header\testFileUtil.h" />
     <ClInclude Include="header\util\fileUtil.h" />

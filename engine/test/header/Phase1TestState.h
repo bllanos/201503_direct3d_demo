@@ -56,7 +56,7 @@ public:
 
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval) override;
 
-	virtual HRESULT poll(InputClass& input, Mouse& mouse) override;
+	virtual HRESULT poll(Keyboard& input, Mouse& mouse) override;
 
 	// Currently not implemented - will cause linker errors if called
 private:

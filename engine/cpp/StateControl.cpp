@@ -28,7 +28,7 @@ using std::wostringstream;
 
 StateControl::StateControl(void) :
 LogUser(true, STATECONTROL_START_MSG_PREFIX),
-m_mainWindow(0), m_Input(0), m_Mouse(0), m_D3D(0),
+m_mainWindow(0), m_Keyboard(0), m_Mouse(0), m_D3D(0),
 m_GeometryRendererManager(0), m_CurrentState(0)
 {}
 
@@ -39,9 +39,9 @@ StateControl::~StateControl(void)
 		m_mainWindow = 0;
 	}
 
-	if( m_Input ) {
-		delete m_Input;
-		m_Input = 0;
+	if( m_Keyboard ) {
+		delete m_Keyboard;
+		m_Keyboard = 0;
 	}
 
 	if( m_Mouse ) {
@@ -91,8 +91,8 @@ HRESULT StateControl::Initialize(void)
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
-	m_Input = new InputClass();
-	if( m_Input->Initialize() ) {
+	m_Keyboard = new Keyboard();
+	if( m_Keyboard->Initialize() ) {
 		logMessage(L"Failed to initialize InputClass member.");
 		BasicWindow::shutdownAll();
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -155,6 +155,9 @@ HRESULT StateControl::Initialize(void)
 		BasicWindow::shutdownAll();
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
+
+	m_mainWindow->addMessageHandler(m_Keyboard);
+	m_mainWindow->addMessageHandler(m_Mouse);
 
 	return ERROR_SUCCESS;
 }
@@ -266,8 +269,14 @@ HRESULT StateControl::Frame(void)
 	HRESULT result = ERROR_SUCCESS;
 
 	// Non-rendering processing
+	/* testing keyboard input
+	bool checkAKey = m_Keyboard->IsKeyDown(VK_LEFT);
+	if(checkAKey)
+		logMessage(L"Key LEFT was pressed...");
+	*/
+
 	m_Mouse->Update();
-	result = m_CurrentState->poll(*m_Input, *m_Mouse);
+	result = m_CurrentState->poll(*m_Keyboard, *m_Mouse);
 	if( FAILED(result) ) {
 		logMessage(L"Call to State Poll() function failed.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);

@@ -34,8 +34,10 @@ Note: I have not tested whether this class
 using namespace DirectX;
 
 #include "cinecameraclass.h"
+#include "IWinMessageHandler.h"
+#include "BasicWindow.h"
 
-class Mouse
+class Mouse : public IWinMessageHandler
 {
 	// List of mouse buttons
 public: 
@@ -77,7 +79,7 @@ public:
 	int Initialize(HWND hwnd); // Need the 'hwnd' parameter to get screen dimensions
 
 	// Called by the SystemClass class to allow the Mouse class to register mouse events
-	LRESULT CALLBACK MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
+	LRESULT CALLBACK winProc(HWND, UINT, WPARAM, LPARAM);
 
 	/* To be called during the game loop to ensure that the mouse's
 	   movement speed is set to zero in the absence of Windows messages

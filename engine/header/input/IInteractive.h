@@ -21,7 +21,7 @@ Description
 
 #pragma once // This is a Microsoft-specific way to prevent multiple inclusions of a header file
 #include <windows.h>
-#include "inputclass.h"
+#include "Keyboard.h"
 
 class Mouse;
 
@@ -30,7 +30,7 @@ class IInteractive
 public:
 	IInteractive(void) {}
 	virtual ~IInteractive(void) {}
-	virtual HRESULT poll(InputClass& input, Mouse& mouse) = 0; // Pure virtual function
+	virtual HRESULT poll(Keyboard& input, Mouse& mouse) = 0; // Pure virtual function
 
 private:
 	IInteractive(const IInteractive& other);

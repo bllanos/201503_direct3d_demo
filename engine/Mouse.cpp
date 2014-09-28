@@ -54,7 +54,7 @@ Mouse::~Mouse(void)
 	}
 }
 
-LRESULT CALLBACK Mouse::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK Mouse::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
 	/* Allow for the default handler to be called by the SystemClass object
 	regardless of how the mouse handles the event, because this allows
@@ -69,6 +69,8 @@ LRESULT CALLBACK Mouse::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPAR
 	bool stopTracking = false;
 
 	bool positionMustChange = false;
+
+	//HWND hwnd = bwin.getHWND();
 
 	switch (umsg)
 	{

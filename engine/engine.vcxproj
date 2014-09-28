@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -21,7 +21,7 @@
     <ClCompile Include="test\cpp\Phase1TestState.cpp" />
     <ClCompile Include="test\cpp\Phase1TestTransformable.cpp" />
     <ClCompile Include="cinecameraclass.cpp" />
-    <ClCompile Include="inputclass.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Mouse.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -41,7 +41,7 @@
     <ClInclude Include="header\StateControl.h" />
     <ClInclude Include="cinecameraclass.h" />
     <ClInclude Include="header\rendering\IGeometryRenderer.h" />
-    <ClInclude Include="inputclass.h" />
+    <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
