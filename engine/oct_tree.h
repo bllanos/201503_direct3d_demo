@@ -39,7 +39,7 @@
 		~Octree();
 		
 		int advance();
-		int addObject(<*T> newGameObject);
+		int addObject(<T*> newGameObject);
 		
 	protected:
 		Octnode * rootNode;
