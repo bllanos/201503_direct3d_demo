@@ -81,7 +81,7 @@
     <ClCompile Include="test\cpp\Phase1TestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
-    <ClCompile Include="Keyboard.cpp">
+    <ClCompile Include="cpp\Keyboard.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,7 +137,7 @@
     <ClInclude Include="test\header\Phase1TestTransformable.h">
       <Filter>test\header</Filter>
     </ClInclude>
-    <ClInclude Include="Keyboard.h">
+    <ClInclude Include="header\Keyboard.h">
       <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>
