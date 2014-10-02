@@ -28,7 +28,18 @@ public:
 	int KeyDown(unsigned int);
 	int KeyUp(unsigned int);
 	bool IsKeyDown(unsigned int) const;
-	void ResetKeys();
+
+	// returns true if the given key was pressed last iteration, but not this iteration.
+	bool Up(unsigned int);
+	// returns true if given key was pressed this iteration and not last.
+	bool Down(unsigned int);
+	// returns number of milliseconds the given key has been held down since last being pressed.
+	DWORD TimePressed(unsigned int) const;
+	// tracks length of time the given key has not been pressed down since last being pressed/since program start.
+	DWORD TimeReleased(unsigned int) const;
+
+	// ensures the Up, Down, TimePressed, and TimeReleased functions operate correctly.
+	int Update(void);
 	
 	LRESULT CALLBACK winProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -62,7 +73,19 @@ public:
 	static const int Keyboard::ascii_Z;
 
 private:
+	// this iteration's key values
 	bool* m_keys;
+	// last iteration's key values
+	bool* m_lastKeys;
+	// the time each key has been held down
+	DWORD* m_timePressed;
+	// the time each key has been released
+	DWORD* m_timeReleased;
+
+	// Time of the current message processing round
+	DWORD m_t;
+	// Time of the last message processing round
+	DWORD m_tPast;
 };
 
 #endif

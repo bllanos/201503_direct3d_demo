@@ -263,6 +263,8 @@ HRESULT StateControl::Frame(void)
 	// captionWOSStream << L", Last Iteration was: " << to_wstring(elapsedTimeLastFrame) << L" [ms]";
 	DWORD totalElapsedTime = (currentTime - runStartTime);
 	captionWOSStream << L" | Elapsed Time: " << (totalElapsedTime / MILLISECS_PER_SEC_DWORD) << L" [s]";
+	//captionWOSStream << L" | TimePressed(A): " << m_Keyboard->TimePressed(m_Keyboard->ascii_A) << L" [ms]";
+	//captionWOSStream << L" | TimeReleased(A): " << m_Keyboard->TimeReleased(m_Keyboard->ascii_A) << L" [ms]";
 	SetWindowText(m_mainWindow->getHWND(), captionWOSStream.str().c_str());
 
 	// Do the processing for this iteration
@@ -274,8 +276,10 @@ HRESULT StateControl::Frame(void)
 	if(checkAKey)
 		logMessage(L"Key LEFT was pressed...");
 	*/
+	
 
 	m_Mouse->Update();
+	m_Keyboard->Update();
 	result = m_CurrentState->poll(*m_Keyboard, *m_Mouse);
 	if( FAILED(result) ) {
 		logMessage(L"Call to State Poll() function failed.");
