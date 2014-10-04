@@ -41,7 +41,7 @@ public:
 	// ensures the Up, Down, TimePressed, and TimeReleased functions operate correctly.
 	int Update(void);
 	
-	LRESULT CALLBACK winProc(HWND, UINT, WPARAM, LPARAM);
+	LRESULT CALLBACK winProc(BasicWindow*, UINT, WPARAM, LPARAM);
 
 	// Key codes
 public:

@@ -46,12 +46,12 @@
     <Filter Include="test\source">
       <UniqueIdentifier>{d8e4676c-b3ec-45eb-90e2-3a4211ded724}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\input">
+      <UniqueIdentifier>{b7e4783b-55dc-41da-9497-4e22a2d8602d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cinecameraclass.cpp">
-      <Filter>Unprocessed Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mouse.cpp">
       <Filter>Unprocessed Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cpp\rendering\SimpleColorRenderer.cpp">
@@ -81,15 +81,15 @@
     <ClCompile Include="test\cpp\Phase1TestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
-    <ClCompile Include="cpp\Keyboard.cpp">
-      <Filter>source</Filter>
+    <ClCompile Include="cpp\input\Keyboard.cpp">
+      <Filter>source\input</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\input\Mouse.cpp">
+      <Filter>source\input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cinecameraclass.h">
-      <Filter>Unprocessed Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mouse.h">
       <Filter>Unprocessed Header Files</Filter>
     </ClInclude>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -137,8 +137,11 @@
     <ClInclude Include="test\header\Phase1TestTransformable.h">
       <Filter>test\header</Filter>
     </ClInclude>
-    <ClInclude Include="header\Keyboard.h">
-      <Filter>header</Filter>
+    <ClInclude Include="header\input\Mouse.h">
+      <Filter>header\input</Filter>
+    </ClInclude>
+    <ClInclude Include="header\input\Keyboard.h">
+      <Filter>header\input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

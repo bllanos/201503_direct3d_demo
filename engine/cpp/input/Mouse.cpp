@@ -54,7 +54,7 @@ Mouse::~Mouse(void)
 	}
 }
 
-LRESULT CALLBACK Mouse::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
 	/* Allow for the default handler to be called by the SystemClass object
 	regardless of how the mouse handles the event, because this allows
@@ -141,69 +141,54 @@ LRESULT CALLBACK Mouse::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lpar
 		break;
 
 	case WM_MOUSEMOVE:
+		m_Tracking = true;
 		if (m_Tracking)
 		{
 			m_Moving = true;
 			positionMustChange = true;
 		}
+
+		// if the mouse is being tracked and is moving, get ready for a HOVER or LEAVE message
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(TRACKMOUSEEVENT);
+		tme.dwFlags = TME_HOVER | TME_LEAVE;
+		tme.dwHoverTime = 1; // interval of time (currently 1ms) to check mouse position
+		tme.hwndTrack = bwin->getHWND();
+		TrackMouseEvent(&tme);
+
+		break;
+
+	case WM_MOUSEHOVER:
+		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Starting Tracking\n");
+		m_Tracking = true;
+		startTracking = true;
+
+		// upon handling this message, get ready for another
+		TRACKMOUSEEVENT tmeHover;
+		tmeHover.cbSize = sizeof(TRACKMOUSEEVENT);
+		tmeHover.dwFlags = TME_HOVER | TME_LEAVE;
+		tmeHover.dwHoverTime = 1; // interval of time (currently 1ms) to check mouse position
+		tmeHover.hwndTrack = bwin->getHWND();
+		TrackMouseEvent(&tmeHover);
+
+		break;
+
+	case WM_MOUSELEAVE:
+		m_Tracking = false;
+		stopTracking = true;
+
+		// upon handling this message, get ready for HOVER for when the mouse enters the window again
+		TRACKMOUSEEVENT tmeLeave;
+		tmeLeave.cbSize = sizeof(TRACKMOUSEEVENT);
+		tmeLeave.dwFlags = TME_HOVER;
+		tmeLeave.dwHoverTime = 1; // interval of time (currently 1ms) to check mouse position
+		tmeLeave.hwndTrack = bwin->getHWND();
+		TrackMouseEvent(&tmeLeave);
+
 		break;
 
 	default:
 		result = C_BAD_INPUT; // Someone else must process this message
-	}
-
-	// Check whether to start or stop tracking the mouse
-
-	if (startTracking)
-	{
-		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Starting Tracking\n");
-		m_Tracking = true;
-		SetCapture(hwnd); // Capture mouse input
-
-		/* Constrain the cursor to the window
-		   Copied from the "Drawing Lines with the Mouse" example at
-		   http://msdn.microsoft.com/en-us/library/windows/desktop/ms645602%28v=vs.85%29.aspx
-		   */
-		RECT rcClient;                 // client area rectangle 
-		POINT ptClientUL;              // client upper left corner 
-		POINT ptClientLR;              // client lower right corner
-		// Retrieve the screen coordinates of the client area, 
-		// and convert them into client coordinates.
-		GetClientRect(hwnd, &rcClient);
-		ptClientUL.x = rcClient.left;
-		ptClientUL.y = rcClient.top;
-
-		// Add one to the right and bottom sides, because the 
-		// coordinates retrieved by GetClientRect do not 
-		// include the far left and lowermost pixels.
-		ptClientLR.x = rcClient.right + 1;
-		ptClientLR.y = rcClient.bottom + 1;
-		// Convert client-area coordinates to screen coordinates.
-		ClientToScreen(hwnd, &ptClientUL);
-		ClientToScreen(hwnd, &ptClientLR);
-
-		// Copy the client coordinates of the client area 
-		// to the rcClient structure. Confine the mouse cursor 
-		// to the client area by passing the rcClient structure 
-		// to the ClipCursor function.
-		SetRect(&rcClient, ptClientUL.x, ptClientUL.y,
-			ptClientLR.x, ptClientLR.y);
-		ClipCursor(&rcClient);
-	}
-
-	else if (stopTracking)
-	{
-		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Stopping Tracking\n");
-		m_Tracking = false;
-		m_Moving = false;
-		ClipCursor(NULL); // Release the cursor clipping
-		ReleaseCapture(); // Uncapture the mouse
-
-		// Destroy position and time data
-		m_tPast = static_cast<DWORD>(0); // Suspend timer
-		m_t = static_cast<DWORD>(0); // Suspend timer
-		m_PastPosition = XMFLOAT2(0.0f, 0.0f);
-		m_Position = XMFLOAT2(0.0f, 0.0f);
 	}
 
 	// Update the position of the mouse
@@ -237,6 +222,7 @@ LRESULT CALLBACK Mouse::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lpar
 		//	// writeToDebugConsole(mousePosWOSStream.str().c_str());
 		//}
 	}
+
 	return result;
 }
 

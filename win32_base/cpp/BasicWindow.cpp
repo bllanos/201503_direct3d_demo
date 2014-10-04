@@ -321,7 +321,7 @@ void BasicWindow::addMessageHandler(IWinMessageHandler* msgHandler) {
 
 LRESULT CALLBACK BasicWindow::processMessageHandlers(UINT umsg, WPARAM wparam, LPARAM lparam) {
 	for (size_t i = 0; i < m_msgHandlers.size(); ++i) {
-		LRESULT msgHandlerResult = m_msgHandlers[i]->winProc(this->getHWND(), umsg, wparam, lparam);
+		LRESULT msgHandlerResult = m_msgHandlers[i]->winProc(this, umsg, wparam, lparam);
 		if (msgHandlerResult == 0) {
 			return msgHandlerResult;
 		}

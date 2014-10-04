@@ -30,6 +30,7 @@ Note: I have not tested whether this class
 
 #pragma once
 
+#include <Windows.h>
 #include <DirectXMath.h>
 using namespace DirectX;
 
@@ -79,7 +80,7 @@ public:
 	int Initialize(HWND hwnd); // Need the 'hwnd' parameter to get screen dimensions
 
 	// Called by the SystemClass class to allow the Mouse class to register mouse events
-	LRESULT CALLBACK winProc(HWND, UINT, WPARAM, LPARAM);
+	LRESULT CALLBACK winProc(BasicWindow*, UINT, WPARAM, LPARAM);
 
 	/* To be called during the game loop to ensure that the mouse's
 	   movement speed is set to zero in the absence of Windows messages

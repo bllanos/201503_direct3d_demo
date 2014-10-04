@@ -262,9 +262,24 @@ HRESULT StateControl::Frame(void)
 	captionWOSStream << itPerSecond << L" [Hz]";
 	// captionWOSStream << L", Last Iteration was: " << to_wstring(elapsedTimeLastFrame) << L" [ms]";
 	DWORD totalElapsedTime = (currentTime - runStartTime);
-	captionWOSStream << L" | Elapsed Time: " << (totalElapsedTime / MILLISECS_PER_SEC_DWORD) << L" [s]";
+	//captionWOSStream << L" | Elapsed Time: " << (totalElapsedTime / MILLISECS_PER_SEC_DWORD) << L" [s]";
 	//captionWOSStream << L" | TimePressed(A): " << m_Keyboard->TimePressed(m_Keyboard->ascii_A) << L" [ms]";
 	//captionWOSStream << L" | TimeReleased(A): " << m_Keyboard->TimeReleased(m_Keyboard->ascii_A) << L" [ms]";
+	
+	/*
+	if (m_Mouse->IsBeingTracked()) {
+		captionWOSStream << L" | Mouse Tracking: true";
+	}
+	else {
+		captionWOSStream << L" | Mouse Tracking: false";
+	}
+	*/
+
+	XMFLOAT2 mousePos;
+	if (m_Mouse->GetWindowPosition(mousePos)) {
+		captionWOSStream << L" | Mouse: (" << mousePos.x << "," << mousePos.y << ")";
+	}
+	
 	SetWindowText(m_mainWindow->getHWND(), captionWOSStream.str().c_str());
 
 	// Do the processing for this iteration

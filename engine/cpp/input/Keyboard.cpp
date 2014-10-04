@@ -199,7 +199,7 @@ int Keyboard::Update(void)
 	return C_OK;
 }
 
-LRESULT CALLBACK Keyboard::winProc(HWND bwin, UINT umsg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK Keyboard::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
 	int result = 1; // Zero would mean that the message was fully handled here
 
