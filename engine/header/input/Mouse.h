@@ -54,7 +54,7 @@ public:
 
 	// Data members
 private:
-	// Is the object tracking the mouse? (True if any mouse buttons are down)
+	// True if the mouse is inside the current window, false if not
 	bool m_Tracking;
 	// Mouse position in pixels relative to top left of window
 	XMFLOAT2 m_Position;
