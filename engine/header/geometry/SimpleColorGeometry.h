@@ -24,6 +24,8 @@ Description
 	 rather than texture coordinates.
 */
 
+#pragma once
+
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include "vertexTypes.h"
@@ -93,8 +95,6 @@ private:
 	// Data members
 private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
-
-protected:
 	D3D_PRIMITIVE_TOPOLOGY m_primitive_topology;
 	size_t m_vertexCount, m_indexCount;
 
