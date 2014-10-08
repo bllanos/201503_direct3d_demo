@@ -42,7 +42,7 @@ protected:
 public:
 	virtual ~ITransformable(void) {}
 
-	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) = 0;
+	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const = 0;
 
 	// Currently not implemented - will cause linker errors if called
 private:

@@ -45,7 +45,7 @@ public:
 
 	virtual ~Phase1TestTransformable(void);
 
-	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) override;
+	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const override;
 
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
 

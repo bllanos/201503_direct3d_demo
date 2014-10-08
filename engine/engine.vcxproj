@@ -25,6 +25,7 @@
     <ClCompile Include="cinecameraclass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\geometry\SkinnedColorGeometry.h" />
     <ClInclude Include="header\input\Keyboard.h" />
     <ClInclude Include="header\input\Mouse.h" />
     <ClInclude Include="test\header\Phase1TestState.h" />

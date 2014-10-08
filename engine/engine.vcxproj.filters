@@ -143,5 +143,8 @@
     <ClInclude Include="header\input\Keyboard.h">
       <Filter>header\input</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\geometry\SkinnedColorGeometry.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
