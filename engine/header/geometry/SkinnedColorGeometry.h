@@ -12,7 +12,7 @@ Mark Wilkes, ID: 100884169
 
 Created October 8, 2014
 
-Primary basis: SimpleColorGeometry.h, with ideas from
+Primary basis: "SimpleColorGeometry.h", with ideas from
 Chapter 8 (which discussed vertex skinning) of
 - Zink, Jason, Matt Pettineo and Jack Hoxley.
   _Practical Rendering and Computation with Direct 3D 11._
@@ -106,7 +106,12 @@ private:
 
 	// Data members
 private:
-	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer, *m_boneBuffer;
+	/* Note that positions and normal vectors need to be treated
+	   by different world transformation matrices.
+	   (Therefore, there are two bone matrix buffers.)
+	   See: http://en.wikipedia.org/wiki/Normal_%28geometry%29#Transforming_normals
+	 */
+	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer, *m_bonePositionBuffer, *m_boneNormalBuffer;
 	DirectX::XMFLOAT4X4 *m_bindMatrices;
 	D3D_PRIMITIVE_TOPOLOGY m_primitive_topology;
 	size_t m_vertexCount, m_indexCount, m_boneCount;
@@ -137,8 +142,8 @@ template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	directoryScope,
 	directoryField
 	),
-	m_vertexBuffer(0), m_indexBuffer(0), m_boneBuffer(0),
-	m_bindMatrices(0),
+	m_vertexBuffer(0), m_indexBuffer(0), m_bonePositionBuffer(0),
+	m_boneNormalBuffer(0), m_bindMatrices(0),
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
 	m_vertexCount(0), m_indexCount(0), m_boneCount(0) {}
 
@@ -156,7 +161,7 @@ template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	filename,
 	path
 	),
-	m_vertexBuffer(0), m_indexBuffer(0), m_boneBuffer(0),
-	m_bindMatrices(0),
+	m_vertexBuffer(0), m_indexBuffer(0), m_bonePositionBuffer(0),
+	m_boneNormalBuffer(0), m_bindMatrices(0),
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
 	m_vertexCount(0), m_indexCount(0), m_boneCount(0) {}
