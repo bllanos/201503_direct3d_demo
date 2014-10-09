@@ -262,9 +262,11 @@ HRESULT StateControl::Frame(void)
 	captionWOSStream << itPerSecond << L" [Hz]";
 	// captionWOSStream << L", Last Iteration was: " << to_wstring(elapsedTimeLastFrame) << L" [ms]";
 	DWORD totalElapsedTime = (currentTime - runStartTime);
-	//captionWOSStream << L" | Elapsed Time: " << (totalElapsedTime / MILLISECS_PER_SEC_DWORD) << L" [s]";
-	//captionWOSStream << L" | TimePressed(A): " << m_Keyboard->TimePressed(m_Keyboard->ascii_A) << L" [ms]";
-	//captionWOSStream << L" | TimeReleased(A): " << m_Keyboard->TimeReleased(m_Keyboard->ascii_A) << L" [ms]";
+	captionWOSStream << L" | Elapsed Time: " << (totalElapsedTime / MILLISECS_PER_SEC_DWORD) << L" [s]";
+	//captionWOSStream << L" | TimePressed(LEFT): " << m_Mouse->TimePressed(m_Mouse->LEFT) << L" [ms]";
+	//captionWOSStream << L" | TimeReleased(LEFT): " << m_Mouse->TimeReleased(m_Mouse->LEFT) << L" [ms]";
+	//captionWOSStream << L" | Up(LEFT)" << m_Mouse->Up(m_Mouse->LEFT);
+	//captionWOSStream << L" | Down(LEFT)" << m_Mouse->Down(m_Mouse->LEFT);
 	
 	/*
 	if (m_Mouse->IsBeingTracked()) {

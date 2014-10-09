@@ -62,6 +62,8 @@ private:
 	XMFLOAT2 m_PastPosition;
 	// Records whether specific buttons are pressed or released
 	bool* m_ButtonStates;
+	// Records whether specific buttons are pressed or released in the last iteration
+	bool* m_LastButtonStates;
 	/* True if a mouse button is pressed
 	   and if the mouse's speed-related members
 	   have been updated since start of the button press */
@@ -70,6 +72,10 @@ private:
 	DWORD m_t;
 	// Time of the last message processing round
 	DWORD m_tPast;
+	// the time each button has been held down
+	DWORD* m_timePressed;
+	// the time each button has been released
+	DWORD* m_timeReleased;
 	// Client window dimensions
 	XMFLOAT2 m_ScreenDimensions;
 	
@@ -87,6 +93,15 @@ public:
 	   concerning mouse movement.
 	   */
 	int Update(void);
+
+	// returns true if the given mouse button was pressed last iteration, but not this iteration.
+	bool Up(unsigned int);
+	// returns true if given mouse button was pressed this iteration and not last.
+	bool Down(unsigned int);
+	// returns number of milliseconds the given mouse button has been held down since last being pressed.
+	DWORD TimePressed(unsigned int) const;
+	// tracks length of time the given mouse button has not been pressed down since last being pressed/since program start.
+	DWORD TimeReleased(unsigned int) const;
 
 	/* Returns whether or not the mouse position is being tracked
 	  (Tracking is triggered by pressing down a mouse button, and stops when a button

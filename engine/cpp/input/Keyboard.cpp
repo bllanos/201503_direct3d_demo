@@ -44,25 +44,25 @@ Keyboard::~Keyboard()
 {
 	if (m_keys)
 	{
-		delete m_keys;
+		delete[] m_keys;
 		m_keys = 0;
 	}
 
 	if (m_lastKeys)
 	{
-		delete m_lastKeys;
+		delete[] m_lastKeys;
 		m_lastKeys = 0;
 	}
 
 	if (m_timePressed) 
 	{
-		delete m_timePressed;
+		delete[] m_timePressed;
 		m_timePressed = 0;
 	}
 
 	if (m_timeReleased)
 	{
-		delete m_timeReleased;
+		delete[] m_timeReleased;
 		m_timeReleased = 0;
 	}
 }

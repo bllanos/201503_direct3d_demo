@@ -20,14 +20,20 @@ const int Mouse::nButtons = 5;
 const DWORD Mouse::maxMotionSamplingInterval = static_cast<DWORD>(100); // measured milliseconds
 
 Mouse::Mouse(void) :
-m_Tracking(false), m_Position(0.0f, 0.0f), m_PastPosition(0.0f, 0.0f), m_ButtonStates(0),
-m_Moving(false), m_t(static_cast<DWORD>(0)), m_tPast(static_cast<DWORD>(0)),
+m_Tracking(false), m_Position(0.0f, 0.0f), m_PastPosition(0.0f, 0.0f), m_ButtonStates(0), m_LastButtonStates(0),
+m_Moving(false), m_t(static_cast<DWORD>(0)), m_tPast(static_cast<DWORD>(0)), m_timePressed(static_cast<DWORD>(0)), m_timeReleased(static_cast<DWORD>(0)),
 m_ScreenDimensions(0.0f, 0.0f)
 {
 	m_ButtonStates = new bool[nButtons];
+	m_LastButtonStates = new bool[nButtons];
+	m_timePressed = new DWORD[nButtons];
+	m_timeReleased = new DWORD[nButtons];
 	for (int i = 0; i < nButtons; ++i)
 	{
 			m_ButtonStates[i] = false;
+			m_LastButtonStates[i] = false;
+			m_timePressed[i] = static_cast<DWORD>(0);
+			m_timeReleased[i] = static_cast<DWORD>(0);
 	}
 }
 
@@ -42,6 +48,7 @@ int Mouse::Initialize(HWND hwnd)
 	GetClientRect(hwnd, &rcClient);
 	m_ScreenDimensions.x = static_cast<float>(rcClient.right + 1);
 	m_ScreenDimensions.y = static_cast<float>(rcClient.bottom + 1);
+	m_t = GetTickCount();
 	return C_OK;
 }
 
@@ -51,6 +58,24 @@ Mouse::~Mouse(void)
 	{
 		delete[] m_ButtonStates;
 		m_ButtonStates = 0;
+	}
+
+	if (m_LastButtonStates)
+	{
+		delete[] m_LastButtonStates;
+		m_LastButtonStates = 0;
+	}
+
+	if (m_timePressed)
+	{
+		delete[] m_timePressed;
+		m_timePressed = 0;
+	}
+
+	if (m_timeReleased)
+	{
+		delete[] m_timeReleased;
+		m_timeReleased = 0;
 	}
 }
 
@@ -224,6 +249,32 @@ LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPA
 	}
 
 	return result;
+}
+
+bool Mouse::Up(unsigned int button)
+{
+	if (!m_ButtonStates[button] && m_LastButtonStates[button]) {
+		return true;
+	}
+	return false;
+}
+
+bool Mouse::Down(unsigned int button)
+{
+	if (m_ButtonStates[button] && !m_LastButtonStates[button]) {
+		return true;
+	}
+	return false;
+}
+
+DWORD Mouse::TimePressed(unsigned int button) const
+{
+	return m_timePressed[button];
+}
+
+DWORD Mouse::TimeReleased(unsigned int button) const
+{
+	return m_timeReleased[button];
 }
 
 bool Mouse::IsBeingTracked(void) const
@@ -472,5 +523,29 @@ int Mouse::Update(void)
 		// Indicate that speed data is available
 		m_Moving = true;
 	}
+
+	// track metrics for all buttons
+	for (int i = 0; i < nButtons; ++i)
+	{
+		// handle TimePressed function requirements
+		if (m_ButtonStates[i] && m_LastButtonStates[i]) {
+			m_timePressed[i] += m_t - m_tPast;
+		}
+		else {
+			m_timePressed[i] = static_cast<DWORD>(0);
+		}
+
+		// handle TimeReleased function requirements
+		if (!m_ButtonStates[i] && !m_LastButtonStates[i]) {
+			m_timeReleased[i] += m_t - m_tPast;
+		}
+		else {
+			m_timeReleased[i] = static_cast<DWORD>(0);
+		}
+
+		// handle Up and Down function requirements
+		m_LastButtonStates[i] = m_ButtonStates[i];
+	}
+
 	return C_OK;
 }
