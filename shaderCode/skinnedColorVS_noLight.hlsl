@@ -56,7 +56,7 @@ VSOutput VSMAIN(in VSInput input) {
 	float4 inPosition = { input.position, 1.0f};
 
 	// Calculate world-space output position using bone matrices
-	output.position = { 0.0f, 0.0f, 0.0f, 0.0f };
+	output.position = float4( 0.0f, 0.0f, 0.0f, 0.0f );
 	[unroll] for( uint i = 0; i < 4; i += 1 ) {
 		output.position += (
 			mul(inPosition, SkinMatrices[input.boneIDs[i]].transform) * input.boneWeights[i]
