@@ -40,6 +40,8 @@ Pan-Tilt-Roll-Strafe-Dolly-Crane-Zooom
 	const float MAX_CAMERA_FIELD_OF_VIEW = NOMINAL_FIELD_OF_VIEW * 3;
 	const float MIN_CAMERA_FIELD_OF_VIEW = NOMINAL_FIELD_OF_VIEW / 3;
 
+	const float CAMERA_ORI_CHANGE_FACTOR = 0.01f; // amount to change the roll, pitch, and yaw by
+
 class CineCameraClass : public IInteractive
 {
 public:
@@ -47,9 +49,14 @@ public:
 	CineCameraClass(const CineCameraClass&); //copy constructor
 	~CineCameraClass(); //destructor
 
-	void SetPosition(float, float, float);
-	void SetDirection(float, float, float);
-	void SetUpDirection(float, float, float);
+	void MoveCamera(float amount); // move forward and back (move forward, move backward)
+	void StrafeCamera(float amount); // move left and right
+	void CraneCamera(float amount); // move up and down
+	void SpinCamera(float roll, float pitch, float yaw); // spin the camera (tilt, pan)
+
+	/*
+	The implementation of Strafe and Crane needs to be tested.
+	*/
 
 	void MoveForward(); //translate forward along camera direction vector
 	void MoveBackward(); //translate backwards along camera direction vector
@@ -70,6 +77,8 @@ public:
 
 	void GetViewMatrix(XMFLOAT4X4&) const;
 	void GetProjectionMatrix(XMFLOAT4X4&) const;
+	void ComputeLocalTransform(DirectX::XMFLOAT4X4&);
+
 
 	// The following functions are used by the Mouse class to convert from screen to world coordinates
 	void GetFieldOfView(float& fov) const; // Not needed if the Mouse class uses XMVector3Unproject()
@@ -79,14 +88,9 @@ public:
 	virtual HRESULT poll(Keyboard& input, Mouse& mouse) override;
 
 private:
-	bool checkOrthogonality(void);
 	int UpdateMatrices(void);
 
 private:
-
-	XMFLOAT3 position; //position in 3-space of the camera
-	XMFLOAT3 direction; //direction the camera is pointing
-	XMFLOAT3 upDirection; //up direction of the camera
 
 	float screenWidth;
 	float screenHeight;
@@ -97,6 +101,13 @@ private:
 	//system when it is time to render
 	XMFLOAT4X4 m_viewMatrix;
 	XMFLOAT4X4 m_projectionMatrix;
+
+	// Copied from demo - Camera variables
+	XMFLOAT3 m_position;
+	XMFLOAT4 m_orientation;
+	XMFLOAT3 m_forward;
+	XMFLOAT3 m_up;
+	XMFLOAT3 m_left; // player coordinate frame, rebuilt from orientation
 
 };
 

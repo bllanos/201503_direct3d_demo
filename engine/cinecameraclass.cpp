@@ -10,31 +10,18 @@
 
 CineCameraClass::CineCameraClass(int screenWidth_in, int screenHeight_in)
 {
-	position = XMFLOAT3(0.0f, 0.0f, -10.0f); //location of camera in 3D space
-	direction = XMFLOAT3(0.0f, 0.0f, 1.0f); //direction camera is facing
-	upDirection = XMFLOAT3(0.0f, 1.0f, 0.0f); //up direction of camera
-
 	screenWidth = static_cast<float>(screenWidth_in);
 	screenHeight = static_cast<float>(screenHeight_in);
 	screenAspectRatio = ((float) screenWidth) / ((float) screenHeight);
 	fieldOfView = NOMINAL_FIELD_OF_VIEW;
 
-	/* note direction and up direction should be initialized to be
-	   orthogonal to each other
-	*/
-	if (!checkOrthogonality())
-	{
-		throw std::exception("CineCameraClass object's vectors are not orthogonal.");
-	}
-	UpdateMatrices();
-}
+	m_position = XMFLOAT3(0.0f, 0.0f, -10.0f);
+	m_orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	m_forward = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_up = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_left = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
-// Verifies that the 'direction' and 'upDirection' vectors are orthogonal
-bool CineCameraClass::checkOrthogonality(void)
-{
-	XMFLOAT3 dotProduct;
-	XMStoreFloat3(&dotProduct, XMVector3Dot(XMLoadFloat3(&direction), XMLoadFloat3(&upDirection)));
-	return XMScalarNearEqual(dotProduct.x, 0.0f, float_eps);
+	UpdateMatrices();
 }
 
 CineCameraClass::CineCameraClass(const CineCameraClass& other)
@@ -47,33 +34,93 @@ CineCameraClass::~CineCameraClass()
 {
 }
 
-
-void CineCameraClass::SetPosition(float x, float y, float z)
+void CineCameraClass::MoveCamera(float ahead)
 {
-	position = XMFLOAT3(x, y, z);
-	UpdateMatrices();
+	// make sure camera properties are up to date
+	// NB: actually unnecessary, since they are updated every frame anyway; done here for clarity
+	m_forward = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	m_up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	m_left = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+
+	XMMATRIX oriTransform = XMMatrixRotationQuaternion(XMLoadFloat4(&m_orientation));
+	XMStoreFloat3(&m_forward,
+		XMVector4Transform(XMLoadFloat3(&m_forward), oriTransform));
+	XMStoreFloat3(&m_up,
+		XMVector4Transform(XMLoadFloat3(&m_up), oriTransform));
+	XMStoreFloat3(&m_left,
+		XMVector3Cross(XMLoadFloat3(&m_forward), XMLoadFloat3(&m_up)));
+
+	// move the camera ahead by the given amount
+	XMVECTOR aheadv = XMVectorScale(XMLoadFloat3(&m_forward), ahead);
+	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), aheadv));
 }
 
-void CineCameraClass::SetDirection(float x, float y, float z)
+void CineCameraClass::StrafeCamera(float side)
 {
-	XMFLOAT3 newDirection = XMFLOAT3(x, y, z);
-	XMStoreFloat3(&direction, XMVector3Normalize(XMLoadFloat3(&newDirection)));
-	if (!checkOrthogonality())
-	{
-		throw std::exception("CineCameraClass object's vectors are not orthogonal.");
-	}
-	UpdateMatrices();
+	// make sure camera properties are up to date
+	// NB: actually unnecessary, since they are updated every frame anyway; done here for clarity
+	m_forward = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	m_up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	m_left = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+
+	XMMATRIX oriTransform = XMMatrixRotationQuaternion(XMLoadFloat4(&m_orientation));
+	XMStoreFloat3(&m_forward,
+		XMVector4Transform(XMLoadFloat3(&m_forward), oriTransform));
+	XMStoreFloat3(&m_up,
+		XMVector4Transform(XMLoadFloat3(&m_up), oriTransform));
+	XMStoreFloat3(&m_left,
+		XMVector3Cross(XMLoadFloat3(&m_forward), XMLoadFloat3(&m_up)));
+
+	// move the camera horizontally by the given amount
+	XMVECTOR sidev = XMVectorScale(XMLoadFloat3(&m_left), side);
+	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), sidev));
 }
 
-void CineCameraClass::SetUpDirection(float x, float y, float z)
+void CineCameraClass::CraneCamera(float vertical)
 {
-	XMFLOAT3 newUpDirection = XMFLOAT3(x, y, z);
-	XMStoreFloat3(&upDirection, XMVector3Normalize(XMLoadFloat3(&newUpDirection)));
-	if (!checkOrthogonality())
-	{
-		throw std::exception("CineCameraClass object's vectors are not orthogonal.");
-	}
-	UpdateMatrices();
+	// make sure camera properties are up to date
+	// NB: actually unnecessary, since they are updated every frame anyway; done here for clarity
+	m_forward = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	m_up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	m_left = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+
+	XMMATRIX oriTransform = XMMatrixRotationQuaternion(XMLoadFloat4(&m_orientation));
+	XMStoreFloat3(&m_forward,
+		XMVector4Transform(XMLoadFloat3(&m_forward), oriTransform));
+	XMStoreFloat3(&m_up,
+		XMVector4Transform(XMLoadFloat3(&m_up), oriTransform));
+	XMStoreFloat3(&m_left,
+		XMVector3Cross(XMLoadFloat3(&m_forward), XMLoadFloat3(&m_up)));
+
+	// move the camera vertically by the given amount
+	XMVECTOR verticalv = XMVectorScale(XMLoadFloat3(&m_up), vertical);
+	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), verticalv));
+}
+
+void CineCameraClass::SpinCamera(float roll, float pitch, float yaw) {
+	// make sure camera properties are up to date
+	// NB: actually unnecessary, since they are updated every frame anyway; done here for clarity
+	m_forward = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	m_up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	m_left = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+
+	XMMATRIX oriTransform = XMMatrixRotationQuaternion(XMLoadFloat4(&m_orientation));
+	XMStoreFloat3(&m_forward,
+		XMVector4Transform(XMLoadFloat3(&m_forward), oriTransform));
+	XMStoreFloat3(&m_up,
+		XMVector4Transform(XMLoadFloat3(&m_up), oriTransform));
+	XMStoreFloat3(&m_left,
+		XMVector3Cross(XMLoadFloat3(&m_forward), XMLoadFloat3(&m_up)));
+
+	// apply camera-relative orientation changes
+	XMVECTOR rollq = XMQuaternionRotationAxis(XMLoadFloat3(&m_forward), roll * CAMERA_ORI_CHANGE_FACTOR);
+	XMVECTOR pitchq = XMQuaternionRotationAxis(XMLoadFloat3(&m_left), pitch * CAMERA_ORI_CHANGE_FACTOR);
+	XMVECTOR yawq = XMQuaternionRotationAxis(XMLoadFloat3(&m_up), yaw * CAMERA_ORI_CHANGE_FACTOR);
+
+	// update camera orientation with roll, pitch, and yaw
+	XMStoreFloat4(&m_orientation, XMQuaternionMultiply(XMLoadFloat4(&m_orientation), rollq));
+	XMStoreFloat4(&m_orientation, XMQuaternionMultiply(XMLoadFloat4(&m_orientation), pitchq));
+	XMStoreFloat4(&m_orientation, XMQuaternionMultiply(XMLoadFloat4(&m_orientation), yawq));
 }
 
 void CineCameraClass::MoveForward()
@@ -83,14 +130,12 @@ void CineCameraClass::MoveForward()
 
 	/*
 	Modify the position of the camera by moving it along its
-	direction vector at a rate based on the constant CAMERA_DOLLY_SPEED
+	position vector at a rate based on the constant CAMERA_DOLLY_SPEED
 
 	You can adjust the constant CAMERA_DOLLY_SPEED to get a nice
 	smooth motion
 	*/
-	position.x += direction.x * CAMERA_DOLLY_SPEED;
-	position.y += direction.y * CAMERA_DOLLY_SPEED;
-	position.z += direction.z * CAMERA_DOLLY_SPEED;
+	MoveCamera(CAMERA_DOLLY_SPEED);
 	return;
 }
 
@@ -99,9 +144,7 @@ void CineCameraClass::MoveBackward()
 	wchar_t* outstring = L"CineCameraClass::Move Backward\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	position.x -= direction.x * CAMERA_DOLLY_SPEED;
-	position.y -= direction.y * CAMERA_DOLLY_SPEED;
-	position.z -= direction.z * CAMERA_DOLLY_SPEED;
+	MoveCamera(-CAMERA_DOLLY_SPEED);
 	return;
 }
 
@@ -110,39 +153,18 @@ void CineCameraClass::CraneUp()
 	wchar_t* outstring = L"CineCameraClass::Crane Up\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	/*
-	Modify the camera position by moving it along it's up vector based on
-	the constant CAMERA_CRANE_SPEED. You can adjust this constant to get a
-	nice smooth crane speed.
+	CraneCamera(CAMERA_CRANE_SPEED);
 
-	Note the camera up vector will not always be pointing in the world vertical
-	(that is along a y-axis). If the camera is tilted up or down that will affect
-	the up vector. See the implementation of the camera tilt method below.
-	*/
-	position.x += upDirection.x * CAMERA_CRANE_SPEED;
-	position.y += upDirection.y * CAMERA_CRANE_SPEED;
-	position.z += upDirection.z * CAMERA_CRANE_SPEED;
 	return;
 }
+
 void CineCameraClass::CraneDown()
 {
-
 	wchar_t* outstring = L"CineCameraClass::Crane Down\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	/*
-	Modify the camera position by moving it along it's up vector based on
-	the constant CAMERA_CRANE_SPEED. You can adjust this constant to get a
-	nice smooth crane speed.
+	CraneCamera(-CAMERA_CRANE_SPEED);
 
-	Note the camera up vector will not always be pointing in the world vertical
-	(that is along a y-axis). If the camera is tilted up or down that will affect
-	the up vector. See the implementation of the camera tilt method below.
-	*/
-
-	position.x -= upDirection.x * CAMERA_CRANE_SPEED;
-	position.y -= upDirection.y * CAMERA_CRANE_SPEED;
-	position.z -= upDirection.z * CAMERA_CRANE_SPEED;
 	return;
 }
 
@@ -151,46 +173,20 @@ void CineCameraClass::StrafeLeft()
 	wchar_t* outstring = L"CineCameraClass::Strafe Left\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	/*
-	Modify the camera position by moving it along it's sideways vector based on
-	the constant CAMERA_STRAFE_SPEED. You can adjust this constant to get a
-	nice smooth crane speed. The sideways vector is the vector that is
-	perpendicular to the plane formed by the camera direction vector and
-	up vectors. See the implementation of the camera tilt operation to see how
-	you can obtain this.
+	StrafeCamera(-CAMERA_STRAFE_SPEED);
 
-	*/
-
-	XMVECTOR sideWaysVector = XMVector3Normalize(XMVector3Cross(XMLoadFloat3(&upDirection), XMLoadFloat3(&direction) ));
-
-	position.x -= XMVectorGetX(sideWaysVector) * CAMERA_STRAFE_SPEED;
-	position.y -= XMVectorGetY(sideWaysVector) * CAMERA_STRAFE_SPEED;
-	position.z -= XMVectorGetZ(sideWaysVector) * CAMERA_STRAFE_SPEED;
 	return;
 }
 
 void CineCameraClass::StrafeRight()
 {
-
-	/*
-	Modify the camera position by moving it along it's sideways vector based on
-	the constant CAMERA_STRAFE_SPEED. You can adjust this constant to get a
-	nice smooth crane speed. The sideways vector is the vector that is
-	perpendicular to the plane formed by the camera direction vector and
-	up vectors. See the implementation of the camera tilt operation to see how
-	you can obtain this.
-	*/
-
 	wchar_t* outstring = L"CineCameraClass::Strafe Right\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	XMVECTOR sideWaysVector = XMVector3Normalize(XMVector3Cross(XMLoadFloat3(&upDirection), XMLoadFloat3(&direction) ));
+	StrafeCamera(CAMERA_STRAFE_SPEED);
 
-	position.x += XMVectorGetX(sideWaysVector) * CAMERA_STRAFE_SPEED;
-	position.y += XMVectorGetY(sideWaysVector) * CAMERA_STRAFE_SPEED;
-	position.z += XMVectorGetZ(sideWaysVector) * CAMERA_STRAFE_SPEED;
 	return;
-} 
+}
 
 void CineCameraClass::TiltDown()
 {
@@ -198,30 +194,7 @@ void CineCameraClass::TiltDown()
 	wchar_t* outstring = L"CineCameraClass::TiltDown\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	//Compute the sideways vector of the camera.
-	//The sideways vector is the vector cross product of the up vector and the
-	//direction vector of the camera
-
-	XMVECTOR sideWaysVector = XMVector3Normalize(XMVector3Cross(XMLoadFloat3(&upDirection), XMLoadFloat3(&direction) ));
-
-	//Tilt the camera downwards rotating about the sideways direction vector
-
-	//Create a Rotaton Quaternion that represents a rotation about the
-	//Sideways vector.
-	//A Quaternion is created by supplying a vector and an angle and
-	//represents a rotation of that angle about the vector
-
-	//create the quaternion the rotates about the sideways vector of the camera
-	XMVECTOR tiltRotationQuaternion = XMQuaternionRotationAxis(sideWaysVector, XM_PIDIV4/100*CAMERA_TILT_SPEED);
-
-	//Modify both the camera's direction vector and its up vector using the
-	//rotation quaternion. Note we want the camera's direction vector and up vector
-	//to always be orthogonal so we rotate both of them by the same amount
-	//around the sideways vector
-
-	XMStoreFloat3(&direction, XMVector3Rotate( XMLoadFloat3(&direction), tiltRotationQuaternion));
-	XMStoreFloat3(&upDirection, XMVector3Rotate( XMLoadFloat3(&upDirection), tiltRotationQuaternion));
-
+	SpinCamera(0.0f, -CAMERA_TILT_SPEED, 0.0f);
 }
 
 void CineCameraClass::TiltUp()
@@ -230,14 +203,7 @@ void CineCameraClass::TiltUp()
 	wchar_t* outstring = L"CineCameraClass::TiltUp\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	//Tilt the camera upwards rotating about the sideways direction vector
-
-	XMVECTOR sideWaysVector = XMVector3Normalize(XMVector3Cross(XMLoadFloat3(&upDirection), XMLoadFloat3(&direction) ));
-	XMVECTOR tiltRotationQuaternion = XMQuaternionRotationAxis(sideWaysVector, -XM_PIDIV4/100*CAMERA_TILT_SPEED);
-
-	XMStoreFloat3(&direction, XMVector3Rotate( XMLoadFloat3(&direction), tiltRotationQuaternion));
-	XMStoreFloat3(&upDirection, XMVector3Rotate( XMLoadFloat3(&upDirection), tiltRotationQuaternion));
-
+	SpinCamera(0.0f, CAMERA_TILT_SPEED, 0.0f);
 } 
 
 void CineCameraClass::PanLeft()
@@ -246,18 +212,7 @@ void CineCameraClass::PanLeft()
 	wchar_t* outstring = L"CineCameraClass::PanLeft\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	/*
-	Pan the camera left rotating CCW about the up vector direction vector
-
-	Create a Rotaton Quaternion that represents a rotation about the
-	camera's up vector.
-	A Quaternion is created by supplying a vector and an angle and
-	represents a rotation of that angle about the vector
-	See how this is done for the tilt operation
-	*/
-
-	XMVECTOR panRotationQuaternion = XMQuaternionRotationAxis(XMLoadFloat3(&upDirection), -XM_PIDIV4/100*CAMERA_PAN_SPEED);
-	XMStoreFloat3(&direction, XMVector3Rotate( XMLoadFloat3(&direction), panRotationQuaternion));
+	SpinCamera(0.0f, 0.0f, -CAMERA_PAN_SPEED);
 } 
 
 void CineCameraClass::PanRight()
@@ -266,19 +221,7 @@ void CineCameraClass::PanRight()
 	wchar_t* outstring = L"CineCameraClass::PanRight\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	/*
-	Pan the camera left rotating CW about the up vector direction vector
-
-	Create a Rotaton Quaternion that represents a rotation about the
-	camera's up vector.
-	A Quaternion is created by supplying a vector and an angle and
-	represents a rotation of that angle about the vector
-	See how this is done for the tilt operation
-	*/
-
-	//Pan the camera right rotating CW about the up vector direction vector
-	XMVECTOR panRotationQuaternion = XMQuaternionRotationAxis(XMLoadFloat3(&upDirection), XM_PIDIV4/100*CAMERA_PAN_SPEED);
-	XMStoreFloat3(&direction, XMVector3Rotate( XMLoadFloat3(&direction), panRotationQuaternion));
+	SpinCamera(0.0f, 0.0f, CAMERA_PAN_SPEED);
 }
 
 void CineCameraClass::RollLeft()
@@ -287,14 +230,7 @@ void CineCameraClass::RollLeft()
 	wchar_t* outstring = L"CineCameraClass::RollLeft\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	//create the quaternion the rotates about the direction vector of the camera
-	XMVECTOR rollRotationQuaternion = XMQuaternionRotationAxis(XMLoadFloat3(&direction), XM_PIDIV4/100*CAMERA_ROLL_SPEED);
-
-	//Modify both the camera's up vector using the
-	//rotation quaternion. 
-
-	XMStoreFloat3(&upDirection, XMVector3Rotate( XMLoadFloat3(&upDirection), rollRotationQuaternion));
-
+	SpinCamera(CAMERA_ROLL_SPEED, 0.0f, 0.0f);
 }
 
 void CineCameraClass::RollRight()
@@ -303,16 +239,7 @@ void CineCameraClass::RollRight()
 	wchar_t* outstring = L"CineCameraClass::RollRight\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	//Rotate the Camera counter clockwise about its direction vector
-
-	//create the quaternion the rotates about the direction vector of the camera
-	XMVECTOR rollRotationQuaternion = XMQuaternionRotationAxis(XMLoadFloat3(&direction), -XM_PIDIV4/100*CAMERA_ROLL_SPEED);
-
-	//Modify both the camera's up vector using the
-	//rotation quaternion. 
-
-	XMStoreFloat3(&upDirection, XMVector3Rotate( XMLoadFloat3(&upDirection), rollRotationQuaternion));
-
+	SpinCamera(-CAMERA_ROLL_SPEED, 0.0f, 0.0f);
 }
 
 void CineCameraClass::ZoomIn()
@@ -357,20 +284,35 @@ void CineCameraClass::ZoomOut()
 
 XMFLOAT3 CineCameraClass::GetPosition() const
 {
-	return position;
+	return m_position;
 }
 
 
 int CineCameraClass::UpdateMatrices(void)
 {
+	ComputeLocalTransform(m_viewMatrix);
 
-   //Create a view matrix based on direction camera is looking
-	XMStoreFloat4x4( &m_viewMatrix, XMMatrixLookToLH( XMLoadFloat3(&position), XMLoadFloat3(&direction), XMLoadFloat3(&upDirection)) );
+	//Create a view matrix based on direction camera is looking
+	XMStoreFloat4x4(&m_viewMatrix, XMMatrixInverse(0, XMLoadFloat4x4(&m_viewMatrix)));
 
 	//Create the projection matrix for 3D rendering.
 	XMStoreFloat4x4(&m_projectionMatrix, XMMatrixPerspectiveFovLH(fieldOfView, screenAspectRatio, SCREEN_NEAR, SCREEN_DEPTH));
 
 	return C_OK;
+}
+
+void CineCameraClass::ComputeLocalTransform(DirectX::XMFLOAT4X4& localTransformNoScale) {
+
+	// Initialization
+	XMMATRIX worldTransform = XMMatrixIdentity();
+
+	// Apply transformations
+	worldTransform = XMMatrixRotationQuaternion(XMLoadFloat4(&m_orientation));
+
+	// Translate relative to canonical directions
+	worldTransform = XMMatrixMultiply(worldTransform, XMMatrixTranslationFromVector(XMLoadFloat3(&m_position)));
+
+	XMStoreFloat4x4(&localTransformNoScale, worldTransform);
 }
 
 
