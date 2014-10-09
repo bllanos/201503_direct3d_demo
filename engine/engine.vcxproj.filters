@@ -155,5 +155,8 @@
     <ClInclude Include="header\geometry\SkinnedColorGeometry.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
+    <ClInclude Include="header\geometry\GridQuad.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
