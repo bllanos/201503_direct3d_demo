@@ -22,13 +22,16 @@ Description
 #include "GeometryRendererManager.h"
 #include "fileUtil.h"
 #include "SimpleColorRenderer.h"
+#include "SkinnedColorRenderer.h"
 
 using std::map;
 using std::wstring;
 
 const GeometryRendererManager::GeometryRendererType
 GeometryRendererManager::s_geometryRendererTypesInOrder[] = {
-	GeometryRendererType::SimpleColorRenderer
+	GeometryRendererType::SimpleColorRenderer,
+	GeometryRendererType::SkinnedColorRendererNoLight,
+	GeometryRendererType::SkinnedColorRendererLight
 };
 
 const size_t GeometryRendererManager::s_nGeometryRendererTypes =
@@ -36,7 +39,9 @@ const size_t GeometryRendererManager::s_nGeometryRendererTypes =
 	sizeof(GeometryRendererManager::GeometryRendererType);
 
 const wstring GeometryRendererManager::s_geometryRendererTypeNames[] = {
-	L"SimpleColorRenderer"
+	L"SimpleColorRenderer",
+	L"SkinnedColorRendererNoLight",
+	L"SkinnedColorRendererLight"
 };
 
 HRESULT GeometryRendererManager::wstringToGeometryRendererType(
@@ -68,6 +73,28 @@ GeometryRendererManager::~GeometryRendererManager(void) {
 		delete it->second;
 		it->second = 0;
 	}
+}
+
+#define INITIALIZE_RENDERER(EnumConstant, Class) \
+case GeometryRendererType::EnumConstant: \
+{ \
+	geometryRenderer = new Class(filename); \
+	if( FAILED(geometryRenderer->initialize(device)) ) { \
+		logMessage(L"Call to initialize() function of renderer '" + field + L"' failed."); \
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL); \
+		delete geometryRenderer; \
+	} else { \
+		if( m_map.count(type) != 0 ) { \
+			logMessage(L"Found duplicate renderer '" + field + L"' in map of renderers. Code is likely broken."); \
+			delete geometryRenderer; \
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE); \
+		} else { \
+			m_map[type] = geometryRenderer; \
+			logMessage(L"Successfully created and initialized renderer '" + field + L"'."); \
+		} \
+	} \
+	geometryRenderer = 0; \
+	break; \
 }
 
 HRESULT GeometryRendererManager::initialize(ID3D11Device* const device) {
@@ -125,28 +152,9 @@ HRESULT GeometryRendererManager::initialize(ID3D11Device* const device) {
 
 				// Attempt initialization
 				switch( type ) {
-				case GeometryRendererType::SimpleColorRenderer:
-				{
-					geometryRenderer = new SimpleColorRenderer(filename);
-					if( FAILED(geometryRenderer->initialize(device)) ) {
-						logMessage(L"Call to initialize() function of renderer '" + field + L"' failed.");
-						result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-						delete geometryRenderer;
-					} else {
-
-						// Check for existing elements
-						if( m_map.count(type) != 0 ) {
-							logMessage(L"Found duplicate renderer '" + field + L"' in map of renderers. Code is likely broken.");
-							return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);
-						} else {
-							// Success! - Save the renderer
-							m_map[type] = geometryRenderer;
-							logMessage(L"Successfully created and initialized renderer '" + field + L"'.");
-						}
-					}
-					geometryRenderer = 0;
-					break;
-				}
+					INITIALIZE_RENDERER(SimpleColorRenderer, SimpleColorRenderer)
+					INITIALIZE_RENDERER(SkinnedColorRendererNoLight, SkinnedColorRenderer)
+					INITIALIZE_RENDERER(SkinnedColorRendererLight, SkinnedColorRenderer)
 				default:
 					logMessage(L"Reached default case of geometry renderer initialization switch statement. Code is broken.");
 					return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);
