@@ -192,7 +192,7 @@ HRESULT SkinnedColorGeometry::initializeBoneData(ID3D11Device* const device,
 	// Compute the bind pose transformations
 	m_invBindMatrices = new DirectX::XMFLOAT4X4[m_boneCount];
 	size_t i = 0;
-	if( bindMatrices == 0 ) {
+	if( bindMatrices != 0 ) {
 		for( i = 0; i < m_boneCount; ++i ) {
 			XMStoreFloat4x4(m_invBindMatrices + i,
 				XMMatrixInverse(0, XMLoadFloat4x4(bindMatrices + i)));
@@ -280,6 +280,30 @@ HRESULT SkinnedColorGeometry::drawUsingAppropriateRenderer(ID3D11DeviceContext* 
 
 	// Prepare pipeline state
 	// ----------------------
+	if( FAILED(setVerticesAndIndicesOnContext(context)) ) {
+		logMessage(L"Call to setVerticesAndIndicesOnContext() failed.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	if( FAILED(updateAndBindBoneBuffers(context)) ) {
+		logMessage(L"Call to updateAndBindBoneBuffers() failed.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	// Render
+	// ------
+	if( FAILED(manager.render(
+		context,
+		*this,
+		camera,
+		*m_rendererType
+		)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	return ERROR_SUCCESS;
+}
+
+HRESULT SkinnedColorGeometry::setVerticesAndIndicesOnContext(ID3D11DeviceContext* const context) {
 	unsigned int stride = SKINNEDCOLORGEOMETRY_VERTEX_SIZE;
 	unsigned int offset = 0;
 
@@ -292,19 +316,6 @@ HRESULT SkinnedColorGeometry::drawUsingAppropriateRenderer(ID3D11DeviceContext* 
 	// Set the type of primitive that should be rendered from this vertex buffer
 	context->IASetPrimitiveTopology(m_primitive_topology);
 
-	if( FAILED(updateAndBindBoneBuffers(context)) ) {
-		logMessage(L"Call to updateAndBindBoneBuffers() failed.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-
-	if( FAILED(manager.render(
-		context,
-		*this,
-		camera,
-		*m_rendererType
-		)) ) {
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
 	return ERROR_SUCCESS;
 }
 
@@ -368,6 +379,6 @@ HRESULT SkinnedColorGeometry::updateAndBindBoneBuffers(ID3D11DeviceContext* cons
 	return result;
 }
 
-size_t SkinnedColorGeometry::GetIndexCount(void) const {
+size_t SkinnedColorGeometry::getIndexCount(void) const {
 	return m_indexCount;
 }

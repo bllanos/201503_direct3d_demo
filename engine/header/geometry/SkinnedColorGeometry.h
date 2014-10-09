@@ -108,7 +108,7 @@ protected:
 		const D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	/* Initializes the model's vertex and index buffers only.
-	'vertexSize' = sizeof(vertexTypeUsedByThisClass)
+	   Note: 'vertexSize' = sizeof(vertexTypeUsedByThisClass)
 	 */
 	virtual HRESULT initializeVertexAndIndexBuffers(ID3D11Device* const device,
 		const SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices, const size_t nVertices,
@@ -137,11 +137,16 @@ public:
 
 	// Functions to support rendering
 public:
-	size_t GetIndexCount(void) const;
+	size_t getIndexCount(void) const;
 
 	virtual float getTransparencyBlendFactor(void) const = 0;
 
 protected:
+	/* Performs vertex buffer and index buffer-related pipeline
+	   configuration
+	 */
+	virtual HRESULT setVerticesAndIndicesOnContext(ID3D11DeviceContext* const context);
+
 	/* Sends the new transformation matrices to the graphics pipeline,
 	   and binds the buffers to the vertex shader.
 	 */
