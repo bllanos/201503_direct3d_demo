@@ -449,7 +449,6 @@ HRESULT SkinnedColorRenderer::createLightConstantBuffers(ID3D11Device* const dev
 
 void SkinnedColorRenderer::outputShaderErrorMessage(ID3D10Blob* const errorMessage) {
 	char* compileErrors;
-	unsigned long bufferSize, i;
 	wstring prefix(L"Compilation error: ");
 	wstring errorMsg;
 	std::string errorMsg_str;
@@ -457,17 +456,12 @@ void SkinnedColorRenderer::outputShaderErrorMessage(ID3D10Blob* const errorMessa
 	// Get a pointer to the error message text buffer.
 	compileErrors = (char*) (errorMessage->GetBufferPointer());
 
-	// Get the length of the message.
-	bufferSize = errorMessage->GetBufferSize();
-
 	// Write out the error message.
-	for( i = 0; i<bufferSize; i++ ) {
-		errorMsg_str = compileErrors[i];
-		if( FAILED(toWString(errorMsg, errorMsg_str)) ) {
-			m_msgStore.emplace_back(prefix + L" [problem converting error message to a wide-character string]");
-		} else {
-			m_msgStore.emplace_back(prefix + errorMsg);
-		}
+	errorMsg_str = compileErrors;
+	if( FAILED(toWString(errorMsg, errorMsg_str)) ) {
+		m_msgStore.emplace_back(prefix + L" [problem converting error message to a wide-character string]");
+	} else {
+		m_msgStore.emplace_back(prefix + errorMsg);
 	}
 
 	// Log all messages
