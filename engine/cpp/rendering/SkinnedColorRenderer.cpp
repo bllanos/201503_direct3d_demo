@@ -79,14 +79,13 @@ HRESULT SkinnedColorRenderer::initialize(ID3D11Device* const device) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
+	if (FAILED(createNoLightConstantBuffers(device))) {
+		logMessage(L"Call to createNoLightConstantBuffers() failed.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
 	if( m_lighting ) {
 		if( FAILED(createLightConstantBuffers(device)) ) {
 			logMessage(L"Call to createLightConstantBuffers() failed.");
-			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-		}
-	} else {
-		if( FAILED(createNoLightConstantBuffers(device)) ) {
-			logMessage(L"Call to createNoLightConstantBuffers() failed.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}
@@ -479,14 +478,13 @@ void SkinnedColorRenderer::outputShaderErrorMessage(ID3D10Blob* const errorMessa
 }
 
 HRESULT SkinnedColorRenderer::setShaderParameters(ID3D11DeviceContext* const context, const DirectX::XMFLOAT4X4 viewMatrix, const DirectX::XMFLOAT4X4 projectionMatrix, const float blendFactor) {
+	if (FAILED(setNoLightShaderParameters(context, viewMatrix, projectionMatrix, blendFactor))) {
+		logMessage(L"Call to setNoLightShaderParameters() failed.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
 	if( m_lighting ) {
 		if( FAILED(setLightShaderParameters(context)) ) {
 			logMessage(L"Call to setLightShaderParameters() failed.");
-			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-		}
-	} else {
-		if( FAILED(setNoLightShaderParameters(context, viewMatrix, projectionMatrix, blendFactor)) ) {
-			logMessage(L"Call to setNoLightShaderParameters() failed.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}

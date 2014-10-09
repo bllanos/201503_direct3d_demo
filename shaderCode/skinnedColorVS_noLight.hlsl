@@ -59,7 +59,7 @@ VSOutput VSMAIN(in VSInput input) {
 	output.position = { 0.0f, 0.0f, 0.0f, 0.0f };
 	[unroll] for( uint i = 0; i < 4; i += 1 ) {
 		output.position += (
-			mul(inPosition, SkinMatrices[input.boneIDs[i]]) * input.boneWeights[i]
+			mul(inPosition, SkinMatrices[input.boneIDs[i]].transform) * input.boneWeights[i]
 			);
 	}
 
