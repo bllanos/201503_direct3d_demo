@@ -28,9 +28,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\geometry\SkinnedColorGeometry.h" />
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\rendering\SkinnedColorRenderer.h" />
     <ClInclude Include="header\input\Keyboard.h" />
     <ClInclude Include="header\input\Mouse.h" />
+    <ClInclude Include="header\rendering\SkinnedColorRenderer.h" />
     <ClInclude Include="test\header\Phase1TestState.h" />
     <ClInclude Include="test\header\Phase1TestTransformable.h" />
     <ClInclude Include="header\d3dclass.h" />
