@@ -11,23 +11,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\geometry\SkinnedColorGeometry.cpp" />
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\rendering\SkinnedColorRenderer.cpp" />
     <ClCompile Include="cpp\d3dclass.cpp" />
     <ClCompile Include="cpp\engineMain.cpp" />
     <ClCompile Include="cpp\GeometryRendererManager.cpp" />
     <ClCompile Include="cpp\geometry\CubeModel.cpp" />
     <ClCompile Include="cpp\geometry\SimpleColorGeometry.cpp" />
+    <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp" />
     <ClCompile Include="cpp\input\Keyboard.cpp" />
     <ClCompile Include="cpp\input\Mouse.cpp" />
     <ClCompile Include="cpp\rendering\SimpleColorRenderer.cpp" />
+    <ClCompile Include="cpp\rendering\SkinnedColorRenderer.cpp" />
     <ClCompile Include="cpp\StateControl.cpp" />
     <ClCompile Include="test\cpp\Phase1TestState.cpp" />
     <ClCompile Include="test\cpp\Phase1TestTransformable.cpp" />
     <ClCompile Include="cinecameraclass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\geometry\SkinnedColorGeometry.h" />
+    <ClInclude Include="header\geometry\SkinnedColorGeometry.h" />
     <ClInclude Include="header\input\Keyboard.h" />
     <ClInclude Include="header\input\Mouse.h" />
     <ClInclude Include="header\rendering\SkinnedColorRenderer.h" />
