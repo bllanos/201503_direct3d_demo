@@ -54,7 +54,7 @@ Description
 #define SKINNEDCOLORRENDERER_SHADER_FILE_PATH_FIELD L"shaderFilePath"
 
 #define SKINNEDCOLORRENDERER_VS_FILE_NAME_FIELD L"vsFileName"
-#define SKINNEDCOLORRENDERER_PS_LIGHT_FLAG_FIELD_NO_LIGHT L"enableLighting"
+#define SKINNEDCOLORRENDERER_PS_LIGHT_FLAG_FIELD L"enableLighting"
 #define SKINNEDCOLORRENDERER_PS_FILE_NAME_FIELD_NO_LIGHT L"psFileName_noLighting"
 #define SKINNEDCOLORRENDERER_PS_FILE_NAME_FIELD_LIGHT L"psFileName_withLighting"
 
@@ -62,7 +62,8 @@ Description
 #define SKINNEDCOLORRENDERER_PS_SHADER_MODEL_FIELD L"psShaderModel"
 
 #define SKINNEDCOLORRENDERER_VS_ENTRYPOINT_FIELD L"vsEntryPoint"
-#define SKINNEDCOLORRENDERER_PS_ENTRYPOINT_FIELD L"psEntryPoint"
+#define SKINNEDCOLORRENDERER_PS_ENTRYPOINT_FIELD_NO_LIGHT L"psEntryPoint_noLighting"
+#define SKINNEDCOLORRENDERER_PS_ENTRYPOINT_FIELD_LIGHT L"psEntryPoint_withLighting"
 
 class SkinnedColorRenderer : public IGeometryRenderer, public ConfigUser {
 private:
@@ -104,14 +105,21 @@ protected:
 
 	   The output pixel shader filename will depend on
 	   whether lighting is enabled or disabled by the
-	   configuration data.
+	   configuration data. (This function queries
+	   the configuration data for this setting.)
 	*/
 	virtual HRESULT configureRendering(
 		std::wstring& vsFilename, std::wstring& vsShaderModel, std::wstring& vsEntryPoint,
 		std::wstring& psFilename, std::wstring& psShaderModel, std::wstring& psEntryPoint);
 
-	/* Creates the pipeline shaders */
+	/* Creates the pipeline shaders
+	   Also responsible for calling configureRendering()
+	   and createInputLayout()
+	 */
 	virtual HRESULT createShaders(ID3D11Device* const);
+
+	/* Creates the vertex input layout */
+	virtual HRESULT createInputLayout(ID3D11Device* const, ID3D10Blob* const vertexShaderBuffer);
 
 	/* Creates lighting-independent constant buffers */
 	virtual HRESULT createNoLightConstantBuffers(ID3D11Device* const);
@@ -119,7 +127,8 @@ protected:
 	/* Creates lighting-dependent constant buffers */
 	virtual HRESULT createLightConstantBuffers(ID3D11Device* const);
 
-	/* Retrieves and logs shader compilation error messages
+	/* Retrieves and logs shader compilation error messages.
+	   Also releases the input argument.
 	 */
 	void outputShaderErrorMessage(ID3D10Blob* const);
 
