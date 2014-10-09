@@ -31,6 +31,7 @@ Description
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <D3Dcompiler.h>
+#include <string>
 #include "IGeometryRenderer.h"
 #include "ConfigUser.h"
 #include "FlatAtomicConfigIO.h"
@@ -95,7 +96,7 @@ public:
 	virtual HRESULT render(ID3D11DeviceContext* const context, const IGeometry& geometry, const CineCameraClass* const camera) override;
 
 	// Helper functions
-private:
+protected:
 	/* Retrieves shader details from configuration data.
 	   Returns a failure result if any values are not found.
 	   Note that the filename parameters are output
@@ -105,19 +106,32 @@ private:
 	   whether lighting is enabled or disabled by the
 	   configuration data.
 	*/
-	HRESULT configureRendering(
+	virtual HRESULT configureRendering(
 		std::wstring& vsFilename, std::wstring& vsShaderModel, std::wstring& vsEntryPoint,
 		std::wstring& psFilename, std::wstring& psShaderModel, std::wstring& psEntryPoint);
 
-	HRESULT InitializeShader(ID3D11Device* const);
-	HRESULT ShutdownShader();
+	/* Creates the pipeline shaders */
+	virtual HRESULT createShaders(ID3D11Device* const);
+
+	/* Creates lighting-independent constant buffers */
+	virtual HRESULT createNoLightConstantBuffers(ID3D11Device* const);
+
+	/* Creates lighting-dependent constant buffers */
+	virtual HRESULT createLightConstantBuffers(ID3D11Device* const);
 
 	/* Retrieves and logs shader compilation error messages
 	 */
-	void OutputShaderErrorMessage(ID3D10Blob* const);
+	void outputShaderErrorMessage(ID3D10Blob* const);
 
-	HRESULT SetShaderParameters(ID3D11DeviceContext* const, const DirectX::XMFLOAT4X4 viewMatrix, const DirectX::XMFLOAT4X4 projectionMatrix, const float blendFactor);
-	void RenderShader(ID3D11DeviceContext* const, int);
+	virtual HRESULT setShaderParameters(ID3D11DeviceContext* const, const DirectX::XMFLOAT4X4 viewMatrix, const DirectX::XMFLOAT4X4 projectionMatrix, const float blendFactor);
+
+	/* Sets light-independent pipeline state */
+	virtual HRESULT setNoLightShaderParameters(ID3D11DeviceContext* const, const DirectX::XMFLOAT4X4 viewMatrix, const DirectX::XMFLOAT4X4 projectionMatrix, const float blendFactor);
+
+	/* Sets light-dependent pipeline state */
+	virtual HRESULT setLightShaderParameters(ID3D11DeviceContext* const);
+
+	void renderShader(ID3D11DeviceContext* const, const size_t);
 
 	// Data members
 private:
@@ -126,6 +140,9 @@ private:
 	ID3D11InputLayout* m_layout;
 	ID3D11Buffer* m_matrixBuffer;
 	ID3D11Buffer* m_transparentBuffer;
+
+	// Is the renderer configured to use lighting?
+	bool m_lighting;
 
 	// Currently not implemented - will cause linker errors if called
 private:
