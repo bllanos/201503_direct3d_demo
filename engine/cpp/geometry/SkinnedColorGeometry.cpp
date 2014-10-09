@@ -23,38 +23,351 @@ Description
 */
 
 #include "SkinnedColorGeometry.h"
+#include <string>
 
 #define SKINNEDCOLORGEOMETRY_VERTEX_SIZE sizeof(SKINNEDCOLORGEOMETRY_VERTEX_TYPE)
+#define SKINNEDCOLORGEOMETRY_MATRIX_SIZE sizeof(DirectX::XMFLOAT4X4)
+
+using namespace DirectX;
 
 SkinnedColorGeometry::SkinnedColorGeometry(const bool enableLogging, const std::wstring& msgPrefix,
-	Usage usage) {
-
-}
+	Usage usage) :
+	IGeometry(),
+	ConfigUser(enableLogging, msgPrefix, usage),
+	m_vertexBuffer(0), m_indexBuffer(0), m_bonePositionBuffer(0),
+	m_boneNormalBuffer(0), m_bonePositionView(0), m_boneNormalView(0),
+	m_bones(0), m_invBindMatrices(0),
+	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
+	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
+	m_rendererType(0)
+{}
 
 SkinnedColorGeometry::SkinnedColorGeometry(const bool enableLogging, const std::wstring& msgPrefix,
-	Config* sharedConfig) {
-
-}
+	Config* sharedConfig) :
+IGeometry(),
+ConfigUser(enableLogging, msgPrefix, sharedConfig),
+m_vertexBuffer(0), m_indexBuffer(0), m_bonePositionBuffer(0),
+m_boneNormalBuffer(0), m_bonePositionView(0), m_boneNormalView(0),
+m_bones(0), m_invBindMatrices(0),
+m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
+m_vertexCount(0), m_indexCount(0), m_boneCount(0),
+m_rendererType(0)
+{}
 
 HRESULT SkinnedColorGeometry::initialize(ID3D11Device* const device,
 	const SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices, const size_t nVertices,
 	const unsigned long* const indices, const size_t nIndices,
-	const ITransformable* const bones, const size_t nBones,
-	D3D_PRIMITIVE_TOPOLOGY topology) {
+	const ITransformable** const bones, const size_t nBones,
+	const DirectX::XMFLOAT4X4* const bindMatrices,
+	const D3D_PRIMITIVE_TOPOLOGY topology) {
 
+	// Set up vertex and index data
+	if( FAILED(initializeVertexAndIndexBuffers(device,
+		vertices, nVertices,
+		indices, nIndices,
+		topology,
+		SKINNEDCOLORGEOMETRY_VERTEX_SIZE)) ) {
+		logMessage(L"Call to initializeVertexAndIndexBuffers() failed.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	// Set up bone data
+	if( FAILED(initializeBoneData(device,
+		bones, nBones,
+		bindMatrices)) ) {
+		logMessage(L"Call to initializeBoneData() failed.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	return ERROR_SUCCESS;
+}
+
+HRESULT SkinnedColorGeometry::initializeVertexAndIndexBuffers(ID3D11Device* const device,
+	const SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices, const size_t nVertices,
+	const unsigned long* const indices, const size_t nIndices,
+	const D3D_PRIMITIVE_TOPOLOGY topology,
+	const unsigned int vertexSize) {
+
+	// Simple member initialization
+	m_primitive_topology = topology;
+	m_vertexCount = nVertices;
+	m_indexCount = nIndices;
+
+	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc; // descriptions of our buffers
+	D3D11_SUBRESOURCE_DATA vertexData, indexData; // buffer data
+	HRESULT result;
+
+	// Set up the description of the static vertex buffer.
+	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	vertexBufferDesc.ByteWidth = vertexSize * m_vertexCount;
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = 0;
+	vertexBufferDesc.MiscFlags = 0;
+	vertexBufferDesc.StructureByteStride = 0;
+
+	// Give the subresource structure a pointer to the vertex data.
+	vertexData.pSysMem = vertices;
+	vertexData.SysMemPitch = 0;
+	vertexData.SysMemSlicePitch = 0;
+
+	// Now create the vertex buffer.
+	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create vertex buffer.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	// Set up the description of the static index buffer.
+	indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.StructureByteStride = 0;
+
+	// Give the subresource structure a pointer to the index data.
+	indexData.pSysMem = indices;
+	indexData.SysMemPitch = 0;
+	indexData.SysMemSlicePitch = 0;
+
+	// Create the index buffer.
+	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create index buffer.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	return ERROR_SUCCESS;
+}
+
+HRESULT SkinnedColorGeometry::initializeBoneData(ID3D11Device* const device,
+	const ITransformable** const bones, const size_t nBones,
+	const DirectX::XMFLOAT4X4* const bindMatrices) {
+
+	// Simple member initialization
+	m_bones = bones;
+	m_boneCount = nBones;
+
+	D3D11_BUFFER_DESC boneBufferDesc;
+	HRESULT result;
+
+	// Set up the description of the bone matrix buffers
+	boneBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	boneBufferDesc.ByteWidth = SKINNEDCOLORGEOMETRY_MATRIX_SIZE * m_boneCount;
+	boneBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	boneBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	boneBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	boneBufferDesc.StructureByteStride = SKINNEDCOLORGEOMETRY_MATRIX_SIZE;
+
+	// Now create the bone matrix buffers
+	result = device->CreateBuffer(&boneBufferDesc, 0, &m_bonePositionBuffer);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create bone position transformation matrix buffer.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+	result = device->CreateBuffer(&boneBufferDesc, 0, &m_boneNormalBuffer);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create bone normal transformation matrix buffer.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	// Create shader resource views for the bone matrix buffers
+	D3D11_SHADER_RESOURCE_VIEW_DESC desc;
+	desc.Format = DXGI_FORMAT_UNKNOWN;
+	desc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	desc.Buffer.ElementOffset = 0;
+	desc.Buffer.ElementWidth = SKINNEDCOLORGEOMETRY_MATRIX_SIZE;
+
+	result = device->CreateShaderResourceView(m_bonePositionBuffer, &desc, &m_bonePositionView);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create bone position transformation matrix buffer shader resource view.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+	result = device->CreateShaderResourceView(m_boneNormalBuffer, &desc, &m_boneNormalView);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create bone normal transformation matrix buffer shader resource view.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	// Compute the bind pose transformations
+	m_invBindMatrices = new DirectX::XMFLOAT4X4[m_boneCount];
+	size_t i = 0;
+	if( bindMatrices == 0 ) {
+		for( i = 0; i < m_boneCount; ++i ) {
+			XMStoreFloat4x4(m_invBindMatrices + i,
+				XMMatrixInverse(0, XMLoadFloat4x4(bindMatrices + i)));
+		}
+	} else {
+		DirectX::XMFLOAT4X4 bindMatrix;
+		for( i = 0; i < m_boneCount; ++i ) {
+			m_bones[i]->getWorldTransform(bindMatrix);
+			XMStoreFloat4x4(m_invBindMatrices + i,
+				XMMatrixInverse(0, XMLoadFloat4x4(&bindMatrix)));
+		}
+	}
+
+	return ERROR_SUCCESS;
+}
+
+HRESULT SkinnedColorGeometry::setRendererType(const GeometryRendererManager::GeometryRendererType type) {
+	switch( type ) {
+	case GeometryRendererManager::GeometryRendererType::SkinnedColorRendererNoLight:
+		break;
+	case GeometryRendererManager::GeometryRendererType::SkinnedColorRendererLight:
+		break;
+	default:
+		logMessage(L"Attempt to set GeometryRendererType enumeration constant to a value that is not compatible with this class.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	}
+
+	if( m_rendererType == 0 ) {
+		m_rendererType = new GeometryRendererManager::GeometryRendererType;
+	}
+	*m_rendererType = type;
+	return ERROR_SUCCESS;
 }
 
 SkinnedColorGeometry::~SkinnedColorGeometry(void) {
+	// Release all buffers
+	// -------------------
+	if( m_indexBuffer ) {
+		m_indexBuffer->Release();
+		m_indexBuffer = 0;
+	}
+	if( m_vertexBuffer ) {
+		m_vertexBuffer->Release();
+		m_vertexBuffer = 0;
+	}
+	if( m_bonePositionBuffer ) {
+		m_bonePositionBuffer->Release();
+		m_bonePositionBuffer = 0;
+	}
+	if( m_boneNormalBuffer ) {
+		m_boneNormalBuffer->Release();
+		m_boneNormalBuffer = 0;
+	}
 
+	// Release shader resource views
+	if( m_bonePositionView ) {
+		m_bonePositionView->Release();
+		m_bonePositionView = 0;
+	}
+	if( m_boneNormalView ) {
+		m_boneNormalView->Release();
+		m_boneNormalView = 0;
+	}
+
+	// Other cleanup
+	// -------------
+	if( m_invBindMatrices ) {
+		delete[] m_invBindMatrices;
+		m_invBindMatrices = 0;
+	}
+	m_vertexCount = 0;
+	m_indexCount = 0;
+	m_boneCount = 0;
+	if( m_rendererType ) {
+		delete m_rendererType;
+		m_rendererType = 0;
+	}
 }
 
 HRESULT SkinnedColorGeometry::drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const CineCameraClass* const camera) {
+	if( m_rendererType == 0 ) {
+		logMessage(L"Cannot be rendered until renderer type is specified.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	// Prepare pipeline state
+	// ----------------------
+	unsigned int stride = SKINNEDCOLORGEOMETRY_VERTEX_SIZE;
+	unsigned int offset = 0;
+
+	// Set the vertex buffer to active in the input assembler so it can be rendered.
+	context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+
+	// Set the index buffer to active in the input assembler so it can be rendered.
+	context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	// Set the type of primitive that should be rendered from this vertex buffer
+	context->IASetPrimitiveTopology(m_primitive_topology);
+
+	if( FAILED(updateAndBindBoneBuffers(context)) ) {
+		logMessage(L"Call to updateAndBindBoneBuffers() failed.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	if( FAILED(manager.render(
+		context,
+		*this,
+		camera,
+		*m_rendererType
+		)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	return ERROR_SUCCESS;
+}
+
+HRESULT SkinnedColorGeometry::updateAndBindBoneBuffers(ID3D11DeviceContext* const context) {
+
+	HRESULT result = ERROR_SUCCESS;
+	D3D11_MAPPED_SUBRESOURCE mappedPositionBuffer;
+	D3D11_MAPPED_SUBRESOURCE mappedNormalBuffer;
+	DirectX::XMFLOAT4X4* positionTransformPtr; // Used to access buffer data
+	DirectX::XMFLOAT4X4* normalTransformPtr; // Used to access buffer data
+	DirectX::XMFLOAT4X4 storedWorldMatrix;
+	DirectX::XMMATRIX tempMatrix;
+
+	// Update bone transformation matrices
+	// --------------------------------------------
+
+	result = context->Map(m_bonePositionBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedPositionBuffer);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to map bone position transformation matrix buffer.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+	result = context->Map(m_boneNormalBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedNormalBuffer);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to map bone normal transformation matrix buffer.");
+		context->Unmap(m_bonePositionBuffer, 0);
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	// Get pointers to the data in the buffers
+	positionTransformPtr = static_cast<DirectX::XMFLOAT4X4*>(mappedPositionBuffer.pData);
+	normalTransformPtr = static_cast<DirectX::XMFLOAT4X4*>(mappedNormalBuffer.pData);
+
+	// Copy the matrices into the buffer.
+	size_t i = 0;
+	for( i = 0; i < m_boneCount; ++i ) {
+		result = m_bones[i]->getWorldTransform(storedWorldMatrix);
+		if( FAILED(result) ) {
+			logMessage(L"Failed to obtain bone world transformation from ITransformable at index " + std::to_wstring(i));
+			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+			continue;
+		}
+		tempMatrix = XMMatrixMultiply(
+			XMLoadFloat4x4(m_invBindMatrices + i),
+			XMLoadFloat4x4(&storedWorldMatrix)
+			);
+		// Transpose before sending to graphics system
+		XMStoreFloat4x4(positionTransformPtr + i, XMMatrixTranspose(tempMatrix));
+		// Normal transformation is already transposed
+		XMStoreFloat4x4(normalTransformPtr + i, XMMatrixInverse(0, tempMatrix));
+	}
+
+	// Unlock the buffers
+	context->Unmap(m_bonePositionBuffer, 0);
+	context->Unmap(m_boneNormalBuffer, 0);
+
+	// Set buffer registers in the vertex shader
+	// -----------------------------------------
+	ID3D11ShaderResourceView *const bufferViews[2] = { m_bonePositionView, m_boneNormalView };
+	context->VSSetShaderResources(0, 2, bufferViews);
+
+	return result;
 }
 
 size_t SkinnedColorGeometry::GetIndexCount(void) const {
-
-}
-
-void SkinnedColorGeometry::ShutdownBuffers() {
-
+	return m_indexCount;
 }

@@ -22,6 +22,7 @@ Description
   -A class for storing indexed vertex geometry in which
    vertices have associated bone matrices for vertex skinning
   -Vertices contain colour data, rather than texture coordinates.
+  -Vertices contain normals, and so can be used with lighting.
 */
 
 #pragma once
@@ -75,19 +76,59 @@ protected:
 	   will be queried for their world transforms. These world transforms
 	   are the bone matrices.
 
-	   IMPORTANT: When this function is called, the 'bones' array is expected to supply
-	     bind pose transformations. This means that each bone will provide its
-		 transformation relative to the root bone of the model.
-		 (This can be achieved by setting the world transformation of the root
-		  bone to the identity matrix before calling this function.
-		  As a result, each "world" transformation will be a model space bone
-		  transformation.)
+	   The 'bones' argument is assumed to be owned by the client.
+	   (This object's destructor will not deallocate it.)
+
+	   IMPORTANT: When this function is called, if 'bindMatrices' is null,
+	     the 'bones' array is expected to supply bind pose transformations.
+		 
+		 This means that each bone will provide its transformation
+		 relative to the root bone of the model.
+
+		 (For ITransformable objects that implement a hierarchy
+		  of transformations, this can be achieved by temporarily setting
+		  the world transformation of the root to the identity matrix
+		  before calling this function.
+		  As a result, each query for a "world" transformation
+		  will return a model space bone transformation.)
+
+		 If 'bindMatrices' is not null, it must contain the bind
+		 pose transformations for each bone, and 'bones' need not
+		 supply this information.
+
+		 Regardless of the source of bind pose transformations,
+		 this object will invert them before use. (This does
+		 not need to be done by the client.)
 	 */
 	virtual HRESULT initialize(ID3D11Device* const device,
 		const SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices, const size_t nVertices,
 		const unsigned long* const indices, const size_t nIndices,
-		const ITransformable* const bones, const size_t nBones,
-		D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		const ITransformable** const bones, const size_t nBones,
+		const DirectX::XMFLOAT4X4* const bindMatrices = 0,
+		const D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	/* Initializes the model's vertex and index buffers only.
+	'vertexSize' = sizeof(vertexTypeUsedByThisClass)
+	 */
+	virtual HRESULT initializeVertexAndIndexBuffers(ID3D11Device* const device,
+		const SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices, const size_t nVertices,
+		const unsigned long* const indices, const size_t nIndices,
+		const D3D_PRIMITIVE_TOPOLOGY topology,
+		const unsigned int vertexSize);
+
+	/* Initializes the model's bone data only. */
+	virtual HRESULT initializeBoneData(ID3D11Device* const device,
+		const ITransformable** const bones, const size_t nBones,
+		const DirectX::XMFLOAT4X4* const bindMatrices);
+
+	/* Objects of this class can use renderers
+	   corresponding to the enumeration constants
+	   'SkinnedColorRendererNoLight' and 'SkinnedColorRendererLight'.
+
+	   This function must be called at least once, with a valid argument,
+	   before the object can be rendered for the first time.
+	 */
+	virtual HRESULT setRendererType(const GeometryRendererManager::GeometryRendererType type);
 
 public:
 	virtual ~SkinnedColorGeometry(void);
@@ -100,9 +141,11 @@ public:
 
 	virtual float getTransparencyBlendFactor(void) const = 0;
 
-	// Helper functions
-private:
-	void ShutdownBuffers();
+protected:
+	/* Sends the new transformation matrices to the graphics pipeline,
+	   and binds the buffers to the vertex shader.
+	 */
+	virtual HRESULT updateAndBindBoneBuffers(ID3D11DeviceContext* const context);
 
 	// Data members
 private:
@@ -111,10 +154,14 @@ private:
 	   (Therefore, there are two bone matrix buffers.)
 	   See: http://en.wikipedia.org/wiki/Normal_%28geometry%29#Transforming_normals
 	 */
-	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer, *m_bonePositionBuffer, *m_boneNormalBuffer;
-	DirectX::XMFLOAT4X4 *m_bindMatrices;
+	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
+	ID3D11Buffer *m_bonePositionBuffer, *m_boneNormalBuffer;
+	ID3D11ShaderResourceView *m_bonePositionView, *m_boneNormalView;
+	const ITransformable** m_bones;
+	DirectX::XMFLOAT4X4* m_invBindMatrices;
 	D3D_PRIMITIVE_TOPOLOGY m_primitive_topology;
 	size_t m_vertexCount, m_indexCount, m_boneCount;
+	GeometryRendererManager::GeometryRendererType* m_rendererType;
 
 	// Currently not implemented - will cause linker errors if called
 private:
@@ -143,9 +190,12 @@ template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	directoryField
 	),
 	m_vertexBuffer(0), m_indexBuffer(0), m_bonePositionBuffer(0),
-	m_boneNormalBuffer(0), m_bindMatrices(0),
+	m_boneNormalBuffer(0),
+	m_bonePositionView(0), m_boneNormalView(0),
+	m_bones(0), m_invBindMatrices(0),
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
-	m_vertexCount(0), m_indexCount(0), m_boneCount(0) {}
+	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
+	m_rendererType(0) {}
 
 template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	const bool enableLogging, const std::wstring& msgPrefix,
@@ -162,6 +212,9 @@ template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	path
 	),
 	m_vertexBuffer(0), m_indexBuffer(0), m_bonePositionBuffer(0),
-	m_boneNormalBuffer(0), m_bindMatrices(0),
+	m_boneNormalBuffer(0),
+	m_bonePositionView(0), m_boneNormalView(0),
+	m_bones(0), m_invBindMatrices(0),
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
-	m_vertexCount(0), m_indexCount(0), m_boneCount(0) {}
+	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
+	m_rendererType(0) {}
