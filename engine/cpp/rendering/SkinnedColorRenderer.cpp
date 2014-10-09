@@ -133,11 +133,12 @@ HRESULT SkinnedColorRenderer::configureRendering(
 	// Helper variables
 	const wstring* stringValue = 0;
 	const bool* boolValue = 0;
+	wstring field;
 	wstring path; // Directory containing shaders
 	wstring criticalErrorMsg(L"Critical configuration data not found. Aborting shader setup.");
 
 	// Enable or disable lighting
-	if( retrieve<Config::DataType::BOOL, bool>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_PS_LIGHT_FLAG_FIELD, boolValue) ) {
+	if( retrieve<Config::DataType::BOOL, bool>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_FLAG_FIELD, boolValue) ) {
 		m_lighting = *boolValue;
 		if( m_lighting ) {
 			logMessage(L"Lighting is enabled in configuration data.");
@@ -158,7 +159,12 @@ HRESULT SkinnedColorRenderer::configureRendering(
 	}
 
 	// Vertex shader file name
-	if( retrieve<Config::DataType::FILENAME, wstring>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_VS_FILE_NAME_FIELD, stringValue) ) {
+	if( m_lighting ) {
+		field = SKINNEDCOLORRENDERER_VS_FILE_NAME_FIELD_LIGHT;
+	} else {
+		field = SKINNEDCOLORRENDERER_VS_FILE_NAME_FIELD_NO_LIGHT;
+	}
+	if( retrieve<Config::DataType::FILENAME, wstring>(SKINNEDCOLORRENDERER_SCOPE, field, stringValue) ) {
 		vsFilename = *stringValue;
 	} else {
 		logMessage(criticalErrorMsg);
@@ -170,7 +176,6 @@ HRESULT SkinnedColorRenderer::configureRendering(
 	}
 
 	// Pixel shader file name
-	wstring field;
 	if( m_lighting ) {
 		field = SKINNEDCOLORRENDERER_PS_FILE_NAME_FIELD_LIGHT;
 	} else {
@@ -204,7 +209,12 @@ HRESULT SkinnedColorRenderer::configureRendering(
 	}
 
 	// Vertex shader entry point
-	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_VS_ENTRYPOINT_FIELD, stringValue) ) {
+	if( m_lighting ) {
+		field = SKINNEDCOLORRENDERER_VS_ENTRYPOINT_FIELD_LIGHT;
+	} else {
+		field = SKINNEDCOLORRENDERER_VS_ENTRYPOINT_FIELD_NO_LIGHT;
+	}
+	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDCOLORRENDERER_SCOPE, field, stringValue) ) {
 		vsEntryPoint = *stringValue;
 	} else {
 		logMessage(criticalErrorMsg);
@@ -429,6 +439,8 @@ HRESULT SkinnedColorRenderer::createNoLightConstantBuffers(ID3D11Device* const d
 		logMessage(L"Failed to create pixel shader transparency constant buffer.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
 	}
+
+	return result;
 }
 
 HRESULT SkinnedColorRenderer::createLightConstantBuffers(ID3D11Device* const device) {
