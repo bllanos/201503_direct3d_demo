@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -93,7 +93,7 @@
     <ClCompile Include="cpp\rendering\SkinnedColorRenderer.cpp">
       <Filter>source\rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\GridQuad.cpp">
+    <ClCompile Include="cpp\geometry\GridQuad.cpp">
       <Filter>source\geometry</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\GridQuad.cpp" />
+    <ClCompile Include="cpp\geometry\GridQuad.cpp" />
     <ClCompile Include="cpp\d3dclass.cpp" />
     <ClCompile Include="cpp\engineMain.cpp" />
     <ClCompile Include="cpp\GeometryRendererManager.cpp" />
