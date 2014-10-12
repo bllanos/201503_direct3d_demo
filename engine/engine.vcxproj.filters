@@ -93,6 +93,9 @@
     <ClCompile Include="cpp\rendering\SkinnedColorRenderer.cpp">
       <Filter>source\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\GridQuad.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cinecameraclass.h">
