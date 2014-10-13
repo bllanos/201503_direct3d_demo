@@ -21,6 +21,7 @@ Description
 #pragma once
 
 #include "GridQuad.h"
+#include <cmath>
 
 #define GRIDQUAD_NCORNERS 4
 
@@ -219,28 +220,210 @@ HRESULT GridQuad::initialize(ID3D11Device* const device,
 }
 
 float GridQuad::getTransparencyBlendFactor(void) const {
+	return m_blend;
 }
 
-float GridQuad::setTransparencyBlendFactor(float newFactor) {
-
+float GridQuad::setTransparencyBlendFactor(float blend) {
+	float temp = m_blend;
+	if( blend < 0.0f ) {
+		m_blend = GRIDQUAD_BLEND_DEFAULT;
+		logMessage(L"Input transparency multiplier was less than 0. Reverting to default value of: " + std::to_wstring(m_blend));
+	} else if( blend > 1.0f ) {
+		m_blend = GRIDQUAD_BLEND_DEFAULT;
+		logMessage(L"Input transparency multiplier was greater than 1. Reverting to default value of: " + std::to_wstring(m_blend));
+	} else {
+		m_blend = blend;
+	}
+	return temp;
 }
 
 size_t GridQuad::getNumberOfVertices(void) const {
-
+	return (m_nColumns + 1) * (m_nRows + 1);
 }
 
 size_t GridQuad::getNumberOfIndices(void) const {
-
+	// Number of triangles = Number of quads * 2
+	size_t nTrianges = (m_nColumns * m_nRows) * 2;
+	// Number of indices
+	return nTrianges * 3;
 }
 
 HRESULT GridQuad::addIndexedVertices(
 	SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices,
 	size_t& vertexOffset,
 	unsigned long* const indices,
-	size_t& indexOffset) const {
+	size_t& indexOffset) {
 
+	HRESULT result = ERROR_SUCCESS;
+	std::wstring msg;
+
+	// Counters
+	SKINNEDCOLORGEOMETRY_VERTEX_TYPE* vertex = vertices + vertexOffset;
+	unsigned long* index = indices + indexOffset;
+	size_t i = 0; // First dimension counter
+	size_t j = 0; // Second dimension counter
+
+	// Surface parameters
+	float u = 0.0f;
+	float v = 0.0f;
+
+	// Define vertices
+	// ---------------
+	size_t vertexColumns = m_nColumns + 1;
+	size_t vertexRows = m_nRows + 1;
+	for( i = 0; i < vertexRows; ++i ) {
+		u = static_cast<float>(i) / static_cast<float>(vertexRows);
+		for( j = 0; j < vertexColumns; ++j ) {
+			v = static_cast<float>(j) / static_cast<float>(vertexColumns);
+
+			// Set vertex properties
+			if( FAILED(uvToBoneIDs(vertex->boneIDs, u, v)) ) {
+				msg = L"uvToBoneIDs() failed";
+				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+			} else if( FAILED(uvToBoneWeights(vertex->boneWeights, u, v)) ) {
+				msg = L"uvToBoneWeights() failed";
+				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+			} if( FAILED(uvToPosition(vertex->position, u, v)) ) {
+				msg = L"uvToPosition() failed";
+				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+			} if( FAILED(uvToNormal(vertex->normal, u, v)) ) {
+				msg = L"uvToNormal() failed";
+				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+			} if( FAILED(uvToColor(vertex->color, u, v)) ) {
+				msg = L"uvToColor() failed";
+				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+			}
+
+			if( FAILED(result) ) {
+				msg += L" at surface coordinates (u,v) = ";
+				msg += std::to_wstring(u);
+				msg += L", ";
+				msg += std::to_wstring(v);
+				msg += L").";
+				logMessage(msg);
+				return result;
+			}
+
+			++vertex;
+		}
+	}
+
+	// Define indices
+	// --------------
+	unsigned long indexBase = vertexOffset;
+	for( i = 0; i < m_nRows; ++i ) {
+		for( j = 0; j < m_nColumns; ++j ) {
+
+			// Lower triangle
+			*index = indexBase;
+			++index;
+			*index = indexBase + vertexColumns + 1;
+			++index;
+			*index = indexBase + vertexColumns;
+			++index;
+
+			// Upper triangle
+			*index = indexBase;
+			++index;
+			if( m_debugWinding ) {
+				// Back-facing
+				*index = indexBase + vertexColumns + 1;
+				++index;
+				*index = indexBase + 1;
+				++index;
+			} else {
+				// Front-facing
+				*index = indexBase + 1;
+				++index;
+				*index = indexBase + vertexColumns + 1;
+				++index;
+			}
+
+			// Move to the next quad
+			++indexBase;
+		}
+	}
+
+	// Adjust vertex and index offsets
+	vertexOffset += getNumberOfVertices();
+	indexOffset += getNumberOfIndices();
+
+	return result;
 }
 
 HRESULT GridQuad::uvToPosition(DirectX::XMFLOAT3& position, const float u, const float v) const {
+	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	}
+	position.x = (2.0f * u) - 1.0f;
+	position.y = (-2.0f * v) + 1.0f;
+	position.z = 0.0f;
+	return ERROR_SUCCESS;
+}
 
+HRESULT GridQuad::uvToColor(DirectX::XMFLOAT4& color, const float u, const float v) const {
+	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	}
+	// Bilinear interpolation
+	DirectX::XMFLOAT4 upperColor;
+	DirectX::XMStoreFloat4(&upperColor, DirectX::XMVectorLerp(
+		DirectX::XMLoadFloat4(&m_colors[1]), // Top left
+		DirectX::XMLoadFloat4(&m_colors[0]), // Top right
+		u));
+	DirectX::XMFLOAT4 lowerColor;
+	DirectX::XMStoreFloat4(&lowerColor, DirectX::XMVectorLerp(
+		DirectX::XMLoadFloat4(&m_colors[2]), // Bottom left
+		DirectX::XMLoadFloat4(&m_colors[3]), // Bottom right
+		u));
+
+	DirectX::XMStoreFloat4(&color, DirectX::XMVectorLerp(
+		DirectX::XMLoadFloat4(&upperColor),
+		DirectX::XMLoadFloat4(&lowerColor),
+		v));
+	return ERROR_SUCCESS;
+}
+
+HRESULT GridQuad::uvToNormal(DirectX::XMFLOAT3& normal, const float u, const float v) const {
+	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	}
+	normal.x = 0.0f;
+	normal.y = 0.0f;
+	normal.z = -1.0f;
+	return ERROR_SUCCESS;
+}
+
+HRESULT GridQuad::uvToBoneIDs(unsigned int boneIDs[4], const float u, const float v) const {
+	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	}
+	boneIDs[0] = 0; // Top right
+	boneIDs[1] = 1; // Top left
+	boneIDs[2] = 2; // Bottom left
+	boneIDs[3] = 3; // Bottom right
+	return ERROR_SUCCESS;
+}
+
+HRESULT GridQuad::uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, const float u, const float v) const {
+	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	}
+
+	// Top right (1, 1)
+	boneWeights.x = sqrt((1.0f - u) * (1.0f - u) + v * v);
+
+	// Top left (-1, 1)
+	boneWeights.y = sqrt(u*u + v*v);
+
+	// Bottom left (-1, -1)
+	boneWeights.z = sqrt(u*u + (1.0f - v) * (1.0f - v));
+
+	// Bottom right (1, -1)
+	boneWeights.w = sqrt((1.0f - u) * (1.0f - u) + (1.0f - v) * (1.0f - v));
+
+	// Normalize
+	DirectX::XMStoreFloat4(&boneWeights,
+		DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&boneWeights)));
+	return ERROR_SUCCESS;
 }

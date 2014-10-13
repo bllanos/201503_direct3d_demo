@@ -15,10 +15,11 @@ Created October 9, 2014
 Primary basis: CubeModel.h
 
 Description
-  -A rectangular grid with model space dimensions (-1,-1) to (1,1)
+  -A rectangular grid with model space dimensions (-1, -1, 0) to (1, 1, 0),
+     facing in the negative-Z direction.
   -Each corner is pinned to an ITransformable object serving as a bone
-  -Inner vertices are assigned to bones according to the weighted
-   average of the distances to each corner.
+  -Bone weights are normalized distances to the corners of the
+     grid from the given vertex.
 */
 
 #pragma once
@@ -122,22 +123,46 @@ public:
 	/* Loads the input 'vertices' array with vertices
 	defining this model's geometry, starting from
 	index 'vertexOffset'. 'vertexOffset'
-	will be increased by the number of vertices added.
+	will be increased by the number of vertices added,
+	provided that the function succeeds. If the function
+	returns a failure result, 'vertexOffset' will not have
+	been modified, although 'vertices' may have been
+	partially updated.
 
 	Acts likewise on the 'indices' and 'indexOffset' parameters.
+	Note that index values are offset by 'vertexOffset'.
+	In other words, the first vertex has an index equal to 'vertexOffset'.
 
 	Assumes D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST topology
 	and counter-clockwise back face culling.
+
+	Notes:
+	  -The caller can determine what sizes of vertex
+	     and index arrays to allocate by calling
+	     getNumberOfVertices() and getNumberOfIndices(), respectively.
+	  -This function would be 'const' except that it produces
+	     logging output in case of failure.
+	  -Vertex data is calculated using the helper functions below
 	*/
 	virtual HRESULT addIndexedVertices(
 		SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices,
 		size_t& vertexOffset,
 		unsigned long* const indices,
-		size_t& indexOffset) const;
+		size_t& indexOffset);
 
 	/* Defines the mapping from surface parameters to 3D position (Cartesian coordinates)
+	   u = first surface parameter, in the range [0,1]
+	   v = second surface parameter, in the range [0,1]
 	*/
 	virtual HRESULT uvToPosition(DirectX::XMFLOAT3& position, const float u, const float v) const;
+	// Similar to uvToPosition(), but calculates color
+	virtual HRESULT uvToColor(DirectX::XMFLOAT4& color, const float u, const float v) const;
+	// Similar to uvToPosition(), but calculates surface normal
+	virtual HRESULT uvToNormal(DirectX::XMFLOAT3& normal, const float u, const float v) const;
+	// Similar to uvToPosition(), but determines four bone IDs for the location
+	virtual HRESULT uvToBoneIDs(unsigned int boneIDs[4], const float u, const float v) const;
+	// Similar to uvToPosition(), but calculates four bone weights for the location
+	virtual HRESULT uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, const float u, const float v) const;
 
 protected:
 
@@ -175,8 +200,7 @@ protected:
 	 */
 	bool m_debugWinding;
 
-	/* Temporarily stored until the model has been initialized, then deleted.
-	   To be obtained from configuration data.
+	/* To be obtained from configuration data.
 	 */
 	DirectX::XMFLOAT4* m_colors;
 
