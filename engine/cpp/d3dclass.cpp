@@ -291,7 +291,7 @@ int D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwn
 		 NULL,   //use default graphics adapter
 		 D3D_DRIVER_TYPE_HARDWARE, //hardware graphics acceleration
 		 NULL, //no software driver, we are using hardward driver
-		 0, //set up for single threaded use
+		 D3D11_CREATE_DEVICE_DEBUG, //set up for single threaded use
 		 &featureLevel, //pointer to D3D feature levels array (enum)
 		 1, //number of elements in previous parameter
 		 D3D11_SDK_VERSION, //macro to set DirectX SDK version number correctly

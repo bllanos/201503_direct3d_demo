@@ -8,11 +8,11 @@ WSTRING -- GridQuad_LogUser::msgPrefix = L"Test GridQuad Object"
 BOOL -- GridQuad_LogUser::useGlobalLog = false
 BOOL -- GridQuad_LogUser::allocConsole = false
 BOOL -- GridQuad_LogUser::allocLogFile = true
-FILENAME -- GridQuad_LogUser::logFileName = "SkinnedColorTestState.txt""
-DIRECTORY -- GridQuad_LogUser::logFilePath = "..\configFiles\test"
+FILENAME -- GridQuad_LogUser::logFileName = "SkinnedColorTestState.txt"
+DIRECTORY -- GridQuad_LogUser::logFilePath = "..\logFiles\test"
 BOOL -- GridQuad_LogUser::overwriteFile = false
 BOOL -- GridQuad_LogUser::timestampEnable = true
 
 # ConfigUser configuration
-# ------------------------
+# -----------------------------------
 BOOL -- GridQuad_ConfigUser::enableConfigUseLogging = true

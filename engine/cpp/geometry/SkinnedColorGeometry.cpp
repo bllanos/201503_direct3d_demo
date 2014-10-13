@@ -176,7 +176,7 @@ HRESULT SkinnedColorGeometry::initializeBoneData(ID3D11Device* const device,
 	desc.Format = DXGI_FORMAT_UNKNOWN;
 	desc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 	desc.Buffer.ElementOffset = 0;
-	desc.Buffer.ElementWidth = SKINNEDCOLORGEOMETRY_MATRIX_SIZE;
+	desc.Buffer.ElementWidth = m_boneCount;
 
 	result = device->CreateShaderResourceView(m_bonePositionBuffer, &desc, &m_bonePositionView);
 	if( FAILED(result) ) {
