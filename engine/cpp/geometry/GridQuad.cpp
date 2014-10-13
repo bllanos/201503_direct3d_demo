@@ -107,7 +107,7 @@ HRESULT GridQuad::configure(void) {
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
-	if( FAILED(setMembers(nColumns, nRows, blend)) ) {
+	if( FAILED(setMembers(nColumns, nRows, static_cast<float>(blend))) ) {
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
