@@ -37,7 +37,7 @@ class SkinnedColorTestState : public State, public ConfigUser {
 private:
 	CineCameraClass* m_camera;
 	GridQuad* m_gridQuad;
-	SkinnedColorTestTransformable** m_quadBones;
+	SkinnedColorTestTransformable* m_quadBones;
 
 public:
 	SkinnedColorTestState(void);

@@ -40,15 +40,19 @@ private:
 	DirectX::XMFLOAT3 m_axis;
 
 public:
-	/* If 'fixed' is true, the point will not move.
+	SkinnedColorTestTransformable(void);
+
+	/* The effective constructor
+
+	   If 'fixed' is true, the point will not move.
 	   If 'fixed' and 'orbit are true, the point will orbit.
 	   If 'fixed' is true and 'orbit' is false, the point will translate.
 
 	   'axis' is the direction of translation (3D vector) or axis
 	   used for orbiting, depending on the values of 'fixed' and 'orbit'.
-	   (The vector will be normalized by the constructor.)
+	   (The vector will be normalized automatically.)
 	 */
-	SkinnedColorTestTransformable(const DirectX::XMFLOAT3& position,
+	virtual HRESULT initialize(const DirectX::XMFLOAT3& position,
 		const DirectX::XMFLOAT3& scale, const bool fixed, const bool orbit,
 		const DirectX::XMFLOAT3& axis);
 

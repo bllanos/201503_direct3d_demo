@@ -31,14 +31,24 @@ using namespace DirectX;
 // Extent of orbit (radians) (half of full range)
 #define SKINNEDCOLORTESTTRANSFORMABLE_ORBIT DirectX::XM_PIDIV4
 
-SkinnedColorTestTransformable::SkinnedColorTestTransformable(
-	const DirectX::XMFLOAT3& position,
+SkinnedColorTestTransformable::SkinnedColorTestTransformable(void) :
+m_position(0.0f, 0.0f, 0.0f), m_scale(1.0f, 1.0f, 1.0f), m_fixed(true), m_orbit(false), m_axis(0.0f, 0.0f, 1.0f) {
+	XMStoreFloat4x4(&m_worldTransform, XMMatrixIdentity());
+}
+
+HRESULT SkinnedColorTestTransformable::initialize(const DirectX::XMFLOAT3& position,
 	const DirectX::XMFLOAT3& scale, const bool fixed, const bool orbit,
-	const DirectX::XMFLOAT3& axis) :
-	m_position(position), m_scale(scale), m_fixed(fixed), m_orbit(orbit), m_axis(axis)
-{
+	const DirectX::XMFLOAT3& axis) {
+
+	m_position = position;
+	m_scale = scale;
+	m_fixed = fixed;
+	m_orbit = orbit;
+	m_axis = axis;
+
 	XMStoreFloat4x4(&m_worldTransform, XMMatrixIdentity());
 	XMStoreFloat3(&m_axis, XMVector3Normalize(XMLoadFloat3(&m_axis)));
+	return ERROR_SUCCESS;
 }
 
 SkinnedColorTestTransformable::~SkinnedColorTestTransformable(void)

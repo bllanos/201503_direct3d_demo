@@ -62,12 +62,6 @@ SkinnedColorTestState::~SkinnedColorTestState(void) {
 	}
 
 	if( m_quadBones != 0 ) {
-		for( size_t i = 0; i < SKINNEDCOLORTESTSTATE_NQUADBONES; ++i ) {
-			if( m_quadBones[i] != 0 ) {
-				delete m_quadBones[i];
-				m_quadBones[i] = 0;
-			}
-		}
 		delete[] m_quadBones;
 		m_quadBones = 0;
 	}
@@ -113,9 +107,9 @@ HRESULT SkinnedColorTestState::initialize(ID3D11Device* device, int screenWidth,
 	cornerAxes[2] = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	cornerAxes[3] = XMFLOAT3(1.0f, 1.0f, 1.0f);
 
-	m_quadBones = new SkinnedColorTestTransformable*[SKINNEDCOLORTESTSTATE_NQUADBONES];
+	m_quadBones = new SkinnedColorTestTransformable[SKINNEDCOLORTESTSTATE_NQUADBONES];
 	for( size_t i = 0; i < SKINNEDCOLORTESTSTATE_NQUADBONES; ++i ) {
-		m_quadBones[i] = new SkinnedColorTestTransformable(
+		m_quadBones[i].initialize(
 			cornerPositions[i],
 			cornerScales[i],
 			cornerFixed[i],
@@ -160,7 +154,7 @@ HRESULT SkinnedColorTestState::initialize(ID3D11Device* device, int screenWidth,
 	 */
 	m_gridQuad = new GridQuad(true, L"Test GridQuad Object: ", &config);
 
-	result = m_gridQuad->initialize(device, *m_quadBones, 0);
+	result = m_gridQuad->initialize(device, m_quadBones, 0);
 	if( FAILED(result) ) {
 		logMessage(L"Failed to initialize GridQuad object.");
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -185,7 +179,7 @@ HRESULT SkinnedColorTestState::drawContents(ID3D11DeviceContext* const context, 
 
 HRESULT SkinnedColorTestState::update(const DWORD currentTime, const DWORD updateTimeInterval) {
 	for( size_t i = 0; i < SKINNEDCOLORTESTSTATE_NQUADBONES; ++i ) {
-		if( FAILED(m_quadBones[i]->update(currentTime, updateTimeInterval)) ) {
+		if( FAILED(m_quadBones[i].update(currentTime, updateTimeInterval)) ) {
 			logMessage(L"Call to SkinnedColorTestTransformable update() function failed at index " + std::to_wstring(i));
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
