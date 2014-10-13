@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -160,6 +160,12 @@
     </ClInclude>
     <ClInclude Include="header\geometry\GridQuad.h">
       <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\header\SkinnedColorTestState.h">
+      <Filter>test\header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\header\SkinnedColorTestTransformable.h">
+      <Filter>test\header</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
