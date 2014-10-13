@@ -57,7 +57,7 @@ m_rendererType(0)
 HRESULT SkinnedColorGeometry::initialize(ID3D11Device* const device,
 	const SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices, const size_t nVertices,
 	const unsigned long* const indices, const size_t nIndices,
-	const ITransformable* const* const bones, const size_t nBones,
+	const ITransformable* const& const bones, const size_t nBones,
 	const DirectX::XMFLOAT4X4* const bindMatrices,
 	const D3D_PRIMITIVE_TOPOLOGY topology) {
 
@@ -141,7 +141,7 @@ HRESULT SkinnedColorGeometry::initializeVertexAndIndexBuffers(ID3D11Device* cons
 }
 
 HRESULT SkinnedColorGeometry::initializeBoneData(ID3D11Device* const device,
-	const ITransformable* const* const bones, const size_t nBones,
+	const ITransformable* const& const bones, const size_t nBones,
 	const DirectX::XMFLOAT4X4* const bindMatrices) {
 
 	// Simple member initialization
@@ -200,7 +200,7 @@ HRESULT SkinnedColorGeometry::initializeBoneData(ID3D11Device* const device,
 	} else {
 		DirectX::XMFLOAT4X4 bindMatrix;
 		for( i = 0; i < m_boneCount; ++i ) {
-			m_bones[i]->getWorldTransform(bindMatrix);
+			m_bones[i].getWorldTransform(bindMatrix);
 			XMStoreFloat4x4(m_invBindMatrices + i,
 				XMMatrixInverse(0, XMLoadFloat4x4(&bindMatrix)));
 		}
@@ -351,7 +351,7 @@ HRESULT SkinnedColorGeometry::updateAndBindBoneBuffers(ID3D11DeviceContext* cons
 	// Copy the matrices into the buffer.
 	size_t i = 0;
 	for( i = 0; i < m_boneCount; ++i ) {
-		result = m_bones[i]->getWorldTransform(storedWorldMatrix);
+		result = m_bones[i].getWorldTransform(storedWorldMatrix);
 		if( FAILED(result) ) {
 			logMessage(L"Failed to obtain bone world transformation from ITransformable at index " + std::to_wstring(i));
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -379,7 +379,7 @@ HRESULT SkinnedColorGeometry::updateAndBindBoneBuffers(ID3D11DeviceContext* cons
 	return result;
 }
 
-HRESULT SkinnedColorGeometry::setTransformables(const ITransformable* const* const bones) {
+HRESULT SkinnedColorGeometry::setTransformables(const ITransformable* const& const bones) {
 	if( bones == 0 ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
 	}

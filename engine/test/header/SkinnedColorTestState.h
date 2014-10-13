@@ -23,19 +23,15 @@ Description
 #pragma once // This is a Microsoft-specific way to prevent multiple inclusions of a header file
 
 #include "State.h"
-#include "LogUser.h"
+#include "ConfigUser.h"
 #include "CineCameraClass.h"
 #include "GridQuad.h"
 #include "SkinnedColorTestTransformable.h"
-#include "engineGlobals.h"
-
-// Action period in milliseconds
-#define SKINNEDCOLORTESTSTATE_PERIOD (5.0f * MILLISECS_PER_SEC_FLOAT)
 
 // Logging message prefix
 #define SKINNEDCOLORTESTSTATE_START_MSG_PREFIX L"SkinnedColorTestState "
 
-class SkinnedColorTestState : public State, public LogUser {
+class SkinnedColorTestState : public State, public ConfigUser {
 
 	// Data members
 private:

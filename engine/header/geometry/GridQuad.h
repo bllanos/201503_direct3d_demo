@@ -81,7 +81,6 @@ class GridQuad : public SkinnedColorGeometry
 	// Initialization and destruction
 public:
 	template<typename ConfigIOClass> GridQuad(
-		const bool enableLogging, const std::wstring& msgPrefix,
 		ConfigIOClass* const optionalLoader,
 		const Config* locationSource,
 		const std::wstring filenameScope,
@@ -89,6 +88,9 @@ public:
 		const std::wstring directoryScope = L"",
 		const std::wstring directoryField = L""
 		);
+
+	GridQuad(const bool enableLogging, const std::wstring& msgPrefix,
+		Config* sharedConfig);
 
 	virtual ~GridQuad(void);
 
@@ -110,7 +112,7 @@ public:
 	bind pose transformations.
 	*/
 	virtual HRESULT initialize(ID3D11Device* const device,
-		const ITransformable* const* const bones,
+		const ITransformable* const& const bones,
 		const DirectX::XMFLOAT4X4* const bindMatrices = 0);
 
 public:
@@ -222,7 +224,6 @@ private:
 };
 
 template<typename ConfigIOClass> GridQuad::GridQuad(
-	const bool enableLogging, const std::wstring& msgPrefix,
 	ConfigIOClass* const optionalLoader,
 	const Config* locationSource,
 	const std::wstring filenameScope,
@@ -231,7 +232,7 @@ template<typename ConfigIOClass> GridQuad::GridQuad(
 	const std::wstring directoryField
 	) :
 	SkinnedColorGeometry(
-	enableLogging, msgPrefix,
+	true, GRIDQUAD_START_MSG_PREFIX,
 	optionalLoader,
 	locationSource,
 	filenameScope,

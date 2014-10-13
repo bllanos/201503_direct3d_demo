@@ -28,32 +28,29 @@ Description
 #include "ITransformable.h"
 #include "engineGlobals.h"
 
-// Action period in milliseconds
-#define SKINNEDCOLORTESTTRANSFORMABLE_PERIOD (10.0f * MILLISECS_PER_SEC_FLOAT)
-
-// Extent of translation (half of full range)
-#define SKINNEDCOLORTESTTRANSFORMABLE_TRANSLATE 1.0f
-
-// Extent of orbit (radians) (half of full range)
-#define SKINNEDCOLORTESTTRANSFORMABLE_ORBIT DirectX::XM_PIDIV4
-
 class SkinnedColorTestTransformable : public ITransformable {
 
 	// Data members
 private:
 	DirectX::XMFLOAT4X4 m_worldTransform;
+	DirectX::XMFLOAT3 m_position;
+	DirectX::XMFLOAT3 m_scale;
+	bool m_fixed;
+	bool m_orbit;
+	DirectX::XMFLOAT3 m_axis;
 
 public:
 	/* If 'fixed' is true, the point will not move.
 	   If 'fixed' and 'orbit are true, the point will orbit.
 	   If 'fixed' is true and 'orbit' is false, the point will translate.
 
-	   'axis' is the line of translation (3D vector) or quaternion
+	   'axis' is the direction of translation (3D vector) or axis
 	   used for orbiting, depending on the values of 'fixed' and 'orbit'.
+	   (The vector will be normalized by the constructor.)
 	 */
 	SkinnedColorTestTransformable(const DirectX::XMFLOAT3& position,
 		const DirectX::XMFLOAT3& scale, const bool fixed, const bool orbit,
-		const DirectX::XMFLOAT4& axis);
+		const DirectX::XMFLOAT3& axis);
 
 	virtual ~SkinnedColorTestTransformable(void);
 

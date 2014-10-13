@@ -96,6 +96,12 @@
     <ClCompile Include="cpp\geometry\GridQuad.cpp">
       <Filter>source\geometry</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\cpp\SkinnedColorTestTransformable.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\cpp\SkinnedColorTestState.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cinecameraclass.h">

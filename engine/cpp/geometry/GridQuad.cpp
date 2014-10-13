@@ -25,6 +25,17 @@ Description
 
 #define GRIDQUAD_NCORNERS 4
 
+GridQuad::GridQuad(const bool enableLogging, const std::wstring& msgPrefix,
+	Config* sharedConfig) :
+	SkinnedColorGeometry(enableLogging, msgPrefix, sharedConfig),
+	m_nColumns(0), m_nRows(0),
+	m_blend(GRIDQUAD_BLEND_DEFAULT),
+	m_debugWinding(GRIDQUAD_DEBUG_FLAG_DEFAULT), m_colors(0) {
+	if( FAILED(configure()) ) {
+		logMessage(L"Configuration failed.");
+	}
+}
+
 HRESULT GridQuad::configure(void) {
 	HRESULT result = ERROR_SUCCESS;
 
@@ -150,7 +161,7 @@ GridQuad::~GridQuad(void) {
 }
 
 HRESULT GridQuad::initialize(ID3D11Device* const device,
-	const ITransformable* const* const bones,
+	const ITransformable* const& const bones,
 	const DirectX::XMFLOAT4X4* const bindMatrices) {
 
 	HRESULT result = ERROR_SUCCESS;
