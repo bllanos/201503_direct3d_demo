@@ -32,8 +32,6 @@ using std::wstring;
 // Logging output and configuration input filename
 #define SKINNEDCOLORTESTSTATE_FILE_NAME L"SkinnedColorTestState.txt"
 
-#define SKINNEDCOLORTESTSTATE_START_MSG_PREFIX L"SkinnedColorTestState"
-
 #define SKINNEDCOLORTESTSTATE_NQUADBONES 4
 
 SkinnedColorTestState::SkinnedColorTestState(void) :
@@ -165,8 +163,10 @@ HRESULT SkinnedColorTestState::initialize(ID3D11Device* device, int screenWidth,
 	result = m_gridQuad->initialize(device, *m_quadBones, 0);
 	if( FAILED(result) ) {
 		logMessage(L"Failed to initialize GridQuad object.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		return result;
 	}
+	return result;
 }
 
 HRESULT SkinnedColorTestState::next(State*& nextState) {

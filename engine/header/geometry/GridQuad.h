@@ -112,7 +112,7 @@ public:
 	bind pose transformations.
 	*/
 	virtual HRESULT initialize(ID3D11Device* const device,
-		const ITransformable* const& const bones,
+		const ITransformable* const& bones,
 		const DirectX::XMFLOAT4X4* const bindMatrices = 0);
 
 public:

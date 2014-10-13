@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\cpp\SkinnedColorTestState.cpp" />
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\cpp\SkinnedColorTestTransformable.cpp" />
+    <ClCompile Include="test\cpp\SkinnedColorTestState.cpp" />
+    <ClCompile Include="test\cpp\SkinnedColorTestTransformable.cpp" />
     <ClCompile Include="cpp\geometry\GridQuad.cpp" />
     <ClCompile Include="cpp\d3dclass.cpp" />
     <ClCompile Include="cpp\engineMain.cpp" />
@@ -30,8 +30,8 @@
     <ClCompile Include="cinecameraclass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\header\SkinnedColorTestState.h" />
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\header\SkinnedColorTestTransformable.h" />
+    <ClInclude Include="test\header\SkinnedColorTestState.h" />
+    <ClInclude Include="test\header\SkinnedColorTestTransformable.h" />
     <ClInclude Include="header\geometry\GridQuad.h" />
     <ClInclude Include="header\geometry\SkinnedColorGeometry.h" />
     <ClInclude Include="header\input\Keyboard.h" />

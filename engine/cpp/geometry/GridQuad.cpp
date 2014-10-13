@@ -161,7 +161,7 @@ GridQuad::~GridQuad(void) {
 }
 
 HRESULT GridQuad::initialize(ID3D11Device* const device,
-	const ITransformable* const& const bones,
+	const ITransformable* const& bones,
 	const DirectX::XMFLOAT4X4* const bindMatrices) {
 
 	HRESULT result = ERROR_SUCCESS;
