@@ -77,6 +77,7 @@ Description
 
 class GridQuad : public SkinnedColorGeometry
 {
+	// Initialization and destruction
 public:
 	template<typename ConfigIOClass> GridQuad(
 		const bool enableLogging, const std::wstring& msgPrefix,
@@ -88,32 +89,27 @@ public:
 		const std::wstring directoryField = L""
 		);
 
-	/* Retrieves configuration data,
-	   using default values if possible when configuration
-	   data is not found.
-	   -Calls ConfigUser::ConfigureConfigUser() if there is a Config instance to use
-	 */
-	virtual HRESULT configure(void);
-
 	virtual ~GridQuad(void);
 
-	/* Call this function at least once
-	   before rendering for the first time.
-	   (This object cannot be rendered without
-	    bone transformation data.)
-	 */
-	virtual void setTransformables(ITransformable** const);
-
 	/* The effective constructor.
-	
-	  'bindMatrices' will be used, if it is not null,
-	   to override the assumption that bones
-	   are located at the corners of the grid.
-	   The expected order of bind pose transformations
-	   is as follows:
-	     (1,1), (-1,1), (-1,-1), (1,-1) (These are the corners of the grid)
-	 */
-	virtual HRESULT initialize(ID3D11Device* const d3dDevice, const DirectX::XMFLOAT4X4* const bindMatrices = 0);
+
+	'bindMatrices' will be used, if it is not null,
+	to override the assumption that bones
+	are located at the corners of the grid.
+	The expected order of bind pose transformations
+	is as follows:
+	(1,1,0), (-1,1,0), (-1,-1,0), (1,-1,0) (These are the corners of the grid)
+
+	The 'bones' parameter is not used for transformation data in this function,
+	but is just passed through to the base class.
+	It should have elements in the same order described for the
+	bind pose transformations.
+	*/
+	virtual HRESULT initialize(ID3D11Device* const device,
+		const ITransformable* const* const bones,
+		const DirectX::XMFLOAT4X4* const bindMatrices = 0);
+
+public:
 
 	virtual float getTransparencyBlendFactor(void) const override;
 
@@ -124,20 +120,41 @@ public:
 	virtual size_t getNumberOfIndices(void) const;
 
 	/* Loads the input 'vertices' array with vertices
-	   defining this model's geometry, starting from
-	   index 'vertexOffset'. 'vertexOffset'
-	   will be increased by the number of vertices added.
+	defining this model's geometry, starting from
+	index 'vertexOffset'. 'vertexOffset'
+	will be increased by the number of vertices added.
 
-	   Acts likewise on the 'indices' and 'indexOffset' parameters.
+	Acts likewise on the 'indices' and 'indexOffset' parameters.
 
-	   Assumes D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST topology
-	   and counter-clockwise back face culling.
-	 */
+	Assumes D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST topology
+	and counter-clockwise back face culling.
+	*/
 	virtual HRESULT addIndexedVertices(
 		SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices,
 		size_t& vertexOffset,
 		unsigned long* const indices,
 		size_t& indexOffset) const;
+
+	/* Defines the mapping from surface parameters to 3D position (Cartesian coordinates)
+	*/
+	virtual HRESULT uvToPosition(DirectX::XMFLOAT3& position, const float u, const float v) const;
+
+protected:
+
+	/* Retrieves configuration data,
+	   using default values if possible when configuration
+	   data is not found.
+	   -Calls ConfigUser::ConfigureConfigUser() if there is a Config instance to use
+	 */
+	virtual HRESULT configure(void);
+
+	/* Performs range checking for the appropriate data members,
+	   then sets their values.
+
+	   This function exists to avoid having repeated range checking code
+	   in this class's constructors and configuration functions.
+	 */
+	virtual HRESULT setMembers(const int& nColumns, const int& nRows, const float& blend);
 
 	// Data members
 protected:
@@ -152,6 +169,11 @@ protected:
 	   which can be obtained from configuration data
 	 */
 	float m_blend;
+
+	/* Flag indicating whether or not to invert
+	   winding of every second triangle.
+	 */
+	bool m_debugWinding;
 
 	/* Temporarily stored until the model has been initialized, then deleted.
 	   To be obtained from configuration data.
@@ -182,5 +204,11 @@ template<typename ConfigIOClass> GridQuad::GridQuad(
 	directoryScope,
 	directoryField
 	),
-	m_nColumns(0), m_nRows(0), m_blend(1.0f), m_colors(0)
-	{}
+	m_nColumns(0), m_nRows(0),
+	m_blend(GRIDQUAD_BLEND_DEFAULT),
+	m_debugWinding(GRIDQUAD_DEBUG_FLAG_DEFAULT), m_colors(0)
+{
+	if( FAILED(configure()) {
+		logMessage(L"Configuration failed.");
+	}
+}

@@ -103,7 +103,7 @@ protected:
 	virtual HRESULT initialize(ID3D11Device* const device,
 		const SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices, const size_t nVertices,
 		const unsigned long* const indices, const size_t nIndices,
-		const ITransformable** const bones, const size_t nBones,
+		const ITransformable* const* const bones, const size_t nBones,
 		const DirectX::XMFLOAT4X4* const bindMatrices = 0,
 		const D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -118,7 +118,7 @@ protected:
 
 	/* Initializes the model's bone data only. */
 	virtual HRESULT initializeBoneData(ID3D11Device* const device,
-		const ITransformable** const bones, const size_t nBones,
+		const ITransformable* const* const bones, const size_t nBones,
 		const DirectX::XMFLOAT4X4* const bindMatrices);
 
 	/* Objects of this class can use renderers
@@ -141,6 +141,14 @@ public:
 
 	virtual float getTransparencyBlendFactor(void) const = 0;
 
+	/* Allows for changing the position, motion, etc., of the model
+	   in the world.
+
+	   Ensure that the number of elements in 'bones' matches the 'nBones'
+	   parameter passed to initialize().
+	 */
+	virtual HRESULT setTransformables(const ITransformable* const* const bones);
+
 protected:
 	/* Performs vertex buffer and index buffer-related pipeline
 	   configuration
@@ -148,6 +156,7 @@ protected:
 	virtual HRESULT setVerticesAndIndicesOnContext(ID3D11DeviceContext* const context);
 
 	/* Sends the new transformation matrices to the graphics pipeline,
+	   transposing them in the process,
 	   and binds the buffers to the vertex shader.
 	 */
 	virtual HRESULT updateAndBindBoneBuffers(ID3D11DeviceContext* const context);
@@ -162,7 +171,7 @@ private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 	ID3D11Buffer *m_bonePositionBuffer, *m_boneNormalBuffer;
 	ID3D11ShaderResourceView *m_bonePositionView, *m_boneNormalView;
-	const ITransformable** m_bones;
+	const ITransformable* const* m_bones;
 	DirectX::XMFLOAT4X4* m_invBindMatrices;
 	D3D_PRIMITIVE_TOPOLOGY m_primitive_topology;
 	size_t m_vertexCount, m_indexCount, m_boneCount;
