@@ -29,6 +29,7 @@ Description
 
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <vector>
 #include "vertexTypes.h"
 #include "IGeometry.h"
 #include "ConfigUser.h"
@@ -71,8 +72,8 @@ protected:
 	// The effective constructor for the SkinnedColorGeometry class itself
 protected:
 
-	/* The 'bones' argument is an array of ITransformable objects, with length
-	   equal to 'nBones'. Each rendering pass, the ITransformable objects
+	/* The 'bones' argument is a vector of ITransformable objects.
+	   Each rendering pass, the ITransformable objects
 	   will be queried for their world transforms. These world transforms
 	   are the bone matrices.
 
@@ -80,7 +81,7 @@ protected:
 	   (This object's destructor will not deallocate it.)
 
 	   IMPORTANT: When this function is called, if 'bindMatrices' is null,
-	     the 'bones' array is expected to supply bind pose transformations.
+	     the 'bones' vector is expected to supply bind pose transformations.
 		 
 		 This means that each bone will provide its transformation
 		 relative to the root bone of the model.
@@ -103,7 +104,7 @@ protected:
 	virtual HRESULT initialize(ID3D11Device* const device,
 		const SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices, const size_t nVertices,
 		const unsigned long* const indices, const size_t nIndices,
-		const ITransformable* const& bones, const size_t nBones,
+		const std::vector<const ITransformable*>* const bones,
 		const DirectX::XMFLOAT4X4* const bindMatrices = 0,
 		const D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -118,7 +119,7 @@ protected:
 
 	/* Initializes the model's bone data only. */
 	virtual HRESULT initializeBoneData(ID3D11Device* const device,
-		const ITransformable* const& bones, const size_t nBones,
+		const std::vector<const ITransformable*>* const bones,
 		const DirectX::XMFLOAT4X4* const bindMatrices);
 
 	/* Objects of this class can use renderers
@@ -144,10 +145,10 @@ public:
 	/* Allows for changing the position, motion, etc., of the model
 	   in the world.
 
-	   Ensure that the number of elements in 'bones' matches the 'nBones'
-	   parameter passed to initialize().
+	   Ensure that the number of elements in 'bones' matches the length
+	   of the 'bones' parameter passed to initialize().
 	 */
-	virtual HRESULT setTransformables(const ITransformable* const& bones);
+	virtual HRESULT setTransformables(const std::vector<const ITransformable*>* const bones);
 
 protected:
 	/* Performs vertex buffer and index buffer-related pipeline
@@ -171,10 +172,11 @@ private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 	ID3D11Buffer *m_bonePositionBuffer, *m_boneNormalBuffer;
 	ID3D11ShaderResourceView *m_bonePositionView, *m_boneNormalView;
-	const ITransformable* m_bones;
+	const std::vector<const ITransformable*>* m_bones;
 	DirectX::XMFLOAT4X4* m_invBindMatrices;
 	D3D_PRIMITIVE_TOPOLOGY m_primitive_topology;
-	size_t m_vertexCount, m_indexCount, m_boneCount;
+	size_t m_vertexCount, m_indexCount;
+	std::vector<const ITransformable*>::size_type m_boneCount;
 	GeometryRendererManager::GeometryRendererType* m_rendererType;
 
 	// Currently not implemented - will cause linker errors if called

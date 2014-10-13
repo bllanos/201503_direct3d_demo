@@ -40,7 +40,7 @@ ConfigUser(true, SKINNEDCOLORTESTSTATE_START_MSG_PREFIX,
 	SKINNEDCOLORTESTSTATE_FILE_NAME,
 	ENGINE_DEFAULT_CONFIG_PATH_TEST
 ),
-m_camera(0), m_gridQuad(0), m_quadBones(0)
+m_camera(0), m_gridQuad(0), m_quadBones(0), m_quadBones_shared(0)
 {
 	// Set up a custom logging output stream
 	wstring logFilename;
@@ -62,8 +62,21 @@ SkinnedColorTestState::~SkinnedColorTestState(void) {
 	}
 
 	if( m_quadBones != 0 ) {
-		delete[] m_quadBones;
+		std::vector<SkinnedColorTestTransformable*>::size_type i = 0;
+		std::vector<SkinnedColorTestTransformable*>::size_type size = m_quadBones->size();
+		for( i = 0; i < size; ++i ) {
+			if( (*m_quadBones)[i] != 0 ) {
+				delete (*m_quadBones)[i];
+				(*m_quadBones)[i] = 0;
+			}
+		}
+		delete m_quadBones;
 		m_quadBones = 0;
+	}
+
+	if( m_quadBones_shared != 0 ) {
+		delete m_quadBones_shared;
+		m_quadBones_shared = 0;
 	}
 }
 
@@ -107,14 +120,20 @@ HRESULT SkinnedColorTestState::initialize(ID3D11Device* device, int screenWidth,
 	cornerAxes[2] = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	cornerAxes[3] = XMFLOAT3(1.0f, 1.0f, 1.0f);
 
-	m_quadBones = new SkinnedColorTestTransformable[SKINNEDCOLORTESTSTATE_NQUADBONES];
+	m_quadBones = new std::vector<SkinnedColorTestTransformable*>();
 	for( size_t i = 0; i < SKINNEDCOLORTESTSTATE_NQUADBONES; ++i ) {
-		m_quadBones[i].initialize(
+		m_quadBones->push_back(new SkinnedColorTestTransformable());
+		(*m_quadBones)[i]->initialize(
 			cornerPositions[i],
 			cornerScales[i],
 			cornerFixed[i],
 			cornerOrbit[i],
 			cornerAxes[i]);
+	}
+
+	m_quadBones_shared = new std::vector<const ITransformable*>();
+	for( size_t i = 0; i < SKINNEDCOLORTESTSTATE_NQUADBONES; ++i ) {
+		m_quadBones_shared->push_back((*m_quadBones)[i]);
 	}
 
 	// Vertex skinning geometry
@@ -154,7 +173,7 @@ HRESULT SkinnedColorTestState::initialize(ID3D11Device* device, int screenWidth,
 	 */
 	m_gridQuad = new GridQuad(true, L"Test GridQuad Object: ", &config);
 
-	result = m_gridQuad->initialize(device, m_quadBones, 0);
+	result = m_gridQuad->initialize(device, m_quadBones_shared, 0);
 	if( FAILED(result) ) {
 		logMessage(L"Failed to initialize GridQuad object.");
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -179,7 +198,7 @@ HRESULT SkinnedColorTestState::drawContents(ID3D11DeviceContext* const context, 
 
 HRESULT SkinnedColorTestState::update(const DWORD currentTime, const DWORD updateTimeInterval) {
 	for( size_t i = 0; i < SKINNEDCOLORTESTSTATE_NQUADBONES; ++i ) {
-		if( FAILED(m_quadBones[i].update(currentTime, updateTimeInterval)) ) {
+		if( FAILED((*m_quadBones)[i]->update(currentTime, updateTimeInterval)) ) {
 			logMessage(L"Call to SkinnedColorTestTransformable update() function failed at index " + std::to_wstring(i));
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}

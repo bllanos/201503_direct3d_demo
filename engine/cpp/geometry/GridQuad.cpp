@@ -161,8 +161,14 @@ GridQuad::~GridQuad(void) {
 }
 
 HRESULT GridQuad::initialize(ID3D11Device* const device,
-	const ITransformable* const& bones,
+	const std::vector<const ITransformable*>* const bones,
 	const DirectX::XMFLOAT4X4* const bindMatrices) {
+
+	if( bones == 0 ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	} else if( bones->size() != GRIDQUAD_NCORNERS ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	}
 
 	HRESULT result = ERROR_SUCCESS;
 
@@ -201,14 +207,14 @@ HRESULT GridQuad::initialize(ID3D11Device* const device,
 			result = SkinnedColorGeometry::initialize(device,
 				vertices, nVertices,
 				indices, nIndices,
-				bones, GRIDQUAD_NCORNERS,
+				bones,
 				ownBindMatrices,
 				D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		} else {
 			result = SkinnedColorGeometry::initialize(device,
 				vertices, nVertices,
 				indices, nIndices,
-				bones, GRIDQUAD_NCORNERS,
+				bones,
 				bindMatrices,
 				D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		}

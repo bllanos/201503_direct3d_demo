@@ -22,6 +22,7 @@ Description
 
 #pragma once // This is a Microsoft-specific way to prevent multiple inclusions of a header file
 
+#include <vector>
 #include "State.h"
 #include "ConfigUser.h"
 #include "CineCameraClass.h"
@@ -37,7 +38,8 @@ class SkinnedColorTestState : public State, public ConfigUser {
 private:
 	CineCameraClass* m_camera;
 	GridQuad* m_gridQuad;
-	SkinnedColorTestTransformable* m_quadBones;
+	std::vector<SkinnedColorTestTransformable*>* m_quadBones;
+	std::vector<const ITransformable*>* m_quadBones_shared;
 
 public:
 	SkinnedColorTestState(void);
