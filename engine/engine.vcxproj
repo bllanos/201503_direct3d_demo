@@ -23,6 +23,7 @@
     <ClCompile Include="test\cpp\Phase1TestState.cpp" />
     <ClCompile Include="test\cpp\Phase1TestTransformable.cpp" />
     <ClCompile Include="cinecameraclass.cpp" />
+    <ClCompile Include="Transformable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\input\Keyboard.h" />
@@ -43,6 +44,7 @@
     <ClInclude Include="header\StateControl.h" />
     <ClInclude Include="cinecameraclass.h" />
     <ClInclude Include="header\rendering\IGeometryRenderer.h" />
+    <ClInclude Include="Transformable.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EE9C0E97-8193-496B-8C61-41698F8AB67B}</ProjectGuid>

@@ -34,9 +34,10 @@ Note: I have not tested whether this class
 #include <DirectXMath.h>
 using namespace DirectX;
 
-#include "cinecameraclass.h"
 #include "IWinMessageHandler.h"
 #include "BasicWindow.h"
+
+class CineCameraClass;
 
 class Mouse : public IWinMessageHandler
 {

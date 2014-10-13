@@ -13,6 +13,8 @@ Implementation of the Mouse class
 #include "engineGlobals.h"
 #include <string>
 #include <sstream>   // for wostringstream
+#include "CineCameraClass.h"
+
 using std::wostringstream;
 
 const int Mouse::nButtons = 5;

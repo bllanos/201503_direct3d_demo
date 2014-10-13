@@ -15,11 +15,7 @@ CineCameraClass::CineCameraClass(int screenWidth_in, int screenHeight_in)
 	screenAspectRatio = ((float) screenWidth) / ((float) screenHeight);
 	fieldOfView = NOMINAL_FIELD_OF_VIEW;
 
-	m_position = XMFLOAT3(0.0f, 0.0f, -10.0f);
-	m_orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	m_forward = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	m_up = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	m_left = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_transform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -10.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	UpdateMatrices();
 }
@@ -34,95 +30,6 @@ CineCameraClass::~CineCameraClass()
 {
 }
 
-void CineCameraClass::MoveCamera(float ahead)
-{
-	// make sure camera properties are up to date
-	// NB: actually unnecessary, since they are updated every frame anyway; done here for clarity
-	m_forward = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	m_up = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	m_left = XMFLOAT3(-1.0f, 0.0f, 0.0f);
-
-	XMMATRIX oriTransform = XMMatrixRotationQuaternion(XMLoadFloat4(&m_orientation));
-	XMStoreFloat3(&m_forward,
-		XMVector4Transform(XMLoadFloat3(&m_forward), oriTransform));
-	XMStoreFloat3(&m_up,
-		XMVector4Transform(XMLoadFloat3(&m_up), oriTransform));
-	XMStoreFloat3(&m_left,
-		XMVector3Cross(XMLoadFloat3(&m_forward), XMLoadFloat3(&m_up)));
-
-	// move the camera ahead by the given amount
-	XMVECTOR aheadv = XMVectorScale(XMLoadFloat3(&m_forward), ahead);
-	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), aheadv));
-}
-
-void CineCameraClass::StrafeCamera(float side)
-{
-	// make sure camera properties are up to date
-	// NB: actually unnecessary, since they are updated every frame anyway; done here for clarity
-	m_forward = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	m_up = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	m_left = XMFLOAT3(-1.0f, 0.0f, 0.0f);
-
-	XMMATRIX oriTransform = XMMatrixRotationQuaternion(XMLoadFloat4(&m_orientation));
-	XMStoreFloat3(&m_forward,
-		XMVector4Transform(XMLoadFloat3(&m_forward), oriTransform));
-	XMStoreFloat3(&m_up,
-		XMVector4Transform(XMLoadFloat3(&m_up), oriTransform));
-	XMStoreFloat3(&m_left,
-		XMVector3Cross(XMLoadFloat3(&m_forward), XMLoadFloat3(&m_up)));
-
-	// move the camera horizontally by the given amount
-	XMVECTOR sidev = XMVectorScale(XMLoadFloat3(&m_left), side);
-	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), sidev));
-}
-
-void CineCameraClass::CraneCamera(float vertical)
-{
-	// make sure camera properties are up to date
-	// NB: actually unnecessary, since they are updated every frame anyway; done here for clarity
-	m_forward = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	m_up = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	m_left = XMFLOAT3(-1.0f, 0.0f, 0.0f);
-
-	XMMATRIX oriTransform = XMMatrixRotationQuaternion(XMLoadFloat4(&m_orientation));
-	XMStoreFloat3(&m_forward,
-		XMVector4Transform(XMLoadFloat3(&m_forward), oriTransform));
-	XMStoreFloat3(&m_up,
-		XMVector4Transform(XMLoadFloat3(&m_up), oriTransform));
-	XMStoreFloat3(&m_left,
-		XMVector3Cross(XMLoadFloat3(&m_forward), XMLoadFloat3(&m_up)));
-
-	// move the camera vertically by the given amount
-	XMVECTOR verticalv = XMVectorScale(XMLoadFloat3(&m_up), vertical);
-	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), verticalv));
-}
-
-void CineCameraClass::SpinCamera(float roll, float pitch, float yaw) {
-	// make sure camera properties are up to date
-	// NB: actually unnecessary, since they are updated every frame anyway; done here for clarity
-	m_forward = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	m_up = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	m_left = XMFLOAT3(-1.0f, 0.0f, 0.0f);
-
-	XMMATRIX oriTransform = XMMatrixRotationQuaternion(XMLoadFloat4(&m_orientation));
-	XMStoreFloat3(&m_forward,
-		XMVector4Transform(XMLoadFloat3(&m_forward), oriTransform));
-	XMStoreFloat3(&m_up,
-		XMVector4Transform(XMLoadFloat3(&m_up), oriTransform));
-	XMStoreFloat3(&m_left,
-		XMVector3Cross(XMLoadFloat3(&m_forward), XMLoadFloat3(&m_up)));
-
-	// apply camera-relative orientation changes
-	XMVECTOR rollq = XMQuaternionRotationAxis(XMLoadFloat3(&m_forward), roll * CAMERA_ORI_CHANGE_FACTOR);
-	XMVECTOR pitchq = XMQuaternionRotationAxis(XMLoadFloat3(&m_left), pitch * CAMERA_ORI_CHANGE_FACTOR);
-	XMVECTOR yawq = XMQuaternionRotationAxis(XMLoadFloat3(&m_up), yaw * CAMERA_ORI_CHANGE_FACTOR);
-
-	// update camera orientation with roll, pitch, and yaw
-	XMStoreFloat4(&m_orientation, XMQuaternionMultiply(XMLoadFloat4(&m_orientation), rollq));
-	XMStoreFloat4(&m_orientation, XMQuaternionMultiply(XMLoadFloat4(&m_orientation), pitchq));
-	XMStoreFloat4(&m_orientation, XMQuaternionMultiply(XMLoadFloat4(&m_orientation), yawq));
-}
-
 void CineCameraClass::MoveForward()
 {
 	wchar_t* outstring = L"CineCameraClass::Move Forward\n";
@@ -135,7 +42,7 @@ void CineCameraClass::MoveForward()
 	You can adjust the constant CAMERA_DOLLY_SPEED to get a nice
 	smooth motion
 	*/
-	MoveCamera(CAMERA_DOLLY_SPEED);
+	m_transform->MoveCamera(CAMERA_DOLLY_SPEED);
 	return;
 }
 
@@ -144,7 +51,7 @@ void CineCameraClass::MoveBackward()
 	wchar_t* outstring = L"CineCameraClass::Move Backward\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	MoveCamera(-CAMERA_DOLLY_SPEED);
+	m_transform->MoveCamera(-CAMERA_DOLLY_SPEED);
 	return;
 }
 
@@ -153,7 +60,7 @@ void CineCameraClass::CraneUp()
 	wchar_t* outstring = L"CineCameraClass::Crane Up\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	CraneCamera(CAMERA_CRANE_SPEED);
+	m_transform->CraneCamera(CAMERA_CRANE_SPEED);
 
 	return;
 }
@@ -163,7 +70,7 @@ void CineCameraClass::CraneDown()
 	wchar_t* outstring = L"CineCameraClass::Crane Down\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	CraneCamera(-CAMERA_CRANE_SPEED);
+	m_transform->CraneCamera(-CAMERA_CRANE_SPEED);
 
 	return;
 }
@@ -173,7 +80,7 @@ void CineCameraClass::StrafeLeft()
 	wchar_t* outstring = L"CineCameraClass::Strafe Left\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	StrafeCamera(-CAMERA_STRAFE_SPEED);
+	m_transform->StrafeCamera(-CAMERA_STRAFE_SPEED);
 
 	return;
 }
@@ -183,7 +90,7 @@ void CineCameraClass::StrafeRight()
 	wchar_t* outstring = L"CineCameraClass::Strafe Right\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	StrafeCamera(CAMERA_STRAFE_SPEED);
+	m_transform->StrafeCamera(CAMERA_STRAFE_SPEED);
 
 	return;
 }
@@ -194,7 +101,7 @@ void CineCameraClass::TiltDown()
 	wchar_t* outstring = L"CineCameraClass::TiltDown\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	SpinCamera(0.0f, -CAMERA_TILT_SPEED, 0.0f);
+	m_transform->SpinCamera(0.0f, -CAMERA_TILT_SPEED, 0.0f);
 }
 
 void CineCameraClass::TiltUp()
@@ -203,7 +110,7 @@ void CineCameraClass::TiltUp()
 	wchar_t* outstring = L"CineCameraClass::TiltUp\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	SpinCamera(0.0f, CAMERA_TILT_SPEED, 0.0f);
+	m_transform->SpinCamera(0.0f, CAMERA_TILT_SPEED, 0.0f);
 } 
 
 void CineCameraClass::PanLeft()
@@ -212,7 +119,7 @@ void CineCameraClass::PanLeft()
 	wchar_t* outstring = L"CineCameraClass::PanLeft\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	SpinCamera(0.0f, 0.0f, -CAMERA_PAN_SPEED);
+	m_transform->SpinCamera(0.0f, 0.0f, -CAMERA_PAN_SPEED);
 } 
 
 void CineCameraClass::PanRight()
@@ -221,7 +128,7 @@ void CineCameraClass::PanRight()
 	wchar_t* outstring = L"CineCameraClass::PanRight\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	SpinCamera(0.0f, 0.0f, CAMERA_PAN_SPEED);
+	m_transform->SpinCamera(0.0f, 0.0f, CAMERA_PAN_SPEED);
 }
 
 void CineCameraClass::RollLeft()
@@ -230,7 +137,7 @@ void CineCameraClass::RollLeft()
 	wchar_t* outstring = L"CineCameraClass::RollLeft\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	SpinCamera(CAMERA_ROLL_SPEED, 0.0f, 0.0f);
+	m_transform->SpinCamera(CAMERA_ROLL_SPEED, 0.0f, 0.0f);
 }
 
 void CineCameraClass::RollRight()
@@ -239,7 +146,7 @@ void CineCameraClass::RollRight()
 	wchar_t* outstring = L"CineCameraClass::RollRight\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	SpinCamera(-CAMERA_ROLL_SPEED, 0.0f, 0.0f);
+	m_transform->SpinCamera(-CAMERA_ROLL_SPEED, 0.0f, 0.0f);
 }
 
 void CineCameraClass::ZoomIn()
@@ -284,13 +191,14 @@ void CineCameraClass::ZoomOut()
 
 XMFLOAT3 CineCameraClass::GetPosition() const
 {
-	return m_position;
+	return m_transform->getPosition();
 }
 
 
 int CineCameraClass::UpdateMatrices(void)
 {
-	ComputeLocalTransform(m_viewMatrix);
+	m_transform->update(0, 0);
+	m_transform->getWorldTransformNoScale(m_viewMatrix);
 
 	//Create a view matrix based on direction camera is looking
 	XMStoreFloat4x4(&m_viewMatrix, XMMatrixInverse(0, XMLoadFloat4x4(&m_viewMatrix)));
@@ -300,21 +208,6 @@ int CineCameraClass::UpdateMatrices(void)
 
 	return C_OK;
 }
-
-void CineCameraClass::ComputeLocalTransform(DirectX::XMFLOAT4X4& localTransformNoScale) {
-
-	// Initialization
-	XMMATRIX worldTransform = XMMatrixIdentity();
-
-	// Apply transformations
-	worldTransform = XMMatrixRotationQuaternion(XMLoadFloat4(&m_orientation));
-
-	// Translate relative to canonical directions
-	worldTransform = XMMatrixMultiply(worldTransform, XMMatrixTranslationFromVector(XMLoadFloat3(&m_position)));
-
-	XMStoreFloat4x4(&localTransformNoScale, worldTransform);
-}
-
 
 void CineCameraClass::GetViewMatrix(XMFLOAT4X4& viewMatrix) const
 {
@@ -366,6 +259,14 @@ HRESULT CineCameraClass::poll(Keyboard& input, Mouse& mouse)
 	}
 	else if (input.IsKeyDown(VK_CONTROL)){
 
+		/*
+		XMFLOAT2 mouseVel;
+		if (mouse.GetWindowVelocity(mouseVel)) {
+			m_transform->SpinCamera(0.0f, 0.0f, mouseVel.x);
+			m_transform->SpinCamera(0.0f, mouseVel.y, 0.0f);
+		}*/
+
+		
 		if (input.IsKeyDown(VK_LEFT)) //Pan Camera Left
 			PanLeft();
 
@@ -377,6 +278,7 @@ HRESULT CineCameraClass::poll(Keyboard& input, Mouse& mouse)
 
 		if (input.IsKeyDown(VK_DOWN)) //Tilt Camera Upward
 			TiltUp();
+		
 	}
 	else if (input.IsKeyDown(Keyboard::ascii_C)){
 

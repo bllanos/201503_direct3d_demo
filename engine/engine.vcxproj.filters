@@ -87,6 +87,9 @@
     <ClCompile Include="cpp\input\Mouse.cpp">
       <Filter>source\input</Filter>
     </ClCompile>
+    <ClCompile Include="Transformable.cpp">
+      <Filter>Unprocessed Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cinecameraclass.h">
@@ -142,6 +145,9 @@
     </ClInclude>
     <ClInclude Include="header\input\Keyboard.h">
       <Filter>header\input</Filter>
+    </ClInclude>
+    <ClInclude Include="Transformable.h">
+      <Filter>Unprocessed Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
