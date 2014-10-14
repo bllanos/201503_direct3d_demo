@@ -19,8 +19,8 @@ BOOL -- GridQuad_ConfigUser::enableConfigUseLogging = true
 
 # GridQuad geometry configuration
 # -----------------------------------------------
-INT -- GridQuad::nColumns = 1
-INT -- GridQuad::nRows = 1
+INT -- GridQuad::nColumns = 10
+INT -- GridQuad::nRows = 10
 DOUBLE -- GridQuad::transparencyMultiplier = 1.0
 BOOL -- GridQuad::debugWinding = true
 BOOL -- GridQuad::renderWithLighting = false

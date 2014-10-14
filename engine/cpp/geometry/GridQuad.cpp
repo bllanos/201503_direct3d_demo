@@ -289,9 +289,9 @@ HRESULT GridQuad::addIndexedVertices(
 	size_t vertexColumns = m_nColumns + 1;
 	size_t vertexRows = m_nRows + 1;
 	for( i = 0; i < vertexRows; ++i ) {
-		u = static_cast<float>(i) / static_cast<float>(vertexRows);
+		v = static_cast<float>(i) / static_cast<float>(vertexRows - 1);
 		for( j = 0; j < vertexColumns; ++j ) {
-			v = static_cast<float>(j) / static_cast<float>(vertexColumns);
+			u = static_cast<float>(j) / static_cast<float>(vertexColumns - 1);
 
 			// Set vertex properties
 			if( FAILED(uvToBoneIDs(vertex->boneIDs, u, v)) ) {
@@ -359,6 +359,8 @@ HRESULT GridQuad::addIndexedVertices(
 			// Move to the next quad
 			++indexBase;
 		}
+		// Move to the next row
+		++indexBase;
 	}
 
 	// Adjust vertex and index offsets
@@ -427,20 +429,35 @@ HRESULT GridQuad::uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, const float u,
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
 
+	// Calculate distances from corners
+	// --------------------------------
+	float sumDistances = 0.0f;
+
 	// Top right (1, 1)
 	boneWeights.x = sqrt((1.0f - u) * (1.0f - u) + v * v);
+	sumDistances += boneWeights.x;
 
 	// Top left (-1, 1)
 	boneWeights.y = sqrt(u*u + v*v);
+	sumDistances += boneWeights.y;
 
 	// Bottom left (-1, -1)
 	boneWeights.z = sqrt(u*u + (1.0f - v) * (1.0f - v));
+	sumDistances += boneWeights.z;
 
 	// Bottom right (1, -1)
 	boneWeights.w = sqrt((1.0f - u) * (1.0f - u) + (1.0f - v) * (1.0f - v));
+	sumDistances += boneWeights.w;
 
-	// Normalize
+	// Weight each distance as (1 - its proportion of the sum)
+	// -------------------------------------------------------
 	DirectX::XMStoreFloat4(&boneWeights,
-		DirectX::XMVector4Normalize(DirectX::XMLoadFloat4(&boneWeights)));
+		DirectX::XMVectorScale(DirectX::XMLoadFloat4(&boneWeights), 1.0f / sumDistances));
+	DirectX::XMStoreFloat4(&boneWeights,
+		DirectX::XMVectorSubtract(XMVectorSplatOne(), DirectX::XMLoadFloat4(&boneWeights)));
+
+	// The sum of all components needs to be one
+	DirectX::XMStoreFloat4(&boneWeights,
+		DirectX::XMVectorScale(DirectX::XMLoadFloat4(&boneWeights), 1.0f / 3.0f));
 	return ERROR_SUCCESS;
 }
