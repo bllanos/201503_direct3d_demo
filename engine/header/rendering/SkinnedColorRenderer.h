@@ -35,6 +35,7 @@ Description
 #include "IGeometryRenderer.h"
 #include "ConfigUser.h"
 #include "FlatAtomicConfigIO.h"
+#include "SkinnedColorGeometry.h"
 
 // Type of loader to use for configuration data
 #define SKINNEDCOLORRENDERER_CONFIGIO_CLASS FlatAtomicConfigIO
@@ -68,6 +69,12 @@ Description
 #define SKINNEDCOLORRENDERER_PS_ENTRYPOINT_FIELD_NO_LIGHT L"psEntryPoint_noLighting"
 #define SKINNEDCOLORRENDERER_PS_ENTRYPOINT_FIELD_LIGHT L"psEntryPoint_withLighting"
 
+// Lighting parameters
+#define SKINNEDCOLORRENDERER_LIGHT_POSITION_DEFAULT DirectX::XMFLOAT4(-1000.0f, 0.0f, 0.0f, 1.0f);
+#define SKINNEDCOLORRENDERER_LIGHT_POSITION_FIELD L"lightPosition"
+#define SKINNEDCOLORRENDERER_LIGHT_COLOR_DEFAULT DirectX::XMFLOAT4(1.0, 1.0f, 1.0f, 1.0f);
+#define SKINNEDCOLORRENDERER_LIGHT_COLOR_FIELD L"lightColor"
+
 class SkinnedColorRenderer : public IGeometryRenderer, public ConfigUser {
 private:
 	struct CameraBufferType {
@@ -86,10 +93,10 @@ private:
 	};
 
 public:
-	struct LightBufferType {
+	// Point light source
+	struct Light {
 		DirectX::XMFLOAT4 lightPosition;
 		DirectX::XMFLOAT4 lightColor;
-		DirectX::XMFLOAT4 lightDirection;
 	};
 
 public:
@@ -147,13 +154,26 @@ protected:
 	 */
 	void outputShaderErrorMessage(ID3D10Blob* const);
 
-	virtual HRESULT setShaderParameters(ID3D11DeviceContext* const, const DirectX::XMFLOAT4X4 viewMatrix, const DirectX::XMFLOAT4X4 projectionMatrix, const float blendFactor);
+	virtual HRESULT setShaderParameters(
+		ID3D11DeviceContext* const,
+		const DirectX::XMFLOAT4X4 viewMatrix,
+		const DirectX::XMFLOAT4X4 projectionMatrix,
+		const DirectX::XMFLOAT4 cameraPosition,
+		const float blendFactor,
+		const SkinnedColorGeometry::Material* material);
 
 	/* Sets light-independent pipeline state */
-	virtual HRESULT setNoLightShaderParameters(ID3D11DeviceContext* const, const DirectX::XMFLOAT4X4 viewMatrix, const DirectX::XMFLOAT4X4 projectionMatrix, const float blendFactor);
+	virtual HRESULT setNoLightShaderParameters(
+		ID3D11DeviceContext* const,
+		const DirectX::XMFLOAT4X4 viewMatrix,
+		const DirectX::XMFLOAT4X4 projectionMatrix,
+		const DirectX::XMFLOAT4 cameraPosition,
+		const float blendFactor);
 
 	/* Sets light-dependent pipeline state */
-	virtual HRESULT setLightShaderParameters(ID3D11DeviceContext* const);
+	virtual HRESULT setLightShaderParameters(
+		ID3D11DeviceContext* const,
+		const SkinnedColorGeometry::Material* material);
 
 	void renderShader(ID3D11DeviceContext* const, const size_t);
 
@@ -162,11 +182,19 @@ private:
 	ID3D11VertexShader* m_vertexShader;
 	ID3D11PixelShader* m_pixelShader;
 	ID3D11InputLayout* m_layout;
-	ID3D11Buffer* m_matrixBuffer;
-	ID3D11Buffer* m_transparentBuffer;
+	ID3D11Buffer* m_cameraBuffer;
+	ID3D11Buffer* m_materialBuffer;
+	ID3D11Buffer* m_lightBuffer;
 
 	// Is the renderer configured to use lighting?
 	bool m_lighting;
+
+	/* To be initialized from configuration data
+	   Currently, the light gets sent to the pipeline each
+	   rendering pass, even though there is no
+	   mechanism for changing the light data between frames.
+	 */
+	Light* m_light;
 
 	// Currently not implemented - will cause linker errors if called
 private:

@@ -37,8 +37,8 @@ SkinnedColorRenderer::SkinnedColorRenderer(
 	static_cast<SKINNEDCOLORRENDERER_CONFIGIO_CLASS*>(0),
 	filename, path),
 	m_vertexShader(0), m_pixelShader(0), m_layout(0),
-	m_matrixBuffer(0), m_transparentBuffer(0),
-	m_lighting(false)
+	m_cameraBuffer(0), m_materialBuffer(0), m_lightBuffer(0),
+	m_lighting(false), m_light(0)
 {
 	// Configure base members
 	const wstring configUserScope(SKINNEDCOLORRENDERER_CONFIGUSER_SCOPE);
@@ -46,14 +46,19 @@ SkinnedColorRenderer::SkinnedColorRenderer(
 }
 
 SkinnedColorRenderer::~SkinnedColorRenderer(void) {
-	if( m_transparentBuffer ) {
-		m_transparentBuffer->Release();
-		m_transparentBuffer = 0;
+	if( m_cameraBuffer ) {
+		m_cameraBuffer->Release();
+		m_cameraBuffer = 0;
 	}
 
-	if( m_matrixBuffer ) {
-		m_matrixBuffer->Release();
-		m_matrixBuffer = 0;
+	if( m_materialBuffer ) {
+		m_materialBuffer->Release();
+		m_materialBuffer = 0;
+	}
+
+	if( m_lightBuffer ) {
+		m_lightBuffer->Release();
+		m_lightBuffer = 0;
 	}
 
 	if( m_layout ) {
@@ -69,6 +74,11 @@ SkinnedColorRenderer::~SkinnedColorRenderer(void) {
 	if( m_vertexShader ) {
 		m_vertexShader->Release();
 		m_vertexShader = 0;
+	}
+
+	if( m_light != 0 ) {
+		delete m_light;
+		m_light = 0;
 	}
 }
 
@@ -110,8 +120,17 @@ HRESULT SkinnedColorRenderer::render(ID3D11DeviceContext* const context, const I
 
 	float blend = castGeometry.getTransparencyBlendFactor();
 
+	// Prepare camera data
+	DirectX::XMFLOAT4 cameraPosition;
+	DirectX::XMFLOAT3 cameraPositionFloat3 = camera->GetPosition();
+	cameraPosition.x = cameraPositionFloat3.x;
+	cameraPosition.y = cameraPositionFloat3.y;
+	cameraPosition.z = cameraPositionFloat3.z;
+	cameraPosition.w = 1.0f;
+
 	// Set the shader parameters that it will use for rendering.
-	result = setShaderParameters(context, viewMatrix, projectionMatrix, blend);
+	result = setShaderParameters(context, viewMatrix, projectionMatrix,
+		cameraPosition, blend, castGeometry.getMaterial());
 	if( FAILED(result) ) {
 		logMessage(L"Failed to set shader parameters.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -231,6 +250,21 @@ HRESULT SkinnedColorRenderer::configureRendering(
 	} else {
 		logMessage(criticalErrorMsg);
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
+	}
+
+	// Light parameters
+	if( m_lighting ) {
+		m_light = new Light;
+		m_light->lightPosition = SKINNEDCOLORRENDERER_LIGHT_POSITION_DEFAULT;
+		m_light->lightColor = SKINNEDCOLORRENDERER_LIGHT_COLOR_DEFAULT;
+		const DirectX::XMFLOAT4* float4Value = 0;
+
+		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_POSITION_FIELD, float4Value) ) {
+			m_light->lightPosition = *float4Value;
+		}
+		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_COLOR_FIELD, float4Value) ) {
+			m_light->lightColor = *float4Value;
+		}
 	}
 
 	return ERROR_SUCCESS;
@@ -406,36 +440,36 @@ HRESULT SkinnedColorRenderer::createInputLayout(ID3D11Device* const device, ID3D
 
 HRESULT SkinnedColorRenderer::createNoLightConstantBuffers(ID3D11Device* const device) {
 	HRESULT result = ERROR_SUCCESS;
-	D3D11_BUFFER_DESC matrixBufferDesc;
-	D3D11_BUFFER_DESC transparentBufferDesc;
+	D3D11_BUFFER_DESC cameraBufferDesc;
+	D3D11_BUFFER_DESC materialBufferDesc;
 
 	// Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
-	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	matrixBufferDesc.ByteWidth = sizeof(MatrixBufferType);
-	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	matrixBufferDesc.MiscFlags = 0;
-	matrixBufferDesc.StructureByteStride = 0;
+	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	cameraBufferDesc.ByteWidth = sizeof(CameraBufferType);
+	cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cameraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cameraBufferDesc.MiscFlags = 0;
+	cameraBufferDesc.StructureByteStride = 0;
 
 	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-	result = device->CreateBuffer(&matrixBufferDesc, NULL, &m_matrixBuffer);
+	result = device->CreateBuffer(&cameraBufferDesc, NULL, &m_cameraBuffer);
 	if( FAILED(result) ) {
-		logMessage(L"Failed to create vertex transformation constant buffer.");
+		logMessage(L"Failed to create camera transformation constant buffer.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
 	}
 
-	// Setup the description of the transparent dynamic constant buffer that is in the pixel shader.
-	transparentBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	transparentBufferDesc.ByteWidth = sizeof(TransparentBufferType);
-	transparentBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	transparentBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	transparentBufferDesc.MiscFlags = 0;
-	transparentBufferDesc.StructureByteStride = 0;
+	// Setup the description of the material dynamic constant buffer that is in the pixel shader.
+	materialBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	materialBufferDesc.ByteWidth = sizeof(MaterialBufferType);
+	materialBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	materialBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	materialBufferDesc.MiscFlags = 0;
+	materialBufferDesc.StructureByteStride = 0;
 
 	// Create the constant buffer pointer so we can access the pixel shader constant buffer from within this class.
-	result = device->CreateBuffer(&transparentBufferDesc, NULL, &m_transparentBuffer);
+	result = device->CreateBuffer(&materialBufferDesc, NULL, &m_materialBuffer);
 	if( FAILED(result) ) {
-		logMessage(L"Failed to create pixel shader transparency constant buffer.");
+		logMessage(L"Failed to create material constant buffer.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
 	}
 
@@ -443,8 +477,24 @@ HRESULT SkinnedColorRenderer::createNoLightConstantBuffers(ID3D11Device* const d
 }
 
 HRESULT SkinnedColorRenderer::createLightConstantBuffers(ID3D11Device* const device) {
-	// Under construction
-	return ERROR_SUCCESS;
+	HRESULT result = ERROR_SUCCESS;
+	D3D11_BUFFER_DESC lightBufferDesc;
+
+	// Setup the description of the dynamic matrix constant buffer that is in the pixel shader.
+	lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	lightBufferDesc.ByteWidth = sizeof(Light);
+	lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	lightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	lightBufferDesc.MiscFlags = 0;
+	lightBufferDesc.StructureByteStride = 0;
+
+	// Create the constant buffer pointer so we can access the pixel shader constant buffer from within this class.
+	result = device->CreateBuffer(&lightBufferDesc, NULL, &m_lightBuffer);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create light constant buffer.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+	return result;
 }
 
 void SkinnedColorRenderer::outputShaderErrorMessage(ID3D10Blob* const errorMessage) {
@@ -471,13 +521,20 @@ void SkinnedColorRenderer::outputShaderErrorMessage(ID3D10Blob* const errorMessa
 	errorMessage->Release();
 }
 
-HRESULT SkinnedColorRenderer::setShaderParameters(ID3D11DeviceContext* const context, const DirectX::XMFLOAT4X4 viewMatrix, const DirectX::XMFLOAT4X4 projectionMatrix, const float blendFactor) {
-	if (FAILED(setNoLightShaderParameters(context, viewMatrix, projectionMatrix, blendFactor))) {
+HRESULT SkinnedColorRenderer::setShaderParameters(
+	ID3D11DeviceContext* const context,
+	const DirectX::XMFLOAT4X4 viewMatrix,
+	const DirectX::XMFLOAT4X4 projectionMatrix,
+	const DirectX::XMFLOAT4 cameraPosition,
+	const float blendFactor,
+	const SkinnedColorGeometry::Material* material) {
+
+	if( FAILED(setNoLightShaderParameters(context, viewMatrix, projectionMatrix, cameraPosition, blendFactor)) ) {
 		logMessage(L"Call to setNoLightShaderParameters() failed.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	if( m_lighting ) {
-		if( FAILED(setLightShaderParameters(context)) ) {
+		if( FAILED(setLightShaderParameters(context, material)) ) {
 			logMessage(L"Call to setLightShaderParameters() failed.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
@@ -486,12 +543,17 @@ HRESULT SkinnedColorRenderer::setShaderParameters(ID3D11DeviceContext* const con
 	return ERROR_SUCCESS;
 }
 
-HRESULT SkinnedColorRenderer::setNoLightShaderParameters(ID3D11DeviceContext* const context, const DirectX::XMFLOAT4X4 viewMatrix, const DirectX::XMFLOAT4X4 projectionMatrix, const float blendFactor) {
+HRESULT SkinnedColorRenderer::setNoLightShaderParameters(
+	ID3D11DeviceContext* const context,
+	const DirectX::XMFLOAT4X4 viewMatrix,
+	const DirectX::XMFLOAT4X4 projectionMatrix,
+	const DirectX::XMFLOAT4 cameraPosition,
+	const float blendFactor) {
+
 	HRESULT result = ERROR_SUCCESS;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	MatrixBufferType* transformDataPtr = 0;
-	unsigned int bufferNumber = 0;
-	TransparentBufferType* blendDataPtr = 0;
+	CameraBufferType* cameraDataPtr = 0;
+	MaterialBufferType* materialDataPtr = 0;
 
 	// Transpose the matrices to prepare them for the shader.
 	DirectX::XMFLOAT4X4 viewMatrixTranspose;
@@ -500,36 +562,34 @@ HRESULT SkinnedColorRenderer::setNoLightShaderParameters(ID3D11DeviceContext* co
 	XMStoreFloat4x4(&projectionMatrixTranspose, XMMatrixTranspose(XMLoadFloat4x4(&projectionMatrix)));
 
 	// Lock the constant buffer so it can be written to.
-	result = context->Map(m_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = context->Map(m_cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if( FAILED(result) ) {
-		logMessage(L"Failed to map transformation constant buffer.");
+		logMessage(L"Failed to map camera constant buffer.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
 	}
 
 	// Get a pointer to the data in the constant buffer.
-	transformDataPtr = (MatrixBufferType*) mappedResource.pData;
+	cameraDataPtr = (CameraBufferType*) mappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	transformDataPtr->view = viewMatrixTranspose;
-	transformDataPtr->projection = projectionMatrixTranspose;
+	cameraDataPtr->view = viewMatrixTranspose;
+	cameraDataPtr->projection = projectionMatrixTranspose;
+	cameraDataPtr->cameraPosition = cameraPosition;
 
 	// Unlock the constant buffer.
-	context->Unmap(m_matrixBuffer, 0);
-
-	// Set the position of the constant buffer in the vertex shader.
-	bufferNumber = 0;
+	context->Unmap(m_cameraBuffer, 0);
 
 	// Finally set the constant buffer in the vertex shader with the updated values.
-	context->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
+	context->VSSetConstantBuffers(0, 1, &m_cameraBuffer);
 
 	// Lock the transparent constant buffer so it can be written to.
-	result = context->Map(m_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = context->Map(m_materialBuffer, 0, D3D11_MAP_WRITE, 0, &mappedResource);
 	if( FAILED(result) ) {
-		return false;
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
 	}
 
 	// Get a pointer to the data in the transparent constant buffer.
-	blendDataPtr = (TransparentBufferType*) mappedResource.pData;
+	materialDataPtr = (MaterialBufferType*) mappedResource.pData;
 
 	// Copy the blend amount value into the transparent constant buffer.
 	float blend = blendFactor;
@@ -537,23 +597,69 @@ HRESULT SkinnedColorRenderer::setNoLightShaderParameters(ID3D11DeviceContext* co
 		logMessage(L"Blend factor out of range (0.0f to 1.0f) - Defaulted to 1.0f.");
 		blend = 1.0f;
 	}
-	blendDataPtr->blendAmount = blend;
+	materialDataPtr->blendAmount = blend;
 
 	// Unlock the buffer.
-	context->Unmap(m_transparentBuffer, 0);
+	context->Unmap(m_materialBuffer, 0);
 
-	// Set the position of the transparent constant buffer in the pixel shader.
-	bufferNumber = 0;
-
-	// Now set the texture translation constant buffer in the pixel shader with the updated values.
-	context->PSSetConstantBuffers(bufferNumber, 1, &m_transparentBuffer);
+	// Now set the material constant buffer in the pixel shader with the updated values.
+	context->PSSetConstantBuffers(0, 1, &m_materialBuffer);
 
 	return result;
 }
 
-HRESULT SkinnedColorRenderer::setLightShaderParameters(ID3D11DeviceContext* const context) {
-	// Under construction
-	return ERROR_SUCCESS;
+HRESULT SkinnedColorRenderer::setLightShaderParameters(ID3D11DeviceContext* const context,
+	const SkinnedColorGeometry::Material* material) {
+
+	HRESULT result = ERROR_SUCCESS;
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	MaterialBufferType* materialDataPtr = 0;
+	Light* lightDataPtr = 0;
+
+	// Lock the material constant buffer so it can be written to.
+	result = context->Map(m_materialBuffer, 0, D3D11_MAP_WRITE, 0, &mappedResource);
+	if( FAILED(result) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	// Get a pointer to the data in the material constant buffer.
+	materialDataPtr = (MaterialBufferType*) mappedResource.pData;
+
+	// Blending factors should already have been set earlier
+	materialDataPtr->ambientAlbedo = material->ambientAlbedo;
+	materialDataPtr->diffuseAlbedo = material->diffuseAlbedo;
+	materialDataPtr->specularAlbedo = material->specularAlbedo;
+	materialDataPtr->specularPower = material->specularPower;
+
+	// Unlock the buffer.
+	context->Unmap(m_materialBuffer, 0);
+
+	// Assumed to have been done earlier by setNoLightShaderParameters()
+	// context->PSSetConstantBuffers(0, 1, &m_materialBuffer);
+
+	// Lock the light constant buffer so it can be written to.
+	result = context->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if( FAILED(result) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	// Get a pointer to the data in the transparent constant buffer.
+	lightDataPtr = (Light*) mappedResource.pData;
+
+	// Copy values
+	lightDataPtr->lightPosition = m_light->lightPosition;
+	lightDataPtr->lightColor = m_light->lightColor;
+
+	// Unlock the buffer.
+	context->Unmap(m_lightBuffer, 0);
+
+	// Now set the light constant buffer in the pixel shader with the updated values.
+	context->PSSetConstantBuffers(2, 1, &m_lightBuffer);
+
+	// The lighting shader also needs camera properties
+	context->PSSetConstantBuffers(1, 1, &m_cameraBuffer);
+
+	return result;
 }
 
 void SkinnedColorRenderer::renderShader(ID3D11DeviceContext* const context, const size_t indexCount) {
