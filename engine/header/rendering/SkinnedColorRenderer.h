@@ -70,14 +70,26 @@ Description
 
 class SkinnedColorRenderer : public IGeometryRenderer, public ConfigUser {
 private:
-	struct MatrixBufferType {
+	struct CameraBufferType {
 		DirectX::XMFLOAT4X4 view;
 		DirectX::XMFLOAT4X4 projection;
+		DirectX::XMFLOAT4 cameraPosition;
 	};
 
-	struct TransparentBufferType {
+	struct MaterialBufferType {
+		DirectX::XMFLOAT4 ambientAlbedo;
+		DirectX::XMFLOAT4 diffuseAlbedo;
+		DirectX::XMFLOAT4 specularAlbedo;
+		float specularPower;
 		float blendAmount;
-		DirectX::XMFLOAT3 padding;
+		DirectX::XMFLOAT2 padding;
+	};
+
+public:
+	struct LightBufferType {
+		DirectX::XMFLOAT4 lightPosition;
+		DirectX::XMFLOAT4 lightColor;
+		DirectX::XMFLOAT4 lightDirection;
 	};
 
 public:
