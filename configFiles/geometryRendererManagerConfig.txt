@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------
 BOOL -- GeometryRendererManager::SimpleColorRenderer = true
 BOOL -- GeometryRendererManager::SkinnedColorRendererNoLight = true
-BOOL -- GeometryRendererManager::SkinnedColorRendererLight = false
+BOOL -- GeometryRendererManager::SkinnedColorRendererLight = true
 
 # Where to find configuration data for the SimpleColorRenderer
 # ------------------------------------------------------------

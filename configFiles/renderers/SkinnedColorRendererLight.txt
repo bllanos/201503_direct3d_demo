@@ -1,5 +1,5 @@
 # Configuration file for the SkinnedColorRenderer class
-# Version to be used for unlit geometry by convention
+# Version to be used for lit geometry by convention
 
 # LogUser configuration
 # ---------------------
@@ -14,14 +14,19 @@ BOOL -- SkinnedColorRenderer_ConfigUser::enableConfigUseLogging = true
 
 # Disable lighting
 # ----------------
-BOOL -- SkinnedColorRenderer::enableLighting = false
+BOOL -- SkinnedColorRenderer::enableLighting = true
 
 # Shader setup
 # ------------
 DIRECTORY -- SkinnedColorRenderer::shaderFilePath = "..\shaderCode"
-FILENAME -- SkinnedColorRenderer::vsFileName_noLighting = "skinnedColorVS_noLight.hlsl"
+FILENAME -- SkinnedColorRenderer::vsFileName_withLighting = "skinnedColorVS_phongLight.hlsl"
 WSTRING -- SkinnedColorRenderer::vsShaderModel = L"vs_4_0"
-WSTRING -- SkinnedColorRenderer::vsEntryPoint_noLighting = L"VSMAIN"
-FILENAME -- SkinnedColorRenderer::psFileName_noLighting = "skinnedColorPS_noLight.hlsl"
+WSTRING -- SkinnedColorRenderer::vsEntryPoint_withLighting = L"VSMAIN"
+FILENAME -- SkinnedColorRenderer::psFileName_withLighting = "skinnedColorPS_phongLight.hlsl"
 WSTRING -- SkinnedColorRenderer::psShaderModel = L"ps_4_0"
-WSTRING -- SkinnedColorRenderer::psEntryPoint_noLighting = L"ColorPixelShader"
+WSTRING -- SkinnedColorRenderer::psEntryPoint_withLighting = L"PSMAIN"
+
+# Light parameters
+# ----------------
+FLOAT4 -- SkinnedColorRenderer::lightPosition = (100.0, 0.0, -50.0)
+COLOR -- SkinnedColorRenderer::lightColor = (0, 255, 0, 255)

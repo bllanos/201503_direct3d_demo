@@ -262,7 +262,7 @@ HRESULT SkinnedColorRenderer::configureRendering(
 		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_POSITION_FIELD, float4Value) ) {
 			m_light->lightPosition = *float4Value;
 		}
-		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_COLOR_FIELD, float4Value) ) {
+		if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_COLOR_FIELD, float4Value) ) {
 			m_light->lightColor = *float4Value;
 		}
 	}
