@@ -462,35 +462,27 @@ HRESULT GridQuad::uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, const float u,
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
 
-	// Calculate distances from corners
-	// --------------------------------
-	float sumDistances = 0.0f;
+	// Corner weights to interpolate
+	const XMVECTOR topRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	const XMVECTOR topLeft = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	const XMVECTOR bottomLeft = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	const XMVECTOR bottomRight = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Top right (1, 1)
-	boneWeights.x = sqrt((1.0f - u) * (1.0f - u) + v * v);
-	sumDistances += boneWeights.x;
+	// Bilinear interpolation
+	DirectX::XMFLOAT4 upperWeight;
+	DirectX::XMStoreFloat4(&upperWeight, DirectX::XMVectorLerp(
+		topLeft, // Top left
+		topRight, // Top right
+		u));
+	DirectX::XMFLOAT4 lowerWeight;
+	DirectX::XMStoreFloat4(&lowerWeight, DirectX::XMVectorLerp(
+		bottomLeft, // Bottom left
+		bottomRight, // Bottom right
+		u));
 
-	// Top left (-1, 1)
-	boneWeights.y = sqrt(u*u + v*v);
-	sumDistances += boneWeights.y;
-
-	// Bottom left (-1, -1)
-	boneWeights.z = sqrt(u*u + (1.0f - v) * (1.0f - v));
-	sumDistances += boneWeights.z;
-
-	// Bottom right (1, -1)
-	boneWeights.w = sqrt((1.0f - u) * (1.0f - u) + (1.0f - v) * (1.0f - v));
-	sumDistances += boneWeights.w;
-
-	// Weight each distance as (1 - its proportion of the sum)
-	// -------------------------------------------------------
-	DirectX::XMStoreFloat4(&boneWeights,
-		DirectX::XMVectorScale(DirectX::XMLoadFloat4(&boneWeights), 1.0f / sumDistances));
-	DirectX::XMStoreFloat4(&boneWeights,
-		DirectX::XMVectorSubtract(XMVectorSplatOne(), DirectX::XMLoadFloat4(&boneWeights)));
-
-	// The sum of all components needs to be one
-	DirectX::XMStoreFloat4(&boneWeights,
-		DirectX::XMVectorScale(DirectX::XMLoadFloat4(&boneWeights), 1.0f / 3.0f));
+	DirectX::XMStoreFloat4(&boneWeights, DirectX::XMVectorLerp(
+		DirectX::XMLoadFloat4(&upperWeight),
+		DirectX::XMLoadFloat4(&lowerWeight),
+		v));
 	return ERROR_SUCCESS;
 }

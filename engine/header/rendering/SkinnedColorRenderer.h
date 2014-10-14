@@ -173,7 +173,8 @@ protected:
 	/* Sets light-dependent pipeline state */
 	virtual HRESULT setLightShaderParameters(
 		ID3D11DeviceContext* const,
-		const SkinnedColorGeometry::Material* material);
+		const SkinnedColorGeometry::Material* material,
+		const float blendFactor);
 
 	void renderShader(ID3D11DeviceContext* const, const size_t);
 

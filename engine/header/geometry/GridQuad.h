@@ -18,8 +18,8 @@ Description
   -A rectangular grid with model space dimensions (-1, -1, 0) to (1, 1, 0),
      facing in the negative-Z direction.
   -Each corner is pinned to an ITransformable object serving as a bone
-  -Bone weights for interior vertices are calculated based on distances
-     to the corners of the grid.
+  -Bone weights for interior vertices are calculated using
+     bilinear interpolation.
 */
 
 #pragma once

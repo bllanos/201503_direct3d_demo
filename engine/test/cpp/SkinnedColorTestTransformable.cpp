@@ -23,7 +23,7 @@ Description
 using namespace DirectX;
 
 // Action period in milliseconds
-#define SKINNEDCOLORTESTTRANSFORMABLE_PERIOD (10.0f * MILLISECS_PER_SEC_FLOAT)
+#define SKINNEDCOLORTESTTRANSFORMABLE_PERIOD (15.0f * MILLISECS_PER_SEC_FLOAT)
 
 // Extent of translation (half of full range)
 #define SKINNEDCOLORTESTTRANSFORMABLE_TRANSLATE 2.0f

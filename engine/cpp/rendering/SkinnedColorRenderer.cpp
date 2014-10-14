@@ -534,7 +534,7 @@ HRESULT SkinnedColorRenderer::setShaderParameters(
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	if( m_lighting ) {
-		if( FAILED(setLightShaderParameters(context, material)) ) {
+		if( FAILED(setLightShaderParameters(context, material, blendFactor)) ) {
 			logMessage(L"Call to setLightShaderParameters() failed.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
@@ -583,7 +583,7 @@ HRESULT SkinnedColorRenderer::setNoLightShaderParameters(
 	context->VSSetConstantBuffers(0, 1, &m_cameraBuffer);
 
 	// Lock the transparent constant buffer so it can be written to.
-	result = context->Map(m_materialBuffer, 0, D3D11_MAP_WRITE, 0, &mappedResource);
+	result = context->Map(m_materialBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if( FAILED(result) ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
 	}
@@ -609,7 +609,7 @@ HRESULT SkinnedColorRenderer::setNoLightShaderParameters(
 }
 
 HRESULT SkinnedColorRenderer::setLightShaderParameters(ID3D11DeviceContext* const context,
-	const SkinnedColorGeometry::Material* material) {
+	const SkinnedColorGeometry::Material* material, const float blendFactor) {
 
 	HRESULT result = ERROR_SUCCESS;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -617,7 +617,7 @@ HRESULT SkinnedColorRenderer::setLightShaderParameters(ID3D11DeviceContext* cons
 	Light* lightDataPtr = 0;
 
 	// Lock the material constant buffer so it can be written to.
-	result = context->Map(m_materialBuffer, 0, D3D11_MAP_WRITE, 0, &mappedResource);
+	result = context->Map(m_materialBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if( FAILED(result) ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
 	}
@@ -625,11 +625,17 @@ HRESULT SkinnedColorRenderer::setLightShaderParameters(ID3D11DeviceContext* cons
 	// Get a pointer to the data in the material constant buffer.
 	materialDataPtr = (MaterialBufferType*) mappedResource.pData;
 
-	// Blending factors should already have been set earlier
 	materialDataPtr->ambientAlbedo = material->ambientAlbedo;
 	materialDataPtr->diffuseAlbedo = material->diffuseAlbedo;
 	materialDataPtr->specularAlbedo = material->specularAlbedo;
 	materialDataPtr->specularPower = material->specularPower;
+	float blend = blendFactor;
+	if( blendFactor > 1.0f || blendFactor < 0.0f ) {
+		logMessage(L"Blend factor out of range (0.0f to 1.0f) - Defaulted to 1.0f.");
+		blend = 1.0f;
+	}
+	materialDataPtr->blendAmount = blend;
+
 
 	// Unlock the buffer.
 	context->Unmap(m_materialBuffer, 0);
