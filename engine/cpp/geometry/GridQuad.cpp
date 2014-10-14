@@ -95,7 +95,7 @@ HRESULT GridQuad::configure(void) {
 		};
 
 		for( size_t i = 0; i < GRIDQUAD_NCORNERS; ++i ) {
-			if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(GRIDQUAD_SCOPE, colorFields[i], colorValue) ) {
+			if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(GRIDQUAD_SCOPE, colorFields[i], colorValue) ) {
 				m_colors[i] = *colorValue;
 			}
 		}
@@ -110,7 +110,7 @@ HRESULT GridQuad::configure(void) {
 	if( useLighting ) {
 		result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedColorRendererLight);
 	} else {
-		result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedColorRendererLight);
+		result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedColorRendererNoLight);
 	}
 	if( FAILED(result) ) {
 		std::wstring msg = L"Error setting the renderer to use based on the lighting flag value of ";

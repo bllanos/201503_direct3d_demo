@@ -13,6 +13,18 @@ DIRECTORY -- GridQuad_LogUser::logFilePath = "..\logFiles\test"
 BOOL -- GridQuad_LogUser::overwriteFile = false
 BOOL -- GridQuad_LogUser::timestampEnable = true
 
-# ConfigUser configuration
+# GridQuad ConfigUser configuration
 # -----------------------------------
 BOOL -- GridQuad_ConfigUser::enableConfigUseLogging = true
+
+# GridQuad geometry configuration
+# -----------------------------------------------
+INT -- GridQuad::nColumns = 1
+INT -- GridQuad::nRows = 1
+DOUBLE -- GridQuad::transparencyMultiplier = 1.0
+BOOL -- GridQuad::debugWinding = true
+BOOL -- GridQuad::renderWithLighting = false
+COLOR -- GridQuad::topRight = (255, 255, 255, 255)
+COLOR -- GridQuad::topLeft = (255, 255, 0, 255)
+COLOR -- GridQuad::bottomLeft = (255, 0, 255, 255)
+COLOR -- GridQuad::bottomRight = (255, 0, 0, 255)
