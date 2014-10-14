@@ -32,7 +32,7 @@ Phase1TestTransformable::Phase1TestTransformable(void)
 Phase1TestTransformable::~Phase1TestTransformable(void)
 {}
 
-HRESULT Phase1TestTransformable::getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) {
+HRESULT Phase1TestTransformable::getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const {
 	worldTransform = m_worldTransform;
 	return ERROR_SUCCESS;
 }

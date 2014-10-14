@@ -27,3 +27,12 @@ struct SimpleColorVertexType {
 	DirectX::XMFLOAT3 position;
 	DirectX::XMFLOAT4 color;
 };
+
+#define SKINNEDCOLORVERTEXTYPE_COMPONENTS 5
+struct SkinnedColorVertexType {
+	unsigned int boneIDs[4];
+	DirectX::XMFLOAT4 boneWeights;
+	DirectX::XMFLOAT3 position;
+	DirectX::XMFLOAT3 normal;
+	DirectX::XMFLOAT4 color;
+};

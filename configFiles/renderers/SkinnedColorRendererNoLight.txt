@@ -1,0 +1,27 @@
+# Configuration file for the SkinnedColorRenderer class
+# Version to be used for lit geometry by convention
+
+# LogUser configuration
+# ---------------------
+BOOL -- SkinnedColorRenderer_LogUser::enableLogging = true
+WSTRING -- SkinnedColorRenderer_LogUser::msgPrefix = L"SkinnedColorRenderer"
+BOOL -- SkinnedColorRenderer_LogUser::useGlobalLog = true
+# BOOL -- SkinnedColorRenderer_LogUser::timestampEnable = true
+
+# ConfigUser configuration
+# ------------------------
+BOOL -- SkinnedColorRenderer_ConfigUser::enableConfigUseLogging = true
+
+# Disable lighting
+# ----------------
+BOOL -- SkinnedColorRenderer::enableLighting = false
+
+# Shader setup
+# ------------
+DIRECTORY -- SkinnedColorRenderer::shaderFilePath = "..\shaderCode"
+FILENAME -- SkinnedColorRenderer::vsFileName_noLighting = "skinnedColorVS_noLight.hlsl"
+WSTRING -- SkinnedColorRenderer::vsShaderModel = L"vs_4_0"
+WSTRING -- SkinnedColorRenderer::vsEntryPoint_noLighting = L"VSMAIN"
+FILENAME -- SkinnedColorRenderer::psFileName_noLighting = "colorPS.hlsl"
+WSTRING -- SkinnedColorRenderer::psShaderModel = L"ps_4_0"
+WSTRING -- SkinnedColorRenderer::psEntryPoint_noLighting = L"ColorPixelShader"

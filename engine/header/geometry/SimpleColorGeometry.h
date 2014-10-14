@@ -15,7 +15,7 @@ Incorporated September 18, 2014
 Primary basis: COMP2501A project code
   (Bernard Llanos, Alec McGrail, Benjamin Smith - Winter 2014)
   -Adapted from the following source: COMP2501A Tutorial 5
-  -Original name was "SimpleColorGeometry.h"
+  -Original name was "modelclass.h"
 
 Description
   -A class for storing indexed vertex geometry

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -87,6 +87,21 @@
     <ClCompile Include="cpp\input\Mouse.cpp">
       <Filter>source\input</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\rendering\SkinnedColorRenderer.cpp">
+      <Filter>source\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\geometry\GridQuad.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\SkinnedColorTestTransformable.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\SkinnedColorTestState.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cinecameraclass.h">
@@ -142,6 +157,21 @@
     </ClInclude>
     <ClInclude Include="header\input\Keyboard.h">
       <Filter>header\input</Filter>
+    </ClInclude>
+    <ClInclude Include="header\rendering\SkinnedColorRenderer.h">
+      <Filter>header\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\SkinnedColorGeometry.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\GridQuad.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\SkinnedColorTestState.h">
+      <Filter>test\header</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\SkinnedColorTestTransformable.h">
+      <Filter>test\header</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

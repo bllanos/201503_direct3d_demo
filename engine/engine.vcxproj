@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -11,22 +11,32 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="test\cpp\SkinnedColorTestState.cpp" />
+    <ClCompile Include="test\cpp\SkinnedColorTestTransformable.cpp" />
+    <ClCompile Include="cpp\geometry\GridQuad.cpp" />
     <ClCompile Include="cpp\d3dclass.cpp" />
     <ClCompile Include="cpp\engineMain.cpp" />
     <ClCompile Include="cpp\GeometryRendererManager.cpp" />
     <ClCompile Include="cpp\geometry\CubeModel.cpp" />
     <ClCompile Include="cpp\geometry\SimpleColorGeometry.cpp" />
+    <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp" />
     <ClCompile Include="cpp\input\Keyboard.cpp" />
     <ClCompile Include="cpp\input\Mouse.cpp" />
     <ClCompile Include="cpp\rendering\SimpleColorRenderer.cpp" />
+    <ClCompile Include="cpp\rendering\SkinnedColorRenderer.cpp" />
     <ClCompile Include="cpp\StateControl.cpp" />
     <ClCompile Include="test\cpp\Phase1TestState.cpp" />
     <ClCompile Include="test\cpp\Phase1TestTransformable.cpp" />
     <ClCompile Include="cinecameraclass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="test\header\SkinnedColorTestState.h" />
+    <ClInclude Include="test\header\SkinnedColorTestTransformable.h" />
+    <ClInclude Include="header\geometry\GridQuad.h" />
+    <ClInclude Include="header\geometry\SkinnedColorGeometry.h" />
     <ClInclude Include="header\input\Keyboard.h" />
     <ClInclude Include="header\input\Mouse.h" />
+    <ClInclude Include="header\rendering\SkinnedColorRenderer.h" />
     <ClInclude Include="test\header\Phase1TestState.h" />
     <ClInclude Include="test\header\Phase1TestTransformable.h" />
     <ClInclude Include="header\d3dclass.h" />
