@@ -259,14 +259,13 @@ HRESULT CineCameraClass::poll(Keyboard& input, Mouse& mouse)
 	}
 	else if (input.IsKeyDown(VK_CONTROL)){
 
-		/*
-		XMFLOAT2 mouseVel;
+		XMFLOAT2 mouseVel(0.0f, 0.0f);
 		if (mouse.GetWindowVelocity(mouseVel)) {
 			m_transform->SpinCamera(0.0f, 0.0f, mouseVel.x);
-			m_transform->SpinCamera(0.0f, mouseVel.y, 0.0f);
-		}*/
+			m_transform->SpinCamera(0.0f, -mouseVel.y, 0.0f);
+		}
 
-		
+		/*
 		if (input.IsKeyDown(VK_LEFT)) //Pan Camera Left
 			PanLeft();
 
@@ -278,6 +277,7 @@ HRESULT CineCameraClass::poll(Keyboard& input, Mouse& mouse)
 
 		if (input.IsKeyDown(VK_DOWN)) //Tilt Camera Upward
 			TiltUp();
+		*/
 		
 	}
 	else if (input.IsKeyDown(Keyboard::ascii_C)){

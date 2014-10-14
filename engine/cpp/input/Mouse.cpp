@@ -228,7 +228,7 @@ LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPA
 			m_tPast = m_t;
 			m_PastPosition = m_Position;
 		}
-
+		
 		// Update the time
 		m_t = GetTickCount();
 
@@ -311,14 +311,17 @@ bool Mouse::GetWindowPosition(XMFLOAT2& position) const
 
 bool Mouse::GetWindowVelocity(XMFLOAT2& velocity) const
 {
-	if (!m_Tracking || !m_Moving || m_tPast == static_cast<DWORD>(0))
+	// added m_t - m_tPast == 0
+	if (m_t - m_tPast == 0.0f || !m_Tracking || !m_Moving || m_tPast == static_cast<DWORD>(0))
 	{
 		return false;
 	}
+
 	velocity.x = (m_Position.x - m_PastPosition.x) /
 		static_cast<float>(m_t - m_tPast);
 	velocity.y = (m_Position.y - m_PastPosition.y) /
 		static_cast<float>(m_t - m_tPast);
+
 	return true;
 }
 
