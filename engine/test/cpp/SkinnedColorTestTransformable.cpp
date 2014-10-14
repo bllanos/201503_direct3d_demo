@@ -26,10 +26,10 @@ using namespace DirectX;
 #define SKINNEDCOLORTESTTRANSFORMABLE_PERIOD (10.0f * MILLISECS_PER_SEC_FLOAT)
 
 // Extent of translation (half of full range)
-#define SKINNEDCOLORTESTTRANSFORMABLE_TRANSLATE 1.0f
+#define SKINNEDCOLORTESTTRANSFORMABLE_TRANSLATE 2.0f
 
 // Extent of orbit (radians) (half of full range)
-#define SKINNEDCOLORTESTTRANSFORMABLE_ORBIT DirectX::XM_PIDIV4
+#define SKINNEDCOLORTESTTRANSFORMABLE_ORBIT DirectX::XM_PIDIV2
 
 SkinnedColorTestTransformable::SkinnedColorTestTransformable(void) :
 m_position(0.0f, 0.0f, 0.0f), m_scale(1.0f, 1.0f, 1.0f), m_fixed(true), m_orbit(false), m_axis(0.0f, 0.0f, 1.0f) {
@@ -47,7 +47,9 @@ HRESULT SkinnedColorTestTransformable::initialize(const DirectX::XMFLOAT3& posit
 	m_axis = axis;
 
 	XMStoreFloat4x4(&m_worldTransform, XMMatrixIdentity());
-	XMStoreFloat3(&m_axis, XMVector3Normalize(XMLoadFloat3(&m_axis)));
+	if( !m_orbit ) {
+		XMStoreFloat3(&m_axis, XMVector3Normalize(XMLoadFloat3(&m_axis)));
+	}
 	return ERROR_SUCCESS;
 }
 

@@ -98,27 +98,27 @@ HRESULT SkinnedColorTestState::initialize(ID3D11Device* device, int screenWidth,
 
 	XMFLOAT3 cornerScales[SKINNEDCOLORTESTSTATE_NQUADBONES];
 	cornerScales[0] = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	cornerScales[1] = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	cornerScales[2] = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	cornerScales[3] = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	cornerScales[1] = XMFLOAT3(2.0f, 1.0f, 1.0f);
+	cornerScales[2] = XMFLOAT3(2.0f, 2.0f, 1.0f);
+	cornerScales[3] = XMFLOAT3(2.0f, 1.0f, 1.0f);
 
 	bool cornerFixed[SKINNEDCOLORTESTSTATE_NQUADBONES];
-	cornerFixed[0] = true;
-	cornerFixed[1] = true;
-	cornerFixed[2] = true;
-	cornerFixed[3] = true;
+	cornerFixed[0] = false;
+	cornerFixed[1] = false;
+	cornerFixed[2] = false;
+	cornerFixed[3] = false;
 
 	bool cornerOrbit[SKINNEDCOLORTESTSTATE_NQUADBONES];
 	cornerOrbit[0] = false;
 	cornerOrbit[1] = false;
-	cornerOrbit[2] = false;
+	cornerOrbit[2] = true;
 	cornerOrbit[3] = false;
 
 	XMFLOAT3 cornerAxes[SKINNEDCOLORTESTSTATE_NQUADBONES];
-	cornerAxes[0] = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	cornerAxes[1] = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	cornerAxes[2] = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	cornerAxes[3] = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	cornerAxes[0] = XMFLOAT3(-1.0f, -1.0f, -1.0f);
+	cornerAxes[1] = XMFLOAT3(-1.0f, 1.0f, 0.0f);
+	cornerAxes[2] = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	cornerAxes[3] = XMFLOAT3(1.0f, -1.0f, 0.0f);
 
 	m_quadBones = new std::vector<SkinnedColorTestTransformable*>();
 	for( size_t i = 0; i < SKINNEDCOLORTESTSTATE_NQUADBONES; ++i ) {
