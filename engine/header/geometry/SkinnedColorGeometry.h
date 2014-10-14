@@ -42,6 +42,15 @@ Description
    instead of ConfigUser.
 */
 class SkinnedColorGeometry : public IGeometry, public ConfigUser {
+
+public:
+	struct Material {
+		DirectX::XMFLOAT4 ambientAlbedo;
+		DirectX::XMFLOAT4 diffuseAlbedo;
+		DirectX::XMFLOAT4 specularAlbedo;
+		float specularPower;
+	};
+
 	/* Proxying the ConfigUser constructors
 	   for use by derived classes
 	*/
@@ -131,6 +140,15 @@ protected:
 	 */
 	virtual HRESULT setRendererType(const GeometryRendererManager::GeometryRendererType type);
 
+	/* This function must be called at least once
+	   before the object can be rendered for the first time
+	   using a renderer which performs lighting calculations.
+
+	   This object assumes that it owns the 'material' argument.
+	   (The destructor will delete this object's material.)
+	 */
+	HRESULT setMaterial(Material* material);
+
 public:
 	virtual ~SkinnedColorGeometry(void);
 
@@ -149,6 +167,8 @@ public:
 	   of the 'bones' parameter passed to initialize().
 	 */
 	virtual HRESULT setTransformables(const std::vector<const ITransformable*>* const bones);
+
+	const Material* getMaterial(void) const;
 
 protected:
 	/* Performs vertex buffer and index buffer-related pipeline
@@ -178,6 +198,8 @@ private:
 	size_t m_vertexCount, m_indexCount;
 	std::vector<const ITransformable*>::size_type m_boneCount;
 	GeometryRendererManager::GeometryRendererType* m_rendererType;
+
+	Material* m_material;
 
 	// Currently not implemented - will cause linker errors if called
 private:
@@ -211,7 +233,7 @@ template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	m_bones(0), m_invBindMatrices(0),
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
 	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
-	m_rendererType(0) {}
+	m_rendererType(0), m_material(0) {}
 
 template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	const bool enableLogging, const std::wstring& msgPrefix,
@@ -233,4 +255,4 @@ template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	m_bones(0), m_invBindMatrices(0),
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
 	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
-	m_rendererType(0) {}
+	m_rendererType(0), m_material(0) {}

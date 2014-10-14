@@ -23,7 +23,7 @@ Description
   -No lighting calculations
 */
 
-cbuffer Transforms : register(cb0)
+cbuffer CameraProperties : register(cb0)
 {
 	matrix viewMatrix;
 	matrix projectionMatrix;

@@ -70,6 +70,17 @@ Description
 #define GRIDQUAD_COLOR_BOTTOM_LEFT_FIELD L"bottomLeft"
 #define GRIDQUAD_COLOR_BOTTOM_RIGHT_FIELD L"bottomRight"
 
+/* Material properties
+ */
+#define GRIDQUAD_AMBIENT_ALBEDO_DEFAULT XMFLOAT4(0.0f,0.0f,0.0f,0.0f)
+#define GRIDQUAD_AMBIENT_ALBEDO_FIELD L"ambientAlbedo"
+#define GRIDQUAD_DIFFUSE_ALBEDO_DEFAULT XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
+#define GRIDQUAD_DIFFUSE_ALBEDO_FIELD L"diffuseAlbedo"
+#define GRIDQUAD_SPECULAR_ALBEDO_DEFAULT XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
+#define GRIDQUAD_SPECULAR_ALBEDO_FIELD L"specularAlbedo"
+#define GRIDQUAD_SPECULAR_POWER_DEFAULT 100.0f
+#define GRIDQUAD_SPECULAR_POWER_FIELD L"specularPower"
+
 /* LogUser and ConfigUser configuration parameters
    Refer to LogUser.h and ConfigUser.h
  */
@@ -190,7 +201,8 @@ protected:
 	   This function exists to avoid having repeated range checking code
 	   in this class's constructors and configuration functions.
 	 */
-	virtual HRESULT setMembers(const int& nColumns, const int& nRows, const float& blend);
+	virtual HRESULT setMembers(const int& nColumns, const int& nRows, const float& blend,
+		Material* const material);
 
 	// Data members
 protected:

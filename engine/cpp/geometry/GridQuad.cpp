@@ -23,6 +23,8 @@ Description
 #include "GridQuad.h"
 #include <cmath>
 
+using namespace DirectX;
+
 #define GRIDQUAD_NCORNERS 4
 
 GridQuad::GridQuad(const bool enableLogging, const std::wstring& msgPrefix,
@@ -40,16 +42,28 @@ HRESULT GridQuad::configure(void) {
 	HRESULT result = ERROR_SUCCESS;
 
 	// Initialize with default values
+	// ------------------------------
+
+	// Geometry properties
 	size_t nColumns = GRIDQUAD_COLUMNS_DEFAULT;
 	size_t nRows = GRIDQUAD_ROWS_DEFAULT;
 	double blend = static_cast<double>(GRIDQUAD_BLEND_DEFAULT);
 	m_debugWinding = GRIDQUAD_DEBUG_FLAG_DEFAULT;
+
+	// Visual properties
 	bool useLighting = GRIDQUAD_USE_LIGHTING_FLAG_DEFAULT;
 
 	m_colors = new DirectX::XMFLOAT4[GRIDQUAD_NCORNERS];
 	for( size_t i = 0; i < GRIDQUAD_NCORNERS; ++i ) {
 		m_colors[i] = GRIDQUAD_COLORS_DEFAULT;
 	}
+
+	// Material properties
+	Material* material = new Material;
+	material->ambientAlbedo = GRIDQUAD_AMBIENT_ALBEDO_DEFAULT;
+	material->diffuseAlbedo = GRIDQUAD_DIFFUSE_ALBEDO_DEFAULT;
+	material->specularAlbedo = GRIDQUAD_SPECULAR_ALBEDO_DEFAULT;
+	material->specularPower = GRIDQUAD_SPECULAR_POWER_DEFAULT;
 
 	if( hasConfigToUse() ) {
 
@@ -64,7 +78,7 @@ HRESULT GridQuad::configure(void) {
 		const bool* boolValue = 0;
 		const int* intValue = 0;
 		const double* doubleValue = 0;
-		const DirectX::XMFLOAT4* colorValue = 0;
+		const DirectX::XMFLOAT4* float4Value = 0;
 
 		// Query for initialization data
 		if( retrieve<Config::DataType::INT, int>(GRIDQUAD_SCOPE, GRIDQUAD_COLUMNS_FIELD, intValue) ) {
@@ -95,9 +109,23 @@ HRESULT GridQuad::configure(void) {
 		};
 
 		for( size_t i = 0; i < GRIDQUAD_NCORNERS; ++i ) {
-			if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(GRIDQUAD_SCOPE, colorFields[i], colorValue) ) {
-				m_colors[i] = *colorValue;
+			if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(GRIDQUAD_SCOPE, colorFields[i], float4Value) ) {
+				m_colors[i] = *float4Value;
 			}
+		}
+
+		// Material properties
+		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(GRIDQUAD_SCOPE, GRIDQUAD_AMBIENT_ALBEDO_FIELD, float4Value) ) {
+			material->ambientAlbedo = *float4Value;
+		}
+		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(GRIDQUAD_SCOPE, GRIDQUAD_DIFFUSE_ALBEDO_FIELD, float4Value) ) {
+			material->diffuseAlbedo = *float4Value;
+		}
+		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(GRIDQUAD_SCOPE, GRIDQUAD_SPECULAR_ALBEDO_FIELD, float4Value) ) {
+			material->specularAlbedo = *float4Value;
+		}
+		if( retrieve<Config::DataType::DOUBLE, double>(GRIDQUAD_SCOPE, GRIDQUAD_SPECULAR_POWER_FIELD, doubleValue) ) {
+			material->specularPower = static_cast<float>(*doubleValue);
 		}
 
 	} else {
@@ -118,14 +146,15 @@ HRESULT GridQuad::configure(void) {
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
-	if( FAILED(setMembers(nColumns, nRows, static_cast<float>(blend))) ) {
+	if( FAILED(setMembers(nColumns, nRows, static_cast<float>(blend), material)) ) {
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
 	return result;
 }
 
-HRESULT GridQuad::setMembers(const int& nColumns, const int& nRows, const float& blend) {
+HRESULT GridQuad::setMembers(const int& nColumns, const int& nRows, const float& blend,
+	Material* const material) {
 	if( nColumns < 1 ) {
 		m_nColumns = GRIDQUAD_COLUMNS_DEFAULT;
 		logMessage(L"Input number of columns was less than 1. Reverting to default value of: " + std::to_wstring(m_nColumns));
@@ -148,6 +177,10 @@ HRESULT GridQuad::setMembers(const int& nColumns, const int& nRows, const float&
 		logMessage(L"Input transparency multiplier was greater than 1. Reverting to default value of: " + std::to_wstring(m_blend));
 	} else {
 		m_blend = blend;
+	}
+
+	if( FAILED(setMaterial(material)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	return ERROR_SUCCESS;
 }

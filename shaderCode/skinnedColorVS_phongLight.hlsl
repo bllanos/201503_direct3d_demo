@@ -26,7 +26,7 @@ Description
   -Phong lighting calculations
 */
 
-cbuffer Transforms : register(cb0) {
+cbuffer CameraProperties : register(cb0) {
 	matrix viewMatrix;
 	matrix projectionMatrix;
 	float4 cameraPosition;

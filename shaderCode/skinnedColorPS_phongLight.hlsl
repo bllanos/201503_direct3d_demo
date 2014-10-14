@@ -33,7 +33,7 @@ cbuffer MaterialProperties : register(cb0) {
 	float blendAmount;
 };
 
-cbuffer Transforms : register(cb1) {
+cbuffer CameraProperties : register(cb1) {
 	matrix viewMatrix;
 	matrix projectionMatrix;
 	float4 cameraPosition;

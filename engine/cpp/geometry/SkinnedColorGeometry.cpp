@@ -39,7 +39,7 @@ SkinnedColorGeometry::SkinnedColorGeometry(const bool enableLogging, const std::
 	m_bones(0), m_invBindMatrices(0),
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
 	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
-	m_rendererType(0)
+	m_rendererType(0), m_material(0)
 {}
 
 SkinnedColorGeometry::SkinnedColorGeometry(const bool enableLogging, const std::wstring& msgPrefix,
@@ -51,7 +51,7 @@ m_boneNormalBuffer(0), m_bonePositionView(0), m_boneNormalView(0),
 m_bones(0), m_invBindMatrices(0),
 m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
 m_vertexCount(0), m_indexCount(0), m_boneCount(0),
-m_rendererType(0)
+m_rendererType(0), m_material(0)
 {}
 
 HRESULT SkinnedColorGeometry::initialize(ID3D11Device* const device,
@@ -270,6 +270,10 @@ SkinnedColorGeometry::~SkinnedColorGeometry(void) {
 		delete m_rendererType;
 		m_rendererType = 0;
 	}
+	if( m_material != 0 ) {
+		delete m_material;
+		m_material = 0;
+	}
 }
 
 HRESULT SkinnedColorGeometry::drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const CineCameraClass* const camera) {
@@ -391,4 +395,13 @@ HRESULT SkinnedColorGeometry::setTransformables(const std::vector<const ITransfo
 
 size_t SkinnedColorGeometry::getIndexCount(void) const {
 	return m_indexCount;
+}
+
+HRESULT SkinnedColorGeometry::setMaterial(Material* material) {
+	m_material = material;
+	return ERROR_SUCCESS;
+}
+
+const SkinnedColorGeometry::Material* SkinnedColorGeometry::getMaterial(void) const {
+	return m_material;
 }
