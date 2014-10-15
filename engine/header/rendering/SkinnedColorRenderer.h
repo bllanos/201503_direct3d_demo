@@ -70,10 +70,16 @@ Description
 #define SKINNEDCOLORRENDERER_PS_ENTRYPOINT_FIELD_LIGHT L"psEntryPoint_withLighting"
 
 // Lighting parameters
-#define SKINNEDCOLORRENDERER_LIGHT_POSITION_DEFAULT DirectX::XMFLOAT4(-1000.0f, 0.0f, 0.0f, 1.0f);
+#define SKINNEDCOLORRENDERER_LIGHT_POSITION_DEFAULT DirectX::XMFLOAT4(-1000.0f, 0.0f, 0.0f, 1.0f)
 #define SKINNEDCOLORRENDERER_LIGHT_POSITION_FIELD L"lightPosition"
-#define SKINNEDCOLORRENDERER_LIGHT_COLOR_DEFAULT DirectX::XMFLOAT4(1.0, 1.0f, 1.0f, 1.0f);
+#define SKINNEDCOLORRENDERER_LIGHT_COLOR_DEFAULT DirectX::XMFLOAT4(1.0, 1.0f, 1.0f, 1.0f)
 #define SKINNEDCOLORRENDERER_LIGHT_COLOR_FIELD L"lightColor"
+#define SKINNEDCOLORRENDERER_LIGHT_AMBIENT_WEIGHT_DEFAULT 1.0f
+#define SKINNEDCOLORRENDERER_LIGHT_AMBIENT_WEIGHT_FIELD L"lightAmbientWeight"
+#define SKINNEDCOLORRENDERER_LIGHT_DIFFUSE_WEIGHT_DEFAULT 1.0f
+#define SKINNEDCOLORRENDERER_LIGHT_DIFFUSE_WEIGHT_FIELD L"lightDiffuseWeight"
+#define SKINNEDCOLORRENDERER_LIGHT_SPECULAR_WEIGHT_DEFAULT 1.0f
+#define SKINNEDCOLORRENDERER_LIGHT_SPECULAR_WEIGHT_FIELD L"lightSpecularWeight"
 
 class SkinnedColorRenderer : public IGeometryRenderer, public ConfigUser {
 private:
@@ -97,6 +103,10 @@ public:
 	struct Light {
 		DirectX::XMFLOAT4 lightPosition;
 		DirectX::XMFLOAT4 lightColor;
+		float lightAmbientWeight;
+		float lightDiffuseWeight;
+		float lightSpecularWeight;
+		float padding;
 	};
 
 public:

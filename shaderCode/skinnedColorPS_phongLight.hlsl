@@ -42,6 +42,9 @@ cbuffer CameraProperties : register(cb1) {
 cbuffer LightProperties : register(cb2) {
 	float4 lightPosition;
 	float4 lightColor;
+	float lightAmbientWeight;
+	float lightDiffuseWeight;
+	float lightSpecularWeight;
 };
 
 struct PSInput {
@@ -71,8 +74,11 @@ float4 PSMAIN(in PSInput input) : SV_TARGET
 	float4 ambient = ambientAlbedo;
 
 	// Final colour
-	float4 color = saturate(ambient + diffuse + specular);
-	color *= lightColor*input.color;
+	float4 color = saturate(
+		lightAmbientWeight * ambient +
+		lightDiffuseWeight * diffuse +
+		lightSpecularWeight * specular);
+	color *= (lightColor*input.color);
 	color.w *= blendAmount;
 	return color;
 }

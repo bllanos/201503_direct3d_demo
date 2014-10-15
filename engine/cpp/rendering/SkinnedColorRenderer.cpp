@@ -151,6 +151,8 @@ HRESULT SkinnedColorRenderer::configureRendering(
 	// Helper variables
 	const wstring* stringValue = 0;
 	const bool* boolValue = 0;
+	const DirectX::XMFLOAT4* float4Value = 0;
+	const double* doubleValue = 0;
 	wstring field;
 	wstring path; // Directory containing shaders
 	wstring criticalErrorMsg(L"Critical configuration data not found. Aborting shader setup.");
@@ -257,13 +259,24 @@ HRESULT SkinnedColorRenderer::configureRendering(
 		m_light = new Light;
 		m_light->lightPosition = SKINNEDCOLORRENDERER_LIGHT_POSITION_DEFAULT;
 		m_light->lightColor = SKINNEDCOLORRENDERER_LIGHT_COLOR_DEFAULT;
-		const DirectX::XMFLOAT4* float4Value = 0;
+		m_light->lightAmbientWeight = SKINNEDCOLORRENDERER_LIGHT_AMBIENT_WEIGHT_DEFAULT;
+		m_light->lightDiffuseWeight = SKINNEDCOLORRENDERER_LIGHT_DIFFUSE_WEIGHT_DEFAULT;
+		m_light->lightSpecularWeight = SKINNEDCOLORRENDERER_LIGHT_SPECULAR_WEIGHT_DEFAULT;
 
 		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_POSITION_FIELD, float4Value) ) {
 			m_light->lightPosition = *float4Value;
 		}
 		if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_COLOR_FIELD, float4Value) ) {
 			m_light->lightColor = *float4Value;
+		}
+		if( retrieve<Config::DataType::DOUBLE, double>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_AMBIENT_WEIGHT_FIELD, doubleValue) ) {
+			m_light->lightAmbientWeight = static_cast<float>(*doubleValue);
+		}
+		if( retrieve<Config::DataType::DOUBLE, double>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_DIFFUSE_WEIGHT_FIELD, doubleValue) ) {
+			m_light->lightDiffuseWeight = static_cast<float>(*doubleValue);
+		}
+		if( retrieve<Config::DataType::DOUBLE, double>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_SPECULAR_WEIGHT_FIELD, doubleValue) ) {
+			m_light->lightSpecularWeight = static_cast<float>(*doubleValue);
 		}
 	}
 
@@ -655,6 +668,9 @@ HRESULT SkinnedColorRenderer::setLightShaderParameters(ID3D11DeviceContext* cons
 	// Copy values
 	lightDataPtr->lightPosition = m_light->lightPosition;
 	lightDataPtr->lightColor = m_light->lightColor;
+	lightDataPtr->lightAmbientWeight = m_light->lightAmbientWeight;
+	lightDataPtr->lightDiffuseWeight = m_light->lightDiffuseWeight;
+	lightDataPtr->lightSpecularWeight = m_light->lightSpecularWeight;
 
 	// Unlock the buffer.
 	context->Unmap(m_lightBuffer, 0);
