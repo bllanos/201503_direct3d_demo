@@ -99,14 +99,14 @@ HRESULT SkinnedColorTestState::initialize(ID3D11Device* device, int screenWidth,
 	XMFLOAT3 cornerScales[SKINNEDCOLORTESTSTATE_NQUADBONES];
 	cornerScales[0] = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	cornerScales[1] = XMFLOAT3(2.0f, 1.0f, 1.0f);
-	cornerScales[2] = XMFLOAT3(2.0f, 2.0f, 1.0f);
-	cornerScales[3] = XMFLOAT3(2.0f, 1.0f, 1.0f);
+	cornerScales[2] = XMFLOAT3(1.0f, 2.0f, 1.0f);
+	cornerScales[3] = XMFLOAT3(1.0f, 1.0f, 1.0f);
 
 	bool cornerFixed[SKINNEDCOLORTESTSTATE_NQUADBONES];
-	cornerFixed[0] = false;
-	cornerFixed[1] = false;
-	cornerFixed[2] = false;
-	cornerFixed[3] = false;
+	cornerFixed[0] = true;
+	cornerFixed[1] = true;
+	cornerFixed[2] = true;
+	cornerFixed[3] = true;
 
 	bool cornerOrbit[SKINNEDCOLORTESTSTATE_NQUADBONES];
 	cornerOrbit[0] = false;

@@ -28,5 +28,6 @@ WSTRING -- SkinnedColorRenderer::psEntryPoint_withLighting = L"PSMAIN"
 
 # Light parameters
 # ----------------
-FLOAT4 -- SkinnedColorRenderer::lightPosition = (100.0, 0.0, -50.0, 1.0)
+# FLOAT4 -- SkinnedColorRenderer::lightPosition = (100.0, 0.0, -50.0, 1.0)
+FLOAT4 -- SkinnedColorRenderer::lightPosition = (0.0, 0.0, -50.0, 1.0)
 COLOR -- SkinnedColorRenderer::lightColor = (0, 255, 0, 255)

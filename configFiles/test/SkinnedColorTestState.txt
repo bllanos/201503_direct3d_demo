@@ -19,19 +19,19 @@ BOOL -- GridQuad_ConfigUser::enableConfigUseLogging = true
 
 # GridQuad geometry configuration
 # -----------------------------------------------
-INT -- GridQuad::nColumns = 10
-INT -- GridQuad::nRows = 10
+INT -- GridQuad::nColumns = 5
+INT -- GridQuad::nRows = 5
 DOUBLE -- GridQuad::transparencyMultiplier = 0.5
-BOOL -- GridQuad::debugWinding = true
-BOOL -- GridQuad::renderWithLighting = false
+BOOL -- GridQuad::debugWinding = false
+BOOL -- GridQuad::renderWithLighting = true
 COLOR -- GridQuad::topRight = (255, 255, 255, 255)
-COLOR -- GridQuad::topLeft = (255, 255, 0, 255)
-COLOR -- GridQuad::bottomLeft = (255, 0, 255, 255)
-COLOR -- GridQuad::bottomRight = (255, 0, 0, 255)
+COLOR -- GridQuad::topLeft = (255, 255, 255, 255)
+COLOR -- GridQuad::bottomLeft = (255, 255, 255, 255)
+COLOR -- GridQuad::bottomRight = (255, 255, 255, 255)
 
 # GridQuad material configuration
 # -------------------------------
 FLOAT4 -- GridQuad::ambientAlbedo = (1.0, 1.0, 1.0, 1.0)
 FLOAT4 -- GridQuad::diffuseAlbedo = (1.0, 1.0, 1.0, 1.0)
 FLOAT4 -- GridQuad::specularAlbedo = (1.0, 1.0, 1.0, 1.0)
-DOUBLE -- GridQuad::specularPower = 100.0
+DOUBLE -- GridQuad::specularPower = 400.0
