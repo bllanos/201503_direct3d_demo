@@ -1,14 +1,14 @@
 /* Adapted from the following source: COMP2501A Tutorial 5 */
 
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: cameraclass.cpp
+// Filename: Camera.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "cinecameraclass.h"
+#include "Camera.h"
 #include "engineGlobals.h"
 #include "defs.h"
 #include <exception>
 
-CineCameraClass::CineCameraClass(int screenWidth_in, int screenHeight_in)
+Camera::Camera(int screenWidth_in, int screenHeight_in)
 {
 	screenWidth = static_cast<float>(screenWidth_in);
 	screenHeight = static_cast<float>(screenHeight_in);
@@ -20,19 +20,19 @@ CineCameraClass::CineCameraClass(int screenWidth_in, int screenHeight_in)
 	UpdateMatrices();
 }
 
-CineCameraClass::CineCameraClass(const CineCameraClass& other)
+Camera::Camera(const Camera& other)
 {
 	throw std::exception("Not implemented");
 }
 
 
-CineCameraClass::~CineCameraClass()
+Camera::~Camera()
 {
 }
 
-void CineCameraClass::MoveForward()
+void Camera::MoveForward()
 {
-	wchar_t* outstring = L"CineCameraClass::Move Forward\n";
+	wchar_t* outstring = L"Camera::Move Forward\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
 	/*
@@ -42,117 +42,117 @@ void CineCameraClass::MoveForward()
 	You can adjust the constant CAMERA_DOLLY_SPEED to get a nice
 	smooth motion
 	*/
-	m_transform->MoveCamera(CAMERA_DOLLY_SPEED);
+	m_transform->Move(CAMERA_DOLLY_SPEED);
 	return;
 }
 
-void CineCameraClass::MoveBackward()
+void Camera::MoveBackward()
 {
-	wchar_t* outstring = L"CineCameraClass::Move Backward\n";
+	wchar_t* outstring = L"Camera::Move Backward\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	m_transform->MoveCamera(-CAMERA_DOLLY_SPEED);
+	m_transform->Move(-CAMERA_DOLLY_SPEED);
 	return;
 }
 
-void CineCameraClass::CraneUp()
+void Camera::CraneUp()
 {
-	wchar_t* outstring = L"CineCameraClass::Crane Up\n";
+	wchar_t* outstring = L"Camera::Crane Up\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	m_transform->CraneCamera(CAMERA_CRANE_SPEED);
+	m_transform->Crane(CAMERA_CRANE_SPEED);
 
 	return;
 }
 
-void CineCameraClass::CraneDown()
+void Camera::CraneDown()
 {
-	wchar_t* outstring = L"CineCameraClass::Crane Down\n";
+	wchar_t* outstring = L"Camera::Crane Down\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	m_transform->CraneCamera(-CAMERA_CRANE_SPEED);
+	m_transform->Crane(-CAMERA_CRANE_SPEED);
 
 	return;
 }
 
-void CineCameraClass::StrafeLeft()
+void Camera::StrafeLeft()
 {
-	wchar_t* outstring = L"CineCameraClass::Strafe Left\n";
+	wchar_t* outstring = L"Camera::Strafe Left\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	m_transform->StrafeCamera(-CAMERA_STRAFE_SPEED);
+	m_transform->Strafe(-CAMERA_STRAFE_SPEED);
 
 	return;
 }
 
-void CineCameraClass::StrafeRight()
+void Camera::StrafeRight()
 {
-	wchar_t* outstring = L"CineCameraClass::Strafe Right\n";
+	wchar_t* outstring = L"Camera::Strafe Right\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	m_transform->StrafeCamera(CAMERA_STRAFE_SPEED);
+	m_transform->Strafe(CAMERA_STRAFE_SPEED);
 
 	return;
 }
 
-void CineCameraClass::TiltDown()
+void Camera::TiltDown()
 {
 	//NOTE: currently the argument delta is not used
-	wchar_t* outstring = L"CineCameraClass::TiltDown\n";
+	wchar_t* outstring = L"Camera::TiltDown\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	m_transform->SpinCamera(0.0f, -CAMERA_TILT_SPEED, 0.0f);
+	m_transform->Spin(0.0f, -CAMERA_TILT_SPEED, 0.0f);
 }
 
-void CineCameraClass::TiltUp()
+void Camera::TiltUp()
 {
 	//NOTE: currently the argument delta is not used
-	wchar_t* outstring = L"CineCameraClass::TiltUp\n";
+	wchar_t* outstring = L"Camera::TiltUp\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	m_transform->SpinCamera(0.0f, CAMERA_TILT_SPEED, 0.0f);
+	m_transform->Spin(0.0f, CAMERA_TILT_SPEED, 0.0f);
 } 
 
-void CineCameraClass::PanLeft()
+void Camera::PanLeft()
 {
 	//NOTE: currently the argument delta is not used
-	wchar_t* outstring = L"CineCameraClass::PanLeft\n";
+	wchar_t* outstring = L"Camera::PanLeft\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	m_transform->SpinCamera(0.0f, 0.0f, -CAMERA_PAN_SPEED);
+	m_transform->Spin(0.0f, 0.0f, -CAMERA_PAN_SPEED);
 } 
 
-void CineCameraClass::PanRight()
+void Camera::PanRight()
 {
 	//NOTE: currently the argument delta is not used
-	wchar_t* outstring = L"CineCameraClass::PanRight\n";
+	wchar_t* outstring = L"Camera::PanRight\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	m_transform->SpinCamera(0.0f, 0.0f, CAMERA_PAN_SPEED);
+	m_transform->Spin(0.0f, 0.0f, CAMERA_PAN_SPEED);
 }
 
-void CineCameraClass::RollLeft()
+void Camera::RollLeft()
 {
 	//NOTE: currently the argument delta is not used
-	wchar_t* outstring = L"CineCameraClass::RollLeft\n";
+	wchar_t* outstring = L"Camera::RollLeft\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	m_transform->SpinCamera(CAMERA_ROLL_SPEED, 0.0f, 0.0f);
+	m_transform->Spin(CAMERA_ROLL_SPEED, 0.0f, 0.0f);
 }
 
-void CineCameraClass::RollRight()
+void Camera::RollRight()
 {
 	//NOTE: currently the argument delta is not used
-	wchar_t* outstring = L"CineCameraClass::RollRight\n";
+	wchar_t* outstring = L"Camera::RollRight\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
-	m_transform->SpinCamera(-CAMERA_ROLL_SPEED, 0.0f, 0.0f);
+	m_transform->Spin(-CAMERA_ROLL_SPEED, 0.0f, 0.0f);
 }
 
-void CineCameraClass::ZoomIn()
+void Camera::ZoomIn()
 {
 	//NOTE: currently the argument delta is not used
-	wchar_t* outstring = L"CineCameraClass::Zoom In\n";
+	wchar_t* outstring = L"Camera::Zoom In\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
  
 	/*
@@ -169,10 +169,10 @@ void CineCameraClass::ZoomIn()
 
 }
 
-void CineCameraClass::ZoomOut()
+void Camera::ZoomOut()
 {
 	//NOTE: currently the argument delta is not used
-	wchar_t* outstring = L"CineCameraClass::Zoom Out\n";
+	wchar_t* outstring = L"Camera::Zoom Out\n";
 	// if(verbose_camera) writeToDebugConsole(outstring);
 
 	/*
@@ -189,13 +189,13 @@ void CineCameraClass::ZoomOut()
 } 
 
 
-XMFLOAT3 CineCameraClass::GetPosition() const
+XMFLOAT3 Camera::GetPosition() const
 {
 	return m_transform->getPosition();
 }
 
 
-int CineCameraClass::UpdateMatrices(void)
+int Camera::UpdateMatrices(void)
 {
 	m_transform->update(0, 0);
 	m_transform->getWorldTransformNoScale(m_viewMatrix);
@@ -209,36 +209,36 @@ int CineCameraClass::UpdateMatrices(void)
 	return C_OK;
 }
 
-void CineCameraClass::GetViewMatrix(XMFLOAT4X4& viewMatrix) const
+void Camera::GetViewMatrix(XMFLOAT4X4& viewMatrix) const
 {
 	viewMatrix = m_viewMatrix;
 	return;
 }
 
-void CineCameraClass::GetProjectionMatrix(XMFLOAT4X4& viewMatrix) const
+void Camera::GetProjectionMatrix(XMFLOAT4X4& viewMatrix) const
 {
 	viewMatrix = m_projectionMatrix;
 	return;
 }
 
-float CineCameraClass::GetAspectRatio(void) const
+float Camera::GetAspectRatio(void) const
 {
 	return screenAspectRatio;
 }
 
-void CineCameraClass::GetClipDistances(XMFLOAT2& nearFarClipDistances) const
+void Camera::GetClipDistances(XMFLOAT2& nearFarClipDistances) const
 {
 	nearFarClipDistances.x = SCREEN_NEAR;
 	nearFarClipDistances.y = SCREEN_DEPTH;
 }
 
 
-void CineCameraClass::GetFieldOfView(float& fov) const
+void Camera::GetFieldOfView(float& fov) const
 {
 	fov = fieldOfView;
 }
 
-HRESULT CineCameraClass::poll(Keyboard& input, Mouse& mouse)
+HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 {
 	/*
 	We will combinations for a key + arrow keys to control the camera
@@ -261,8 +261,8 @@ HRESULT CineCameraClass::poll(Keyboard& input, Mouse& mouse)
 
 		XMFLOAT2 mouseVel(0.0f, 0.0f);
 		if (mouse.GetWindowVelocity(mouseVel)) {
-			m_transform->SpinCamera(0.0f, 0.0f, mouseVel.x);
-			m_transform->SpinCamera(0.0f, -mouseVel.y, 0.0f);
+			m_transform->Spin(0.0f, 0.0f, mouseVel.x);
+			m_transform->Spin(0.0f, -mouseVel.y, 0.0f);
 		}
 
 		/*

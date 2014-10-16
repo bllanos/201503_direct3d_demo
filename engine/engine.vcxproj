@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="cpp\d3dclass.cpp" />
     <ClCompile Include="cpp\engineMain.cpp" />
     <ClCompile Include="cpp\GeometryRendererManager.cpp" />
@@ -22,10 +23,10 @@
     <ClCompile Include="cpp\StateControl.cpp" />
     <ClCompile Include="test\cpp\Phase1TestState.cpp" />
     <ClCompile Include="test\cpp\Phase1TestTransformable.cpp" />
-    <ClCompile Include="cinecameraclass.cpp" />
     <ClCompile Include="Transformable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="header\input\Keyboard.h" />
     <ClInclude Include="header\input\Mouse.h" />
     <ClInclude Include="test\header\Phase1TestState.h" />
@@ -42,7 +43,6 @@
     <ClInclude Include="header\rendering\SimpleColorRenderer.h" />
     <ClInclude Include="header\State.h" />
     <ClInclude Include="header\StateControl.h" />
-    <ClInclude Include="cinecameraclass.h" />
     <ClInclude Include="header\rendering\IGeometryRenderer.h" />
     <ClInclude Include="Transformable.h" />
   </ItemGroup>

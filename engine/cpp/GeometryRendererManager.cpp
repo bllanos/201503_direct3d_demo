@@ -161,7 +161,7 @@ HRESULT GeometryRendererManager::initialize(ID3D11Device* const device) {
 HRESULT GeometryRendererManager::render(
 	ID3D11DeviceContext* const context,
 	const IGeometry& geometry,
-	const CineCameraClass* const camera,
+	const Camera* const camera,
 	GeometryRendererType rendererType
 	) {
 

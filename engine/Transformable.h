@@ -70,10 +70,10 @@ public:
 
 	void setParent(Transformable* const parent);
 
-	void MoveCamera(float amount); // move forward and back (move forward, move backward)
-	void StrafeCamera(float amount); // move left and right
-	void CraneCamera(float amount); // move up and down
-	void SpinCamera(float roll, float pitch, float yaw); // spin the camera (tilt, pan)
+	void Move(float amount); // move forward and back (move forward, move backward)
+	void Strafe(float amount); // move left and right
+	void Crane(float amount); // move up and down
+	void Spin(float roll, float pitch, float yaw); // spin the object (tilt, pan)
 
 	DirectX::XMFLOAT3 getPosition(void) const;
 

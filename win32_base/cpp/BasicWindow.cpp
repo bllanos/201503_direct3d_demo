@@ -337,9 +337,7 @@ LRESULT CALLBACK BasicWindow::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARA
 	 */
 
 	// let the classes that implement IWinMessageHandler handle their messages first.
-	if (processMessageHandlers(umsg, wparam, lparam) == 0) {
-		return 0;
-	}
+	processMessageHandlers(umsg, wparam, lparam);
 
 	if (umsg == WM_CLOSE || (umsg == WM_KEYDOWN && wparam == VK_ESCAPE) ) {
 		

@@ -60,7 +60,7 @@ HRESULT SimpleColorRenderer::initialize(ID3D11Device* const device)
 	return InitializeShader(device);
 }
 
-HRESULT SimpleColorRenderer::render(ID3D11DeviceContext* const context, const IGeometry& geometry, const CineCameraClass* const camera) {
+HRESULT SimpleColorRenderer::render(ID3D11DeviceContext* const context, const IGeometry& geometry, const Camera* const camera) {
 
 	/* Renderers assume that they are being called on the right kind of geometry,
 	   because the geometry itself should be calling this function (indirectly

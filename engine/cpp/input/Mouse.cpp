@@ -13,7 +13,7 @@ Implementation of the Mouse class
 #include "engineGlobals.h"
 #include <string>
 #include <sstream>   // for wostringstream
-#include "CineCameraClass.h"
+#include "Camera.h"
 
 using std::wostringstream;
 
@@ -23,8 +23,8 @@ const DWORD Mouse::maxMotionSamplingInterval = static_cast<DWORD>(100); // measu
 
 Mouse::Mouse(void) :
 m_Tracking(false), m_Position(0.0f, 0.0f), m_PastPosition(0.0f, 0.0f), m_ButtonStates(0), m_LastButtonStates(0),
-m_Moving(false), m_t(static_cast<DWORD>(0)), m_tPast(static_cast<DWORD>(0)), m_timePressed(static_cast<DWORD>(0)), m_timeReleased(static_cast<DWORD>(0)),
-m_ScreenDimensions(0.0f, 0.0f)
+m_Moving(false), m_t(static_cast<DWORD>(0)), m_tPast(static_cast<DWORD>(0)), m_timePressed(static_cast<DWORD>(0)), 
+m_timeReleased(static_cast<DWORD>(0)), m_ScreenDimensions(0.0f, 0.0f)
 {
 	m_ButtonStates = new bool[nButtons];
 	m_LastButtonStates = new bool[nButtons];
@@ -92,8 +92,8 @@ LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPA
 	which means that the window will receive all mouse input. The mouse
 	must be captured in order for the default window procedure to handle
 	mouse input as well. The mouse is released when no buttons are down. */
-	bool startTracking = false;
-	bool stopTracking = false;
+	//bool startTracking = false;
+	//bool stopTracking = false;
 
 	bool positionMustChange = false;
 
@@ -103,37 +103,37 @@ LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPA
 	{
 	case WM_LBUTTONDOWN:
 		m_ButtonStates[Button::LEFT] = true;
-		startTracking = true;
+		//startTracking = true;
 		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Left mouse button down.\n");
 		break;
 
 	case WM_LBUTTONUP:
 		m_ButtonStates[Button::LEFT] = false;
-		stopTracking = true;
+		//stopTracking = true;
 		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Left mouse button up.\n");
 		break;
 
 	case WM_MBUTTONDOWN:
 		m_ButtonStates[Button::MIDDLE] = true;
-		startTracking = true;
+		//startTracking = true;
 		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Middle mouse button down.\n");
 		break;
 
 	case WM_MBUTTONUP:
 		m_ButtonStates[Button::MIDDLE] = false;
-		stopTracking = true;
+		//stopTracking = true;
 		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Middle mouse button up.\n");
 		break;
 
 	case WM_RBUTTONDOWN:
 		m_ButtonStates[Button::RIGHT] = true;
-		startTracking = true;
+		//startTracking = true;
 		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Right mouse button down.\n");
 		break;
 
 	case WM_RBUTTONUP:
 		m_ButtonStates[Button::RIGHT] = false;
-		stopTracking = true;
+		//stopTracking = true;
 		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Right mouse button up.\n");
 		break;
 
@@ -141,13 +141,13 @@ LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPA
 		if (wparam & MK_XBUTTON1)
 		{
 			m_ButtonStates[Button::X1] = true;
-			startTracking = true;
+			//startTracking = true;
 			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X1 mouse button down.\n");
 		}
 		else if (wparam & MK_XBUTTON2)
 		{
 			m_ButtonStates[Button::X2] = true;
-			startTracking = true;
+			//startTracking = true;
 			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X2 mouse button down.\n");
 		}
 		break;
@@ -156,19 +156,18 @@ LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPA
 		if (wparam & MK_XBUTTON1)
 		{
 			m_ButtonStates[Button::X1] = false;
-			stopTracking = true;
+			//stopTracking = true;
 			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X1 mouse button up.\n");
 		}
 		else if (wparam & MK_XBUTTON2)
 		{
 			m_ButtonStates[Button::X2] = false;
-			stopTracking = true;
+			//stopTracking = true;
 			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X2 mouse button up.\n");
 		}
 		break;
 
 	case WM_MOUSEMOVE:
-		m_Tracking = true;
 		if (m_Tracking)
 		{
 			m_Moving = true;
@@ -178,7 +177,7 @@ LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPA
 		// if the mouse is being tracked and is moving, get ready for a HOVER or LEAVE message
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_HOVER | TME_LEAVE;
+		tme.dwFlags = TME_HOVER;
 		tme.dwHoverTime = 1; // interval of time (currently 1ms) to check mouse position
 		tme.hwndTrack = bwin->getHWND();
 		TrackMouseEvent(&tme);
@@ -188,29 +187,6 @@ LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPA
 	case WM_MOUSEHOVER:
 		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Starting Tracking\n");
 		m_Tracking = true;
-		startTracking = true;
-
-		// upon handling this message, get ready for another
-		TRACKMOUSEEVENT tmeHover;
-		tmeHover.cbSize = sizeof(TRACKMOUSEEVENT);
-		tmeHover.dwFlags = TME_HOVER | TME_LEAVE;
-		tmeHover.dwHoverTime = 1; // interval of time (currently 1ms) to check mouse position
-		tmeHover.hwndTrack = bwin->getHWND();
-		TrackMouseEvent(&tmeHover);
-
-		break;
-
-	case WM_MOUSELEAVE:
-		m_Tracking = false;
-		stopTracking = true;
-
-		// upon handling this message, get ready for HOVER for when the mouse enters the window again
-		TRACKMOUSEEVENT tmeLeave;
-		tmeLeave.cbSize = sizeof(TRACKMOUSEEVENT);
-		tmeLeave.dwFlags = TME_HOVER;
-		tmeLeave.dwHoverTime = 1; // interval of time (currently 1ms) to check mouse position
-		tmeLeave.hwndTrack = bwin->getHWND();
-		TrackMouseEvent(&tmeLeave);
 
 		break;
 
@@ -218,19 +194,34 @@ LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPA
 		result = C_BAD_INPUT; // Someone else must process this message
 	}
 
+	// get the position of the current window relative to the desktop 
+	// (where 0,0 is the top left corner of the desktop)
+	RECT rc;
+	GetClientRect(bwin->getHWND(), &rc);
+	MapWindowPoints(bwin->getHWND(), GetParent(HWND_DESKTOP), (LPPOINT)&rc, 2);
+
+	// get the mouse position and test against the position of the current window
+	POINT mspos;
+	GetCursorPos(&mspos);
+	if (mspos.x > rc.right || mspos.x < rc.left ||
+		mspos.y > rc.bottom || mspos.y < rc.top)
+	{
+		m_Tracking = false;
+	}
+
 	// Update the position of the mouse
 	POINTS mousePts; // Mouse position in integer format
-	if (startTracking || (m_Tracking && positionMustChange))
+	if (m_Tracking && positionMustChange)
 	{
 		// Save the previous position and time
 		if (m_Moving)
 		{
-			m_tPast = m_t;
+			//m_tPast = m_t;
 			m_PastPosition = m_Position;
 		}
 		
 		// Update the time
-		m_t = GetTickCount();
+		//m_t = GetTickCount();
 
 		// Retrieve mouse position
 		mousePts = MAKEPOINTS(lparam);
@@ -301,7 +292,7 @@ bool Mouse::IsMoving(bool& moving) const
 
 bool Mouse::GetWindowPosition(XMFLOAT2& position) const
 {
-	if (!m_Tracking)
+	if (!m_Tracking || !m_Tracking && m_Moving)
 	{
 		return false;
 	}
@@ -311,8 +302,7 @@ bool Mouse::GetWindowPosition(XMFLOAT2& position) const
 
 bool Mouse::GetWindowVelocity(XMFLOAT2& velocity) const
 {
-	// added m_t - m_tPast == 0
-	if (m_t - m_tPast == 0.0f || !m_Tracking || !m_Moving || m_tPast == static_cast<DWORD>(0))
+	if (!m_Tracking || !m_Moving || m_tPast == static_cast<DWORD>(0))
 	{
 		return false;
 	}
@@ -325,7 +315,7 @@ bool Mouse::GetWindowVelocity(XMFLOAT2& velocity) const
 	return true;
 }
 
-bool Mouse::MapScreenToWorld(const XMFLOAT2& screenPosition, const CineCameraClass& camera, XMFLOAT3& nearClipPosition, XMFLOAT3& farClipPosition) const
+bool Mouse::MapScreenToWorld(const XMFLOAT2& screenPosition, const Camera& camera, XMFLOAT3& nearClipPosition, XMFLOAT3& farClipPosition) const
 {
 	// Input validation
 	if (screenPosition.x < 0 || screenPosition.y < 0 || screenPosition.x > m_ScreenDimensions.x || screenPosition.y > m_ScreenDimensions.y)
@@ -417,7 +407,7 @@ bool Mouse::MapScreenToWorld(const XMFLOAT2& screenPosition, const CineCameraCla
 	return true;
 }
 
-bool Mouse::GetWorldPosition(const CineCameraClass& camera, const float distAlongCameraLook, XMFLOAT3& worldPosition) const
+bool Mouse::GetWorldPosition(const Camera& camera, const float distAlongCameraLook, XMFLOAT3& worldPosition) const
 {
 	if (!m_Tracking)
 	{
@@ -445,7 +435,7 @@ bool Mouse::GetWorldPosition(const CineCameraClass& camera, const float distAlon
 	return true;
 }
 
-bool Mouse::GetWorldVelocity(const CineCameraClass& camera, const float distAlongCameraLook, XMFLOAT3& worldVelocity) const
+bool Mouse::GetWorldVelocity(const Camera& camera, const float distAlongCameraLook, XMFLOAT3& worldVelocity) const
 {
 	if (!m_Tracking || !m_Moving || m_tPast == static_cast<DWORD>(0))
 	{
@@ -484,7 +474,7 @@ bool Mouse::GetWorldVelocity(const CineCameraClass& camera, const float distAlon
 	return true;
 }
 
-bool Mouse::GetWorldDirection(const CineCameraClass& camera, XMFLOAT3& worldDirection) const
+bool Mouse::GetWorldDirection(const Camera& camera, XMFLOAT3& worldDirection) const
 {
 	if (!m_Tracking)
 	{
@@ -516,14 +506,16 @@ int Mouse::Update(void)
 		return C_OK;
 	}
 
+	m_tPast = m_t;
+
 	// Check the time
 	DWORD t = GetTickCount();
 	if ((t - m_t) >= maxMotionSamplingInterval )
 	{
 		// Set the mouse speed to zero
-		m_tPast = m_t;
+		//m_tPast = m_t;
 		m_PastPosition = m_Position;
-		m_t = t;
+		//m_t = t;
 
 		// Indicate that speed data is available
 		m_Moving = true;
@@ -551,6 +543,8 @@ int Mouse::Update(void)
 		// handle Up and Down function requirements
 		m_LastButtonStates[i] = m_ButtonStates[i];
 	}
+
+	m_t = GetTickCount();
 
 	return C_OK;
 }

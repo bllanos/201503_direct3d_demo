@@ -79,6 +79,8 @@ Keyboard& Keyboard::operator=(const Keyboard& other)
 
 int Keyboard::Initialize(void)
 {
+	m_t = GetTickCount();
+
 	m_keys = new bool[N_KEYS];
 	if (!m_keys)
 	{
@@ -111,8 +113,6 @@ int Keyboard::Initialize(void)
 		m_timePressed[i] = static_cast<DWORD>(0);
 		m_timeReleased[i] = static_cast<DWORD>(0);
 	}
-
-	m_t = GetTickCount();
 
 	return C_OK;
 }

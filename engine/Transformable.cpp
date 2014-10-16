@@ -103,7 +103,7 @@ void Transformable::computeLocalTransform(DirectX::XMFLOAT4X4& localTransformNoS
 	XMStoreFloat4x4(&localTransformNoScale, worldTransform);
 }
 
-void Transformable::MoveCamera(float ahead)
+void Transformable::Move(float ahead)
 {
 	updateCameraProperties();
 
@@ -112,7 +112,7 @@ void Transformable::MoveCamera(float ahead)
 	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), aheadv));
 }
 
-void Transformable::StrafeCamera(float side)
+void Transformable::Strafe(float side)
 {
 	updateCameraProperties();
 
@@ -121,7 +121,7 @@ void Transformable::StrafeCamera(float side)
 	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), sidev));
 }
 
-void Transformable::CraneCamera(float vertical)
+void Transformable::Crane(float vertical)
 {
 	updateCameraProperties();
 
@@ -130,7 +130,7 @@ void Transformable::CraneCamera(float vertical)
 	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), verticalv));
 }
 
-void Transformable::SpinCamera(float roll, float pitch, float yaw) {
+void Transformable::Spin(float roll, float pitch, float yaw) {
 	updateCameraProperties();
 
 	// apply camera-relative orientation changes

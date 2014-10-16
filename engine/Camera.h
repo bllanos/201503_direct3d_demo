@@ -1,10 +1,10 @@
 /* Adapted from the following source: COMP2501A Tutorial 5 */
 
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: cinecameraclass.h
+// Filename: Camera.h
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef _CINECAMERACLASS_H_
-#define _CINECAMERACLASS_H_
+#ifndef _CAMERA_H_
+#define _CAMERA_H_
 
 
 //////////////
@@ -41,12 +41,12 @@ Pan-Tilt-Roll-Strafe-Dolly-Crane-Zooom
 	const float MAX_CAMERA_FIELD_OF_VIEW = NOMINAL_FIELD_OF_VIEW * 3;
 	const float MIN_CAMERA_FIELD_OF_VIEW = NOMINAL_FIELD_OF_VIEW / 3;
 
-class CineCameraClass : public IInteractive
+class Camera : public IInteractive
 {
 public:
-	CineCameraClass(int screenWidth, int screenHeight); //constructor
-	CineCameraClass(const CineCameraClass&); //copy constructor
-	~CineCameraClass(); //destructor
+	Camera(int screenWidth, int screenHeight); //constructor
+	Camera(const Camera&); //copy constructor
+	~Camera(); //destructor
 
 	void MoveForward(); //translate forward along camera direction vector
 	void MoveBackward(); //translate backwards along camera direction vector

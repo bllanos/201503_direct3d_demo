@@ -34,7 +34,7 @@ Notes
 #include "IGeometry.h"
 
 class IGeometry;
-class CineCameraClass;
+class Camera;
 
 class IGeometryRenderer {
 
@@ -52,7 +52,7 @@ public:
 
 	/* Render the specified geometry
 	 */
-	virtual HRESULT render(ID3D11DeviceContext* const context, const IGeometry& geometry, const CineCameraClass* const camera) = 0;
+	virtual HRESULT render(ID3D11DeviceContext* const context, const IGeometry& geometry, const Camera* const camera) = 0;
 
 	// Currently not implemented - will cause linker errors if called
 private:

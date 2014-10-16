@@ -51,9 +51,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cinecameraclass.cpp">
-      <Filter>Unprocessed Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cpp\rendering\SimpleColorRenderer.cpp">
       <Filter>source\rendering</Filter>
     </ClCompile>
@@ -90,11 +87,11 @@
     <ClCompile Include="Transformable.cpp">
       <Filter>Unprocessed Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cinecameraclass.h">
-      <Filter>Unprocessed Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
       <Filter>header\rendering</Filter>
     </ClInclude>
@@ -148,6 +145,9 @@
     </ClInclude>
     <ClInclude Include="Transformable.h">
       <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

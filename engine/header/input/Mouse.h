@@ -37,7 +37,7 @@ using namespace DirectX;
 #include "IWinMessageHandler.h"
 #include "BasicWindow.h"
 
-class CineCameraClass;
+class Camera;
 
 class Mouse : public IWinMessageHandler
 {
@@ -139,7 +139,7 @@ public:
 	/* Maps an arbitrary position on the screen to a position in the world
 	   Returns false and does nothing if the input screen position is outside the screen
 	*/
-	bool MapScreenToWorld(const XMFLOAT2& screenPosition, const CineCameraClass& camera, XMFLOAT3& nearClipPosition, XMFLOAT3& farClipPosition) const;
+	bool MapScreenToWorld(const XMFLOAT2& screenPosition, const Camera& camera, XMFLOAT3& nearClipPosition, XMFLOAT3& farClipPosition) const;
 
 	/* Returns the projection of the mouse position from the screen
 	   to a point at a given distance
@@ -154,21 +154,21 @@ public:
 	   of the vector that starts at the camera's position in the world
 	   and ends at the mouse's position in the world.
 		*/
-	bool GetWorldPosition(const CineCameraClass& camera, const float distAlongCameraLook, XMFLOAT3& worldPosition) const;
+	bool GetWorldPosition(const Camera& camera, const float distAlongCameraLook, XMFLOAT3& worldPosition) const;
 
 	/* Similar, but retrieves the change in position since the last message processing round,
 	   in units of world coordinate units per millisecond.
 	   Additionally, if this is the first round that the mouse is being tracked,
 	   returns false and does nothing (as there is no data).
 	   */
-	bool GetWorldVelocity(const CineCameraClass& camera, const float distAlongCameraLook, XMFLOAT3& worldVelocity) const;
+	bool GetWorldVelocity(const Camera& camera, const float distAlongCameraLook, XMFLOAT3& worldVelocity) const;
 
 	/* Returns the direction vector (normalized) of the ray passing through
 	the mouse from the camera in the world coordinate space
 	and returns true when the mouse is being tracked.
 	Otherwise, when the mouse is not being tracked, returns false and does nothing.
 	*/
-	bool GetWorldDirection(const CineCameraClass& camera, XMFLOAT3& worldDirection) const;
+	bool GetWorldDirection(const Camera& camera, XMFLOAT3& worldDirection) const;
 
 private:
 	// Not implemented - will cause linker errors if called
