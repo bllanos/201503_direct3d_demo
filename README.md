@@ -18,7 +18,7 @@ with Visual Studio 2013.
 For Visual Studio 2012, it will be necessary to 'downgrade' the projects
 in the solution by changing their 'Platform Toolset' values (`Configuration Properties > General`).
 
-Any broken links, “File not found”-type errors, (e.g. “Cannot open…”) can normally be resolved
+Any broken links, â€œFile not foundâ€-type errors, (e.g. â€œCannot openâ€¦â€) can normally be resolved
 by removing the files in question from the project using the 'Solution Explorer' pane and then
 using the `Project > Add Existing Item` wizard to reinsert them into the project under the
 correct file paths.
@@ -87,3 +87,6 @@ There are no assets, currently.
   (i.e. Keep features not yet fully developed on branches
   other than 'master'.) The 'master' branch should ideally be demo-worthy at
   all times.
+
+- Before merging code into the 'master' branch, merge the 'master' branch
+  into your working branch and ensure that the merged code works properly.
