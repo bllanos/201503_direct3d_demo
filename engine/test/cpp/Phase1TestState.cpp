@@ -51,10 +51,7 @@ Phase1TestState::~Phase1TestState(void) {
 HRESULT Phase1TestState::initialize(ID3D11Device* device, int screenWidth, int screenHeight) {
 
 	// Initialize the camera
-	m_camera = new CineCameraClass(screenWidth, screenHeight);
-	m_camera->SetPosition(0.0f, 0.0f, -10.0f); //location of camera in 3D space
-	m_camera->SetDirection(0.0f, 0.0f, 1.0f); //direction camera is facing
-	m_camera->SetUpDirection(0.0f, 1.0f, 0.0f); //up direction of camera
+	m_camera = new Camera(screenWidth, screenHeight);
 
 	m_cubeModelTransformable = new Phase1TestTransformable();
 

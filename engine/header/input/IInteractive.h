@@ -22,8 +22,9 @@ Description
 #pragma once // This is a Microsoft-specific way to prevent multiple inclusions of a header file
 #include <windows.h>
 #include "Keyboard.h"
+#include "Mouse.h"
 
-class Mouse;
+//class Mouse;
 
 class IInteractive
 {

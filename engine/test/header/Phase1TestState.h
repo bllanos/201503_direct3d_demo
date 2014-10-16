@@ -22,7 +22,7 @@ Description
 
 #include "State.h"
 #include "LogUser.h"
-#include "CineCameraClass.h"
+#include "Camera.h"
 #include "CubeModel.h"
 #include "Phase1TestTransformable.h"
 #include "engineGlobals.h"
@@ -37,7 +37,7 @@ class Phase1TestState : public State, public LogUser {
 
 	// Data members
 private:
-	CineCameraClass* m_camera;
+	Camera* m_camera;
 	CubeModel* m_cubeModel;
 
 	// Owned by the CubeModel object

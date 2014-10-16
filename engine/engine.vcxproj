@@ -14,6 +14,7 @@
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestTransformable.cpp" />
     <ClCompile Include="cpp\geometry\GridQuad.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="cpp\d3dclass.cpp" />
     <ClCompile Include="cpp\engineMain.cpp" />
     <ClCompile Include="cpp\GeometryRendererManager.cpp" />
@@ -27,13 +28,17 @@
     <ClCompile Include="cpp\StateControl.cpp" />
     <ClCompile Include="test\cpp\Phase1TestState.cpp" />
     <ClCompile Include="test\cpp\Phase1TestTransformable.cpp" />
-    <ClCompile Include="cinecameraclass.cpp" />
+    <ClCompile Include="Transformable.cpp" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClInclude Include="test\header\SkinnedColorTestState.h" />
     <ClInclude Include="test\header\SkinnedColorTestTransformable.h" />
     <ClInclude Include="header\geometry\GridQuad.h" />
     <ClInclude Include="header\geometry\SkinnedColorGeometry.h" />
+=======
+    <ClInclude Include="Camera.h" />
+>>>>>>> origin/quaternion-camera
     <ClInclude Include="header\input\Keyboard.h" />
     <ClInclude Include="header\input\Mouse.h" />
     <ClInclude Include="header\rendering\SkinnedColorRenderer.h" />
@@ -51,8 +56,8 @@
     <ClInclude Include="header\rendering\SimpleColorRenderer.h" />
     <ClInclude Include="header\State.h" />
     <ClInclude Include="header\StateControl.h" />
-    <ClInclude Include="cinecameraclass.h" />
     <ClInclude Include="header\rendering\IGeometryRenderer.h" />
+    <ClInclude Include="Transformable.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EE9C0E97-8193-496B-8C61-41698F8AB67B}</ProjectGuid>

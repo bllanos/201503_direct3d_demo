@@ -26,7 +26,7 @@ Description
 #include <windows.h>
 #include <d3d11.h>
 #include "GeometryRendererManager.h"
-#include "cinecameraclass.h"
+#include "Camera.h"
 
 class GeometryRendererManager;
 
@@ -51,7 +51,7 @@ public:
 	virtual HRESULT drawUsingAppropriateRenderer(
 		ID3D11DeviceContext* const context,
 		GeometryRendererManager& manager,
-		const CineCameraClass* const camera
+		const Camera* const camera
 		) = 0;
 
 	// Currently not implemented - will cause linker errors if called

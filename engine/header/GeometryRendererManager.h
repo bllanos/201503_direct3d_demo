@@ -37,7 +37,7 @@ Description
 
 class IGeometryRenderer;
 class IGeometry;
-class CineCameraClass;
+class Camera;
 
 class GeometryRendererManager : public ConfigUser {
 
@@ -143,7 +143,7 @@ public:
 	HRESULT render(
 		ID3D11DeviceContext* const context,
 		const IGeometry& geometry,
-		const CineCameraClass* const camera,
+		const Camera* const camera,
 		GeometryRendererType rendererType
 		);
 
