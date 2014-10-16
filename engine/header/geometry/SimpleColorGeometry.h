@@ -13,16 +13,18 @@ Mark Wilkes, ID: 100884169
 Incorporated September 18, 2014
 
 Primary basis: COMP2501A project code
-  (Bernard Llanos, Alec McGrail, Benjamin Smith - Winter 2014)
-  -Adapted from the following source: COMP2501A Tutorial 5
-  -Original name was "SimpleColorGeometry.h"
+(Bernard Llanos, Alec McGrail, Benjamin Smith - Winter 2014)
+-Adapted from the following source: COMP2501A Tutorial 5
+-Original name was "SimpleColorGeometry.h"
 
 Description
-  -A class for storing indexed vertex geometry
-     which is composed of a single unit
-     (i.e. no moving parts) and whose vertices contain colour data,
-	 rather than texture coordinates.
+-A class for storing indexed vertex geometry
+which is composed of a single unit
+(i.e. no moving parts) and whose vertices contain colour data,
+rather than texture coordinates.
 */
+
+#pragma once
 
 #include <d3d11.h>
 #include <DirectXMath.h>
@@ -33,14 +35,14 @@ Description
 #define SIMPLECOLORGEOMETRY_VERTEX_TYPE SimpleColorVertexType
 
 /* The inheritance from ConfigUser is a convenience for derived classes.
-   As presently implemented, this class could inherit from LogUser
-   instead of ConfigUser.
- */
+As presently implemented, this class could inherit from LogUser
+instead of ConfigUser.
+*/
 class SimpleColorGeometry : public IGeometry, public ConfigUser
 {
 	/* Proxying the ConfigUser constructors
-	   for use by derived classes
-	 */
+	for use by derived classes
+	*/
 protected:
 	SimpleColorGeometry(const bool enableLogging, const std::wstring& msgPrefix,
 		Usage usage);
@@ -93,8 +95,6 @@ private:
 	// Data members
 private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
-
-protected:
 	D3D_PRIMITIVE_TOPOLOGY m_primitive_topology;
 	size_t m_vertexCount, m_indexCount;
 

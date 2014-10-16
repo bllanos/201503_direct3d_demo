@@ -262,8 +262,8 @@ int D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwn
 	called the feature level. This variable tells DirectX what version we plan to use. 
 	Here we set the feature level to 11.0 which is DirectX 11. 
 	*/
-	// Set the feature level to DirectX 11.
-	featureLevel = D3D_FEATURE_LEVEL_11_0;
+	// Set the feature level to DirectX 10.
+	featureLevel = D3D_FEATURE_LEVEL_10_0;
 
 	/*
 	Now that the swap chain description and feature level have been filled out we can create the swap chain, 

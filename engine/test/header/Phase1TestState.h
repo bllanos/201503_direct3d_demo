@@ -15,7 +15,7 @@ Created September 22, 2014
 Primary basis: None
 
 Description
-  -A class derived from State used for testing the Phase 1 engine
+-A class derived from State used for testing the Phase 1 engine
 */
 
 #pragma once // This is a Microsoft-specific way to prevent multiple inclusions of a header file
@@ -26,6 +26,7 @@ Description
 #include "CubeModel.h"
 #include "Phase1TestTransformable.h"
 #include "engineGlobals.h"
+#include "sphereModel.h"
 
 // Action period in milliseconds
 #define PHASE1TESTSTATE_PERIOD (5.0f * MILLISECS_PER_SEC_FLOAT)
@@ -38,10 +39,14 @@ class Phase1TestState : public State, public LogUser {
 	// Data members
 private:
 	CineCameraClass* m_camera;
-	CubeModel* m_cubeModel;
+	//CubeModel* m_cubeModel;
+	SphereModel* m_sphereModel;
+	SphereModel* m_sphereModel2;
 
 	// Owned by the CubeModel object
-	Phase1TestTransformable* m_cubeModelTransformable;
+	//Phase1TestTransformable* m_cubeModelTransformable;
+	Phase1TestTransformable* m_sphereModelTransformable;
+	Phase1TestTransformable* m_sphereModelTransformable2;
 
 public:
 	Phase1TestState(void);

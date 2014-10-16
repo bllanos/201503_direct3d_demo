@@ -16,6 +16,7 @@
     <ClCompile Include="cpp\GeometryRendererManager.cpp" />
     <ClCompile Include="cpp\geometry\CubeModel.cpp" />
     <ClCompile Include="cpp\geometry\SimpleColorGeometry.cpp" />
+    <ClCompile Include="cpp\geometry\SphereModel.cpp" />
     <ClCompile Include="cpp\Keyboard.cpp" />
     <ClCompile Include="cpp\rendering\SimpleColorRenderer.cpp" />
     <ClCompile Include="cpp\StateControl.cpp" />
@@ -25,6 +26,7 @@
     <ClCompile Include="Mouse.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cpp\geometry\sphereModel.h" />
     <ClInclude Include="header\Keyboard.h" />
     <ClInclude Include="test\header\Phase1TestState.h" />
     <ClInclude Include="test\header\Phase1TestTransformable.h" />

@@ -84,6 +84,9 @@
     <ClCompile Include="cpp\Keyboard.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\geometry\SphereModel.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cinecameraclass.h">
@@ -139,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="header\Keyboard.h">
       <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="cpp\geometry\sphereModel.h">
+      <Filter>header\geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
