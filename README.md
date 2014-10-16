@@ -23,6 +23,11 @@ by removing the files in question from the project using the 'Solution Explorer'
 using the `Project > Add Existing Item` wizard to reinsert them into the project under the
 correct file paths.
 
+One group member uses the WARP software driver due to hardware limitations.
+This setting should not be pushed to the repository, but in the event
+that it makes its way in, it can be changed on Line 292 of d3dclass.cpp
+(in the call to `D3D11CreateDeviceAndSwapChain()`).
+
 ### Running a clone of the repository
 _(Hopefully not applicable to any submitted versions of the code)_
 
@@ -90,3 +95,7 @@ There are no assets, currently.
 
 - Before merging code into the 'master' branch, merge the 'master' branch
   into your working branch and ensure that the merged code works properly.
+
+- All shaders will be compiled for shader model 4.0 (as determined by the
+  rendering configuration files). The Direct3D device will be created
+  with a feature level of 10.0, and will be set to use a hardware driver.
