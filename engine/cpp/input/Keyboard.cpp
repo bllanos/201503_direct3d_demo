@@ -44,25 +44,25 @@ Keyboard::~Keyboard()
 {
 	if (m_keys)
 	{
-		delete m_keys;
+		delete[] m_keys;
 		m_keys = 0;
 	}
 
 	if (m_lastKeys)
 	{
-		delete m_lastKeys;
+		delete[] m_lastKeys;
 		m_lastKeys = 0;
 	}
 
 	if (m_timePressed) 
 	{
-		delete m_timePressed;
+		delete[] m_timePressed;
 		m_timePressed = 0;
 	}
 
 	if (m_timeReleased)
 	{
-		delete m_timeReleased;
+		delete[] m_timeReleased;
 		m_timeReleased = 0;
 	}
 }
@@ -79,6 +79,8 @@ Keyboard& Keyboard::operator=(const Keyboard& other)
 
 int Keyboard::Initialize(void)
 {
+	m_t = GetTickCount();
+
 	m_keys = new bool[N_KEYS];
 	if (!m_keys)
 	{
@@ -111,8 +113,6 @@ int Keyboard::Initialize(void)
 		m_timePressed[i] = static_cast<DWORD>(0);
 		m_timeReleased[i] = static_cast<DWORD>(0);
 	}
-
-	m_t = GetTickCount();
 
 	return C_OK;
 }
@@ -199,7 +199,7 @@ int Keyboard::Update(void)
 	return C_OK;
 }
 
-LRESULT CALLBACK Keyboard::winProc(HWND bwin, UINT umsg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK Keyboard::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
 	int result = 1; // Zero would mean that the message was fully handled here
 

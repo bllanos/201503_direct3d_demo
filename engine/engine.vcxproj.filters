@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -46,14 +46,11 @@
     <Filter Include="test\source">
       <UniqueIdentifier>{d8e4676c-b3ec-45eb-90e2-3a4211ded724}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\input">
+      <UniqueIdentifier>{b7e4783b-55dc-41da-9497-4e22a2d8602d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cinecameraclass.cpp">
-      <Filter>Unprocessed Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mouse.cpp">
-      <Filter>Unprocessed Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cpp\rendering\SimpleColorRenderer.cpp">
       <Filter>source\rendering</Filter>
     </ClCompile>
@@ -81,7 +78,31 @@
     <ClCompile Include="test\cpp\Phase1TestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
-    <ClCompile Include="cpp\Keyboard.cpp">
+    <ClCompile Include="cpp\input\Keyboard.cpp">
+      <Filter>source\input</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\input\Mouse.cpp">
+      <Filter>source\input</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\rendering\SkinnedColorRenderer.cpp">
+      <Filter>source\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\geometry\GridQuad.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\SkinnedColorTestTransformable.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\SkinnedColorTestState.cpp">
+      <Filter>test\source</Filter>
+	</ClCompile>
+    <ClCompile Include="Transformable.cpp">
+      <Filter>Unprocessed Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="cpp\geometry\SphereModel.cpp">
@@ -89,12 +110,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cinecameraclass.h">
-      <Filter>Unprocessed Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mouse.h">
-      <Filter>Unprocessed Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
       <Filter>header\rendering</Filter>
     </ClInclude>
@@ -140,7 +155,31 @@
     <ClInclude Include="test\header\Phase1TestTransformable.h">
       <Filter>test\header</Filter>
     </ClInclude>
-    <ClInclude Include="header\Keyboard.h">
+    <ClInclude Include="header\input\Mouse.h">
+      <Filter>header\input</Filter>
+    </ClInclude>
+    <ClInclude Include="header\input\Keyboard.h">
+      <Filter>header\input</Filter>
+    </ClInclude>
+    <ClInclude Include="header\rendering\SkinnedColorRenderer.h">
+      <Filter>header\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\SkinnedColorGeometry.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\GridQuad.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\SkinnedColorTestState.h">
+      <Filter>test\header</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\SkinnedColorTestTransformable.h">
+      <Filter>test\header</Filter>
+	</ClInclude>
+    <ClInclude Include="Transformable.h">
+      <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
       <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="cpp\geometry\sphereModel.h">

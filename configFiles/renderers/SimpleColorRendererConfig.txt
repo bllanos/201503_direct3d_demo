@@ -14,9 +14,9 @@ BOOL -- SimpleColorRenderer_ConfigUser::enableConfigUseLogging = true
 # Shader setup
 # ------------
 DIRECTORY -- SimpleColorRenderer::shaderFilePath = "..\shaderCode"
-FILENAME -- SimpleColorRenderer::vsFileName = "color.vs"
+FILENAME -- SimpleColorRenderer::vsFileName = "colorVS.hlsl"
 WSTRING -- SimpleColorRenderer::vsShaderModel = L"vs_4_0"
 WSTRING -- SimpleColorRenderer::vsEntryPoint = L"ColorVertexShader"
-FILENAME -- SimpleColorRenderer::psFileName = "color.ps"
+FILENAME -- SimpleColorRenderer::psFileName = "colorPS.hlsl"
 WSTRING -- SimpleColorRenderer::psShaderModel = L"ps_4_0"
 WSTRING -- SimpleColorRenderer::psEntryPoint = L"ColorPixelShader"

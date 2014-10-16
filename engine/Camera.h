@@ -1,10 +1,10 @@
 /* Adapted from the following source: COMP2501A Tutorial 5 */
 
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: cinecameraclass.h
+// Filename: Camera.h
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef _CINECAMERACLASS_H_
-#define _CINECAMERACLASS_H_
+#ifndef _CAMERA_H_
+#define _CAMERA_H_
 
 
 //////////////
@@ -13,6 +13,7 @@
 #include <windows.h> //needed to create and destroy windows and call Win32 functions
 #include <DirectXMath.h>
 #include "IInteractive.h"
+#include "Transformable.h"
 
 using namespace DirectX;
 
@@ -40,16 +41,12 @@ Pan-Tilt-Roll-Strafe-Dolly-Crane-Zooom
 	const float MAX_CAMERA_FIELD_OF_VIEW = NOMINAL_FIELD_OF_VIEW * 3;
 	const float MIN_CAMERA_FIELD_OF_VIEW = NOMINAL_FIELD_OF_VIEW / 3;
 
-class CineCameraClass : public IInteractive
+class Camera : public IInteractive
 {
 public:
-	CineCameraClass(int screenWidth, int screenHeight); //constructor
-	CineCameraClass(const CineCameraClass&); //copy constructor
-	~CineCameraClass(); //destructor
-
-	void SetPosition(float, float, float);
-	void SetDirection(float, float, float);
-	void SetUpDirection(float, float, float);
+	Camera(int screenWidth, int screenHeight); //constructor
+	Camera(const Camera&); //copy constructor
+	~Camera(); //destructor
 
 	void MoveForward(); //translate forward along camera direction vector
 	void MoveBackward(); //translate backwards along camera direction vector
@@ -79,14 +76,9 @@ public:
 	virtual HRESULT poll(Keyboard& input, Mouse& mouse) override;
 
 private:
-	bool checkOrthogonality(void);
 	int UpdateMatrices(void);
 
 private:
-
-	XMFLOAT3 position; //position in 3-space of the camera
-	XMFLOAT3 direction; //direction the camera is pointing
-	XMFLOAT3 upDirection; //up direction of the camera
 
 	float screenWidth;
 	float screenHeight;
@@ -98,6 +90,7 @@ private:
 	XMFLOAT4X4 m_viewMatrix;
 	XMFLOAT4X4 m_projectionMatrix;
 
+	Transformable* m_transform;
 };
 
 #endif

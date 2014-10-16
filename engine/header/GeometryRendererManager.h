@@ -37,7 +37,7 @@ Description
 
 class IGeometryRenderer;
 class IGeometry;
-class CineCameraClass;
+class Camera;
 
 class GeometryRendererManager : public ConfigUser {
 
@@ -46,7 +46,19 @@ public:
 	   to be used in place of run-time type information.
 	 */
 	enum class GeometryRendererType : unsigned int {
-		SimpleColorRenderer
+		SimpleColorRenderer,
+		/* There are two renderers of the same class,
+		   which are expected to be configured
+		   to omit and apply 3-term lighting, respectively.
+
+		   However, configuration data will actually determine
+		   which one(s) use lighting, in order to facilitate
+		   debugging. In normal operation, the first
+		   should not use lighting, whereas the second should
+		   use lighting by convention.
+		 */
+		SkinnedColorRendererNoLight,
+		SkinnedColorRendererLight
 	};
 	/* When adding new data types to this enumeration, also do the following:
 	   -Update the 's_geometryRendererTypeNames' and
@@ -131,7 +143,7 @@ public:
 	HRESULT render(
 		ID3D11DeviceContext* const context,
 		const IGeometry& geometry,
-		const CineCameraClass* const camera,
+		const Camera* const camera,
 		GeometryRendererType rendererType
 		);
 

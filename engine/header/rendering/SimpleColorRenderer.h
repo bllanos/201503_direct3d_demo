@@ -97,7 +97,7 @@ public:
 
 	virtual HRESULT initialize(ID3D11Device* const device) override;
 
-	virtual HRESULT render(ID3D11DeviceContext* const context, const IGeometry& geometry, const CineCameraClass* const camera) override;
+	virtual HRESULT render(ID3D11DeviceContext* const context, const IGeometry& geometry, const Camera* const camera) override;
 
 	// Helper functions
 private:

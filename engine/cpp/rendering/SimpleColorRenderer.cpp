@@ -60,7 +60,7 @@ HRESULT SimpleColorRenderer::initialize(ID3D11Device* const device)
 	return InitializeShader(device);
 }
 
-HRESULT SimpleColorRenderer::render(ID3D11DeviceContext* const context, const IGeometry& geometry, const CineCameraClass* const camera) {
+HRESULT SimpleColorRenderer::render(ID3D11DeviceContext* const context, const IGeometry& geometry, const Camera* const camera) {
 
 	/* Renderers assume that they are being called on the right kind of geometry,
 	   because the geometry itself should be calling this function (indirectly
@@ -396,7 +396,6 @@ int SimpleColorRenderer::ShutdownShader()
 void SimpleColorRenderer::OutputShaderErrorMessage(ID3D10Blob* const errorMessage)
 {
 	char* compileErrors;
-	unsigned long bufferSize, i;
 	wstring prefix(L"Compilation error: ");
 	wstring errorMsg;
 	std::string errorMsg_str;
@@ -404,18 +403,13 @@ void SimpleColorRenderer::OutputShaderErrorMessage(ID3D10Blob* const errorMessag
 	// Get a pointer to the error message text buffer.
 	compileErrors = (char*)(errorMessage->GetBufferPointer());
 
-	// Get the length of the message.
-	bufferSize = errorMessage->GetBufferSize();
-
 	// Write out the error message.
-	for(i=0; i<bufferSize; i++)
-	{
-		errorMsg_str = compileErrors[i];
-		if( FAILED(toWString(errorMsg, errorMsg_str)) ) {
-			m_msgStore.emplace_back(prefix + L" [problem converting error message to a wide-character string]");
-		} else {
-			m_msgStore.emplace_back(prefix + errorMsg);
-		}
+	errorMsg_str = compileErrors;
+	if (FAILED(toWString(errorMsg, errorMsg_str))) {
+		m_msgStore.emplace_back(prefix + L" [problem converting error message to a wide-character string]");
+	}
+	else {
+		m_msgStore.emplace_back(prefix + errorMsg);
 	}
 
 	// Log all messages
@@ -423,7 +417,6 @@ void SimpleColorRenderer::OutputShaderErrorMessage(ID3D10Blob* const errorMessag
 
 	// Release the error message.
 	errorMessage->Release();
-	return;
 }
 
 

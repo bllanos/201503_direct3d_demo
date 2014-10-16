@@ -108,7 +108,7 @@ SimpleColorGeometry::~SimpleColorGeometry() {
 	m_indexCount = 0;
 }
 
-HRESULT SimpleColorGeometry::drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const CineCameraClass* const camera) {
+HRESULT SimpleColorGeometry::drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const Camera* const camera) {
 
 	// Prepare pipeline state
 	unsigned int stride = SIMPLECOLORGEOMETRY_VERTEX_SIZE;

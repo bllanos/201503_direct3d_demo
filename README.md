@@ -64,6 +64,13 @@ The following works were consulted for ideas during development:
   _Practical Rendering and Computation with Direct 3D 11._
   Boca Raton: CRC Press Taylor & Francis Group, 2011.
 
+### References for Specific Features
+- Phong lighting
+  - COMP3501A illumination demo
+  - Zink, Jason, Matt Pettineo and Jack Hoxley.
+    _Practical Rendering and Computation with Direct 3D 11._
+    Boca Raton: CRC Press Taylor & Francis Group, 2011. (Chapter 11)
+
 ## Sources of Assets
 There are no assets, currently.
 

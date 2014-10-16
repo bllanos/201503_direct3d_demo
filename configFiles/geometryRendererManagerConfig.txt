@@ -3,8 +3,18 @@
 # Determine which renderers the system will attempt to initialize
 # ---------------------------------------------------------------
 BOOL -- GeometryRendererManager::SimpleColorRenderer = true
+BOOL -- GeometryRendererManager::SkinnedColorRendererNoLight = true
+BOOL -- GeometryRendererManager::SkinnedColorRendererLight = true
 
 # Where to find configuration data for the SimpleColorRenderer
 # ------------------------------------------------------------
 FILENAME -- GeometryRendererManager::SimpleColorRenderer_inputConfigFileName = "SimpleColorRendererConfig.txt"
 DIRECTORY -- GeometryRendererManager::SimpleColorRenderer_inputConfigFilePath = "..\configFiles\renderers"
+
+# Do likewise for other renderers
+# ------------------------------------------------------------
+FILENAME -- GeometryRendererManager::SkinnedColorRendererNoLight_inputConfigFileName = "SkinnedColorRendererNoLight.txt"
+DIRECTORY -- GeometryRendererManager::SkinnedColorRendererNoLight_inputConfigFilePath = "..\configFiles\renderers"
+
+FILENAME -- GeometryRendererManager::SkinnedColorRendererLight_inputConfigFileName = "SkinnedColorRendererLight.txt"
+DIRECTORY -- GeometryRendererManager::SkinnedColorRendererLight_inputConfigFilePath = "..\configFiles\renderers"

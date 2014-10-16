@@ -321,7 +321,7 @@ void BasicWindow::addMessageHandler(IWinMessageHandler* msgHandler) {
 
 LRESULT CALLBACK BasicWindow::processMessageHandlers(UINT umsg, WPARAM wparam, LPARAM lparam) {
 	for (size_t i = 0; i < m_msgHandlers.size(); ++i) {
-		LRESULT msgHandlerResult = m_msgHandlers[i]->winProc(this->getHWND(), umsg, wparam, lparam);
+		LRESULT msgHandlerResult = m_msgHandlers[i]->winProc(this, umsg, wparam, lparam);
 		if (msgHandlerResult == 0) {
 			return msgHandlerResult;
 		}
@@ -337,9 +337,7 @@ LRESULT CALLBACK BasicWindow::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARA
 	 */
 
 	// let the classes that implement IWinMessageHandler handle their messages first.
-	if (processMessageHandlers(umsg, wparam, lparam) == 0) {
-		return 0;
-	}
+	processMessageHandlers(umsg, wparam, lparam);
 
 	if (umsg == WM_CLOSE || (umsg == WM_KEYDOWN && wparam == VK_ESCAPE) ) {
 		

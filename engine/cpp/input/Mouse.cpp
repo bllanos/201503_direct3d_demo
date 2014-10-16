@@ -13,6 +13,8 @@ Implementation of the Mouse class
 #include "engineGlobals.h"
 #include <string>
 #include <sstream>   // for wostringstream
+#include "Camera.h"
+
 using std::wostringstream;
 
 const int Mouse::nButtons = 5;
@@ -20,14 +22,20 @@ const int Mouse::nButtons = 5;
 const DWORD Mouse::maxMotionSamplingInterval = static_cast<DWORD>(100); // measured milliseconds
 
 Mouse::Mouse(void) :
-m_Tracking(false), m_Position(0.0f, 0.0f), m_PastPosition(0.0f, 0.0f), m_ButtonStates(0),
-m_Moving(false), m_t(static_cast<DWORD>(0)), m_tPast(static_cast<DWORD>(0)),
-m_ScreenDimensions(0.0f, 0.0f)
+m_Tracking(false), m_Position(0.0f, 0.0f), m_PastPosition(0.0f, 0.0f), m_ButtonStates(0), m_LastButtonStates(0),
+m_Moving(false), m_t(static_cast<DWORD>(0)), m_tPast(static_cast<DWORD>(0)), m_timePressed(static_cast<DWORD>(0)), 
+m_timeReleased(static_cast<DWORD>(0)), m_ScreenDimensions(0.0f, 0.0f)
 {
 	m_ButtonStates = new bool[nButtons];
+	m_LastButtonStates = new bool[nButtons];
+	m_timePressed = new DWORD[nButtons];
+	m_timeReleased = new DWORD[nButtons];
 	for (int i = 0; i < nButtons; ++i)
 	{
 			m_ButtonStates[i] = false;
+			m_LastButtonStates[i] = false;
+			m_timePressed[i] = static_cast<DWORD>(0);
+			m_timeReleased[i] = static_cast<DWORD>(0);
 	}
 }
 
@@ -42,6 +50,7 @@ int Mouse::Initialize(HWND hwnd)
 	GetClientRect(hwnd, &rcClient);
 	m_ScreenDimensions.x = static_cast<float>(rcClient.right + 1);
 	m_ScreenDimensions.y = static_cast<float>(rcClient.bottom + 1);
+	m_t = GetTickCount();
 	return C_OK;
 }
 
@@ -52,9 +61,27 @@ Mouse::~Mouse(void)
 		delete[] m_ButtonStates;
 		m_ButtonStates = 0;
 	}
+
+	if (m_LastButtonStates)
+	{
+		delete[] m_LastButtonStates;
+		m_LastButtonStates = 0;
+	}
+
+	if (m_timePressed)
+	{
+		delete[] m_timePressed;
+		m_timePressed = 0;
+	}
+
+	if (m_timeReleased)
+	{
+		delete[] m_timeReleased;
+		m_timeReleased = 0;
+	}
 }
 
-LRESULT CALLBACK Mouse::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
 	/* Allow for the default handler to be called by the SystemClass object
 	regardless of how the mouse handles the event, because this allows
@@ -65,8 +92,8 @@ LRESULT CALLBACK Mouse::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lpar
 	which means that the window will receive all mouse input. The mouse
 	must be captured in order for the default window procedure to handle
 	mouse input as well. The mouse is released when no buttons are down. */
-	bool startTracking = false;
-	bool stopTracking = false;
+	//bool startTracking = false;
+	//bool stopTracking = false;
 
 	bool positionMustChange = false;
 
@@ -76,37 +103,37 @@ LRESULT CALLBACK Mouse::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lpar
 	{
 	case WM_LBUTTONDOWN:
 		m_ButtonStates[Button::LEFT] = true;
-		startTracking = true;
+		//startTracking = true;
 		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Left mouse button down.\n");
 		break;
 
 	case WM_LBUTTONUP:
 		m_ButtonStates[Button::LEFT] = false;
-		stopTracking = true;
+		//stopTracking = true;
 		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Left mouse button up.\n");
 		break;
 
 	case WM_MBUTTONDOWN:
 		m_ButtonStates[Button::MIDDLE] = true;
-		startTracking = true;
+		//startTracking = true;
 		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Middle mouse button down.\n");
 		break;
 
 	case WM_MBUTTONUP:
 		m_ButtonStates[Button::MIDDLE] = false;
-		stopTracking = true;
+		//stopTracking = true;
 		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Middle mouse button up.\n");
 		break;
 
 	case WM_RBUTTONDOWN:
 		m_ButtonStates[Button::RIGHT] = true;
-		startTracking = true;
+		//startTracking = true;
 		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Right mouse button down.\n");
 		break;
 
 	case WM_RBUTTONUP:
 		m_ButtonStates[Button::RIGHT] = false;
-		stopTracking = true;
+		//stopTracking = true;
 		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Right mouse button up.\n");
 		break;
 
@@ -114,13 +141,13 @@ LRESULT CALLBACK Mouse::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lpar
 		if (wparam & MK_XBUTTON1)
 		{
 			m_ButtonStates[Button::X1] = true;
-			startTracking = true;
+			//startTracking = true;
 			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X1 mouse button down.\n");
 		}
 		else if (wparam & MK_XBUTTON2)
 		{
 			m_ButtonStates[Button::X2] = true;
-			startTracking = true;
+			//startTracking = true;
 			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X2 mouse button down.\n");
 		}
 		break;
@@ -129,13 +156,13 @@ LRESULT CALLBACK Mouse::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lpar
 		if (wparam & MK_XBUTTON1)
 		{
 			m_ButtonStates[Button::X1] = false;
-			stopTracking = true;
+			//stopTracking = true;
 			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X1 mouse button up.\n");
 		}
 		else if (wparam & MK_XBUTTON2)
 		{
 			m_ButtonStates[Button::X2] = false;
-			stopTracking = true;
+			//stopTracking = true;
 			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X2 mouse button up.\n");
 		}
 		break;
@@ -146,79 +173,55 @@ LRESULT CALLBACK Mouse::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lpar
 			m_Moving = true;
 			positionMustChange = true;
 		}
+
+		// if the mouse is being tracked and is moving, get ready for a HOVER or LEAVE message
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(TRACKMOUSEEVENT);
+		tme.dwFlags = TME_HOVER;
+		tme.dwHoverTime = 1; // interval of time (currently 1ms) to check mouse position
+		tme.hwndTrack = bwin->getHWND();
+		TrackMouseEvent(&tme);
+
+		break;
+
+	case WM_MOUSEHOVER:
+		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Starting Tracking\n");
+		m_Tracking = true;
+
 		break;
 
 	default:
 		result = C_BAD_INPUT; // Someone else must process this message
 	}
 
-	// Check whether to start or stop tracking the mouse
+	// get the position of the current window relative to the desktop 
+	// (where 0,0 is the top left corner of the desktop)
+	RECT rc;
+	GetClientRect(bwin->getHWND(), &rc);
+	MapWindowPoints(bwin->getHWND(), GetParent(HWND_DESKTOP), (LPPOINT)&rc, 2);
 
-	if (startTracking)
+	// get the mouse position and test against the position of the current window
+	POINT mspos;
+	GetCursorPos(&mspos);
+	if (mspos.x > rc.right || mspos.x < rc.left ||
+		mspos.y > rc.bottom || mspos.y < rc.top)
 	{
-		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Starting Tracking\n");
-		m_Tracking = true;
-		SetCapture(hwnd); // Capture mouse input
-
-		/* Constrain the cursor to the window
-		   Copied from the "Drawing Lines with the Mouse" example at
-		   http://msdn.microsoft.com/en-us/library/windows/desktop/ms645602%28v=vs.85%29.aspx
-		   */
-		RECT rcClient;                 // client area rectangle 
-		POINT ptClientUL;              // client upper left corner 
-		POINT ptClientLR;              // client lower right corner
-		// Retrieve the screen coordinates of the client area, 
-		// and convert them into client coordinates.
-		GetClientRect(hwnd, &rcClient);
-		ptClientUL.x = rcClient.left;
-		ptClientUL.y = rcClient.top;
-
-		// Add one to the right and bottom sides, because the 
-		// coordinates retrieved by GetClientRect do not 
-		// include the far left and lowermost pixels.
-		ptClientLR.x = rcClient.right + 1;
-		ptClientLR.y = rcClient.bottom + 1;
-		// Convert client-area coordinates to screen coordinates.
-		ClientToScreen(hwnd, &ptClientUL);
-		ClientToScreen(hwnd, &ptClientLR);
-
-		// Copy the client coordinates of the client area 
-		// to the rcClient structure. Confine the mouse cursor 
-		// to the client area by passing the rcClient structure 
-		// to the ClipCursor function.
-		SetRect(&rcClient, ptClientUL.x, ptClientUL.y,
-			ptClientLR.x, ptClientLR.y);
-		ClipCursor(&rcClient);
-	}
-
-	else if (stopTracking)
-	{
-		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Stopping Tracking\n");
 		m_Tracking = false;
-		m_Moving = false;
-		ClipCursor(NULL); // Release the cursor clipping
-		ReleaseCapture(); // Uncapture the mouse
-
-		// Destroy position and time data
-		m_tPast = static_cast<DWORD>(0); // Suspend timer
-		m_t = static_cast<DWORD>(0); // Suspend timer
-		m_PastPosition = XMFLOAT2(0.0f, 0.0f);
-		m_Position = XMFLOAT2(0.0f, 0.0f);
 	}
 
 	// Update the position of the mouse
 	POINTS mousePts; // Mouse position in integer format
-	if (startTracking || (m_Tracking && positionMustChange))
+	if (m_Tracking && positionMustChange)
 	{
 		// Save the previous position and time
 		if (m_Moving)
 		{
-			m_tPast = m_t;
+			//m_tPast = m_t;
 			m_PastPosition = m_Position;
 		}
-
+		
 		// Update the time
-		m_t = GetTickCount();
+		//m_t = GetTickCount();
 
 		// Retrieve mouse position
 		mousePts = MAKEPOINTS(lparam);
@@ -237,7 +240,34 @@ LRESULT CALLBACK Mouse::winProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lpar
 		//	// writeToDebugConsole(mousePosWOSStream.str().c_str());
 		//}
 	}
+
 	return result;
+}
+
+bool Mouse::Up(unsigned int button)
+{
+	if (!m_ButtonStates[button] && m_LastButtonStates[button]) {
+		return true;
+	}
+	return false;
+}
+
+bool Mouse::Down(unsigned int button)
+{
+	if (m_ButtonStates[button] && !m_LastButtonStates[button]) {
+		return true;
+	}
+	return false;
+}
+
+DWORD Mouse::TimePressed(unsigned int button) const
+{
+	return m_timePressed[button];
+}
+
+DWORD Mouse::TimeReleased(unsigned int button) const
+{
+	return m_timeReleased[button];
 }
 
 bool Mouse::IsBeingTracked(void) const
@@ -262,7 +292,7 @@ bool Mouse::IsMoving(bool& moving) const
 
 bool Mouse::GetWindowPosition(XMFLOAT2& position) const
 {
-	if (!m_Tracking)
+	if (!m_Tracking || !m_Tracking && m_Moving)
 	{
 		return false;
 	}
@@ -276,14 +306,16 @@ bool Mouse::GetWindowVelocity(XMFLOAT2& velocity) const
 	{
 		return false;
 	}
+
 	velocity.x = (m_Position.x - m_PastPosition.x) /
 		static_cast<float>(m_t - m_tPast);
 	velocity.y = (m_Position.y - m_PastPosition.y) /
 		static_cast<float>(m_t - m_tPast);
+
 	return true;
 }
 
-bool Mouse::MapScreenToWorld(const XMFLOAT2& screenPosition, const CineCameraClass& camera, XMFLOAT3& nearClipPosition, XMFLOAT3& farClipPosition) const
+bool Mouse::MapScreenToWorld(const XMFLOAT2& screenPosition, const Camera& camera, XMFLOAT3& nearClipPosition, XMFLOAT3& farClipPosition) const
 {
 	// Input validation
 	if (screenPosition.x < 0 || screenPosition.y < 0 || screenPosition.x > m_ScreenDimensions.x || screenPosition.y > m_ScreenDimensions.y)
@@ -375,7 +407,7 @@ bool Mouse::MapScreenToWorld(const XMFLOAT2& screenPosition, const CineCameraCla
 	return true;
 }
 
-bool Mouse::GetWorldPosition(const CineCameraClass& camera, const float distAlongCameraLook, XMFLOAT3& worldPosition) const
+bool Mouse::GetWorldPosition(const Camera& camera, const float distAlongCameraLook, XMFLOAT3& worldPosition) const
 {
 	if (!m_Tracking)
 	{
@@ -403,7 +435,7 @@ bool Mouse::GetWorldPosition(const CineCameraClass& camera, const float distAlon
 	return true;
 }
 
-bool Mouse::GetWorldVelocity(const CineCameraClass& camera, const float distAlongCameraLook, XMFLOAT3& worldVelocity) const
+bool Mouse::GetWorldVelocity(const Camera& camera, const float distAlongCameraLook, XMFLOAT3& worldVelocity) const
 {
 	if (!m_Tracking || !m_Moving || m_tPast == static_cast<DWORD>(0))
 	{
@@ -442,7 +474,7 @@ bool Mouse::GetWorldVelocity(const CineCameraClass& camera, const float distAlon
 	return true;
 }
 
-bool Mouse::GetWorldDirection(const CineCameraClass& camera, XMFLOAT3& worldDirection) const
+bool Mouse::GetWorldDirection(const Camera& camera, XMFLOAT3& worldDirection) const
 {
 	if (!m_Tracking)
 	{
@@ -474,17 +506,45 @@ int Mouse::Update(void)
 		return C_OK;
 	}
 
+	m_tPast = m_t;
+
 	// Check the time
 	DWORD t = GetTickCount();
 	if ((t - m_t) >= maxMotionSamplingInterval )
 	{
 		// Set the mouse speed to zero
-		m_tPast = m_t;
+		//m_tPast = m_t;
 		m_PastPosition = m_Position;
-		m_t = t;
+		//m_t = t;
 
 		// Indicate that speed data is available
 		m_Moving = true;
 	}
+
+	// track metrics for all buttons
+	for (int i = 0; i < nButtons; ++i)
+	{
+		// handle TimePressed function requirements
+		if (m_ButtonStates[i] && m_LastButtonStates[i]) {
+			m_timePressed[i] += m_t - m_tPast;
+		}
+		else {
+			m_timePressed[i] = static_cast<DWORD>(0);
+		}
+
+		// handle TimeReleased function requirements
+		if (!m_ButtonStates[i] && !m_LastButtonStates[i]) {
+			m_timeReleased[i] += m_t - m_tPast;
+		}
+		else {
+			m_timeReleased[i] = static_cast<DWORD>(0);
+		}
+
+		// handle Up and Down function requirements
+		m_LastButtonStates[i] = m_ButtonStates[i];
+	}
+
+	m_t = GetTickCount();
+
 	return C_OK;
 }

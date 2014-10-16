@@ -30,12 +30,14 @@ Note: I have not tested whether this class
 
 #pragma once
 
+#include <Windows.h>
 #include <DirectXMath.h>
 using namespace DirectX;
 
-#include "cinecameraclass.h"
 #include "IWinMessageHandler.h"
 #include "BasicWindow.h"
+
+class Camera;
 
 class Mouse : public IWinMessageHandler
 {
@@ -53,7 +55,7 @@ public:
 
 	// Data members
 private:
-	// Is the object tracking the mouse? (True if any mouse buttons are down)
+	// True if the mouse is inside the current window, false if not
 	bool m_Tracking;
 	// Mouse position in pixels relative to top left of window
 	XMFLOAT2 m_Position;
@@ -61,6 +63,8 @@ private:
 	XMFLOAT2 m_PastPosition;
 	// Records whether specific buttons are pressed or released
 	bool* m_ButtonStates;
+	// Records whether specific buttons are pressed or released in the last iteration
+	bool* m_LastButtonStates;
 	/* True if a mouse button is pressed
 	   and if the mouse's speed-related members
 	   have been updated since start of the button press */
@@ -69,6 +73,10 @@ private:
 	DWORD m_t;
 	// Time of the last message processing round
 	DWORD m_tPast;
+	// the time each button has been held down
+	DWORD* m_timePressed;
+	// the time each button has been released
+	DWORD* m_timeReleased;
 	// Client window dimensions
 	XMFLOAT2 m_ScreenDimensions;
 	
@@ -79,13 +87,22 @@ public:
 	int Initialize(HWND hwnd); // Need the 'hwnd' parameter to get screen dimensions
 
 	// Called by the SystemClass class to allow the Mouse class to register mouse events
-	LRESULT CALLBACK winProc(HWND, UINT, WPARAM, LPARAM);
+	LRESULT CALLBACK winProc(BasicWindow*, UINT, WPARAM, LPARAM);
 
 	/* To be called during the game loop to ensure that the mouse's
 	   movement speed is set to zero in the absence of Windows messages
 	   concerning mouse movement.
 	   */
 	int Update(void);
+
+	// returns true if the given mouse button was pressed last iteration, but not this iteration.
+	bool Up(unsigned int);
+	// returns true if given mouse button was pressed this iteration and not last.
+	bool Down(unsigned int);
+	// returns number of milliseconds the given mouse button has been held down since last being pressed.
+	DWORD TimePressed(unsigned int) const;
+	// tracks length of time the given mouse button has not been pressed down since last being pressed/since program start.
+	DWORD TimeReleased(unsigned int) const;
 
 	/* Returns whether or not the mouse position is being tracked
 	  (Tracking is triggered by pressing down a mouse button, and stops when a button
@@ -122,7 +139,7 @@ public:
 	/* Maps an arbitrary position on the screen to a position in the world
 	   Returns false and does nothing if the input screen position is outside the screen
 	*/
-	bool MapScreenToWorld(const XMFLOAT2& screenPosition, const CineCameraClass& camera, XMFLOAT3& nearClipPosition, XMFLOAT3& farClipPosition) const;
+	bool MapScreenToWorld(const XMFLOAT2& screenPosition, const Camera& camera, XMFLOAT3& nearClipPosition, XMFLOAT3& farClipPosition) const;
 
 	/* Returns the projection of the mouse position from the screen
 	   to a point at a given distance
@@ -137,21 +154,21 @@ public:
 	   of the vector that starts at the camera's position in the world
 	   and ends at the mouse's position in the world.
 		*/
-	bool GetWorldPosition(const CineCameraClass& camera, const float distAlongCameraLook, XMFLOAT3& worldPosition) const;
+	bool GetWorldPosition(const Camera& camera, const float distAlongCameraLook, XMFLOAT3& worldPosition) const;
 
 	/* Similar, but retrieves the change in position since the last message processing round,
 	   in units of world coordinate units per millisecond.
 	   Additionally, if this is the first round that the mouse is being tracked,
 	   returns false and does nothing (as there is no data).
 	   */
-	bool GetWorldVelocity(const CineCameraClass& camera, const float distAlongCameraLook, XMFLOAT3& worldVelocity) const;
+	bool GetWorldVelocity(const Camera& camera, const float distAlongCameraLook, XMFLOAT3& worldVelocity) const;
 
 	/* Returns the direction vector (normalized) of the ray passing through
 	the mouse from the camera in the world coordinate space
 	and returns true when the mouse is being tracked.
 	Otherwise, when the mouse is not being tracked, returns false and does nothing.
 	*/
-	bool GetWorldDirection(const CineCameraClass& camera, XMFLOAT3& worldDirection) const;
+	bool GetWorldDirection(const Camera& camera, XMFLOAT3& worldDirection) const;
 
 private:
 	// Not implemented - will cause linker errors if called

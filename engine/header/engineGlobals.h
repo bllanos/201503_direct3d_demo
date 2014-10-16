@@ -29,6 +29,7 @@ Notes:
 
 // For the output of unit tests (file paths are relative to the win32_base project folder)
 #define ENGINE_DEFAULT_LOG_PATH_TEST		L"..\\logFiles\\test"
+#define ENGINE_DEFAULT_CONFIG_PATH_TEST		L"..\\configFiles\\test"
 
 // Function return error/status codes
 #define C_OK			 0

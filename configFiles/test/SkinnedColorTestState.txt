@@ -1,0 +1,37 @@
+# Configuration file for the SkinnedColorTestState class
+# as well as its GridQuad data member.
+
+# GridQuad LogUser configuration
+# -----------------------------------------------
+BOOL -- GridQuad_LogUser::enableLogging = true
+WSTRING -- GridQuad_LogUser::msgPrefix = L"Test GridQuad Object"
+BOOL -- GridQuad_LogUser::useGlobalLog = false
+BOOL -- GridQuad_LogUser::allocConsole = false
+BOOL -- GridQuad_LogUser::allocLogFile = true
+FILENAME -- GridQuad_LogUser::logFileName = "SkinnedColorTestState.txt"
+DIRECTORY -- GridQuad_LogUser::logFilePath = "..\logFiles\test"
+BOOL -- GridQuad_LogUser::overwriteFile = false
+BOOL -- GridQuad_LogUser::timestampEnable = true
+
+# GridQuad ConfigUser configuration
+# -----------------------------------
+BOOL -- GridQuad_ConfigUser::enableConfigUseLogging = true
+
+# GridQuad geometry configuration
+# -----------------------------------------------
+INT -- GridQuad::nColumns = 10
+INT -- GridQuad::nRows = 10
+DOUBLE -- GridQuad::transparencyMultiplier = 1.0
+BOOL -- GridQuad::debugWinding = true
+BOOL -- GridQuad::renderWithLighting = true
+COLOR -- GridQuad::topRight = (200, 255, 255, 255)
+COLOR -- GridQuad::topLeft = (255, 200, 255, 255)
+COLOR -- GridQuad::bottomLeft = (255, 255, 200, 255)
+COLOR -- GridQuad::bottomRight = (200, 255, 200, 255)
+
+# GridQuad material configuration
+# -------------------------------
+FLOAT4 -- GridQuad::ambientAlbedo = (1.0, 1.0, 1.0, 1.0)
+FLOAT4 -- GridQuad::diffuseAlbedo = (1.0, 1.0, 1.0, 1.0)
+FLOAT4 -- GridQuad::specularAlbedo = (1.0, 1.0, 1.0, 1.0)
+DOUBLE -- GridQuad::specularPower = 400.0

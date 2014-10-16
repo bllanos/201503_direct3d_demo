@@ -35,7 +35,10 @@ Description
 class CubeModel : public SimpleColorGeometry
 {
 public:
-	// The 'pColors' argument will be owned by this object
+	/* The 'pColors' argument will be owned by this object,
+	   as with the 'transformable' argument.
+	   (Both will be deleted by this object's destructor.)
+	 */
 	CubeModel(ITransformable* const transformable,
 		float lengthX, float lengthY, float lengthZ,
 		DirectX::XMFLOAT4 * pColors = 0);

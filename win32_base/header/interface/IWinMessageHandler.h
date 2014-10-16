@@ -18,14 +18,14 @@ Description
 #pragma once
 #include <windows.h>
 
-//class BasicWindow;
+class BasicWindow;
 
 class IWinMessageHandler
 {
 public:
 	IWinMessageHandler(void) {}
 	virtual ~IWinMessageHandler(void) {}
-	virtual LRESULT CALLBACK winProc(HWND, UINT, WPARAM, LPARAM) = 0; // handle Windows messages for Keyboard or Mouse
+	virtual LRESULT CALLBACK winProc(BasicWindow*, UINT, WPARAM, LPARAM) = 0; // handle Windows messages for Keyboard or Mouse
 
 private:
 	IWinMessageHandler(const IWinMessageHandler& other);

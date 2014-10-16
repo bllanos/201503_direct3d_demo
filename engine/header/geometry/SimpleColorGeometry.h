@@ -13,9 +13,9 @@ Mark Wilkes, ID: 100884169
 Incorporated September 18, 2014
 
 Primary basis: COMP2501A project code
-(Bernard Llanos, Alec McGrail, Benjamin Smith - Winter 2014)
--Adapted from the following source: COMP2501A Tutorial 5
--Original name was "SimpleColorGeometry.h"
+  (Bernard Llanos, Alec McGrail, Benjamin Smith - Winter 2014)
+  -Adapted from the following source: COMP2501A Tutorial 5
+  -Original name was "modelclass.h"
 
 Description
 -A class for storing indexed vertex geometry
@@ -78,7 +78,7 @@ protected:
 public:
 	virtual ~SimpleColorGeometry(void);
 
-	virtual HRESULT drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const CineCameraClass* const camera) override;
+	virtual HRESULT drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const Camera* const camera) override;
 
 	// Functions to support rendering
 public:
