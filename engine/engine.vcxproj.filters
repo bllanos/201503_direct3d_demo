@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -84,9 +84,6 @@
     <ClCompile Include="cpp\input\Mouse.cpp">
       <Filter>source\input</Filter>
     </ClCompile>
-    <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp">
-      <Filter>source\geometry</Filter>
-    </ClCompile>
     <ClCompile Include="cpp\rendering\SkinnedColorRenderer.cpp">
       <Filter>source\rendering</Filter>
     </ClCompile>
@@ -98,7 +95,7 @@
     </ClCompile>
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp">
       <Filter>test\source</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="Transformable.cpp">
       <Filter>Unprocessed Source Files</Filter>
     </ClCompile>
@@ -106,6 +103,9 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="cpp\geometry\SphereModel.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp">
       <Filter>source\geometry</Filter>
     </ClCompile>
   </ItemGroup>
@@ -175,7 +175,7 @@
     </ClInclude>
     <ClInclude Include="test\header\SkinnedColorTestTransformable.h">
       <Filter>test\header</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="Transformable.h">
       <Filter>Unprocessed Header Files</Filter>
     </ClInclude>
