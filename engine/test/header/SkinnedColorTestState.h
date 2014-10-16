@@ -25,7 +25,7 @@ Description
 #include <vector>
 #include "State.h"
 #include "ConfigUser.h"
-#include "CineCameraClass.h"
+#include "Camera.h"
 #include "GridQuad.h"
 #include "SkinnedColorTestTransformable.h"
 
@@ -36,7 +36,7 @@ class SkinnedColorTestState : public State, public ConfigUser {
 
 	// Data members
 private:
-	CineCameraClass* m_camera;
+	Camera* m_camera;
 	GridQuad* m_gridQuad;
 	std::vector<SkinnedColorTestTransformable*>* m_quadBones;
 	std::vector<const ITransformable*>* m_quadBones_shared;

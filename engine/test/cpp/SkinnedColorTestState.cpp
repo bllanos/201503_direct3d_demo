@@ -82,10 +82,7 @@ SkinnedColorTestState::~SkinnedColorTestState(void) {
 
 HRESULT SkinnedColorTestState::initialize(ID3D11Device* device, int screenWidth, int screenHeight) {
 	// Initialize the camera
-	m_camera = new CineCameraClass(screenWidth, screenHeight);
-	m_camera->SetPosition(0.0f, 0.0f, -5.0f); //location of camera in 3D space
-	m_camera->SetDirection(0.0f, 0.0f, 1.0f); //direction camera is facing
-	m_camera->SetUpDirection(0.0f, 1.0f, 0.0f); //up direction of camera
+	m_camera = new Camera(screenWidth, screenHeight);
 
 	// Bones
 	// -------
@@ -208,7 +205,7 @@ HRESULT SkinnedColorTestState::update(const DWORD currentTime, const DWORD updat
 
 HRESULT SkinnedColorTestState::poll(Keyboard& input, Mouse& mouse) {
 	if( FAILED(m_camera->poll(input, mouse)) ) {
-		logMessage(L"Call to CineCameraClass poll() function failed.");
+		logMessage(L"Call to Camera poll() function failed.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	} else {
 		return ERROR_SUCCESS;

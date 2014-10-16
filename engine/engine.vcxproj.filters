@@ -98,6 +98,7 @@
     </ClCompile>
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp">
       <Filter>test\source</Filter>
+	</ClCompile>
     <ClCompile Include="Transformable.cpp">
       <Filter>Unprocessed Source Files</Filter>
     </ClCompile>
@@ -171,6 +172,7 @@
     </ClInclude>
     <ClInclude Include="test\header\SkinnedColorTestTransformable.h">
       <Filter>test\header</Filter>
+	</ClInclude>
     <ClInclude Include="Transformable.h">
       <Filter>Unprocessed Header Files</Filter>
     </ClInclude>

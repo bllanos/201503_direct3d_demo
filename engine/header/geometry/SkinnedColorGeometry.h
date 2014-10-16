@@ -152,7 +152,7 @@ protected:
 public:
 	virtual ~SkinnedColorGeometry(void);
 
-	virtual HRESULT drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const CineCameraClass* const camera) override;
+	virtual HRESULT drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const Camera* const camera) override;
 
 	// Functions to support rendering
 public:

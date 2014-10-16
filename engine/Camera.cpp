@@ -28,6 +28,10 @@ Camera::Camera(const Camera& other)
 
 Camera::~Camera()
 {
+	if (m_transform) {
+		delete m_transform;
+		m_transform = 0;
+	}
 }
 
 void Camera::MoveForward()
@@ -265,7 +269,7 @@ HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 			m_transform->Spin(0.0f, -mouseVel.y, 0.0f);
 		}
 
-		/*
+		
 		if (input.IsKeyDown(VK_LEFT)) //Pan Camera Left
 			PanLeft();
 
@@ -277,7 +281,6 @@ HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 
 		if (input.IsKeyDown(VK_DOWN)) //Tilt Camera Upward
 			TiltUp();
-		*/
 		
 	}
 	else if (input.IsKeyDown(Keyboard::ascii_C)){

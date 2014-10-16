@@ -44,7 +44,7 @@ Transformable::Transformable(DirectX::XMFLOAT3& scale, DirectX::XMFLOAT3& positi
 Transformable::~Transformable(void)
 {}
 
-HRESULT Transformable::getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) {
+HRESULT Transformable::getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const {
 	worldTransform = m_worldTransform;
 	return ERROR_SUCCESS;
 }

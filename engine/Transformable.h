@@ -62,7 +62,7 @@ public:
 
 	virtual ~Transformable(void);
 
-	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) override;
+	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const override;
 
 	virtual HRESULT getWorldTransformNoScale(DirectX::XMFLOAT4X4& worldTransformNoScale);
 
