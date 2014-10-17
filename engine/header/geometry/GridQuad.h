@@ -46,20 +46,12 @@ Description
 #define GRIDQUAD_COLUMNS_FIELD L"nColumns"
 #define GRIDQUAD_ROWS_DEFAULT 1
 #define GRIDQUAD_ROWS_FIELD L"nRows"
-#define GRIDQUAD_BLEND_DEFAULT 1.0f
-#define GRIDQUAD_BLEND_FIELD L"transparencyMultiplier"
 
 /* If true, one triangle in each quad will be generated
    with the opposite winding order.
  */
 #define GRIDQUAD_DEBUG_FLAG_DEFAULT false
 #define GRIDQUAD_DEBUG_FLAG_FIELD L"debugWinding"
-
-/* Determines the kind of renderer that this
-   object will try to use.
- */
-#define GRIDQUAD_USE_LIGHTING_FLAG_DEFAULT true
-#define GRIDQUAD_USE_LIGHTING_FLAG_FIELD L"renderWithLighting"
 
 /* One colour will be defined for each corner.
    Interior vertices will get interpolated colours.
@@ -69,17 +61,6 @@ Description
 #define GRIDQUAD_COLOR_TOP_LEFT_FIELD L"topLeft"
 #define GRIDQUAD_COLOR_BOTTOM_LEFT_FIELD L"bottomLeft"
 #define GRIDQUAD_COLOR_BOTTOM_RIGHT_FIELD L"bottomRight"
-
-/* Material properties
- */
-#define GRIDQUAD_AMBIENT_ALBEDO_DEFAULT XMFLOAT4(0.0f,0.0f,0.0f,0.0f)
-#define GRIDQUAD_AMBIENT_ALBEDO_FIELD L"ambientAlbedo"
-#define GRIDQUAD_DIFFUSE_ALBEDO_DEFAULT XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
-#define GRIDQUAD_DIFFUSE_ALBEDO_FIELD L"diffuseAlbedo"
-#define GRIDQUAD_SPECULAR_ALBEDO_DEFAULT XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
-#define GRIDQUAD_SPECULAR_ALBEDO_FIELD L"specularAlbedo"
-#define GRIDQUAD_SPECULAR_POWER_DEFAULT 100.0f
-#define GRIDQUAD_SPECULAR_POWER_FIELD L"specularPower"
 
 /* LogUser and ConfigUser configuration parameters
    Refer to LogUser.h and ConfigUser.h
@@ -128,45 +109,18 @@ public:
 
 public:
 
-	virtual float getTransparencyBlendFactor(void) const override;
-
-	/* Returns the previous value.
-	   Clamps the input parameter to the range [0,1].
+	/* Provides public access to the base class function
 	 */
-	virtual float setTransparencyBlendFactor(float newFactor);
+	virtual float setTransparencyBlendFactor(float newFactor) override;
 
-	virtual size_t getNumberOfVertices(void) const;
-	virtual size_t getNumberOfIndices(void) const;
+	virtual size_t getNumberOfVertices(void) const override;
+	virtual size_t getNumberOfIndices(void) const override;
 
-	/* Loads the input 'vertices' array with vertices
-	   defining this model's geometry, starting from
-	   index 'vertexOffset'. 'vertexOffset'
-	   will be increased by the number of vertices added,
-	   provided that the function succeeds. If the function
-	   returns a failure result, 'vertexOffset' will not have
-	   been modified, although 'vertices' may have been
-	   partially updated.
-
-	   Acts likewise on the 'indices' and 'indexOffset' parameters.
-	   Note that index values are offset by 'vertexOffset'.
-	   In other words, the first vertex has an index equal to 'vertexOffset'.
-
-	   Assumes D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST topology
-	   and counter-clockwise back face culling.
-
-	   Notes:
-	    -The caller can determine what sizes of vertex
-	       and index arrays to allocate by calling
-	       getNumberOfVertices() and getNumberOfIndices(), respectively.
-	    -This function would be 'const' except that it produces
-	       logging output in case of failure.
-	    -Vertex data is calculated using the helper functions below.
-	*/
 	virtual HRESULT addIndexedVertices(
 		SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices,
 		size_t& vertexOffset,
 		unsigned long* const indices,
-		size_t& indexOffset);
+		size_t& indexOffset) override;
 
 	/* Defines the mapping from surface parameters to 3D position (Cartesian coordinates)
 	   u = first surface parameter, in the range [0,1]
@@ -188,21 +142,13 @@ public:
 
 protected:
 
-	/* Retrieves configuration data, using default values,
-	     if possible, when configuration data is not found.
-	   Calls ConfigUser::ConfigureConfigUser()
-	     if there is a Config instance to use.
+	/* Overrides the behaviour of SkinnedColorGeometry::configure()
+	   To use additional configuration data,
+	   and to assign different default arguments:
+	   If 'configUserScope' is null, it defaults to GRIDQUAD_CONFIGUSER_SCOPE.
+	   If 'logUserScope' is null, it defaults to GRIDQUAD_LOGUSER_SCOPE.
 	 */
-	virtual HRESULT configure(void);
-
-	/* Performs range checking for the appropriate data members,
-	   then sets their values.
-
-	   This function exists to avoid having repeated range checking code
-	   in this class's constructors and configuration functions.
-	 */
-	virtual HRESULT setMembers(const int& nColumns, const int& nRows, const float& blend,
-		Material* const material);
+	virtual HRESULT configure(const std::wstring& scope = GRIDQUAD_SCOPE, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0) override;
 
 	// Data members
 protected:
@@ -212,11 +158,6 @@ protected:
 	 */
 	size_t m_nColumns;
 	size_t m_nRows;
-
-	/* Transparency multiplier,
-	   which can be obtained from configuration data
-	 */
-	float m_blend;
 
 	/* Flag indicating whether or not to invert
 	   winding of every second triangle,
@@ -253,7 +194,6 @@ template<typename ConfigIOClass> GridQuad::GridQuad(
 	directoryField
 	),
 	m_nColumns(0), m_nRows(0),
-	m_blend(GRIDQUAD_BLEND_DEFAULT),
 	m_debugWinding(GRIDQUAD_DEBUG_FLAG_DEFAULT), m_colors(0)
 {
 	if( FAILED(configure()) ) {

@@ -39,19 +39,21 @@ SkinnedColorGeometry::SkinnedColorGeometry(const bool enableLogging, const std::
 	m_bones(0), m_invBindMatrices(0),
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
 	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
-	m_rendererType(0), m_material(0)
+	m_rendererType(0), m_material(0),
+	m_blend(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT)
 {}
 
 SkinnedColorGeometry::SkinnedColorGeometry(const bool enableLogging, const std::wstring& msgPrefix,
 	Config* sharedConfig) :
-IGeometry(),
-ConfigUser(enableLogging, msgPrefix, sharedConfig),
-m_vertexBuffer(0), m_indexBuffer(0), m_bonePositionBuffer(0),
-m_boneNormalBuffer(0), m_bonePositionView(0), m_boneNormalView(0),
-m_bones(0), m_invBindMatrices(0),
-m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
-m_vertexCount(0), m_indexCount(0), m_boneCount(0),
-m_rendererType(0), m_material(0)
+	IGeometry(),
+	ConfigUser(enableLogging, msgPrefix, sharedConfig),
+	m_vertexBuffer(0), m_indexBuffer(0), m_bonePositionBuffer(0),
+	m_boneNormalBuffer(0), m_bonePositionView(0), m_boneNormalView(0),
+	m_bones(0), m_invBindMatrices(0),
+	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
+	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
+	m_rendererType(0), m_material(0),
+	m_blend(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT)
 {}
 
 HRESULT SkinnedColorGeometry::initialize(ID3D11Device* const device,
@@ -404,4 +406,111 @@ HRESULT SkinnedColorGeometry::setMaterial(Material* material) {
 
 const SkinnedColorGeometry::Material* SkinnedColorGeometry::getMaterial(void) const {
 	return m_material;
+}
+
+float SkinnedColorGeometry::setTransparencyBlendFactor(float blend) {
+	float temp = m_blend;
+	if (blend < 0.0f) {
+		m_blend = SKINNEDCOLORGEOMETRY_BLEND_DEFAULT;
+		logMessage(L"Input transparency multiplier was less than 0. Reverting to default value of: " + std::to_wstring(m_blend));
+	}
+	else if (blend > 1.0f) {
+		m_blend = SKINNEDCOLORGEOMETRY_BLEND_DEFAULT;
+		logMessage(L"Input transparency multiplier was greater than 1. Reverting to default value of: " + std::to_wstring(m_blend));
+	}
+	else {
+		m_blend = blend;
+	}
+	return temp;
+}
+
+float SkinnedColorGeometry::getTransparencyBlendFactor(void) const {
+	return m_blend;
+}
+
+HRESULT SkinnedColorGeometry::configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope)
+{
+	HRESULT result = ERROR_SUCCESS;
+
+	// Initialize with default values
+	// ------------------------------
+
+	// Visual properties
+	double blend = static_cast<double>(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT);
+	bool useLighting = SKINNEDCOLORGEOMETRY_USE_LIGHTING_FLAG_DEFAULT;
+
+	// Material properties
+	Material* material = new Material;
+	material->ambientAlbedo = SKINNEDCOLORGEOMETRY_AMBIENT_ALBEDO_DEFAULT;
+	material->diffuseAlbedo = SKINNEDCOLORGEOMETRY_DIFFUSE_ALBEDO_DEFAULT;
+	material->specularAlbedo = SKINNEDCOLORGEOMETRY_SPECULAR_ALBEDO_DEFAULT;
+	material->specularPower = SKINNEDCOLORGEOMETRY_SPECULAR_POWER_DEFAULT;
+
+	if (hasConfigToUse()) {
+
+		// Configure base members
+		const std::wstring* configUserScopeToUse = (configUserScope == 0) ? &scope : configUserScope;
+		const std::wstring* logUserScopeToUse = (logUserScope == 0) ? configUserScopeToUse : logUserScope;
+
+		if (FAILED(configureConfigUser(*logUserScopeToUse, configUserScopeToUse))) {
+			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+
+		// Data retrieval helper variables
+		const bool* boolValue = 0;
+		const double* doubleValue = 0;
+		const DirectX::XMFLOAT4* float4Value = 0;
+
+		// Query for initialization data
+		if (retrieve<Config::DataType::DOUBLE, double>(scope, SKINNEDCOLORGEOMETRY_BLEND_FIELD, doubleValue)) {
+			blend = *doubleValue;
+		}
+
+		if (retrieve<Config::DataType::BOOL, bool>(scope, SKINNEDCOLORGEOMETRY_USE_LIGHTING_FLAG_FIELD, boolValue)) {
+			useLighting = *boolValue;
+		}
+
+		// Material properties
+		if (retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(scope, SKINNEDCOLORGEOMETRY_AMBIENT_ALBEDO_FIELD, float4Value)) {
+			material->ambientAlbedo = *float4Value;
+		}
+		if (retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(scope, SKINNEDCOLORGEOMETRY_DIFFUSE_ALBEDO_FIELD, float4Value)) {
+			material->diffuseAlbedo = *float4Value;
+		}
+		if (retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(scope, SKINNEDCOLORGEOMETRY_SPECULAR_ALBEDO_FIELD, float4Value)) {
+			material->specularAlbedo = *float4Value;
+		}
+		if (retrieve<Config::DataType::DOUBLE, double>(scope, SKINNEDCOLORGEOMETRY_SPECULAR_POWER_FIELD, doubleValue)) {
+			material->specularPower = static_cast<float>(*doubleValue);
+		}
+
+	}
+	else {
+		logMessage(L"Initialization from configuration data: No Config instance to use.");
+	}
+
+	// Initialization
+	// --------------
+
+	if (useLighting) {
+		result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedColorRendererLight);
+	}
+	else {
+		result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedColorRendererNoLight);
+	}
+	if (FAILED(result)) {
+		std::wstring msg = L"SkinnedColorGeometry::configure(): Error setting the renderer to use based on the lighting flag value of ";
+		logMessage(msg + ((useLighting) ? L"true." : L"false."));
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	setTransparencyBlendFactor(static_cast<float>(blend));
+
+	result = setMaterial(material);
+	if (FAILED(result)) {
+		logMessage(L"SkinnedColorGeometry::configure(): Call to setMaterial() failed.");
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	return result;
 }

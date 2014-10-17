@@ -31,14 +31,14 @@ GridQuad::GridQuad(const bool enableLogging, const std::wstring& msgPrefix,
 	Config* sharedConfig) :
 	SkinnedColorGeometry(enableLogging, msgPrefix, sharedConfig),
 	m_nColumns(0), m_nRows(0),
-	m_blend(GRIDQUAD_BLEND_DEFAULT),
-	m_debugWinding(GRIDQUAD_DEBUG_FLAG_DEFAULT), m_colors(0) {
+	m_debugWinding(GRIDQUAD_DEBUG_FLAG_DEFAULT), m_colors(0)
+{
 	if( FAILED(configure()) ) {
 		logMessage(L"Configuration failed.");
 	}
 }
 
-HRESULT GridQuad::configure(void) {
+HRESULT GridQuad::configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope) {
 	HRESULT result = ERROR_SUCCESS;
 
 	// Initialize with default values
@@ -47,58 +47,44 @@ HRESULT GridQuad::configure(void) {
 	// Geometry properties
 	size_t nColumns = GRIDQUAD_COLUMNS_DEFAULT;
 	size_t nRows = GRIDQUAD_ROWS_DEFAULT;
-	double blend = static_cast<double>(GRIDQUAD_BLEND_DEFAULT);
 	m_debugWinding = GRIDQUAD_DEBUG_FLAG_DEFAULT;
-
-	// Visual properties
-	bool useLighting = GRIDQUAD_USE_LIGHTING_FLAG_DEFAULT;
 
 	m_colors = new DirectX::XMFLOAT4[GRIDQUAD_NCORNERS];
 	for( size_t i = 0; i < GRIDQUAD_NCORNERS; ++i ) {
 		m_colors[i] = GRIDQUAD_COLORS_DEFAULT;
 	}
 
-	// Material properties
-	Material* material = new Material;
-	material->ambientAlbedo = GRIDQUAD_AMBIENT_ALBEDO_DEFAULT;
-	material->diffuseAlbedo = GRIDQUAD_DIFFUSE_ALBEDO_DEFAULT;
-	material->specularAlbedo = GRIDQUAD_SPECULAR_ALBEDO_DEFAULT;
-	material->specularPower = GRIDQUAD_SPECULAR_POWER_DEFAULT;
-
 	if( hasConfigToUse() ) {
 
 		// Configure base members
-		const std::wstring logUserScope(GRIDQUAD_LOGUSER_SCOPE);
-		const std::wstring configUserScope(GRIDQUAD_CONFIGUSER_SCOPE);
-		if( FAILED(configureConfigUser(logUserScope, &configUserScope)) ) {
+		std::wstring logUserScopeDefault(GRIDQUAD_LOGUSER_SCOPE);
+		std::wstring configUserScopeDefault(GRIDQUAD_CONFIGUSER_SCOPE);
+		if (configUserScope == 0) {
+			configUserScope = &configUserScopeDefault;
+		}
+		if (logUserScope == 0) {
+			logUserScope = &logUserScopeDefault;
+		}
+		if (FAILED(SkinnedColorGeometry::configure(scope, configUserScope, logUserScope))) {
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 
 		// Data retrieval helper variables
 		const bool* boolValue = 0;
 		const int* intValue = 0;
-		const double* doubleValue = 0;
 		const DirectX::XMFLOAT4* float4Value = 0;
 
 		// Query for initialization data
-		if( retrieve<Config::DataType::INT, int>(GRIDQUAD_SCOPE, GRIDQUAD_COLUMNS_FIELD, intValue) ) {
+		if( retrieve<Config::DataType::INT, int>(scope, GRIDQUAD_COLUMNS_FIELD, intValue) ) {
 			nColumns = *intValue;
 		}
 
-		if( retrieve<Config::DataType::INT, int>(GRIDQUAD_SCOPE, GRIDQUAD_ROWS_FIELD, intValue) ) {
+		if( retrieve<Config::DataType::INT, int>(scope, GRIDQUAD_ROWS_FIELD, intValue) ) {
 			nRows = *intValue;
 		}
 
-		if( retrieve<Config::DataType::DOUBLE, double>(GRIDQUAD_SCOPE, GRIDQUAD_BLEND_FIELD, doubleValue) ) {
-			blend = *doubleValue;
-		}
-
-		if( retrieve<Config::DataType::BOOL, bool>(GRIDQUAD_SCOPE, GRIDQUAD_DEBUG_FLAG_FIELD, boolValue) ) {
+		if( retrieve<Config::DataType::BOOL, bool>(scope, GRIDQUAD_DEBUG_FLAG_FIELD, boolValue) ) {
 			m_debugWinding = *boolValue;
-		}
-
-		if( retrieve<Config::DataType::BOOL, bool>(GRIDQUAD_SCOPE, GRIDQUAD_USE_LIGHTING_FLAG_FIELD, boolValue) ) {
-			useLighting = *boolValue;
 		}
 
 		std::wstring colorFields[] = {
@@ -109,52 +95,18 @@ HRESULT GridQuad::configure(void) {
 		};
 
 		for( size_t i = 0; i < GRIDQUAD_NCORNERS; ++i ) {
-			if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(GRIDQUAD_SCOPE, colorFields[i], float4Value) ) {
+			if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(scope, colorFields[i], float4Value) ) {
 				m_colors[i] = *float4Value;
 			}
-		}
-
-		// Material properties
-		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(GRIDQUAD_SCOPE, GRIDQUAD_AMBIENT_ALBEDO_FIELD, float4Value) ) {
-			material->ambientAlbedo = *float4Value;
-		}
-		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(GRIDQUAD_SCOPE, GRIDQUAD_DIFFUSE_ALBEDO_FIELD, float4Value) ) {
-			material->diffuseAlbedo = *float4Value;
-		}
-		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(GRIDQUAD_SCOPE, GRIDQUAD_SPECULAR_ALBEDO_FIELD, float4Value) ) {
-			material->specularAlbedo = *float4Value;
-		}
-		if( retrieve<Config::DataType::DOUBLE, double>(GRIDQUAD_SCOPE, GRIDQUAD_SPECULAR_POWER_FIELD, doubleValue) ) {
-			material->specularPower = static_cast<float>(*doubleValue);
 		}
 
 	} else {
 		logMessage(L"Initialization from configuration data: No Config instance to use.");
 	}
 
-	// Initialization
-	// --------------
+	// Additional Initialization
+	// -------------------------
 
-	if( useLighting ) {
-		result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedColorRendererLight);
-	} else {
-		result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedColorRendererNoLight);
-	}
-	if( FAILED(result) ) {
-		std::wstring msg = L"Error setting the renderer to use based on the lighting flag value of ";
-		logMessage(msg + ((useLighting) ? L"true." : L"false."));
-		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-
-	if( FAILED(setMembers(nColumns, nRows, static_cast<float>(blend), material)) ) {
-		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-
-	return result;
-}
-
-HRESULT GridQuad::setMembers(const int& nColumns, const int& nRows, const float& blend,
-	Material* const material) {
 	if( nColumns < 1 ) {
 		m_nColumns = GRIDQUAD_COLUMNS_DEFAULT;
 		logMessage(L"Input number of columns was less than 1. Reverting to default value of: " + std::to_wstring(m_nColumns));
@@ -169,22 +121,8 @@ HRESULT GridQuad::setMembers(const int& nColumns, const int& nRows, const float&
 		m_nRows = nRows;
 	}
 
-	if( blend < 0.0f ) {
-		m_blend = GRIDQUAD_BLEND_DEFAULT;
-		logMessage(L"Input transparency multiplier was less than 0. Reverting to default value of: " + std::to_wstring(m_blend));
-	} else if( blend > 1.0f ) {
-		m_blend = GRIDQUAD_BLEND_DEFAULT;
-		logMessage(L"Input transparency multiplier was greater than 1. Reverting to default value of: " + std::to_wstring(m_blend));
-	} else {
-		m_blend = blend;
-	}
-
-	if( FAILED(setMaterial(material)) ) {
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-	return ERROR_SUCCESS;
+	return result;
 }
-
 
 GridQuad::~GridQuad(void) {
 	if( m_colors != 0 ) {
@@ -269,22 +207,8 @@ HRESULT GridQuad::initialize(ID3D11Device* const device,
 	return result;
 }
 
-float GridQuad::getTransparencyBlendFactor(void) const {
-	return m_blend;
-}
-
 float GridQuad::setTransparencyBlendFactor(float blend) {
-	float temp = m_blend;
-	if( blend < 0.0f ) {
-		m_blend = GRIDQUAD_BLEND_DEFAULT;
-		logMessage(L"Input transparency multiplier was less than 0. Reverting to default value of: " + std::to_wstring(m_blend));
-	} else if( blend > 1.0f ) {
-		m_blend = GRIDQUAD_BLEND_DEFAULT;
-		logMessage(L"Input transparency multiplier was greater than 1. Reverting to default value of: " + std::to_wstring(m_blend));
-	} else {
-		m_blend = blend;
-	}
-	return temp;
+	return SkinnedColorGeometry::setTransparencyBlendFactor(blend);
 }
 
 size_t GridQuad::getNumberOfVertices(void) const {

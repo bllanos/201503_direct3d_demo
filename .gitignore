@@ -2,6 +2,7 @@
 *.sdf
 *.suo
 */Debug/
+UpgradeLog.htm
 Debug/
 logFiles/
 configFiles/output_gitIgnored/

@@ -37,6 +37,33 @@ Description
 
 #define SKINNEDCOLORGEOMETRY_VERTEX_TYPE SkinnedColorVertexType
 
+/* The following definitions are:
+   -Key parameters used to retrieve configuration data
+   -Default values used in the absence of configuration data
+    or constructor/function arguments (where necessary)
+*/
+
+/* Determines the kind of renderer that this
+   object will try to use.
+ */
+#define SKINNEDCOLORGEOMETRY_USE_LIGHTING_FLAG_DEFAULT true
+#define SKINNEDCOLORGEOMETRY_USE_LIGHTING_FLAG_FIELD L"renderWithLighting"
+
+/* Material properties
+*/
+#define SKINNEDCOLORGEOMETRY_AMBIENT_ALBEDO_DEFAULT XMFLOAT4(0.0f,0.0f,0.0f,0.0f)
+#define SKINNEDCOLORGEOMETRY_AMBIENT_ALBEDO_FIELD L"ambientAlbedo"
+#define SKINNEDCOLORGEOMETRY_DIFFUSE_ALBEDO_DEFAULT XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
+#define SKINNEDCOLORGEOMETRY_DIFFUSE_ALBEDO_FIELD L"diffuseAlbedo"
+#define SKINNEDCOLORGEOMETRY_SPECULAR_ALBEDO_DEFAULT XMFLOAT4(1.0f,1.0f,1.0f,1.0f)
+#define SKINNEDCOLORGEOMETRY_SPECULAR_ALBEDO_FIELD L"specularAlbedo"
+#define SKINNEDCOLORGEOMETRY_SPECULAR_POWER_DEFAULT 100.0f
+#define SKINNEDCOLORGEOMETRY_SPECULAR_POWER_FIELD L"specularPower"
+
+/* Transparency multiplier */
+#define SKINNEDCOLORGEOMETRY_BLEND_DEFAULT 1.0f
+#define SKINNEDCOLORGEOMETRY_BLEND_FIELD L"transparencyMultiplier"
+
 /* The inheritance from ConfigUser is a convenience for derived classes.
    As presently implemented, this class could inherit from LogUser
    instead of ConfigUser.
@@ -77,6 +104,35 @@ protected:
 		const std::wstring filename,
 		const std::wstring path = L""
 		);
+
+	// Configuration
+protected:
+	/* Retrieves configuration data, using default values,
+	   if possible, when configuration data is not found.
+	   Calls the base class's configuration function
+	   if there is a Config instance to use (which results
+	   in a cascade of configuration function calls)
+
+	   'scope' will override the scope used to find configuration data
+	   for this class.
+
+	   The earlier parameters will override the scopes used
+	   to find configuration data for ConfigUser and LogUser.
+	   If 'logUserScope' is null, it will default to 'configUserScope'.
+	   If 'configUserScope' is null, it will default to 'scope'.
+
+	   Notes:
+	   - The SkinnedColorGeometry class does not call this function.
+	       It must be called manually by derived classes.
+
+	   - Derived classes must override setRendererType()
+	       and call it after calling this function if they wish
+		   to make use of renderers other than
+		   'GeometryRendererType::SkinnedColorRendererLight'
+		   and
+		   'GeometryRendererType::SkinnedColorRendererNoLight'.
+	*/
+	virtual HRESULT configure(const std::wstring& scope, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0);
 
 	// The effective constructor for the SkinnedColorGeometry class itself
 protected:
@@ -149,6 +205,11 @@ protected:
 	 */
 	HRESULT setMaterial(Material* material);
 
+	/* Returns the previous value.
+	   Clamps the input parameter to the range [0,1].
+	 */
+	virtual float setTransparencyBlendFactor(float newFactor);
+
 public:
 	virtual ~SkinnedColorGeometry(void);
 
@@ -156,9 +217,11 @@ public:
 
 	// Functions to support rendering
 public:
+	/* Returns the number of indices in this model's index buffer.
+	 */
 	size_t getIndexCount(void) const;
 
-	virtual float getTransparencyBlendFactor(void) const = 0;
+	virtual float getTransparencyBlendFactor(void) const;
 
 	/* Allows for changing the position, motion, etc., of the model
 	   in the world.
@@ -182,6 +245,50 @@ protected:
 	 */
 	virtual HRESULT updateAndBindBoneBuffers(ID3D11DeviceContext* const context);
 
+	/* Functions deemed useful for derived classes to provide,
+	   used to support building models composed of
+	   multiple parts.
+	 */
+public:
+	/* Loads the input 'vertices' array with vertices
+	   defining this model's geometry, starting from
+	   index 'vertexOffset'. 'vertexOffset'
+	   will be increased by the number of vertices added,
+	   provided that the function succeeds. If the function
+	   returns a failure result, 'vertexOffset' will not have
+	   been modified, although 'vertices' may have been
+	   partially updated.
+
+	   Acts likewise on the 'indices' and 'indexOffset' parameters.
+	   Note that index values are offset by 'vertexOffset'.
+	   In other words, the first vertex has an index equal to 'vertexOffset'.
+
+	   Assumes D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST topology
+	   and counter-clockwise back face culling.
+
+	   Notes:
+	   -The caller can determine what sizes of vertex
+	    and index arrays to allocate by calling
+	    getNumberOfVertices() and getNumberOfIndices(), respectively.
+	   -This function would be 'const' except that it produces
+	    logging output in case of failure.
+	   -Vertex data is calculated using the helper functions below.
+	*/
+	virtual HRESULT addIndexedVertices(
+		SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices,
+		size_t& vertexOffset,
+		unsigned long* const indices,
+		size_t& indexOffset) = 0;
+
+	/* Used for determining vertex array size needed when initializing compound geometry.
+	   This functions is not to be called during rendering, for instance.
+	 */
+	virtual size_t getNumberOfVertices(void) const = 0;
+	/* Used for determining index array size needed when initializing compound geometry.
+	   This functions is not to be called during rendering, for instance.
+	 */
+	virtual size_t getNumberOfIndices(void) const = 0;
+
 	// Data members
 private:
 	/* Note that positions and normal vectors need to be treated
@@ -200,6 +307,11 @@ private:
 	GeometryRendererManager::GeometryRendererType* m_rendererType;
 
 	Material* m_material;
+
+	/* Transparency multiplier,
+	   which can be obtained from configuration data
+	 */
+	float m_blend;
 
 	// Currently not implemented - will cause linker errors if called
 private:
@@ -233,7 +345,8 @@ template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	m_bones(0), m_invBindMatrices(0),
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
 	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
-	m_rendererType(0), m_material(0) {}
+	m_rendererType(0), m_material(0),
+	m_blend(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT) {}
 
 template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	const bool enableLogging, const std::wstring& msgPrefix,
@@ -255,4 +368,5 @@ template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	m_bones(0), m_invBindMatrices(0),
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
 	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
-	m_rendererType(0), m_material(0) {}
+	m_rendererType(0), m_material(0),
+	m_blend(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT) {}

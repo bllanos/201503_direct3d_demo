@@ -54,17 +54,18 @@ HRESULT SphereModel::initialize(ID3D11Device* const device) {
 
 	for (int i = 0; i < m_loop; i++)
 	{
-		m_theta = 2 * i*3.1416 / m_loop; // large loop
+		m_theta = static_cast<float>(2 * i*3.1416 / m_loop); // large loop
 
 		for (int j = 0; j < m_circle; j++) // small circle
 		{
 
-			m_phi = 2 * j*3.1416 / m_circle; // from 0 to 2PI
+			m_phi = static_cast<float>(2 * j*3.1416 / m_circle); // from 0 to 2PI
 
 			thisnor = // normal direction
 				XMFLOAT3(cos(m_theta)*sin(m_phi), sin(m_theta)*sin(m_phi), cos(m_phi));
 			vertices[i*m_circle + j].position = XMFLOAT3(thisnor.x*m_radius, thisnor.y*m_radius, thisnor.z*m_radius);
-			vertices[i*m_circle + j].color = XMFLOAT4(i / (m_segment + 0.01), j / (m_circle + 0.01), 0.05, 1.0f);
+			vertices[i*m_circle + j].color = XMFLOAT4(static_cast<float>(i / (m_segment + 0.01)),
+				static_cast<float>(j / (m_circle + 0.01)), 0.05f, 1.0f);
 			//vertices[i*m_circle + j].color = XMFLOAT4(0.5, 0.5, 0.5, 1.0);
 
 		}
