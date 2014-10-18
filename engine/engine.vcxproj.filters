@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -48,6 +48,9 @@
     </Filter>
     <Filter Include="source\input">
       <UniqueIdentifier>{b7e4783b-55dc-41da-9497-4e22a2d8602d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header\util">
+      <UniqueIdentifier>{124a1acb-2c5c-40da-ac9b-8175cc9fc999}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="header\geometry\sphereModel.h">
       <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\util\TextureFromDDS.h">
+      <Filter>header\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
