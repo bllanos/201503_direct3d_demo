@@ -28,6 +28,22 @@ This setting should not be pushed to the repository, but in the event
 that it makes its way in, it can be changed on Line 292 of d3dclass.cpp
 (in the call to `D3D11CreateDeviceAndSwapChain()`).
 
+### Including the DirectX Toolkit
+
+The DirectX Toolkit may not be included with the project code
+(and is certainly not in the repository). If it is absent,
+download it from https://directxtk.codeplex.com/ and extract it
+to the following location: `DirectXTK`.
+
+Next, build the appropriate version of the toolkit for your
+platform by opening and building the appropriate Visual Studio
+solution file in the `DirectXTK` folder. Specifically,
+`DirectXTK_Desktop_2013.sln` and `DirectXTK_Desktop_2012.sln`
+are the usable files (for Visual Studio 2013 or 2012, respectively).
+
+The toolkit needs to be built before the rest of the project
+can be built.
+
 ### Running a clone of the repository
 _(Hopefully not applicable to any submitted versions of the code)_
 

@@ -64,10 +64,6 @@ Description
 #define SKINNEDCOLORGEOMETRY_BLEND_DEFAULT 1.0f
 #define SKINNEDCOLORGEOMETRY_BLEND_FIELD L"transparencyMultiplier"
 
-/* The inheritance from ConfigUser is a convenience for derived classes.
-   As presently implemented, this class could inherit from LogUser
-   instead of ConfigUser.
-*/
 class SkinnedColorGeometry : public IGeometry, public ConfigUser {
 
 public:
