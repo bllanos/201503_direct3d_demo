@@ -107,13 +107,14 @@ protected:
 	   if possible, when configuration data is not found.
 	   Calls the base class's configuration function
 	   if there is a Config instance to use (which results
-	   in a cascade of configuration function calls)
+	   in a cascade of configuration function calls).
 
 	   'scope' will override the scope used to find configuration data
 	   for this class.
 
-	   The earlier parameters will override the scopes used
-	   to find configuration data for ConfigUser and LogUser.
+	   The 'configUserScope' and 'logUserScope' parameters
+	   will override the scopes used to find configuration data for the
+	   ConfigUser and LogUser base classes.
 	   If 'logUserScope' is null, it will default to 'configUserScope'.
 	   If 'configUserScope' is null, it will default to 'scope'.
 

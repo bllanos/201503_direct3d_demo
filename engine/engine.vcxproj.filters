@@ -191,5 +191,8 @@
     <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\util\TextureFromDDS.h">
       <Filter>header\util</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\util\Texture.h">
+      <Filter>header\util</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
