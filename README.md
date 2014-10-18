@@ -35,19 +35,19 @@ The DirectX Toolkit may not be included with the project code
 download it from https://directxtk.codeplex.com/ and extract it
 to the following location: `DirectXTK`.
 
-Next, build the appropriate version of the toolkit for your
-platform by opening and building the appropriate Visual Studio
-solution file in the `DirectXTK` folder. Specifically,
-`DirectXTK_Desktop_2013.sln` and `DirectXTK_Desktop_2012.sln`
-are the usable files (for Visual Studio 2013 or 2012, respectively).
-
-The toolkit needs to be built before the rest of the project
-can be built.
+Presently, the 'engine' project (`engine\engine.vcxproj`) has been
+set up to reference `DirectXTK\DirectXTK_Desktop_2013.vcxproj`.
+If you are using Visual Studio 2012 instead of Visual Studio 2013,
+you may need to change the reference to `DirectXTK\DirectXTK_Desktop_2012.vcxproj`.
 
 ### Running a clone of the repository
 _(Hopefully not applicable to any submitted versions of the code)_
 
-In the event that the code is a direct clone of the repository, it should build properly,
+In the event that the code is a direct clone of the repository,
+you will need to obtain the DirectX Toolkit (see above) in order to build
+the project.
+
+Afterwards, the project should build properly,
 but will not execute normally. The reason for the abnormal execution is the lack
 of several folders which are not part of the repository, but which the program
 expects to exist (depending on the configuration data passed to it).
@@ -91,6 +91,15 @@ The following works were consulted for ideas during development:
   - Zink, Jason, Matt Pettineo and Jack Hoxley.
     _Practical Rendering and Computation with Direct 3D 11._
     Boca Raton: CRC Press Taylor & Francis Group, 2011. (Chapter 11)
+- Vertex skinning
+  - Zink, Jason, Matt Pettineo and Jack Hoxley.
+    _Practical Rendering and Computation with Direct 3D 11._
+    Boca Raton: CRC Press Taylor & Francis Group, 2011. (Chapter 8)
+- Texture setup
+  - Chuck Walbourn's "DirectX SDK's Direct3D 11 tutorial series updated
+    to use Visual Studio 2012 and the Windows SDK 8.0 without any dependencies
+	on legacy DirectX SDK content" (_Direct3D Tutorial Win32 Sample_),
+	available at https://code.msdn.microsoft.com/Direct3D-Tutorial-Win32-829979ef
 
 ## Sources of Assets
 There are no assets, currently.

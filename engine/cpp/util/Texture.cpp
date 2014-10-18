@@ -72,66 +72,67 @@ HRESULT Texture::configure(const std::wstring& scope, const std::wstring* config
 
 		if( FAILED(configureConfigUser(*logUserScopeToUse, configUserScopeToUse)) ) {
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-		}
+		} else {
 
-		// Data retrieval helper variables
-		const int* intValue = 0;
-		const DirectX::XMFLOAT4* float4Value = 0;
+			// Data retrieval helper variables
+			const int* intValue = 0;
+			const DirectX::XMFLOAT4* float4Value = 0;
 
-		// Query for configuration data
-		if( retrieve<Config::DataType::INT, int>(scope, TEXTURE_SAMPLER_FILTER_FIELD, intValue) ) {
-			if( *intValue < 0 ) {
-				logMessage(L"Negative value retrieved from configuration data for the sampler filter enumeration constant (invalid).");
-			} else {
-				m_samplerDesc->Filter = static_cast<D3D11_FILTER>(*intValue);
+			// Query for configuration data
+			if( retrieve<Config::DataType::INT, int>(scope, TEXTURE_SAMPLER_FILTER_FIELD, intValue) ) {
+				if( *intValue < 0 ) {
+					logMessage(L"Negative value retrieved from configuration data for the sampler filter enumeration constant (invalid).");
+				} else {
+					m_samplerDesc->Filter = static_cast<D3D11_FILTER>(*intValue);
+				}
 			}
-		}
 
-		if( retrieve<Config::DataType::INT, int>(scope, TEXTURE_SAMPLER_ADDRESSU_FIELD, intValue) ) {
-			if( *intValue < 1 ) {
-				logMessage(L"Value less than 1 retrieved from configuration data for the sampler 'AddressU' enumeration constant (invalid).");
-			} else {
-				m_samplerDesc->AddressU = static_cast<D3D11_TEXTURE_ADDRESS_MODE>(*intValue);
+			if( retrieve<Config::DataType::INT, int>(scope, TEXTURE_SAMPLER_ADDRESSU_FIELD, intValue) ) {
+				if( *intValue < 1 ) {
+					logMessage(L"Value less than 1 retrieved from configuration data for the sampler 'AddressU' enumeration constant (invalid).");
+				} else {
+					m_samplerDesc->AddressU = static_cast<D3D11_TEXTURE_ADDRESS_MODE>(*intValue);
+				}
 			}
-		}
 
-		if( retrieve<Config::DataType::INT, int>(scope, TEXTURE_SAMPLER_ADDRESSV_FIELD, intValue) ) {
-			if( *intValue < 1 ) {
-				logMessage(L"Value less than 1 retrieved from configuration data for the sampler 'AddressV' enumeration constant (invalid).");
-			} else {
-				m_samplerDesc->AddressV = static_cast<D3D11_TEXTURE_ADDRESS_MODE>(*intValue);
+			if( retrieve<Config::DataType::INT, int>(scope, TEXTURE_SAMPLER_ADDRESSV_FIELD, intValue) ) {
+				if( *intValue < 1 ) {
+					logMessage(L"Value less than 1 retrieved from configuration data for the sampler 'AddressV' enumeration constant (invalid).");
+				} else {
+					m_samplerDesc->AddressV = static_cast<D3D11_TEXTURE_ADDRESS_MODE>(*intValue);
+				}
 			}
-		}
 
-		if( retrieve<Config::DataType::INT, int>(scope, TEXTURE_SAMPLER_ADDRESSW_FIELD, intValue) ) {
-			if( *intValue < 1 ) {
-				logMessage(L"Value less than 1 retrieved from configuration data for the sampler 'AddressW' enumeration constant (invalid).");
-			} else {
-				m_samplerDesc->AddressW = static_cast<D3D11_TEXTURE_ADDRESS_MODE>(*intValue);
+			if( retrieve<Config::DataType::INT, int>(scope, TEXTURE_SAMPLER_ADDRESSW_FIELD, intValue) ) {
+				if( *intValue < 1 ) {
+					logMessage(L"Value less than 1 retrieved from configuration data for the sampler 'AddressW' enumeration constant (invalid).");
+				} else {
+					m_samplerDesc->AddressW = static_cast<D3D11_TEXTURE_ADDRESS_MODE>(*intValue);
+				}
 			}
-		}
 
-		if( retrieve<Config::DataType::INT, int>(scope, TEXTURE_SAMPLER_MAXANISOTROPY_FIELD, intValue) ) {
-			if( *intValue < 1 ) {
-				logMessage(L"Value less than 1 retrieved from configuration data for the sampler 'MaxAnisotropy' member (invalid).");
-			} else {
-				m_samplerDesc->MaxAnisotropy = static_cast<UINT>(*intValue);
+			if( retrieve<Config::DataType::INT, int>(scope, TEXTURE_SAMPLER_MAXANISOTROPY_FIELD, intValue) ) {
+				if( *intValue < 1 ) {
+					logMessage(L"Value less than 1 retrieved from configuration data for the sampler 'MaxAnisotropy' member (invalid).");
+				} else {
+					m_samplerDesc->MaxAnisotropy = static_cast<UINT>(*intValue);
+				}
 			}
-		}
 
-		if( retrieve<Config::DataType::INT, int>(scope, TEXTURE_SAMPLER_COMPAREFUNC_FIELD, intValue) ) {
-			if( *intValue < 1 ) {
-				logMessage(L"Value less than 1 retrieved from configuration data for the sampler 'ComparisonFunc' enumeration constant (invalid).");
-			} else {
-				m_samplerDesc->ComparisonFunc = static_cast<D3D11_COMPARISON_FUNC>(*intValue);
+			if( retrieve<Config::DataType::INT, int>(scope, TEXTURE_SAMPLER_COMPAREFUNC_FIELD, intValue) ) {
+				if( *intValue < 1 ) {
+					logMessage(L"Value less than 1 retrieved from configuration data for the sampler 'ComparisonFunc' enumeration constant (invalid).");
+				} else {
+					m_samplerDesc->ComparisonFunc = static_cast<D3D11_COMPARISON_FUNC>(*intValue);
+				}
 			}
-		}
 
-		if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(scope, TEXTURE_SAMPLER_BORDERCOLOR_FIELD, float4Value) ) {
-			m_samplerDesc->BorderColor[0] = float4Value->x;
-			m_samplerDesc->BorderColor[1] = float4Value->y;
-			m_samplerDesc->BorderColor[2] = float4Value->z;
-			m_samplerDesc->BorderColor[3] = float4Value->w;
+			if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(scope, TEXTURE_SAMPLER_BORDERCOLOR_FIELD, float4Value) ) {
+				m_samplerDesc->BorderColor[0] = float4Value->x;
+				m_samplerDesc->BorderColor[1] = float4Value->y;
+				m_samplerDesc->BorderColor[2] = float4Value->z;
+				m_samplerDesc->BorderColor[3] = float4Value->w;
+			}
 		}
 
 	} else {
@@ -153,6 +154,7 @@ HRESULT Texture::initialize(ID3D11Device* device) {
 	} else {
 		// No longer needed
 		delete m_samplerDesc;
+		m_samplerDesc = 0;
 	}
 
 	return ERROR_SUCCESS;

@@ -454,36 +454,36 @@ HRESULT SkinnedColorGeometry::configure(const std::wstring& scope, const std::ws
 
 		if (FAILED(configureConfigUser(*logUserScopeToUse, configUserScopeToUse))) {
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-		}
+		} else {
 
-		// Data retrieval helper variables
-		const bool* boolValue = 0;
-		const double* doubleValue = 0;
-		const DirectX::XMFLOAT4* float4Value = 0;
+			// Data retrieval helper variables
+			const bool* boolValue = 0;
+			const double* doubleValue = 0;
+			const DirectX::XMFLOAT4* float4Value = 0;
 
-		// Query for initialization data
-		if (retrieve<Config::DataType::DOUBLE, double>(scope, SKINNEDCOLORGEOMETRY_BLEND_FIELD, doubleValue)) {
-			blend = *doubleValue;
-		}
+			// Query for initialization data
+			if( retrieve<Config::DataType::DOUBLE, double>(scope, SKINNEDCOLORGEOMETRY_BLEND_FIELD, doubleValue) ) {
+				blend = *doubleValue;
+			}
 
-		if (retrieve<Config::DataType::BOOL, bool>(scope, SKINNEDCOLORGEOMETRY_USE_LIGHTING_FLAG_FIELD, boolValue)) {
-			useLighting = *boolValue;
-		}
+			if( retrieve<Config::DataType::BOOL, bool>(scope, SKINNEDCOLORGEOMETRY_USE_LIGHTING_FLAG_FIELD, boolValue) ) {
+				useLighting = *boolValue;
+			}
 
-		// Material properties
-		if (retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(scope, SKINNEDCOLORGEOMETRY_AMBIENT_ALBEDO_FIELD, float4Value)) {
-			material->ambientAlbedo = *float4Value;
+			// Material properties
+			if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(scope, SKINNEDCOLORGEOMETRY_AMBIENT_ALBEDO_FIELD, float4Value) ) {
+				material->ambientAlbedo = *float4Value;
+			}
+			if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(scope, SKINNEDCOLORGEOMETRY_DIFFUSE_ALBEDO_FIELD, float4Value) ) {
+				material->diffuseAlbedo = *float4Value;
+			}
+			if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(scope, SKINNEDCOLORGEOMETRY_SPECULAR_ALBEDO_FIELD, float4Value) ) {
+				material->specularAlbedo = *float4Value;
+			}
+			if( retrieve<Config::DataType::DOUBLE, double>(scope, SKINNEDCOLORGEOMETRY_SPECULAR_POWER_FIELD, doubleValue) ) {
+				material->specularPower = static_cast<float>(*doubleValue);
+			}
 		}
-		if (retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(scope, SKINNEDCOLORGEOMETRY_DIFFUSE_ALBEDO_FIELD, float4Value)) {
-			material->diffuseAlbedo = *float4Value;
-		}
-		if (retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(scope, SKINNEDCOLORGEOMETRY_SPECULAR_ALBEDO_FIELD, float4Value)) {
-			material->specularAlbedo = *float4Value;
-		}
-		if (retrieve<Config::DataType::DOUBLE, double>(scope, SKINNEDCOLORGEOMETRY_SPECULAR_POWER_FIELD, doubleValue)) {
-			material->specularPower = static_cast<float>(*doubleValue);
-		}
-
 	}
 	else {
 		logMessage(L"Initialization from configuration data: No Config instance to use.");

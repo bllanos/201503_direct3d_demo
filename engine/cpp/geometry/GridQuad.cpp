@@ -67,36 +67,37 @@ HRESULT GridQuad::configure(const std::wstring& scope, const std::wstring* confi
 		}
 		if (FAILED(SkinnedColorGeometry::configure(scope, configUserScope, logUserScope))) {
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-		}
+		} else {
 
-		// Data retrieval helper variables
-		const bool* boolValue = 0;
-		const int* intValue = 0;
-		const DirectX::XMFLOAT4* float4Value = 0;
+			// Data retrieval helper variables
+			const bool* boolValue = 0;
+			const int* intValue = 0;
+			const DirectX::XMFLOAT4* float4Value = 0;
 
-		// Query for initialization data
-		if( retrieve<Config::DataType::INT, int>(scope, GRIDQUAD_COLUMNS_FIELD, intValue) ) {
-			nColumns = *intValue;
-		}
+			// Query for initialization data
+			if( retrieve<Config::DataType::INT, int>(scope, GRIDQUAD_COLUMNS_FIELD, intValue) ) {
+				nColumns = *intValue;
+			}
 
-		if( retrieve<Config::DataType::INT, int>(scope, GRIDQUAD_ROWS_FIELD, intValue) ) {
-			nRows = *intValue;
-		}
+			if( retrieve<Config::DataType::INT, int>(scope, GRIDQUAD_ROWS_FIELD, intValue) ) {
+				nRows = *intValue;
+			}
 
-		if( retrieve<Config::DataType::BOOL, bool>(scope, GRIDQUAD_DEBUG_FLAG_FIELD, boolValue) ) {
-			m_debugWinding = *boolValue;
-		}
+			if( retrieve<Config::DataType::BOOL, bool>(scope, GRIDQUAD_DEBUG_FLAG_FIELD, boolValue) ) {
+				m_debugWinding = *boolValue;
+			}
 
-		std::wstring colorFields[] = {
-			GRIDQUAD_COLOR_TOP_RIGHT_FIELD,
-			GRIDQUAD_COLOR_TOP_LEFT_FIELD,
-			GRIDQUAD_COLOR_BOTTOM_LEFT_FIELD,
-			GRIDQUAD_COLOR_BOTTOM_RIGHT_FIELD
-		};
+			std::wstring colorFields[] = {
+				GRIDQUAD_COLOR_TOP_RIGHT_FIELD,
+				GRIDQUAD_COLOR_TOP_LEFT_FIELD,
+				GRIDQUAD_COLOR_BOTTOM_LEFT_FIELD,
+				GRIDQUAD_COLOR_BOTTOM_RIGHT_FIELD
+			};
 
-		for( size_t i = 0; i < GRIDQUAD_NCORNERS; ++i ) {
-			if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(scope, colorFields[i], float4Value) ) {
-				m_colors[i] = *float4Value;
+			for( size_t i = 0; i < GRIDQUAD_NCORNERS; ++i ) {
+				if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(scope, colorFields[i], float4Value) ) {
+					m_colors[i] = *float4Value;
+				}
 			}
 		}
 

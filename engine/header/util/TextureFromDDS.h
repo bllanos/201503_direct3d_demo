@@ -26,7 +26,17 @@ Description
 
 #include <windows.h>
 #include <d3d11.h>
+#include <string>
 #include "Texture.h"
+
+/* The following definitions are:
+   -Key parameters used to retrieve configuration data
+   -Default values used in the absence of configuration data
+    or constructor/function arguments (where necessary)
+*/
+
+#define TEXTUREFROMDDS_FILE_PATH_FIELD 		L"textureFilePath"
+#define TEXTUREFROMDDS_FILE_NAME_FIELD 		L"textureFileName"
 
 class TextureFromDDS : public Texture {
 
@@ -46,11 +56,42 @@ protected:
 	virtual HRESULT configure(const std::wstring& scope, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0) override;
 
 public:
-	/* Creates texture and texture sampler */
+	/* Creates texture and texture sampler
+	   Note: If this function was passed a device context,
+	     it could make use of the DirectXTK DDSTextureLoader's
+		 functionality for generating mip-maps.
+
+		 However, I think mip-map auto-generation would
+		 only work with Direct3D 11 and above.
+	 */
 	virtual HRESULT initialize(ID3D11Device* device) override;
+
+private:
+	// Texture combined filename and path - deleted after use
+	std::wstring* m_filename;
 
 	// Currently not implemented - will cause linker errors if called
 private:
 	TextureFromDDS(const TextureFromDDS& other);
 	TextureFromDDS& operator=(const TextureFromDDS& other);
 };
+
+template<typename ConfigIOClass> TextureFromDDS::TextureFromDDS(
+	const bool enableLogging, const std::wstring& msgPrefix,
+	const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope,
+	ConfigIOClass* const optionalLoader,
+	const std::wstring filename,
+	const std::wstring path
+	) :
+	Texture(
+	enableLogging, msgPrefix,
+	optionalLoader,
+	filename,
+	path
+	),
+	m_filename(0)
+{
+	if( FAILED(configure(scope, configUserScope, logUserScope)) ) {
+		logMessage(L"Configuration failed.");
+	}
+}
