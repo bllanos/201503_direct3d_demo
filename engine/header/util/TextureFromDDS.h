@@ -40,7 +40,7 @@ public:
 		const std::wstring path = L""
 		);
 
-	virtual ~TextureFromDDS(void) {}
+	virtual ~TextureFromDDS(void);
 
 protected:
 	virtual HRESULT configure(const std::wstring& scope, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0) override;

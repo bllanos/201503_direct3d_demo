@@ -27,7 +27,37 @@ Description
 
 #include <windows.h>
 #include <d3d11.h>
+#include <DirectXMath.h>
 #include "ConfigUser.h"
+
+/* The following definitions are:
+   -Key parameters used to retrieve configuration data
+   -Default values used in the absence of configuration data
+    or constructor/function arguments (where necessary)
+*/
+
+// See http://msdn.microsoft.com/en-us/library/windows/desktop/ff476207%28v=vs.85%29.aspx
+#define TEXTURE_SAMPLER_FILTER_DEFAULT 		D3D11_FILTER_MIN_MAG_MIP_LINEAR
+#define TEXTURE_SAMPLER_FILTER_FIELD		L"filter"
+#define TEXTURE_SAMPLER_ADDRESSU_DEFAULT 	D3D11_TEXTURE_ADDRESS_CLAMP
+#define TEXTURE_SAMPLER_ADDRESSU_FIELD		L"addressU"
+#define TEXTURE_SAMPLER_ADDRESSV_DEFAULT 	D3D11_TEXTURE_ADDRESS_CLAMP
+#define TEXTURE_SAMPLER_ADDRESSV_FIELD		L"addressV"
+#define TEXTURE_SAMPLER_ADDRESSW_DEFAULT 	D3D11_TEXTURE_ADDRESS_CLAMP
+#define TEXTURE_SAMPLER_ADDRESSW_FIELD		L"addressW"
+#define TEXTURE_SAMPLER_MAXANISOTROPY_DEFAULT 	1
+#define TEXTURE_SAMPLER_MAXANISOTROPY_FIELD		L"maxAnisotropy"
+#define TEXTURE_SAMPLER_COMPAREFUNC_DEFAULT 	D3D11_COMPARISON_NEVER
+#define TEXTURE_SAMPLER_COMPAREFUNC_FIELD		L"comparisonFunc"
+#define TEXTURE_SAMPLER_BORDERCOLOR_DEFAULT 	XMFLOAT4(0.0f,0.0f,0.0f,0.0f)
+#define TEXTURE_SAMPLER_BORDERCOLOR_FIELD		L"comparisonFunc"
+
+/* LOD parameters are unlikely to be configured
+   to non-default values
+ */
+#define TEXTURE_SAMPLER_MINLOD_DEFAULT			-FLT_MAX
+#define TEXTURE_SAMPLER_MAXLOD_DEFAULT			FLT_MAX
+#define TEXTURE_SAMPLER_MIPMAPLODBIAS_DEFAULT	0.0f
 
 class Texture : public ConfigUser {
 
@@ -38,7 +68,12 @@ public:
 	   can be bound.
 	*/
 	enum class BindLocation : unsigned int {
-		VS, HS, DS, GS, PS, CS
+		VS, // Vertex shader
+		// HS, // Hull shader - Direct3D 11
+		// DS, // Domain shader - Direct3D 11
+		GS, // Geometry shader
+		PS, // Pixel shader
+		// CS // Compute shader - Direct3D 11
 	};
 
 public:
@@ -50,7 +85,7 @@ public:
 		const std::wstring path = L""
 		);
 
-	virtual ~Texture(void) {}
+	virtual ~Texture(void);
 
 protected:
 	/* Retrieves configuration data, using default values,
@@ -94,6 +129,7 @@ protected:
 
 	// Data members set up by this class
 private:
+	D3D11_SAMPLER_DESC* m_samplerDesc; // Deleted when the sampler state is created
 	ID3D11SamplerState* m_samplerState;
 
 	// Currently not implemented - will cause linker errors if called
@@ -101,3 +137,19 @@ private:
 	Texture(const Texture& other);
 	Texture& operator=(const Texture& other);
 };
+
+template<typename ConfigIOClass> Texture::Texture(
+	const bool enableLogging, const std::wstring& msgPrefix,
+	ConfigIOClass* const optionalLoader,
+	const std::wstring filename,
+	const std::wstring path
+	) :
+	ConfigUser(
+	enableLogging,
+	msgPrefix,
+	optionalLoader,
+	filename,
+	path
+	),
+	m_texture(0), m_textureView(0), m_samplerDesc(0), m_samplerState(0)
+{}

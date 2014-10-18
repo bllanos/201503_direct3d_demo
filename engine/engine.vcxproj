@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\util\Texture.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestTransformable.cpp" />
@@ -89,10 +90,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)\..\win32_base\header\util;$(ProjectDir)\..\win32_base\header\interface;$(ProjectDir)\..\win32_base\header;$(ProjectDir)\header\input;$(ProjectDir)\header\physics;$(ProjectDir)\header\rendering;$(ProjectDir)\header;$(ProjectDir)\test\header;$(ProjectDir)\header\geometry;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)\..\win32_base\header\util;$(ProjectDir)\..\win32_base\header\interface;$(ProjectDir)\..\win32_base\header;$(ProjectDir)\header\input;$(ProjectDir)\header\physics;$(ProjectDir)\header\rendering;$(ProjectDir)\header;$(ProjectDir)\test\header;$(ProjectDir)\header\geometry;$(ProjectDir)\header\util;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)\..\win32_base\header\util;$(ProjectDir)\..\win32_base\header\interface;$(ProjectDir)\..\win32_base\header;$(ProjectDir)\header\input;$(ProjectDir)\header\physics;$(ProjectDir)\header\rendering;$(ProjectDir)\header;$(ProjectDir)\test\header;$(ProjectDir)\header\geometry;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)\..\win32_base\header\util;$(ProjectDir)\..\win32_base\header\interface;$(ProjectDir)\..\win32_base\header;$(ProjectDir)\header\input;$(ProjectDir)\header\physics;$(ProjectDir)\header\rendering;$(ProjectDir)\header;$(ProjectDir)\test\header;$(ProjectDir)\header\geometry;$(ProjectDir)\header\util;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

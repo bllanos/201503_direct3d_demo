@@ -52,6 +52,9 @@
     <Filter Include="header\util">
       <UniqueIdentifier>{124a1acb-2c5c-40da-ac9b-8175cc9fc999}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\util">
+      <UniqueIdentifier>{66af0f04-f30f-4694-9c9b-7a311a94144b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cpp\rendering\SimpleColorRenderer.cpp">
@@ -110,6 +113,9 @@
     </ClCompile>
     <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp">
       <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\util\Texture.cpp">
+      <Filter>source\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
