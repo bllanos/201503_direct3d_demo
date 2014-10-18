@@ -264,7 +264,7 @@ HRESULT GridQuad::addIndexedVertices(
 			} if( FAILED(uvToNormal(vertex->normal, u, v)) ) {
 				msg = L"uvToNormal() failed";
 				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-			} if( FAILED(uvToColor(vertex->color, u, v)) ) {
+			} if( FAILED(uvToColor(vertex->index, u, v)) ) {
 				msg = L"uvToColor() failed";
 				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 			}

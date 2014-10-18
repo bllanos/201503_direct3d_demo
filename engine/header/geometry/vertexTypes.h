@@ -34,5 +34,5 @@ struct SkinnedColorVertexType {
 	DirectX::XMFLOAT4 boneWeights;
 	DirectX::XMFLOAT3 position;
 	DirectX::XMFLOAT3 normal;
-	DirectX::XMFLOAT4 color;
+	DirectX::XMFLOAT4 index; // Multi-purpose: Color, or 1D to 4D texture coordinates
 };
