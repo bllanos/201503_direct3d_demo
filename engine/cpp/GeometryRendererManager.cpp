@@ -22,7 +22,7 @@ Description
 #include "GeometryRendererManager.h"
 #include "fileUtil.h"
 #include "SimpleColorRenderer.h"
-#include "SkinnedColorRenderer.h"
+#include "SkinnedRenderer.h"
 
 using std::map;
 using std::wstring;
@@ -30,8 +30,10 @@ using std::wstring;
 const GeometryRendererManager::GeometryRendererType
 GeometryRendererManager::s_geometryRendererTypesInOrder[] = {
 	GeometryRendererType::SimpleColorRenderer,
-	GeometryRendererType::SkinnedColorRendererNoLight,
-	GeometryRendererType::SkinnedColorRendererLight
+	GeometryRendererType::SkinnedRendererNoLight,
+	GeometryRendererType::SkinnedRendererLight,
+	GeometryRendererType::SkinnedTexturedRendererNoLight,
+	GeometryRendererType::SkinnedTexturedRendererLight
 };
 
 const size_t GeometryRendererManager::s_nGeometryRendererTypes =
@@ -40,8 +42,10 @@ const size_t GeometryRendererManager::s_nGeometryRendererTypes =
 
 const wstring GeometryRendererManager::s_geometryRendererTypeNames[] = {
 	L"SimpleColorRenderer",
-	L"SkinnedColorRendererNoLight",
-	L"SkinnedColorRendererLight"
+	L"SkinnedRendererNoLight",
+	L"SkinnedRendererLight",
+	L"SkinnedTexturedRendererNoLight",
+	L"SkinnedTexturedRendererLight"
 };
 
 HRESULT GeometryRendererManager::wstringToGeometryRendererType(
@@ -153,8 +157,10 @@ HRESULT GeometryRendererManager::initialize(ID3D11Device* const device) {
 				// Attempt initialization
 				switch( type ) {
 					INITIALIZE_RENDERER(SimpleColorRenderer, SimpleColorRenderer)
-					INITIALIZE_RENDERER(SkinnedColorRendererNoLight, SkinnedColorRenderer)
-					INITIALIZE_RENDERER(SkinnedColorRendererLight, SkinnedColorRenderer)
+					INITIALIZE_RENDERER(SkinnedRendererNoLight, SkinnedRenderer)
+					INITIALIZE_RENDERER(SkinnedRendererLight, SkinnedRenderer)
+					INITIALIZE_RENDERER(SkinnedTexturedRendererNoLight, SkinnedRenderer)
+					INITIALIZE_RENDERER(SkinnedTexturedRendererLight, SkinnedRenderer)
 				default:
 					logMessage(L"Reached default case of geometry renderer initialization switch statement. Code is broken.");
 					return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);

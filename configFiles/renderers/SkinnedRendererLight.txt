@@ -1,0 +1,35 @@
+# Configuration file for the SkinnedRenderer class
+# Version to be used for lit geometry by convention
+
+# LogUser configuration
+# ---------------------
+BOOL -- SkinnedRenderer_LogUser::enableLogging = true
+WSTRING -- SkinnedRenderer_LogUser::msgPrefix = L"SkinnedRenderer"
+BOOL -- SkinnedRenderer_LogUser::useGlobalLog = true
+# BOOL -- SkinnedRenderer_LogUser::timestampEnable = true
+
+# ConfigUser configuration
+# ------------------------
+BOOL -- SkinnedRenderer_ConfigUser::enableConfigUseLogging = true
+
+# Disable lighting
+# ----------------
+BOOL -- SkinnedRenderer::enableLighting = true
+
+# Shader setup
+# ------------
+DIRECTORY -- SkinnedRenderer::shaderFilePath = "..\shaderCode"
+FILENAME -- SkinnedRenderer::vsFileName_withLighting = "skinnedColorVS_phongLight.hlsl"
+WSTRING -- SkinnedRenderer::vsShaderModel = L"vs_4_0"
+WSTRING -- SkinnedRenderer::vsEntryPoint_withLighting = L"VSMAIN"
+FILENAME -- SkinnedRenderer::psFileName_withLighting = "skinnedColorPS_phongLight.hlsl"
+WSTRING -- SkinnedRenderer::psShaderModel = L"ps_4_0"
+WSTRING -- SkinnedRenderer::psEntryPoint_withLighting = L"PSMAIN"
+
+# Light parameters
+# ----------------
+FLOAT4 -- SkinnedRenderer::lightPosition = (0.0, 0.0, -30.0, 1.0)
+COLOR -- SkinnedRenderer::lightColor = (255, 255, 200, 255)
+DOUBLE -- SkinnedRenderer::lightAmbientWeight = 0.1
+DOUBLE -- SkinnedRenderer::lightDiffuseWeight = 0.5
+DOUBLE -- SkinnedRenderer::lightSpecularWeight = 0.4

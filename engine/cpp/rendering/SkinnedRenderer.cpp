@@ -1,5 +1,5 @@
 /*
-SkinnedColorRenderer.cpp
+SkinnedRenderer.cpp
 ------------------------
 
 Created for: COMP3501A Project
@@ -15,37 +15,37 @@ Created October 9, 2014
 Primary basis: "SimpleColorRenderer.cpp"
 
 Description
-  -Implementation of the SkinnedColorRenderer class
+  -Implementation of the SkinnedRenderer class
 */
 
 #pragma once
 
-#include "SkinnedColorRenderer.h"
+#include "SkinnedRenderer.h"
 #include "SkinnedColorGeometry.h"
 #include "fileUtil.h"
 
 using namespace DirectX;
 using std::wstring;
 
-SkinnedColorRenderer::SkinnedColorRenderer(
+SkinnedRenderer::SkinnedRenderer(
 	const wstring filename,
 	const wstring path
 	) :
 	IGeometryRenderer(),
 	ConfigUser(
-	true, SKINNEDCOLORRENDERER_START_MSG_PREFIX,
-	static_cast<SKINNEDCOLORRENDERER_CONFIGIO_CLASS*>(0),
+	true, SKINNEDRENDERER_START_MSG_PREFIX,
+	static_cast<SKINNEDRENDERER_CONFIGIO_CLASS*>(0),
 	filename, path),
 	m_vertexShader(0), m_pixelShader(0), m_layout(0),
 	m_cameraBuffer(0), m_materialBuffer(0), m_lightBuffer(0),
 	m_lighting(false), m_light(0)
 {
 	// Configure base members
-	const wstring configUserScope(SKINNEDCOLORRENDERER_CONFIGUSER_SCOPE);
-	configureConfigUser(SKINNEDCOLORRENDERER_LOGUSER_SCOPE, &configUserScope);
+	const wstring configUserScope(SKINNEDRENDERER_CONFIGUSER_SCOPE);
+	configureConfigUser(SKINNEDRENDERER_LOGUSER_SCOPE, &configUserScope);
 }
 
-SkinnedColorRenderer::~SkinnedColorRenderer(void) {
+SkinnedRenderer::~SkinnedRenderer(void) {
 	if( m_cameraBuffer ) {
 		m_cameraBuffer->Release();
 		m_cameraBuffer = 0;
@@ -82,7 +82,7 @@ SkinnedColorRenderer::~SkinnedColorRenderer(void) {
 	}
 }
 
-HRESULT SkinnedColorRenderer::initialize(ID3D11Device* const device) {
+HRESULT SkinnedRenderer::initialize(ID3D11Device* const device) {
 
 	if( FAILED(createShaders(device)) ) {
 		logMessage(L"Call to createShaders() failed.");
@@ -103,7 +103,7 @@ HRESULT SkinnedColorRenderer::initialize(ID3D11Device* const device) {
 	return ERROR_SUCCESS;
 }
 
-HRESULT SkinnedColorRenderer::render(ID3D11DeviceContext* const context, const IGeometry& geometry, const Camera* const camera) {
+HRESULT SkinnedRenderer::render(ID3D11DeviceContext* const context, const IGeometry& geometry, const Camera* const camera) {
 	/* Renderers assume that they are being called on the right kind of geometry,
 	   because the geometry itself should be calling this function (indirectly
 	   through the renderer manager).
@@ -144,7 +144,7 @@ HRESULT SkinnedColorRenderer::render(ID3D11DeviceContext* const context, const I
 	return result;
 }
 
-HRESULT SkinnedColorRenderer::configureRendering(
+HRESULT SkinnedRenderer::configureRendering(
 	std::wstring& vsFilename, std::wstring& vsShaderModel, std::wstring& vsEntryPoint,
 	std::wstring& psFilename, std::wstring& psShaderModel, std::wstring& psEntryPoint) {
 
@@ -158,7 +158,7 @@ HRESULT SkinnedColorRenderer::configureRendering(
 	wstring criticalErrorMsg(L"Critical configuration data not found. Aborting shader setup.");
 
 	// Enable or disable lighting
-	if( retrieve<Config::DataType::BOOL, bool>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_FLAG_FIELD, boolValue) ) {
+	if( retrieve<Config::DataType::BOOL, bool>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_FLAG_FIELD, boolValue) ) {
 		m_lighting = *boolValue;
 		if( m_lighting ) {
 			logMessage(L"Lighting is enabled in configuration data.");
@@ -171,7 +171,7 @@ HRESULT SkinnedColorRenderer::configureRendering(
 	}
 
 	// Shader file path
-	if( retrieve<Config::DataType::DIRECTORY, wstring>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_SHADER_FILE_PATH_FIELD, stringValue) ) {
+	if( retrieve<Config::DataType::DIRECTORY, wstring>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_SHADER_FILE_PATH_FIELD, stringValue) ) {
 		path = *stringValue;
 	} else {
 		logMessage(criticalErrorMsg);
@@ -180,11 +180,11 @@ HRESULT SkinnedColorRenderer::configureRendering(
 
 	// Vertex shader file name
 	if( m_lighting ) {
-		field = SKINNEDCOLORRENDERER_VS_FILE_NAME_FIELD_LIGHT;
+		field = SKINNEDRENDERER_VS_FILE_NAME_FIELD_LIGHT;
 	} else {
-		field = SKINNEDCOLORRENDERER_VS_FILE_NAME_FIELD_NO_LIGHT;
+		field = SKINNEDRENDERER_VS_FILE_NAME_FIELD_NO_LIGHT;
 	}
-	if( retrieve<Config::DataType::FILENAME, wstring>(SKINNEDCOLORRENDERER_SCOPE, field, stringValue) ) {
+	if( retrieve<Config::DataType::FILENAME, wstring>(SKINNEDRENDERER_SCOPE, field, stringValue) ) {
 		vsFilename = *stringValue;
 	} else {
 		logMessage(criticalErrorMsg);
@@ -197,11 +197,11 @@ HRESULT SkinnedColorRenderer::configureRendering(
 
 	// Pixel shader file name
 	if( m_lighting ) {
-		field = SKINNEDCOLORRENDERER_PS_FILE_NAME_FIELD_LIGHT;
+		field = SKINNEDRENDERER_PS_FILE_NAME_FIELD_LIGHT;
 	} else {
-		field = SKINNEDCOLORRENDERER_PS_FILE_NAME_FIELD_NO_LIGHT;
+		field = SKINNEDRENDERER_PS_FILE_NAME_FIELD_NO_LIGHT;
 	}
-	if( retrieve<Config::DataType::FILENAME, wstring>(SKINNEDCOLORRENDERER_SCOPE, field, stringValue) ) {
+	if( retrieve<Config::DataType::FILENAME, wstring>(SKINNEDRENDERER_SCOPE, field, stringValue) ) {
 		psFilename = *stringValue;
 	} else {
 		logMessage(criticalErrorMsg);
@@ -213,7 +213,7 @@ HRESULT SkinnedColorRenderer::configureRendering(
 	}
 
 	// Vertex shader model version
-	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_VS_SHADER_MODEL_FIELD, stringValue) ) {
+	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_VS_SHADER_MODEL_FIELD, stringValue) ) {
 		vsShaderModel = *stringValue;
 	} else {
 		logMessage(criticalErrorMsg);
@@ -221,7 +221,7 @@ HRESULT SkinnedColorRenderer::configureRendering(
 	}
 
 	// Pixel shader model version
-	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_PS_SHADER_MODEL_FIELD, stringValue) ) {
+	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_PS_SHADER_MODEL_FIELD, stringValue) ) {
 		psShaderModel = *stringValue;
 	} else {
 		logMessage(criticalErrorMsg);
@@ -230,11 +230,11 @@ HRESULT SkinnedColorRenderer::configureRendering(
 
 	// Vertex shader entry point
 	if( m_lighting ) {
-		field = SKINNEDCOLORRENDERER_VS_ENTRYPOINT_FIELD_LIGHT;
+		field = SKINNEDRENDERER_VS_ENTRYPOINT_FIELD_LIGHT;
 	} else {
-		field = SKINNEDCOLORRENDERER_VS_ENTRYPOINT_FIELD_NO_LIGHT;
+		field = SKINNEDRENDERER_VS_ENTRYPOINT_FIELD_NO_LIGHT;
 	}
-	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDCOLORRENDERER_SCOPE, field, stringValue) ) {
+	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDRENDERER_SCOPE, field, stringValue) ) {
 		vsEntryPoint = *stringValue;
 	} else {
 		logMessage(criticalErrorMsg);
@@ -243,11 +243,11 @@ HRESULT SkinnedColorRenderer::configureRendering(
 
 	// Pixel shader entry point
 	if( m_lighting ) {
-		field = SKINNEDCOLORRENDERER_PS_ENTRYPOINT_FIELD_LIGHT;
+		field = SKINNEDRENDERER_PS_ENTRYPOINT_FIELD_LIGHT;
 	} else {
-		field = SKINNEDCOLORRENDERER_PS_ENTRYPOINT_FIELD_NO_LIGHT;
+		field = SKINNEDRENDERER_PS_ENTRYPOINT_FIELD_NO_LIGHT;
 	}
-	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDCOLORRENDERER_SCOPE, field, stringValue) ) {
+	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDRENDERER_SCOPE, field, stringValue) ) {
 		psEntryPoint = *stringValue;
 	} else {
 		logMessage(criticalErrorMsg);
@@ -257,25 +257,25 @@ HRESULT SkinnedColorRenderer::configureRendering(
 	// Light parameters
 	if( m_lighting ) {
 		m_light = new Light;
-		m_light->lightPosition = SKINNEDCOLORRENDERER_LIGHT_POSITION_DEFAULT;
-		m_light->lightColor = SKINNEDCOLORRENDERER_LIGHT_COLOR_DEFAULT;
-		m_light->lightAmbientWeight = SKINNEDCOLORRENDERER_LIGHT_AMBIENT_WEIGHT_DEFAULT;
-		m_light->lightDiffuseWeight = SKINNEDCOLORRENDERER_LIGHT_DIFFUSE_WEIGHT_DEFAULT;
-		m_light->lightSpecularWeight = SKINNEDCOLORRENDERER_LIGHT_SPECULAR_WEIGHT_DEFAULT;
+		m_light->lightPosition = SKINNEDRENDERER_LIGHT_POSITION_DEFAULT;
+		m_light->lightColor = SKINNEDRENDERER_LIGHT_COLOR_DEFAULT;
+		m_light->lightAmbientWeight = SKINNEDRENDERER_LIGHT_AMBIENT_WEIGHT_DEFAULT;
+		m_light->lightDiffuseWeight = SKINNEDRENDERER_LIGHT_DIFFUSE_WEIGHT_DEFAULT;
+		m_light->lightSpecularWeight = SKINNEDRENDERER_LIGHT_SPECULAR_WEIGHT_DEFAULT;
 
-		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_POSITION_FIELD, float4Value) ) {
+		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_POSITION_FIELD, float4Value) ) {
 			m_light->lightPosition = *float4Value;
 		}
-		if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_COLOR_FIELD, float4Value) ) {
+		if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_COLOR_FIELD, float4Value) ) {
 			m_light->lightColor = *float4Value;
 		}
-		if( retrieve<Config::DataType::DOUBLE, double>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_AMBIENT_WEIGHT_FIELD, doubleValue) ) {
+		if( retrieve<Config::DataType::DOUBLE, double>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_AMBIENT_WEIGHT_FIELD, doubleValue) ) {
 			m_light->lightAmbientWeight = static_cast<float>(*doubleValue);
 		}
-		if( retrieve<Config::DataType::DOUBLE, double>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_DIFFUSE_WEIGHT_FIELD, doubleValue) ) {
+		if( retrieve<Config::DataType::DOUBLE, double>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_DIFFUSE_WEIGHT_FIELD, doubleValue) ) {
 			m_light->lightDiffuseWeight = static_cast<float>(*doubleValue);
 		}
-		if( retrieve<Config::DataType::DOUBLE, double>(SKINNEDCOLORRENDERER_SCOPE, SKINNEDCOLORRENDERER_LIGHT_SPECULAR_WEIGHT_FIELD, doubleValue) ) {
+		if( retrieve<Config::DataType::DOUBLE, double>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_SPECULAR_WEIGHT_FIELD, doubleValue) ) {
 			m_light->lightSpecularWeight = static_cast<float>(*doubleValue);
 		}
 	}
@@ -283,7 +283,7 @@ HRESULT SkinnedColorRenderer::configureRendering(
 	return ERROR_SUCCESS;
 }
 
-HRESULT SkinnedColorRenderer::createShaders(ID3D11Device* const device) {
+HRESULT SkinnedRenderer::createShaders(ID3D11Device* const device) {
 	HRESULT result = ERROR_SUCCESS;
 	ID3D10Blob* errorMessage = 0;
 	ID3D10Blob* vertexShaderBuffer = 0;
@@ -388,7 +388,7 @@ HRESULT SkinnedColorRenderer::createShaders(ID3D11Device* const device) {
 	return result;
 }
 
-HRESULT SkinnedColorRenderer::createInputLayout(ID3D11Device* const device, ID3D10Blob* const vertexShaderBuffer) {
+HRESULT SkinnedRenderer::createInputLayout(ID3D11Device* const device, ID3D10Blob* const vertexShaderBuffer) {
 	HRESULT result = ERROR_SUCCESS;
 	const unsigned int numElements = SKINNEDCOLORVERTEXTYPE_COMPONENTS;
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[numElements];
@@ -451,7 +451,7 @@ HRESULT SkinnedColorRenderer::createInputLayout(ID3D11Device* const device, ID3D
 	return result;
 }
 
-HRESULT SkinnedColorRenderer::createNoLightConstantBuffers(ID3D11Device* const device) {
+HRESULT SkinnedRenderer::createNoLightConstantBuffers(ID3D11Device* const device) {
 	HRESULT result = ERROR_SUCCESS;
 	D3D11_BUFFER_DESC cameraBufferDesc;
 	D3D11_BUFFER_DESC materialBufferDesc;
@@ -489,7 +489,7 @@ HRESULT SkinnedColorRenderer::createNoLightConstantBuffers(ID3D11Device* const d
 	return result;
 }
 
-HRESULT SkinnedColorRenderer::createLightConstantBuffers(ID3D11Device* const device) {
+HRESULT SkinnedRenderer::createLightConstantBuffers(ID3D11Device* const device) {
 	HRESULT result = ERROR_SUCCESS;
 	D3D11_BUFFER_DESC lightBufferDesc;
 
@@ -510,7 +510,7 @@ HRESULT SkinnedColorRenderer::createLightConstantBuffers(ID3D11Device* const dev
 	return result;
 }
 
-void SkinnedColorRenderer::outputShaderErrorMessage(ID3D10Blob* const errorMessage) {
+void SkinnedRenderer::outputShaderErrorMessage(ID3D10Blob* const errorMessage) {
 	char* compileErrors;
 	wstring prefix(L"Compilation error: ");
 	wstring errorMsg;
@@ -534,13 +534,13 @@ void SkinnedColorRenderer::outputShaderErrorMessage(ID3D10Blob* const errorMessa
 	errorMessage->Release();
 }
 
-HRESULT SkinnedColorRenderer::setShaderParameters(
+HRESULT SkinnedRenderer::setShaderParameters(
 	ID3D11DeviceContext* const context,
 	const DirectX::XMFLOAT4X4 viewMatrix,
 	const DirectX::XMFLOAT4X4 projectionMatrix,
 	const DirectX::XMFLOAT4 cameraPosition,
 	const float blendFactor,
-	const SkinnedColorGeometry::Material* material) {
+	const SKINNEDRENDERER_MATERIAL_STRUCT* material) {
 
 	if( FAILED(setNoLightShaderParameters(context, viewMatrix, projectionMatrix, cameraPosition, blendFactor)) ) {
 		logMessage(L"Call to setNoLightShaderParameters() failed.");
@@ -556,7 +556,7 @@ HRESULT SkinnedColorRenderer::setShaderParameters(
 	return ERROR_SUCCESS;
 }
 
-HRESULT SkinnedColorRenderer::setNoLightShaderParameters(
+HRESULT SkinnedRenderer::setNoLightShaderParameters(
 	ID3D11DeviceContext* const context,
 	const DirectX::XMFLOAT4X4 viewMatrix,
 	const DirectX::XMFLOAT4X4 projectionMatrix,
@@ -621,8 +621,8 @@ HRESULT SkinnedColorRenderer::setNoLightShaderParameters(
 	return result;
 }
 
-HRESULT SkinnedColorRenderer::setLightShaderParameters(ID3D11DeviceContext* const context,
-	const SkinnedColorGeometry::Material* material, const float blendFactor) {
+HRESULT SkinnedRenderer::setLightShaderParameters(ID3D11DeviceContext* const context,
+	const SKINNEDRENDERER_MATERIAL_STRUCT* material, const float blendFactor) {
 
 	HRESULT result = ERROR_SUCCESS;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -684,7 +684,7 @@ HRESULT SkinnedColorRenderer::setLightShaderParameters(ID3D11DeviceContext* cons
 	return result;
 }
 
-void SkinnedColorRenderer::renderShader(ID3D11DeviceContext* const context, const size_t indexCount) {
+void SkinnedRenderer::renderShader(ID3D11DeviceContext* const context, const size_t indexCount) {
 	// Set the vertex input layout.
 	context->IASetInputLayout(m_layout);
 

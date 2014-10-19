@@ -90,9 +90,6 @@
     <ClCompile Include="cpp\input\Mouse.cpp">
       <Filter>source\input</Filter>
     </ClCompile>
-    <ClCompile Include="cpp\rendering\SkinnedColorRenderer.cpp">
-      <Filter>source\rendering</Filter>
-    </ClCompile>
     <ClCompile Include="cpp\geometry\GridQuad.cpp">
       <Filter>source\geometry</Filter>
     </ClCompile>
@@ -119,6 +116,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\util\TextureFromDDS.cpp">
       <Filter>source\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\rendering\SkinnedRenderer.cpp">
+      <Filter>source\rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -173,9 +173,6 @@
     <ClInclude Include="header\input\Keyboard.h">
       <Filter>header\input</Filter>
     </ClInclude>
-    <ClInclude Include="header\rendering\SkinnedColorRenderer.h">
-      <Filter>header\rendering</Filter>
-    </ClInclude>
     <ClInclude Include="header\geometry\SkinnedColorGeometry.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
@@ -205,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\geometry\SkinnedTexturedGeometry.h">
       <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\rendering\SkinnedRenderer.h">
+      <Filter>header\rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

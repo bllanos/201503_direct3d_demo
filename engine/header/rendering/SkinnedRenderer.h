@@ -1,5 +1,5 @@
 /*
-SkinnedColorRenderer.h
+SkinnedRenderer.h
 ---------------------
 
 Created for: COMP3501A Project
@@ -38,50 +38,53 @@ Description
 #include "SkinnedColorGeometry.h"
 
 // Type of loader to use for configuration data
-#define SKINNEDCOLORRENDERER_CONFIGIO_CLASS FlatAtomicConfigIO
+#define SKINNEDRENDERER_CONFIGIO_CLASS FlatAtomicConfigIO
+
+// Type of material data handled by this class
+#define SKINNEDRENDERER_MATERIAL_STRUCT SkinnedColorGeometry::Material
 
 // Default log message prefix used before more information is available
-#define SKINNEDCOLORRENDERER_START_MSG_PREFIX L"SkinnedColorRenderer "
+#define SKINNEDRENDERER_START_MSG_PREFIX L"SkinnedRenderer "
 
 /* The following definitions are:
   -Key parameters used to retrieve configuration data
   -Default values used in the absence of configuration data
    or constructor/function arguments (where necessary)
 */
-#define SKINNEDCOLORRENDERER_SCOPE L"SkinnedColorRenderer"
-#define SKINNEDCOLORRENDERER_LOGUSER_SCOPE L"SkinnedColorRenderer_LogUser"
-#define SKINNEDCOLORRENDERER_CONFIGUSER_SCOPE L"SkinnedColorRenderer_ConfigUser"
+#define SKINNEDRENDERER_SCOPE L"SkinnedRenderer"
+#define SKINNEDRENDERER_LOGUSER_SCOPE L"SkinnedRenderer_LogUser"
+#define SKINNEDRENDERER_CONFIGUSER_SCOPE L"SkinnedRenderer_ConfigUser"
 
-#define SKINNEDCOLORRENDERER_SHADER_FILE_PATH_FIELD L"shaderFilePath"
+#define SKINNEDRENDERER_SHADER_FILE_PATH_FIELD L"shaderFilePath"
 
-#define SKINNEDCOLORRENDERER_LIGHT_FLAG_FIELD L"enableLighting"
+#define SKINNEDRENDERER_LIGHT_FLAG_FIELD L"enableLighting"
 
-#define SKINNEDCOLORRENDERER_VS_FILE_NAME_FIELD_NO_LIGHT L"vsFileName_noLighting"
-#define SKINNEDCOLORRENDERER_VS_FILE_NAME_FIELD_LIGHT L"vsFileName_withLighting"
-#define SKINNEDCOLORRENDERER_PS_FILE_NAME_FIELD_NO_LIGHT L"psFileName_noLighting"
-#define SKINNEDCOLORRENDERER_PS_FILE_NAME_FIELD_LIGHT L"psFileName_withLighting"
+#define SKINNEDRENDERER_VS_FILE_NAME_FIELD_NO_LIGHT L"vsFileName_noLighting"
+#define SKINNEDRENDERER_VS_FILE_NAME_FIELD_LIGHT L"vsFileName_withLighting"
+#define SKINNEDRENDERER_PS_FILE_NAME_FIELD_NO_LIGHT L"psFileName_noLighting"
+#define SKINNEDRENDERER_PS_FILE_NAME_FIELD_LIGHT L"psFileName_withLighting"
 
-#define SKINNEDCOLORRENDERER_VS_SHADER_MODEL_FIELD L"vsShaderModel"
-#define SKINNEDCOLORRENDERER_PS_SHADER_MODEL_FIELD L"psShaderModel"
+#define SKINNEDRENDERER_VS_SHADER_MODEL_FIELD L"vsShaderModel"
+#define SKINNEDRENDERER_PS_SHADER_MODEL_FIELD L"psShaderModel"
 
-#define SKINNEDCOLORRENDERER_VS_ENTRYPOINT_FIELD_NO_LIGHT L"vsEntryPoint_noLighting"
-#define SKINNEDCOLORRENDERER_VS_ENTRYPOINT_FIELD_LIGHT L"vsEntryPoint_withLighting"
-#define SKINNEDCOLORRENDERER_PS_ENTRYPOINT_FIELD_NO_LIGHT L"psEntryPoint_noLighting"
-#define SKINNEDCOLORRENDERER_PS_ENTRYPOINT_FIELD_LIGHT L"psEntryPoint_withLighting"
+#define SKINNEDRENDERER_VS_ENTRYPOINT_FIELD_NO_LIGHT L"vsEntryPoint_noLighting"
+#define SKINNEDRENDERER_VS_ENTRYPOINT_FIELD_LIGHT L"vsEntryPoint_withLighting"
+#define SKINNEDRENDERER_PS_ENTRYPOINT_FIELD_NO_LIGHT L"psEntryPoint_noLighting"
+#define SKINNEDRENDERER_PS_ENTRYPOINT_FIELD_LIGHT L"psEntryPoint_withLighting"
 
 // Lighting parameters
-#define SKINNEDCOLORRENDERER_LIGHT_POSITION_DEFAULT DirectX::XMFLOAT4(-1000.0f, 0.0f, 0.0f, 1.0f)
-#define SKINNEDCOLORRENDERER_LIGHT_POSITION_FIELD L"lightPosition"
-#define SKINNEDCOLORRENDERER_LIGHT_COLOR_DEFAULT DirectX::XMFLOAT4(1.0, 1.0f, 1.0f, 1.0f)
-#define SKINNEDCOLORRENDERER_LIGHT_COLOR_FIELD L"lightColor"
-#define SKINNEDCOLORRENDERER_LIGHT_AMBIENT_WEIGHT_DEFAULT 1.0f
-#define SKINNEDCOLORRENDERER_LIGHT_AMBIENT_WEIGHT_FIELD L"lightAmbientWeight"
-#define SKINNEDCOLORRENDERER_LIGHT_DIFFUSE_WEIGHT_DEFAULT 1.0f
-#define SKINNEDCOLORRENDERER_LIGHT_DIFFUSE_WEIGHT_FIELD L"lightDiffuseWeight"
-#define SKINNEDCOLORRENDERER_LIGHT_SPECULAR_WEIGHT_DEFAULT 1.0f
-#define SKINNEDCOLORRENDERER_LIGHT_SPECULAR_WEIGHT_FIELD L"lightSpecularWeight"
+#define SKINNEDRENDERER_LIGHT_POSITION_DEFAULT DirectX::XMFLOAT4(-1000.0f, 0.0f, 0.0f, 1.0f)
+#define SKINNEDRENDERER_LIGHT_POSITION_FIELD L"lightPosition"
+#define SKINNEDRENDERER_LIGHT_COLOR_DEFAULT DirectX::XMFLOAT4(1.0, 1.0f, 1.0f, 1.0f)
+#define SKINNEDRENDERER_LIGHT_COLOR_FIELD L"lightColor"
+#define SKINNEDRENDERER_LIGHT_AMBIENT_WEIGHT_DEFAULT 1.0f
+#define SKINNEDRENDERER_LIGHT_AMBIENT_WEIGHT_FIELD L"lightAmbientWeight"
+#define SKINNEDRENDERER_LIGHT_DIFFUSE_WEIGHT_DEFAULT 1.0f
+#define SKINNEDRENDERER_LIGHT_DIFFUSE_WEIGHT_FIELD L"lightDiffuseWeight"
+#define SKINNEDRENDERER_LIGHT_SPECULAR_WEIGHT_DEFAULT 1.0f
+#define SKINNEDRENDERER_LIGHT_SPECULAR_WEIGHT_FIELD L"lightSpecularWeight"
 
-class SkinnedColorRenderer : public IGeometryRenderer, public ConfigUser {
+class SkinnedRenderer : public IGeometryRenderer, public ConfigUser {
 private:
 	struct CameraBufferType {
 		DirectX::XMFLOAT4X4 view;
@@ -117,12 +120,12 @@ public:
 	the location of the configuration file.
 	(Documented in ConfigUser.h)
 	*/
-	SkinnedColorRenderer(
+	SkinnedRenderer(
 		const std::wstring filename,
 		const std::wstring path = L""
 		);
 
-	virtual ~SkinnedColorRenderer(void);
+	virtual ~SkinnedRenderer(void);
 
 	virtual HRESULT initialize(ID3D11Device* const device) override;
 
@@ -170,7 +173,7 @@ protected:
 		const DirectX::XMFLOAT4X4 projectionMatrix,
 		const DirectX::XMFLOAT4 cameraPosition,
 		const float blendFactor,
-		const SkinnedColorGeometry::Material* material);
+		const SKINNEDRENDERER_MATERIAL_STRUCT* material);
 
 	/* Sets light-independent pipeline state */
 	virtual HRESULT setNoLightShaderParameters(
@@ -183,7 +186,7 @@ protected:
 	/* Sets light-dependent pipeline state */
 	virtual HRESULT setLightShaderParameters(
 		ID3D11DeviceContext* const,
-		const SkinnedColorGeometry::Material* material,
+		const SKINNEDRENDERER_MATERIAL_STRUCT* material,
 		const float blendFactor);
 
 	void renderShader(ID3D11DeviceContext* const, const size_t);
@@ -209,6 +212,6 @@ private:
 
 	// Currently not implemented - will cause linker errors if called
 private:
-	SkinnedColorRenderer(const SkinnedColorRenderer& other);
-	SkinnedColorRenderer& operator=(const SkinnedColorRenderer& other);
+	SkinnedRenderer(const SkinnedRenderer& other);
+	SkinnedRenderer& operator=(const SkinnedRenderer& other);
 };

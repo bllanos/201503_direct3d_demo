@@ -213,9 +213,9 @@ HRESULT SkinnedColorGeometry::initializeBoneData(ID3D11Device* const device,
 
 HRESULT SkinnedColorGeometry::setRendererType(const GeometryRendererManager::GeometryRendererType type) {
 	switch( type ) {
-	case GeometryRendererManager::GeometryRendererType::SkinnedColorRendererNoLight:
+	case GeometryRendererManager::GeometryRendererType::SkinnedRendererNoLight:
 		break;
-	case GeometryRendererManager::GeometryRendererType::SkinnedColorRendererLight:
+	case GeometryRendererManager::GeometryRendererType::SkinnedRendererLight:
 		break;
 	default:
 		logMessage(L"Attempt to set GeometryRendererType enumeration constant to a value that is not compatible with this class.");
@@ -493,10 +493,10 @@ HRESULT SkinnedColorGeometry::configure(const std::wstring& scope, const std::ws
 	// --------------
 
 	if (useLighting) {
-		result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedColorRendererLight);
+		result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedRendererLight);
 	}
 	else {
-		result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedColorRendererNoLight);
+		result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedRendererNoLight);
 	}
 	if (FAILED(result)) {
 		std::wstring msg = L"SkinnedColorGeometry::configure(): Error setting the renderer to use based on the lighting flag value of ";

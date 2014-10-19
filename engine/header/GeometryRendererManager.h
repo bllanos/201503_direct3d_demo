@@ -57,8 +57,23 @@ public:
 		   should not use lighting, whereas the second should
 		   use lighting by convention.
 		 */
-		SkinnedColorRendererNoLight,
-		SkinnedColorRendererLight
+		SkinnedRendererNoLight,
+		SkinnedRendererLight,
+
+		/* The underlying class of renderer is the same
+		   as with the above pair of renderers,
+		   but it is expected that the shaders loaded
+		   (based on configuration data) will be aware of
+		   model albedo textures.
+
+		   The creation of new renderer classes is probably
+		   only necessary to accommodate changes to data
+		   that gets mapped into constant buffers,
+		   such as the 'Material' data types
+		   that belong to geometry classes.
+		 */
+		SkinnedTexturedRendererNoLight,
+		SkinnedTexturedRendererLight
 	};
 	/* When adding new data types to this enumeration, also do the following:
 	   -Update the 's_geometryRendererTypeNames' and
