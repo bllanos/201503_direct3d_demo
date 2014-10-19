@@ -1,0 +1,27 @@
+# Configuration file for the SkinnedRenderer class
+# Version to be used for unlit geometry with albedo textures by convention
+
+# LogUser configuration
+# ---------------------
+BOOL -- SkinnedRenderer_LogUser::enableLogging = true
+WSTRING -- SkinnedRenderer_LogUser::msgPrefix = L"SkinnedRenderer"
+BOOL -- SkinnedRenderer_LogUser::useGlobalLog = true
+# BOOL -- SkinnedRenderer_LogUser::timestampEnable = true
+
+# ConfigUser configuration
+# ------------------------
+BOOL -- SkinnedRenderer_ConfigUser::enableConfigUseLogging = true
+
+# Disable lighting
+# ----------------
+BOOL -- SkinnedRenderer::enableLighting = false
+
+# Shader setup
+# ------------
+DIRECTORY -- SkinnedRenderer::shaderFilePath = "..\shaderCode"
+FILENAME -- SkinnedRenderer::vsFileName_noLighting = "skinnedColorVS_noLight.hlsl"
+WSTRING -- SkinnedRenderer::vsShaderModel = L"vs_4_0"
+WSTRING -- SkinnedRenderer::vsEntryPoint_noLighting = L"VSMAIN"
+FILENAME -- SkinnedRenderer::psFileName_noLighting = "skinnedColorPS_noLight_albedo.hlsl"
+WSTRING -- SkinnedRenderer::psShaderModel = L"ps_4_0"
+WSTRING -- SkinnedRenderer::psEntryPoint_noLighting = L"PSMAIN"

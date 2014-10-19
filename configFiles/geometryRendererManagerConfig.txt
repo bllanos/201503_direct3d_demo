@@ -5,8 +5,8 @@
 BOOL -- GeometryRendererManager::SimpleColorRenderer = true
 BOOL -- GeometryRendererManager::SkinnedRendererNoLight = true
 BOOL -- GeometryRendererManager::SkinnedRendererLight = true
-BOOL -- GeometryRendererManager::SkinnedTexturedRendererNoLight = false
-BOOL -- GeometryRendererManager::SkinnedTexturedRendererLight = false
+BOOL -- GeometryRendererManager::SkinnedTexturedRendererNoLight = true
+BOOL -- GeometryRendererManager::SkinnedTexturedRendererLight = true
 
 # Where to find configuration data for the SimpleColorRenderer
 # ------------------------------------------------------------
@@ -20,3 +20,9 @@ DIRECTORY -- GeometryRendererManager::SkinnedRendererNoLight_inputConfigFilePath
 
 FILENAME -- GeometryRendererManager::SkinnedRendererLight_inputConfigFileName = "SkinnedRendererLight.txt"
 DIRECTORY -- GeometryRendererManager::SkinnedRendererLight_inputConfigFilePath = "..\configFiles\renderers"
+
+FILENAME -- GeometryRendererManager::SkinnedTexturedRendererNoLight_inputConfigFileName = "SkinnedTexturedRendererNoLight.txt"
+DIRECTORY -- GeometryRendererManager::SkinnedTexturedRendererNoLight_inputConfigFilePath = "..\configFiles\renderers"
+
+FILENAME -- GeometryRendererManager::SkinnedTexturedRendererLight_inputConfigFileName = "SkinnedTexturedRendererLight.txt"
+DIRECTORY -- GeometryRendererManager::SkinnedTexturedRendererLight_inputConfigFilePath = "..\configFiles\renderers"
