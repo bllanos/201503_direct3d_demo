@@ -311,7 +311,7 @@ HRESULT StateControl::Frame(void)
 	/* Render the current frame */
 
 	// Clear the buffers to begin the scene.
-	if( m_D3D->BeginScene(0.0f, 0.0f, 1.0f, 1.0f) ) {
+	if( m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f) ) {
 		logMessage(L"Call to D3DClass member's BeginScene() function failed.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}

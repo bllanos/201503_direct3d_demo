@@ -22,7 +22,7 @@ BOOL -- GridQuadTextured_ConfigUser::enableConfigUseLogging = true
 INT -- GridQuadTextured::nColumns = 10
 INT -- GridQuadTextured::nRows = 10
 DOUBLE -- GridQuadTextured::transparencyMultiplier = 1.0
-BOOL -- GridQuadTextured::debugWinding = true
+BOOL -- GridQuadTextured::debugWinding = false
 
 # GridQuadTextured material configuration
 # ---------------------------------------

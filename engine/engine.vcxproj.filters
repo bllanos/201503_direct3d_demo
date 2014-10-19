@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -111,22 +111,22 @@
     <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp">
       <Filter>source\geometry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\util\Texture.cpp">
+    <ClCompile Include="cpp\util\Texture.cpp">
       <Filter>source\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\util\TextureFromDDS.cpp">
+    <ClCompile Include="cpp\util\TextureFromDDS.cpp">
       <Filter>source\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\rendering\SkinnedRenderer.cpp">
+    <ClCompile Include="cpp\rendering\SkinnedRenderer.cpp">
       <Filter>source\rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\geometry\SkinnedTexturedGeometry.cpp">
+    <ClCompile Include="cpp\geometry\SkinnedTexturedGeometry.cpp">
       <Filter>source\geometry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\geometry\GridQuadTextured.cpp">
+    <ClCompile Include="cpp\geometry\GridQuadTextured.cpp">
       <Filter>source\geometry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\cpp\AlbedoTextureTestState.cpp">
+    <ClCompile Include="test\cpp\AlbedoTextureTestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -203,22 +203,22 @@
     <ClInclude Include="header\geometry\sphereModel.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\util\TextureFromDDS.h">
+    <ClInclude Include="header\util\TextureFromDDS.h">
       <Filter>header\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\util\Texture.h">
+    <ClInclude Include="header\util\Texture.h">
       <Filter>header\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\geometry\SkinnedTexturedGeometry.h">
+    <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\rendering\SkinnedRenderer.h">
+    <ClInclude Include="header\rendering\SkinnedRenderer.h">
       <Filter>header\rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\geometry\GridQuadTextured.h">
+    <ClInclude Include="header\geometry\GridQuadTextured.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\header\AlbedoTextureTestState.h">
+    <ClInclude Include="test\header\AlbedoTextureTestState.h">
       <Filter>test\header</Filter>
     </ClInclude>
   </ItemGroup>

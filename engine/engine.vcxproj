@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -11,12 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\geometry\GridQuadTextured.cpp" />
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\geometry\SkinnedTexturedGeometry.cpp" />
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\rendering\SkinnedRenderer.cpp" />
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\util\Texture.cpp" />
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\util\TextureFromDDS.cpp" />
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\cpp\AlbedoTextureTestState.cpp" />
+    <ClCompile Include="cpp\geometry\GridQuadTextured.cpp" />
+    <ClCompile Include="cpp\geometry\SkinnedTexturedGeometry.cpp" />
+    <ClCompile Include="cpp\rendering\SkinnedRenderer.cpp" />
+    <ClCompile Include="cpp\util\Texture.cpp" />
+    <ClCompile Include="cpp\util\TextureFromDDS.cpp" />
+    <ClCompile Include="test\cpp\AlbedoTextureTestState.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestTransformable.cpp" />
@@ -37,12 +37,12 @@
     <ClCompile Include="Transformable.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\geometry\GridQuadTextured.h" />
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\geometry\SkinnedTexturedGeometry.h" />
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\rendering\SkinnedRenderer.h" />
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\util\Texture.h" />
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\util\TextureFromDDS.h" />
-    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\header\AlbedoTextureTestState.h" />
+    <ClInclude Include="header\geometry\GridQuadTextured.h" />
+    <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h" />
+    <ClInclude Include="header\rendering\SkinnedRenderer.h" />
+    <ClInclude Include="header\util\Texture.h" />
+    <ClInclude Include="header\util\TextureFromDDS.h" />
+    <ClInclude Include="test\header\AlbedoTextureTestState.h" />
     <ClInclude Include="header\geometry\sphereModel.h" />
     <ClInclude Include="test\header\SkinnedColorTestState.h" />
     <ClInclude Include="test\header\SkinnedColorTestTransformable.h" />
