@@ -301,7 +301,6 @@ private:
 	D3D_PRIMITIVE_TOPOLOGY m_primitive_topology;
 	size_t m_vertexCount, m_indexCount;
 	std::vector<const ITransformable*>::size_type m_boneCount;
-	GeometryRendererManager::GeometryRendererType* m_rendererType;
 
 	Material* m_material;
 
@@ -309,6 +308,9 @@ private:
 	   which can be obtained from configuration data
 	 */
 	float m_blend;
+	
+protected:
+	GeometryRendererManager::GeometryRendererType* m_rendererType;
 
 	// Currently not implemented - will cause linker errors if called
 private:

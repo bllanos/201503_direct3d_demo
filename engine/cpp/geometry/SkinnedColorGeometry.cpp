@@ -280,7 +280,7 @@ SkinnedColorGeometry::~SkinnedColorGeometry(void) {
 
 HRESULT SkinnedColorGeometry::drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const Camera* const camera) {
 	if( m_rendererType == 0 ) {
-		logMessage(L"Cannot be rendered until renderer type is specified.");
+		logMessage(L"Cannot be rendered until a renderer type is specified.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
 	}
 

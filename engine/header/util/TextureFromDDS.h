@@ -41,10 +41,8 @@ Description
 class TextureFromDDS : public Texture {
 
 public:
-	/* Calls configure() */
 	template<typename ConfigIOClass> TextureFromDDS(
 		const bool enableLogging, const std::wstring& msgPrefix,
-		const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope,
 		ConfigIOClass* const optionalLoader,
 		const std::wstring filename,
 		const std::wstring path = L""
@@ -52,10 +50,10 @@ public:
 
 	virtual ~TextureFromDDS(void);
 
-protected:
+public:
+	// The client is responsible for calling this function
 	virtual HRESULT configure(const std::wstring& scope, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0) override;
 
-public:
 	/* Creates texture and texture sampler
 	   Note: If this function was passed a device context,
 	     it could make use of the DirectXTK DDSTextureLoader's
@@ -78,7 +76,6 @@ private:
 
 template<typename ConfigIOClass> TextureFromDDS::TextureFromDDS(
 	const bool enableLogging, const std::wstring& msgPrefix,
-	const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope,
 	ConfigIOClass* const optionalLoader,
 	const std::wstring filename,
 	const std::wstring path
@@ -90,8 +87,4 @@ template<typename ConfigIOClass> TextureFromDDS::TextureFromDDS(
 	path
 	),
 	m_filename(0)
-{
-	if( FAILED(configure(scope, configUserScope, logUserScope)) ) {
-		logMessage(L"Configuration failed.");
-	}
-}
+{}

@@ -120,6 +120,9 @@
     <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\rendering\SkinnedRenderer.cpp">
       <Filter>source\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\geometry\SkinnedTexturedGeometry.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">

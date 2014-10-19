@@ -53,6 +53,10 @@ Description
 // Type of Texture class to be used to create textures from files
 #define SKINNEDTEXTUREDGEOMETRY_LOAD_TEXTURE_CLASS TextureFromDDS
 
+// Type of loader to use for configuration data when creating textures
+#include "FlatAtomicConfigIO.h"
+#define SKINNEDTEXTUREDGEOMETRY_CONFIGIO_CLASS FlatAtomicConfigIO
+
 class SkinnedTexturedGeometry : public SkinnedColorGeometry {
 
 	/* Proxying the ConfigUser constructors
@@ -97,7 +101,7 @@ protected:
 
 	/* Objects of this class can use renderers
 	   corresponding to enumeration constants
-	   of the form 'SkinnedTextured*'
+	   of the form 'Skinned*' (until further notice).
 
 	   This function must be called at least once, with a valid argument,
 	   before the object can be rendered for the first time.
