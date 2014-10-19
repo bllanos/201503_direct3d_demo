@@ -201,14 +201,11 @@ HRESULT SkinnedTexturedGeometry::initialize(ID3D11Device* const device,
 }
 
 HRESULT SkinnedTexturedGeometry::initializeTextures(ID3D11Device* const device) {
-	if( m_albedoTexture == 0 ) {
-		logMessage(L"Initialization of this object's albedo texture cannot proceed before the configure() member function has been called successfully.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
-	}
-
-	if( FAILED(m_albedoTexture->initialize(device)) ) {
-		logMessage(L"Initialization of the albedo texture failed.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	if( m_albedoTexture != 0 ) {
+		if( FAILED(m_albedoTexture->initialize(device)) ) {
+			logMessage(L"Initialization of the albedo texture failed.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
 	}
 
 	return ERROR_SUCCESS;
@@ -247,7 +244,7 @@ HRESULT SkinnedTexturedGeometry::setRendererType(const GeometryRendererManager::
 				}
 				break;
 			default:
-				logMessage(L"Attempt to set GeometryRendererType enumeration constant to a value that is not compatible with this class.");
+				// logMessage(L"Attempt to set GeometryRendererType enumeration constant to a value that is not compatible with this class.");
 				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 			}
 
@@ -292,6 +289,10 @@ HRESULT SkinnedTexturedGeometry::drawUsingAppropriateRenderer(ID3D11DeviceContex
 
 HRESULT SkinnedTexturedGeometry::setTexturesOnContext(ID3D11DeviceContext* const context) {
 	if( m_renderAlbedoTexture ) {
+		if( m_albedoTexture == 0 ) {
+			logMessage(L"This object's albedo texture object is null and therefore cannot be used for rendering. Code is likely broken.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);
+		}
 		if( FAILED(m_albedoTexture->bind(context, 0, 0, Texture::BindLocation::PS)) ) {
 			logMessage(L"Failed to bind the albedo texture object's data to the pixel shader.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);

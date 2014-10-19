@@ -173,12 +173,15 @@ HRESULT Texture::bind(ID3D11DeviceContext* const context,
 	case BindLocation::VS:
 		context->VSSetSamplers(samplerSlot, 1, &m_samplerState);
 		context->VSSetShaderResources(textureSlot, 1, &m_textureView);
+		break;
 	case BindLocation::GS:
 		context->GSSetSamplers(samplerSlot, 1, &m_samplerState);
 		context->GSSetShaderResources(textureSlot, 1, &m_textureView);
+		break;
 	case BindLocation::PS:
 		context->PSSetSamplers(samplerSlot, 1, &m_samplerState);
 		context->PSSetShaderResources(textureSlot, 1, &m_textureView);
+		break;
 	default:
 		logMessage(L"Default case encountered for this BindLocation enum constant. Code is broken.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);

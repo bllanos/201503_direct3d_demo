@@ -222,7 +222,7 @@ HRESULT SkinnedColorGeometry::setRendererType(const GeometryRendererManager::Geo
 		m_renderLighting = true;
 		break;
 	default:
-		logMessage(L"Attempt to set GeometryRendererType enumeration constant to a value that is not compatible with this class.");
+		// logMessage(L"Attempt to set GeometryRendererType enumeration constant to a value that is not compatible with this class.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
 

@@ -50,7 +50,7 @@ Description
 #define TEXTURE_SAMPLER_COMPAREFUNC_DEFAULT 	D3D11_COMPARISON_NEVER
 #define TEXTURE_SAMPLER_COMPAREFUNC_FIELD		L"comparisonFunc"
 #define TEXTURE_SAMPLER_BORDERCOLOR_DEFAULT 	XMFLOAT4(0.0f,0.0f,0.0f,0.0f)
-#define TEXTURE_SAMPLER_BORDERCOLOR_FIELD		L"comparisonFunc"
+#define TEXTURE_SAMPLER_BORDERCOLOR_FIELD		L"borderColor"
 
 /* LOD parameters are unlikely to be configured
    to non-default values

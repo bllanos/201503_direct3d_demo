@@ -30,3 +30,51 @@ FLOAT4 -- GridQuadTextured::ambientAlbedo = (1.0, 1.0, 1.0, 1.0)
 FLOAT4 -- GridQuadTextured::diffuseAlbedo = (1.0, 1.0, 1.0, 1.0)
 FLOAT4 -- GridQuadTextured::specularAlbedo = (1.0, 1.0, 1.0, 1.0)
 DOUBLE -- GridQuadTextured::specularPower = 400.0
+
+# GridQuadTextured lighting configuration
+# ---------------------------------------
+BOOL -- GridQuadTextured::renderWithLighting = true
+
+# GridQuadTextured albedo texture controls
+# ----------------------------------------------
+BOOL -- GridQuadTextured::createAlbedoTexture = true
+BOOL -- GridQuadTextured::renderAlbedoTexture = true
+
+# GridQuadTextured albedo texture configuration
+# ----------------------------------------------
+BOOL -- GridQuadTextured::albedoTexture_enableLogging = true
+WSTRING -- GridQuadTextured::albedoTexture_msgPrefix = L"Test Albedo Texture Object"
+WSTRING -- GridQuadTextured::albedoTextureScope = L"albedoTexture"
+WSTRING -- GridQuadTextured::albedoTextureScope_LogUser = L"albedoTexture_LogUser"
+WSTRING -- GridQuadTextured::albedoTextureScope_ConfigUser = L"albedoTexture_ConfigUser"
+FILENAME -- GridQuadTextured::albedoTexture_inputConfigFileName = "AlbedoTextureTestState.txt"
+DIRECTORY -- GridQuadTextured::albedoTexture_inputConfigFilePath = "..\configFiles\test"
+
+# Albedo texture object configuration
+# ----------------------------------------------
+# LogUser
+BOOL -- albedoTexture_LogUser::enableLogging = true
+WSTRING -- albedoTexture_LogUser::msgPrefix = L"Test Albedo Texture Object"
+BOOL -- albedoTexture_LogUser::useGlobalLog = false
+BOOL -- albedoTexture_LogUser::allocConsole = false
+BOOL -- albedoTexture_LogUser::allocLogFile = true
+FILENAME -- albedoTexture_LogUser::logFileName = "AlbedoTextureTestState.txt"
+DIRECTORY -- albedoTexture_LogUser::logFilePath = "..\logFiles\test"
+BOOL -- albedoTexture_LogUser::overwriteFile = false
+BOOL -- albedoTexture_LogUser::timestampEnable = true
+
+# ConfigUser
+BOOL -- albedoTexture_ConfigUser::enableConfigUseLogging = true
+
+# Sampler State
+INT -- albedoTexture::filter = 21
+INT -- albedoTexture::addressU = 4
+INT -- albedoTexture::addressV = 4
+INT -- albedoTexture::addressW = 4
+INT -- albedoTexture::maxAnisotropy = 1
+INT -- albedoTexture::comparisonFunc = 1
+COLOR -- albedoTexture::borderColor = (255, 255, 255, 255)
+
+# Texture
+FILENAME -- albedoTexture::textureFileName = "kingfire_oli_2014262_swir_lrg_512x512.dds"
+DIRECTORY -- albedoTexture::textureFilePath = "..\textures\test"
