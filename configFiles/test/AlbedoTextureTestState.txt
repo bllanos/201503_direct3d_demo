@@ -1,0 +1,32 @@
+# Configuration file for the AlbedoTextureTestState class
+# as well as its GridQuadTextured data member.
+
+# GridQuadTextured LogUser configuration
+# -----------------------------------------------
+BOOL -- GridQuadTextured_LogUser::enableLogging = true
+WSTRING -- GridQuadTextured_LogUser::msgPrefix = L"Test GridQuadTextured Object"
+BOOL -- GridQuadTextured_LogUser::useGlobalLog = false
+BOOL -- GridQuadTextured_LogUser::allocConsole = false
+BOOL -- GridQuadTextured_LogUser::allocLogFile = true
+FILENAME -- GridQuadTextured_LogUser::logFileName = "AlbedoTextureTestState.txt"
+DIRECTORY -- GridQuadTextured_LogUser::logFilePath = "..\logFiles\test"
+BOOL -- GridQuadTextured_LogUser::overwriteFile = false
+BOOL -- GridQuadTextured_LogUser::timestampEnable = true
+
+# GridQuadTextured ConfigUser configuration
+# -----------------------------------------
+BOOL -- GridQuadTextured_ConfigUser::enableConfigUseLogging = true
+
+# GridQuadTextured geometry configuration
+# -----------------------------------------------
+INT -- GridQuadTextured::nColumns = 10
+INT -- GridQuadTextured::nRows = 10
+DOUBLE -- GridQuadTextured::transparencyMultiplier = 1.0
+BOOL -- GridQuadTextured::debugWinding = true
+
+# GridQuadTextured material configuration
+# ---------------------------------------
+FLOAT4 -- GridQuadTextured::ambientAlbedo = (1.0, 1.0, 1.0, 1.0)
+FLOAT4 -- GridQuadTextured::diffuseAlbedo = (1.0, 1.0, 1.0, 1.0)
+FLOAT4 -- GridQuadTextured::specularAlbedo = (1.0, 1.0, 1.0, 1.0)
+DOUBLE -- GridQuadTextured::specularPower = 400.0

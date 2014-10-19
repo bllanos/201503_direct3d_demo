@@ -24,8 +24,8 @@ Description
 #pragma once // This is a Microsoft-specific way to prevent multiple inclusions of a header file
 
 // Class of the first State to be run
-#include "SkinnedColorTestState.h"
-#define STATECONTROL_FIRST_STATE SkinnedColorTestState
+#include "AlbedoTextureTestState.h"
+#define STATECONTROL_FIRST_STATE AlbedoTextureTestState
 
 
 #include "BasicWindow.h"
