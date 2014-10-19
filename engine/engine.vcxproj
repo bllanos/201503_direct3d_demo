@@ -16,6 +16,7 @@
     <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\rendering\SkinnedRenderer.cpp" />
     <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\util\Texture.cpp" />
     <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\util\TextureFromDDS.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\cpp\AlbedoTextureTestState.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestTransformable.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\rendering\SkinnedRenderer.h" />
     <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\util\Texture.h" />
     <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\util\TextureFromDDS.h" />
+    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\header\AlbedoTextureTestState.h" />
     <ClInclude Include="header\geometry\sphereModel.h" />
     <ClInclude Include="test\header\SkinnedColorTestState.h" />
     <ClInclude Include="test\header\SkinnedColorTestTransformable.h" />

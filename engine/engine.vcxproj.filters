@@ -126,6 +126,9 @@
     <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\geometry\GridQuadTextured.cpp">
       <Filter>source\geometry</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\cpp\AlbedoTextureTestState.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -214,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\header\geometry\GridQuadTextured.h">
       <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\test\header\AlbedoTextureTestState.h">
+      <Filter>test\header</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -52,10 +52,14 @@ but will not execute normally. The reason for the abnormal execution is the lack
 of several folders which are not part of the repository, but which the program
 expects to exist (depending on the configuration data passed to it).
 
-To allow for normal execution, create the following (empty) folders:
-- `logFiles`
-- `logFiles\test`
-- `configFiles\output_gitIgnored`
+To allow for normal execution, create the following folders:
+- Empty folders
+  - `logFiles`
+  - `logFiles\test`
+  - `configFiles\output_gitIgnored`
+- Non-empty folders
+  - `textures`: Insert textures for the project here.
+  - `textures\test`: Insert textures needed by test code here.
 
 Note that the above folder paths are relative to the solution directory
 (the directory containing `game.sln`).
@@ -102,7 +106,14 @@ The following works were consulted for ideas during development:
 	available at https://code.msdn.microsoft.com/Direct3D-Tutorial-Win32-829979ef
 
 ## Sources of Assets
-There are no assets, currently.
+
+### Textures used by test code only
+
+- "King Fire in California, False-Color Infrared" (`textures\test\kingfire_oli_2014262_swir_lrg.jpg`)
+  - Downloaded from http://www.nasa.gov/sites/default/files/thumbnails/image/kingfire_oli_2014262_swir_lrg.jpg
+  - Image Credit: NASA Earth Observatory image by Jesse Allen, using Landsat data from the U.S. Geological Survey
+  - Retrieved October 19, 2014
+  - Usage terms: Permissive (http://www.nasa.gov/audience/formedia/features/MP_Photo_Guidelines.html#.VEQBixaDbfc)
 
 ## Development Policies
 - Please add each new file to the system under a path that is relative to the
@@ -124,3 +135,6 @@ There are no assets, currently.
 - All shaders will be compiled for shader model 4.0 (as determined by the
   rendering configuration files). The Direct3D device will be created
   with a feature level of 10.0, and will be set to use a hardware driver.
+
+- Use Visual Studio's image editor to generate MIP maps for textures,
+  as mip maps will not be generated at runtime.
