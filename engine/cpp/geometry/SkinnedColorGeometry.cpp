@@ -40,7 +40,8 @@ SkinnedColorGeometry::SkinnedColorGeometry(const bool enableLogging, const std::
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
 	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
 	m_rendererType(0), m_material(0),
-	m_blend(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT)
+	m_blend(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT),
+	m_renderLighting(SKINNEDCOLORGEOMETRY_USE_LIGHTING_FLAG_DEFAULT)
 {}
 
 SkinnedColorGeometry::SkinnedColorGeometry(const bool enableLogging, const std::wstring& msgPrefix,
@@ -53,7 +54,8 @@ SkinnedColorGeometry::SkinnedColorGeometry(const bool enableLogging, const std::
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
 	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
 	m_rendererType(0), m_material(0),
-	m_blend(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT)
+	m_blend(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT),
+	m_renderLighting(SKINNEDCOLORGEOMETRY_USE_LIGHTING_FLAG_DEFAULT)
 {}
 
 HRESULT SkinnedColorGeometry::initialize(ID3D11Device* const device,
@@ -214,8 +216,10 @@ HRESULT SkinnedColorGeometry::initializeBoneData(ID3D11Device* const device,
 HRESULT SkinnedColorGeometry::setRendererType(const GeometryRendererManager::GeometryRendererType type) {
 	switch( type ) {
 	case GeometryRendererManager::GeometryRendererType::SkinnedRendererNoLight:
+		m_renderLighting = false;
 		break;
 	case GeometryRendererManager::GeometryRendererType::SkinnedRendererLight:
+		m_renderLighting = true;
 		break;
 	default:
 		logMessage(L"Attempt to set GeometryRendererType enumeration constant to a value that is not compatible with this class.");
@@ -437,7 +441,7 @@ HRESULT SkinnedColorGeometry::configure(const std::wstring& scope, const std::ws
 
 	// Visual properties
 	double blend = static_cast<double>(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT);
-	bool useLighting = SKINNEDCOLORGEOMETRY_USE_LIGHTING_FLAG_DEFAULT;
+	m_renderLighting = SKINNEDCOLORGEOMETRY_USE_LIGHTING_FLAG_DEFAULT;
 
 	// Material properties
 	Material* material = new Material;
@@ -467,7 +471,7 @@ HRESULT SkinnedColorGeometry::configure(const std::wstring& scope, const std::ws
 			}
 
 			if( retrieve<Config::DataType::BOOL, bool>(scope, SKINNEDCOLORGEOMETRY_USE_LIGHTING_FLAG_FIELD, boolValue) ) {
-				useLighting = *boolValue;
+				m_renderLighting = *boolValue;
 			}
 
 			// Material properties
@@ -492,7 +496,7 @@ HRESULT SkinnedColorGeometry::configure(const std::wstring& scope, const std::ws
 	// Initialization
 	// --------------
 
-	if (useLighting) {
+	if (m_renderLighting) {
 		result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedRendererLight);
 	}
 	else {
@@ -500,7 +504,7 @@ HRESULT SkinnedColorGeometry::configure(const std::wstring& scope, const std::ws
 	}
 	if (FAILED(result)) {
 		std::wstring msg = L"SkinnedColorGeometry::configure(): Error setting the renderer to use based on the lighting flag value of ";
-		logMessage(msg + ((useLighting) ? L"true." : L"false."));
+		logMessage(msg + ((m_renderLighting) ? L"true." : L"false."));
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 

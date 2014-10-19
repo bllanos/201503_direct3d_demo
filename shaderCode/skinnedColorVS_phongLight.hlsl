@@ -44,12 +44,12 @@ struct VSInput {
 	float4 boneWeights : BONE_WEIGHTS;
 	float3 position : POSITION;
 	float3 normal : NORMAL;
-	float4 color : COLOR;
+	float4 color : INDEX;
 };
 
 struct VSOutput {
 	float4 positionCS : SV_POSITION;
-	float4 color : COLOR;
+	float4 color : INDEX;
 	float3 normalWS : NORMALWS;
 	float3 positionWS : POSITIONWS;
 };

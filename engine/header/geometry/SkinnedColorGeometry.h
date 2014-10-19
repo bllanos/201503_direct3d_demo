@@ -309,8 +309,13 @@ private:
 	 */
 	float m_blend;
 	
+	// Renderer selection data members
 protected:
+	// Null if not set
 	GeometryRendererManager::GeometryRendererType* m_rendererType;
+
+	// Flag indicating whether to render with lighting
+	bool m_renderLighting;
 
 	// Currently not implemented - will cause linker errors if called
 private:
@@ -345,7 +350,8 @@ template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
 	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
 	m_rendererType(0), m_material(0),
-	m_blend(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT) {}
+	m_blend(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT),
+	m_renderLighting(SKINNEDCOLORGEOMETRY_USE_LIGHTING_FLAG_DEFAULT) {}
 
 template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	const bool enableLogging, const std::wstring& msgPrefix,
@@ -368,4 +374,5 @@ template<typename ConfigIOClass> SkinnedColorGeometry::SkinnedColorGeometry(
 	m_primitive_topology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
 	m_vertexCount(0), m_indexCount(0), m_boneCount(0),
 	m_rendererType(0), m_material(0),
-	m_blend(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT) {}
+	m_blend(SKINNEDCOLORGEOMETRY_BLEND_DEFAULT),
+	m_renderLighting(SKINNEDCOLORGEOMETRY_USE_LIGHTING_FLAG_DEFAULT) {}

@@ -30,13 +30,15 @@ using std::wstring;
 SkinnedTexturedGeometry::SkinnedTexturedGeometry(const bool enableLogging, const std::wstring& msgPrefix,
 	Usage usage) :
 	SkinnedColorGeometry(enableLogging, msgPrefix, usage),
-	m_albedoTexture(0)
+	m_albedoTexture(0),
+	m_renderAlbedoTexture(SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_RENDER_FLAG_DEFAULT)
 {}
 
 SkinnedTexturedGeometry::SkinnedTexturedGeometry(const bool enableLogging, const std::wstring& msgPrefix,
 	Config* sharedConfig) :
 	SkinnedColorGeometry(enableLogging, msgPrefix, sharedConfig),
-	m_albedoTexture(0)
+	m_albedoTexture(0),
+	m_renderAlbedoTexture(SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_RENDER_FLAG_DEFAULT)
 {}
 
 HRESULT SkinnedTexturedGeometry::configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope) {
@@ -44,6 +46,14 @@ HRESULT SkinnedTexturedGeometry::configure(const std::wstring& scope, const std:
 
 	// Initialization with default values
 	// ----------------------------------
+
+	// Flags to enable or disable texture loading
+	bool createAlbedoTexture = SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_CREATE_FLAG_DEFAULT;
+
+	// Flags to enable or disable texture rendering
+	m_renderAlbedoTexture = SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_RENDER_FLAG_DEFAULT;
+
+	// Albedo texture parameters
 	bool albedoTexture_enableLogging = SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_ENABLELOGGING_FLAG_DEFAULT;
 	wstring albedoTexture_msgPrefix = SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_MSGPREFIX_DEFAULT;
 	wstring albedoTextureScope = SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_SCOPE_DEFAULT;
@@ -66,35 +76,48 @@ HRESULT SkinnedTexturedGeometry::configure(const std::wstring& scope, const std:
 			// Query for initialization data
 			// -----------------------------
 
-			if( retrieve<Config::DataType::BOOL, bool>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_ENABLELOGGING_FLAG_FIELD, boolValue) ) {
-				albedoTexture_enableLogging = *boolValue;
+			if( retrieve<Config::DataType::BOOL, bool>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_CREATE_FLAG_FIELD, boolValue) ) {
+				createAlbedoTexture = *boolValue;
 			}
 
-			if( retrieve<Config::DataType::WSTRING, wstring>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_MSGPREFIX_FIELD, stringValue) ) {
-				albedoTexture_msgPrefix = *stringValue;
-			}
+			if( createAlbedoTexture ) {
 
-			if( retrieve<Config::DataType::WSTRING, wstring>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_SCOPE_FIELD, stringValue) ) {
-				albedoTextureScope = *stringValue;
-			}
+				if( retrieve<Config::DataType::BOOL, bool>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_RENDER_FLAG_FIELD, boolValue) ) {
+					m_renderAlbedoTexture = *boolValue;
+				}
 
-			if( retrieve<Config::DataType::WSTRING, wstring>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_SCOPE_LOGUSER_FIELD, stringValue) ) {
-				albedoTextureScope_LogUser = *stringValue;
-			}
+				if( retrieve<Config::DataType::BOOL, bool>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_ENABLELOGGING_FLAG_FIELD, boolValue) ) {
+					albedoTexture_enableLogging = *boolValue;
+				}
 
-			if( retrieve<Config::DataType::WSTRING, wstring>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_SCOPE_CONFIGUSER_FIELD, stringValue) ) {
-				albedoTextureScope_ConfigUser = *stringValue;
-			}
+				if( retrieve<Config::DataType::WSTRING, wstring>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_MSGPREFIX_FIELD, stringValue) ) {
+					albedoTexture_msgPrefix = *stringValue;
+				}
 
-			if( retrieve<Config::DataType::FILENAME, wstring>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_CONFIGFILE_NAME_FIELD, stringValue) ) {
-				albedoTextureScope_inputConfigFileName = *stringValue;
+				if( retrieve<Config::DataType::WSTRING, wstring>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_SCOPE_FIELD, stringValue) ) {
+					albedoTextureScope = *stringValue;
+				}
 
-				if( retrieve<Config::DataType::DIRECTORY, wstring>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_CONFIGFILE_PATH_FIELD, stringValue) ) {
-					albedoTextureScope_inputConfigFilePath = *stringValue;
+				if( retrieve<Config::DataType::WSTRING, wstring>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_SCOPE_LOGUSER_FIELD, stringValue) ) {
+					albedoTextureScope_LogUser = *stringValue;
+				}
+
+				if( retrieve<Config::DataType::WSTRING, wstring>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_SCOPE_CONFIGUSER_FIELD, stringValue) ) {
+					albedoTextureScope_ConfigUser = *stringValue;
+				}
+
+				if( retrieve<Config::DataType::FILENAME, wstring>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_CONFIGFILE_NAME_FIELD, stringValue) ) {
+					albedoTextureScope_inputConfigFileName = *stringValue;
+
+					if( retrieve<Config::DataType::DIRECTORY, wstring>(scope, SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_CONFIGFILE_PATH_FIELD, stringValue) ) {
+						albedoTextureScope_inputConfigFilePath = *stringValue;
+					}
+				} else {
+					logMessage(L"No albedo texture configuration filename found in configuration data.");
+					result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
 				}
 			} else {
-				logMessage(L"No albedo texture configuration filename found in configuration data.");
-				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
+				m_renderAlbedoTexture = false;
 			}
 		}
 	} else {
@@ -102,7 +125,7 @@ HRESULT SkinnedTexturedGeometry::configure(const std::wstring& scope, const std:
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
 	}
 
-	if( SUCCEEDED(result) ) {
+	if( SUCCEEDED(result) && createAlbedoTexture ) {
 		// Create and configure the albedo texture
 		// ---------------------------------------
 		TextureFromDDS* albedoTexture = new SKINNEDTEXTUREDGEOMETRY_LOAD_TEXTURE_CLASS(
@@ -124,6 +147,26 @@ HRESULT SkinnedTexturedGeometry::configure(const std::wstring& scope, const std:
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		} else {
 			m_albedoTexture = albedoTexture;
+		}
+	}
+
+	// Disable albedo texture rendering if necessary
+	m_renderAlbedoTexture = (m_albedoTexture != 0) && m_renderAlbedoTexture;
+
+	// Adjust renderer settings configured by the base class
+	// -----------------------------------------------------
+	if( m_renderAlbedoTexture ) {
+		if( m_renderLighting ) {
+			result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedTexturedRendererLight);
+		} else {
+			result = setRendererType(GeometryRendererManager::GeometryRendererType::SkinnedTexturedRendererNoLight);
+		}
+		if( FAILED(result) ) {
+			std::wstring msg = L"SkinnedTexturedGeometry::configure(): Error setting the renderer to use based on the lighting flag value of ";
+			msg += ((m_renderLighting) ? L"'true'" : L"'false'"));
+			msg += L", and albedo texture rendering flag of 'true'.";
+			logMessage(msg);
+			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}
 
@@ -184,10 +227,24 @@ HRESULT SkinnedTexturedGeometry::setRendererType(const GeometryRendererManager::
 
 			switch( type ) {
 			case GeometryRendererManager::GeometryRendererType::SkinnedTexturedRendererNoLight:
-				result = ERROR_SUCCESS;
+				if( m_albedoTexture != 0 ) {
+					m_renderAlbedoTexture = true;
+					m_renderLighting = false;
+					result = ERROR_SUCCESS;
+				} else {
+					logMessage(L"Attempt to set GeometryRendererType enumeration constant to a value which requires an albedo texture (none was created).");
+					result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+				}
 				break;
 			case GeometryRendererManager::GeometryRendererType::SkinnedTexturedRendererLight:
-				result = ERROR_SUCCESS;
+				if( m_albedoTexture != 0 ) {
+					m_renderAlbedoTexture = true;
+					m_renderLighting = true;
+					result = ERROR_SUCCESS;
+				} else {
+					logMessage(L"Attempt to set GeometryRendererType enumeration constant to a value which requires an albedo texture (none was created).");
+					result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+				}
 				break;
 			default:
 				logMessage(L"Attempt to set GeometryRendererType enumeration constant to a value that is not compatible with this class.");
@@ -201,6 +258,9 @@ HRESULT SkinnedTexturedGeometry::setRendererType(const GeometryRendererManager::
 				*m_rendererType = type;
 			}
 		}
+	} else {
+		// Base class's selection of possible renderers do not use textures
+		m_renderAlbedoTexture = false;
 	}
 	return result;
 }
@@ -231,9 +291,11 @@ HRESULT SkinnedTexturedGeometry::drawUsingAppropriateRenderer(ID3D11DeviceContex
 }
 
 HRESULT SkinnedTexturedGeometry::setTexturesOnContext(ID3D11DeviceContext* const context) {
-	if( FAILED(m_albedoTexture->bind(context, 0, 0, Texture::BindLocation::PS)) ) {
-		logMessage(L"Failed to bind the albedo texture object's data to the pixel shader.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	if( m_renderAlbedoTexture ) {
+		if( FAILED(m_albedoTexture->bind(context, 0, 0, Texture::BindLocation::PS)) ) {
+			logMessage(L"Failed to bind the albedo texture object's data to the pixel shader.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
 	}
 	return ERROR_SUCCESS;
 }

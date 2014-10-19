@@ -432,7 +432,7 @@ HRESULT SkinnedRenderer::createInputLayout(ID3D11Device* const device, ID3D10Blo
 	polygonLayout[i].InstanceDataStepRate = 0;
 	++i;
 
-	polygonLayout[i].SemanticName = "COLOR";
+	polygonLayout[i].SemanticName = "INDEX";
 	polygonLayout[i].SemanticIndex = 0;
 	polygonLayout[i].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	polygonLayout[i].InputSlot = 0;

@@ -49,7 +49,7 @@ cbuffer LightProperties : register(cb2) {
 
 struct PSInput {
 	float4 positionSS : SV_POSITION;
-	float4 color : COLOR;
+	float4 color : INDEX;
 	float3 normalWS : NORMALWS;
 	float3 positionWS : POSITIONWS;
 };

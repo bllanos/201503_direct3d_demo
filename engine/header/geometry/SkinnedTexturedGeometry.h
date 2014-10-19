@@ -31,6 +31,21 @@ Description
     or constructor/function arguments (where necessary)
  */
 
+/* Turn albedo texturing loading on or off
+   If false, this object cannot be renderered with albedo texturing.
+   If true, albedo texture rendering can be turned on or off,
+   provided that the texture is created successfully.
+ */
+#define SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_CREATE_FLAG_DEFAULT false
+#define SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_CREATE_FLAG_FIELD L"createAlbedoTexture"
+
+/* Turn albedo texture rendering on or off
+   (Rendering with an albedo texture
+    will be disabled if no albedo texture is created, however.)
+ */
+#define SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_RENDER_FLAG_DEFAULT false
+#define SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_RENDER_FLAG_FIELD L"renderAlbedoTexture"
+
 /* Albedo texture constructor parameters */
 #define SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_ENABLELOGGING_FLAG_DEFAULT true
 #define SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_ENABLELOGGING_FLAG_FIELD L"albedoTexture_enableLogging"
@@ -122,6 +137,11 @@ private:
 	// The model's surface colour/generalized albedo
 	Texture* m_albedoTexture;
 
+	// Renderer selection data members
+protected:
+	// Flag indicating whether to render with an albedo texture
+	bool m_renderAlbedoTexture;
+
 	// Currently not implemented - will cause linker errors if called
 private:
 	SkinnedTexturedGeometry(const SkinnedTexturedGeometry& other);
@@ -147,7 +167,8 @@ template<typename ConfigIOClass> SkinnedTexturedGeometry::SkinnedTexturedGeometr
 	directoryScope,
 	directoryField
 	),
-	m_albedoTexture(0)
+	m_albedoTexture(0),
+	m_renderAlbedoTexture(SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_RENDER_FLAG_DEFAULT)
 {}
 
 template<typename ConfigIOClass> SkinnedTexturedGeometry::SkinnedTexturedGeometry(
@@ -163,5 +184,6 @@ template<typename ConfigIOClass> SkinnedTexturedGeometry::SkinnedTexturedGeometr
 	filename,
 	path
 	),
-	m_albedoTexture(0)
+	m_albedoTexture(0),
+	m_renderAlbedoTexture(SKINNEDTEXTUREDGEOMETRY_ALBEDOTEXTURE_RENDER_FLAG_DEFAULT)
 {}
