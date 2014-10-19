@@ -87,6 +87,7 @@ float4 PSMAIN(in PSInput input) : SV_TARGET
 		lightDiffuseWeight * diffuse +
 		lightSpecularWeight * specular);
 	color *= (lightColor*albedoSample);
+	color.w = albedoSample.w; // Correct alpha value (should not be lighting-dependent)
 	color.w *= blendAmount;
 	return color;
 }
