@@ -163,7 +163,7 @@ HRESULT SkinnedTexturedGeometry::configure(const std::wstring& scope, const std:
 		}
 		if( FAILED(result) ) {
 			std::wstring msg = L"SkinnedTexturedGeometry::configure(): Error setting the renderer to use based on the lighting flag value of ";
-			msg += ((m_renderLighting) ? L"'true'" : L"'false'"));
+			msg += ((m_renderLighting) ? L"'true'" : L"'false'");
 			msg += L", and albedo texture rendering flag of 'true'.";
 			logMessage(msg);
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);

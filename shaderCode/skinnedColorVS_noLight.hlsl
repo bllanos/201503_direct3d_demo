@@ -1,5 +1,5 @@
 /*
-SkinnedColorVS_noLight.hlsl
+skinnedColorVS_noLight.hlsl
 ---------------------------
 
 Created for: COMP3501A Project

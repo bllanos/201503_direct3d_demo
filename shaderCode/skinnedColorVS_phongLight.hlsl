@@ -1,5 +1,5 @@
 /*
-SkinnedColorVS_phongLight.hlsl
+skinnedColorVS_phongLight.hlsl
 ------------------------------
 
 Created for: COMP3501A Project

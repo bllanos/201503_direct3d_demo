@@ -1,6 +1,6 @@
 /*
-skinnedColorPS_phongLight.hlsl
-------------------------------
+skinnedColorPS_phongLight_albedo.hlsl
+-------------------------------------
 
 Created for: COMP3501A Project
 Fall 2014, Carleton University
@@ -10,20 +10,25 @@ Brandon Keyes, ID: 100897196
 Bernard Llanos, ID: 100793648
 Mark Wilkes, ID: 100884169
 
-Created October 13, 2014
+Created October 19, 2014
 
-Primary basis: Blinn-Phong shader from Chapter 11 of
-  Zink, Jason, Matt Pettineo and Jack Hoxley.
-  _Practical Rendering and Computation with Direct 3D 11._
-  Boca Raton: CRC Press Taylor & Francis Group, 2011.
+Primary basis: skinnedColorPS_phongLight.hlsl
 
-Lighting calculations also obtained from the COMP3501A
-  demo on illumination.
+Other references:
+  -Chuck Walbourn's version of the MSDN Direct3D 11 Tutorial 7,
+     available at:
+	 https://code.msdn.microsoft.com/Direct3D-Tutorial-Win32-829979ef
+  -Lighting calculations also obtained from the COMP3501A
+     demo on illumination.
 
 Description
-  -Pixel shader to accompany the SkinnedColorRenderer class
+  -Pixel shader to accompany the SkinnedRenderer class
   -Phong lighting calculations
+  -Albedo texture sampling
 */
+
+Texture2D txAlbedo : register(t0);
+SamplerState smpAlbedo : register(s0);
 
 cbuffer MaterialProperties : register(cb0) {
 	float4 ambientAlbedo;
@@ -49,7 +54,7 @@ cbuffer LightProperties : register(cb2) {
 
 struct PSInput {
 	float4 positionSS : SV_POSITION;
-	float4 color : INDEX;
+	float4 index : INDEX;
 	float3 normalWS : NORMALWS;
 	float3 positionWS : POSITIONWS;
 };
@@ -73,12 +78,15 @@ float4 PSMAIN(in PSInput input) : SV_TARGET
 	// Ambient component
 	float4 ambient = ambientAlbedo;
 
+	// Sample the texture
+	float4 albedoSample = txAlbedo.Sample(smpAlbedo, input.index);
+
 	// Final colour
 	float4 color = saturate(
 		lightAmbientWeight * ambient +
 		lightDiffuseWeight * diffuse +
 		lightSpecularWeight * specular);
-	color *= (lightColor*input.color);
+	color *= (lightColor*albedoSample);
 	color.w *= blendAmount;
 	return color;
 }
