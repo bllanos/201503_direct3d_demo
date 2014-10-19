@@ -49,15 +49,6 @@ Description
 #define GRIDQUADTEXTURED_DEBUG_FLAG_DEFAULT false
 #define GRIDQUADTEXTURED_DEBUG_FLAG_FIELD L"debugWinding"
 
-/* One colour will be defined for each corner.
-   Interior vertices will get interpolated colours.
-*/
-#define GRIDQUADTEXTURED_COLORS_DEFAULT XMFLOAT4(1.0f,0.0f,0.0f,1.0f)
-#define GRIDQUADTEXTURED_COLOR_TOP_RIGHT_FIELD L"topRight"
-#define GRIDQUADTEXTURED_COLOR_TOP_LEFT_FIELD L"topLeft"
-#define GRIDQUADTEXTURED_COLOR_BOTTOM_LEFT_FIELD L"bottomLeft"
-#define GRIDQUADTEXTURED_COLOR_BOTTOM_RIGHT_FIELD L"bottomRight"
-
 /* LogUser and ConfigUser configuration parameters
    Refer to LogUser.h and ConfigUser.h
 */

@@ -1,6 +1,6 @@
 /*
-GridQuad.cpp
-------------
+GridQuadTextured.cpp
+--------------------
 
 Created for: COMP3501A Project
 Fall 2014, Carleton University
@@ -10,59 +10,55 @@ Brandon Keyes, ID: 100897196
 Bernard Llanos, ID: 100793648
 Mark Wilkes, ID: 100884169
 
-Created October 12, 2014
+Created October 19, 2014
 
-Primary basis: CubeModel.cpp
+Primary basis: GridQuad.cpp
 
 Description
-  -Implementation of the GridQuad class
+  -Implementation of the GridQuadTextured class
 */
 
-#include "GridQuad.h"
+#include "GridQuadTextured.h"
 
 using namespace DirectX;
 
-#define GRIDQUAD_NCORNERS 4
+#define GRIDQUADTEXTURED_NCORNERS 4
 
-GridQuad::GridQuad(const bool enableLogging, const std::wstring& msgPrefix,
+GridQuadTextured::GridQuadTextured(const bool enableLogging, const std::wstring& msgPrefix,
 	Config* sharedConfig) :
-	SkinnedColorGeometry(enableLogging, msgPrefix, sharedConfig),
+	SkinnedTexturedGeometry(enableLogging, msgPrefix, sharedConfig),
 	m_nColumns(0), m_nRows(0),
-	m_debugWinding(GRIDQUAD_DEBUG_FLAG_DEFAULT), m_colors(0)
-{
+	m_debugWinding(GRIDQUADTEXTURED_DEBUG_FLAG_DEFAULT) {
 	if( FAILED(configure()) ) {
 		logMessage(L"Configuration failed.");
 	}
 }
 
-HRESULT GridQuad::configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope) {
+GridQuadTextured::~GridQuadTextured(void) {}
+
+HRESULT GridQuadTextured::configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope) {
 	HRESULT result = ERROR_SUCCESS;
 
 	// Initialize with default values
 	// ------------------------------
 
 	// Geometry properties
-	size_t nColumns = GRIDQUAD_COLUMNS_DEFAULT;
-	size_t nRows = GRIDQUAD_ROWS_DEFAULT;
-	m_debugWinding = GRIDQUAD_DEBUG_FLAG_DEFAULT;
-
-	m_colors = new DirectX::XMFLOAT4[GRIDQUAD_NCORNERS];
-	for( size_t i = 0; i < GRIDQUAD_NCORNERS; ++i ) {
-		m_colors[i] = GRIDQUAD_COLORS_DEFAULT;
-	}
+	size_t nColumns = GRIDQUADTEXTURED_COLUMNS_DEFAULT;
+	size_t nRows = GRIDQUADTEXTURED_ROWS_DEFAULT;
+	m_debugWinding = GRIDQUADTEXTURED_DEBUG_FLAG_DEFAULT;
 
 	if( hasConfigToUse() ) {
 
 		// Configure base members
-		std::wstring logUserScopeDefault(GRIDQUAD_LOGUSER_SCOPE);
-		std::wstring configUserScopeDefault(GRIDQUAD_CONFIGUSER_SCOPE);
-		if (configUserScope == 0) {
+		std::wstring logUserScopeDefault(GRIDQUADTEXTURED_LOGUSER_SCOPE);
+		std::wstring configUserScopeDefault(GRIDQUADTEXTURED_CONFIGUSER_SCOPE);
+		if( configUserScope == 0 ) {
 			configUserScope = &configUserScopeDefault;
 		}
-		if (logUserScope == 0) {
+		if( logUserScope == 0 ) {
 			logUserScope = &logUserScopeDefault;
 		}
-		if (FAILED(SkinnedColorGeometry::configure(scope, configUserScope, logUserScope))) {
+		if( FAILED(SkinnedTexturedGeometry::configure(scope, configUserScope, logUserScope)) ) {
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		} else {
 
@@ -72,29 +68,16 @@ HRESULT GridQuad::configure(const std::wstring& scope, const std::wstring* confi
 			const DirectX::XMFLOAT4* float4Value = 0;
 
 			// Query for initialization data
-			if( retrieve<Config::DataType::INT, int>(scope, GRIDQUAD_COLUMNS_FIELD, intValue) ) {
+			if( retrieve<Config::DataType::INT, int>(scope, GRIDQUADTEXTURED_COLUMNS_FIELD, intValue) ) {
 				nColumns = *intValue;
 			}
 
-			if( retrieve<Config::DataType::INT, int>(scope, GRIDQUAD_ROWS_FIELD, intValue) ) {
+			if( retrieve<Config::DataType::INT, int>(scope, GRIDQUADTEXTURED_ROWS_FIELD, intValue) ) {
 				nRows = *intValue;
 			}
 
-			if( retrieve<Config::DataType::BOOL, bool>(scope, GRIDQUAD_DEBUG_FLAG_FIELD, boolValue) ) {
+			if( retrieve<Config::DataType::BOOL, bool>(scope, GRIDQUADTEXTURED_DEBUG_FLAG_FIELD, boolValue) ) {
 				m_debugWinding = *boolValue;
-			}
-
-			std::wstring colorFields[] = {
-				GRIDQUAD_COLOR_TOP_RIGHT_FIELD,
-				GRIDQUAD_COLOR_TOP_LEFT_FIELD,
-				GRIDQUAD_COLOR_BOTTOM_LEFT_FIELD,
-				GRIDQUAD_COLOR_BOTTOM_RIGHT_FIELD
-			};
-
-			for( size_t i = 0; i < GRIDQUAD_NCORNERS; ++i ) {
-				if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(scope, colorFields[i], float4Value) ) {
-					m_colors[i] = *float4Value;
-				}
 			}
 		}
 
@@ -106,14 +89,14 @@ HRESULT GridQuad::configure(const std::wstring& scope, const std::wstring* confi
 	// -------------------------
 
 	if( nColumns < 1 ) {
-		m_nColumns = GRIDQUAD_COLUMNS_DEFAULT;
+		m_nColumns = GRIDQUADTEXTURED_COLUMNS_DEFAULT;
 		logMessage(L"Input number of columns was less than 1. Reverting to default value of: " + std::to_wstring(m_nColumns));
 	} else {
 		m_nColumns = nColumns;
 	}
 
 	if( nRows < 1 ) {
-		m_nRows = GRIDQUAD_ROWS_DEFAULT;
+		m_nRows = GRIDQUADTEXTURED_ROWS_DEFAULT;
 		logMessage(L"Input number of rows was less than 1. Reverting to default value of: " + std::to_wstring(m_nRows));
 	} else {
 		m_nRows = nRows;
@@ -122,20 +105,13 @@ HRESULT GridQuad::configure(const std::wstring& scope, const std::wstring* confi
 	return result;
 }
 
-GridQuad::~GridQuad(void) {
-	if( m_colors != 0 ) {
-		delete[] m_colors;
-		m_colors = 0;
-	}
-}
-
-HRESULT GridQuad::initialize(ID3D11Device* const device,
+HRESULT GridQuadTextured::initialize(ID3D11Device* const device,
 	const std::vector<const ITransformable*>* const bones,
 	const DirectX::XMFLOAT4X4* const bindMatrices) {
 
 	if( bones == 0 ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
-	} else if( bones->size() != GRIDQUAD_NCORNERS ) {
+	} else if( bones->size() != GRIDQUADTEXTURED_NCORNERS ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
 
@@ -156,14 +132,14 @@ HRESULT GridQuad::initialize(ID3D11Device* const device,
 		// Set up bind pose transformations, if necessary
 		DirectX::XMFLOAT4X4* ownBindMatrices = 0;
 		if( bindMatrices == 0 ) {
-			ownBindMatrices = new DirectX::XMFLOAT4X4[GRIDQUAD_NCORNERS];
-			DirectX::XMFLOAT3* cornerPositions = new DirectX::XMFLOAT3[GRIDQUAD_NCORNERS];
-			cornerPositions[0] = XMFLOAT3( 1.0f,  1.0f, 0.0f);
-			cornerPositions[1] = XMFLOAT3(-1.0f,  1.0f, 0.0f);
+			ownBindMatrices = new DirectX::XMFLOAT4X4[GRIDQUADTEXTURED_NCORNERS];
+			DirectX::XMFLOAT3* cornerPositions = new DirectX::XMFLOAT3[GRIDQUADTEXTURED_NCORNERS];
+			cornerPositions[0] = XMFLOAT3(1.0f, 1.0f, 0.0f);
+			cornerPositions[1] = XMFLOAT3(-1.0f, 1.0f, 0.0f);
 			cornerPositions[2] = XMFLOAT3(-1.0f, -1.0f, 0.0f);
-			cornerPositions[3] = XMFLOAT3( 1.0f, -1.0f, 0.0f);
+			cornerPositions[3] = XMFLOAT3(1.0f, -1.0f, 0.0f);
 
-			for( size_t i = 0; i < GRIDQUAD_NCORNERS; ++i ) {
+			for( size_t i = 0; i < GRIDQUADTEXTURED_NCORNERS; ++i ) {
 				XMStoreFloat4x4(&ownBindMatrices[i],
 					XMMatrixTranslationFromVector(XMLoadFloat3(cornerPositions + i)));
 			}
@@ -173,14 +149,14 @@ HRESULT GridQuad::initialize(ID3D11Device* const device,
 		}
 
 		if( bindMatrices == 0 ) {
-			result = SkinnedColorGeometry::initialize(device,
+			result = SkinnedTexturedGeometry::initialize(device,
 				vertices, nVertices,
 				indices, nIndices,
 				bones,
 				ownBindMatrices,
 				D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		} else {
-			result = SkinnedColorGeometry::initialize(device,
+			result = SkinnedTexturedGeometry::initialize(device,
 				vertices, nVertices,
 				indices, nIndices,
 				bones,
@@ -194,7 +170,7 @@ HRESULT GridQuad::initialize(ID3D11Device* const device,
 		}
 
 		if( bindMatrices == 0 ) {
-			delete [] ownBindMatrices;
+			delete[] ownBindMatrices;
 			ownBindMatrices = 0;
 		}
 	}
@@ -205,22 +181,22 @@ HRESULT GridQuad::initialize(ID3D11Device* const device,
 	return result;
 }
 
-float GridQuad::setTransparencyBlendFactor(float blend) {
-	return SkinnedColorGeometry::setTransparencyBlendFactor(blend);
+float GridQuadTextured::setTransparencyBlendFactor(float blend) {
+	return SkinnedTexturedGeometry::setTransparencyBlendFactor(blend);
 }
 
-size_t GridQuad::getNumberOfVertices(void) const {
+size_t GridQuadTextured::getNumberOfVertices(void) const {
 	return (m_nColumns + 1) * (m_nRows + 1);
 }
 
-size_t GridQuad::getNumberOfIndices(void) const {
+size_t GridQuadTextured::getNumberOfIndices(void) const {
 	// Number of triangles = Number of quads * 2
 	size_t nTrianges = (m_nColumns * m_nRows) * 2;
 	// Number of indices
 	return nTrianges * 3;
 }
 
-HRESULT GridQuad::addIndexedVertices(
+HRESULT GridQuadTextured::addIndexedVertices(
 	SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices,
 	size_t& vertexOffset,
 	unsigned long* const indices,
@@ -261,7 +237,7 @@ HRESULT GridQuad::addIndexedVertices(
 			} if( FAILED(uvToNormal(vertex->normal, u, v)) ) {
 				msg = L"uvToNormal() failed";
 				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-			} if( FAILED(uvToColor(vertex->index, u, v)) ) {
+			} if( FAILED(uvToIndex(vertex->index, u, v)) ) {
 				msg = L"uvToColor() failed";
 				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 			}
@@ -325,7 +301,7 @@ HRESULT GridQuad::addIndexedVertices(
 	return result;
 }
 
-HRESULT GridQuad::uvToPosition(DirectX::XMFLOAT3& position, const float u, const float v) const {
+HRESULT GridQuadTextured::uvToPosition(DirectX::XMFLOAT3& position, const float u, const float v) const {
 	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
@@ -335,30 +311,22 @@ HRESULT GridQuad::uvToPosition(DirectX::XMFLOAT3& position, const float u, const
 	return ERROR_SUCCESS;
 }
 
-HRESULT GridQuad::uvToColor(DirectX::XMFLOAT4& color, const float u, const float v) const {
+HRESULT GridQuadTextured::uvToIndex(DirectX::XMFLOAT4& color, const float u, const float v) const {
 	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
-	// Bilinear interpolation
-	DirectX::XMFLOAT4 upperColor;
-	DirectX::XMStoreFloat4(&upperColor, DirectX::XMVectorLerp(
-		DirectX::XMLoadFloat4(&m_colors[1]), // Top left
-		DirectX::XMLoadFloat4(&m_colors[0]), // Top right
-		u));
-	DirectX::XMFLOAT4 lowerColor;
-	DirectX::XMStoreFloat4(&lowerColor, DirectX::XMVectorLerp(
-		DirectX::XMLoadFloat4(&m_colors[2]), // Bottom left
-		DirectX::XMLoadFloat4(&m_colors[3]), // Bottom right
-		u));
+	color.x = u;
+	color.y = v;
+	color.z = 0.0f;
 
-	DirectX::XMStoreFloat4(&color, DirectX::XMVectorLerp(
-		DirectX::XMLoadFloat4(&upperColor),
-		DirectX::XMLoadFloat4(&lowerColor),
-		v));
+	/* This allows the model to be rendered without a texture,
+	   without appearing completely transparent (i.e. invisible)
+	 */
+	color.w = 1.0f;
 	return ERROR_SUCCESS;
 }
 
-HRESULT GridQuad::uvToNormal(DirectX::XMFLOAT3& normal, const float u, const float v) const {
+HRESULT GridQuadTextured::uvToNormal(DirectX::XMFLOAT3& normal, const float u, const float v) const {
 	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
@@ -368,7 +336,7 @@ HRESULT GridQuad::uvToNormal(DirectX::XMFLOAT3& normal, const float u, const flo
 	return ERROR_SUCCESS;
 }
 
-HRESULT GridQuad::uvToBoneIDs(unsigned int boneIDs[4], const float u, const float v) const {
+HRESULT GridQuadTextured::uvToBoneIDs(unsigned int boneIDs[4], const float u, const float v) const {
 	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
@@ -379,7 +347,7 @@ HRESULT GridQuad::uvToBoneIDs(unsigned int boneIDs[4], const float u, const floa
 	return ERROR_SUCCESS;
 }
 
-HRESULT GridQuad::uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, const float u, const float v) const {
+HRESULT GridQuadTextured::uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, const float u, const float v) const {
 	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
