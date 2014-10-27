@@ -13,11 +13,11 @@
 	*6th vertex is back, top, right
 	*7th vertex is back, bottom, right 
  */
+
 #pragma once
 
 #include <vector>
 #include "ObjectModel.h"
-#include "Oct_tree.h"
 
 using namespace std;
  
@@ -37,6 +37,7 @@ class Octnode{
 		XMFLOAT3 origin;
 		float length;
 		int depthMe;
+		int depthMax;
 		XMFLOAT3 vertices[8];
 		
 		bool spherePlaneCheck(XMFLOAT3 planePoints[3], XMFLOAT3 sphereOrigin, float squareLength, float sphereRadi);

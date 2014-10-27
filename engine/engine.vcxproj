@@ -17,6 +17,8 @@
     <ClCompile Include="cpp\rendering\SkinnedRenderer.cpp" />
     <ClCompile Include="cpp\util\Texture.cpp" />
     <ClCompile Include="cpp\util\TextureFromDDS.cpp" />
+    <ClCompile Include="oct_node.cpp" />
+    <ClCompile Include="oct_tree.cpp" />
     <ClCompile Include="test\cpp\AlbedoTextureTestState.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp" />
@@ -46,6 +48,9 @@
     <ClInclude Include="header\rendering\SkinnedRenderer.h" />
     <ClInclude Include="header\util\Texture.h" />
     <ClInclude Include="header\util\TextureFromDDS.h" />
+    <ClInclude Include="ObjectModel.h" />
+    <ClInclude Include="Oct_node.h" />
+    <ClInclude Include="oct_tree.h" />
     <ClInclude Include="test\header\AlbedoTextureTestState.h" />
     <ClInclude Include="test\header\SkinnedColorTestState.h" />
     <ClInclude Include="test\header\SkinnedColorTestTransformable.h" />

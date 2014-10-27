@@ -1,9 +1,12 @@
 #include "oct_node.h"
 #include "ObjectModel.h"
+#include "DirectXMath.h"
 
 Octnode::Octnode(XMFLOAT3 position, float length, int depth, int depthThis, Octnode * parent){
 	nodeObjectList = vector<ObjectModel *>();
 	depthMe = depthThis;
+
+	depthMax = depth;
 	
 	origin = position;
 	
@@ -41,7 +44,7 @@ Octnode::Octnode(XMFLOAT3 position, float length, int depth, int depthThis, Octn
 Octnode::~Octnode(){
 	//delete nodeObjectList;
 	for (int i = 0; i < nodeObjectList.size(); i++){
-		delete nodeObjectList.at[i];
+		//delete nodeObjectList.at[i];
 	}
 }
 
@@ -129,7 +132,7 @@ bool Octnode::spherePlaneCheck(XMFLOAT3 planePoints[3] , XMFLOAT3 sphereOrigin, 
 	if(0 > distPlanePoint) distPlanePoint = 0 - distPlanePoint;
 	
 	//divide top half by bottom half
-	distPlanePoint /= squareRoot((firstCrossSecond.x * firstCrossSecond.x) +
+	distPlanePoint /= sqrt((firstCrossSecond.x * firstCrossSecond.x) +
 								 (firstCrossSecond.y * firstCrossSecond.y) +
 								 (firstCrossSecond.z * firstCrossSecond.z));
 	

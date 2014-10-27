@@ -135,6 +135,12 @@
     <ClCompile Include="test\cpp\TexturedSphereTestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
+    <ClCompile Include="oct_node.cpp">
+      <Filter>Unprocessed Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="oct_tree.cpp">
+      <Filter>Unprocessed Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -232,6 +238,15 @@
     </ClInclude>
     <ClInclude Include="test\header\TexturedSphereTestState.h">
       <Filter>test\header</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectModel.h">
+      <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Oct_node.h">
+      <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="oct_tree.h">
+      <Filter>Unprocessed Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@
 
 #include <vector>
 
-using namespace DirectX;
+using namespace std;
 
 #include "ITransformable.h"
 #include "IGeometry.h"
@@ -20,9 +20,6 @@ class ObjectModel{
 
 		virtual XMFLOAT3 getBoundingOrigin();
 		virtual float getBoundingRadius();
-
-	private:
-
 	protected:
 		//IGeometry model;
 		vector<ITransformable *> transformations;

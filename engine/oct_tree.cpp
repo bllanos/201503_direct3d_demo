@@ -1,21 +1,23 @@
 #include "oct_tree.h"
 #include "ObjectModel.h"
 
-Octtree::~Octtree(){
-	delete rootNode;
-	for (int i = 0; i < completeObjectList.size(); i++){
-		delete completeObjectList.at[i];
-	}
-}
-
 Octtree::Octtree(XMFLOAT3 position, float length, int depth){
+	maxDepth = depth;
 	rootNode = new Octnode(position, length, depth, 0, NULL);
 	completeObjectList = vector<ObjectModel *>();
 }
 
+Octtree::~Octtree(){
+	delete rootNode;
+	for (int i = 0; i < completeObjectList.size(); i++){
+		//delete completeObjectList.at[i];
+	}
+}
+
 int Octtree::advance(){
-	//TODO: make the objects in the tree do stuff
-	//this will also handle the changing between the nodes
+	//Will register all the movement of objects and update them and their location in the tree
+	//Pay particular attention to the fact that all objects with exception the ship are moving
+	//Apply the negation of the ships movement to ALL objects in the oct tree
 	return 0;
 }
 
@@ -31,5 +33,15 @@ int Octtree::addObject(ObjectModel * newGameObject){
 }
 
 int Octtree::checkCollisions(vector<ObjectModel *> outCollidingObjects){
+	/*
+	
+	*/
+	return 0;
+}
+
+int Octtree::checkCollisionsBetween(Octnode* node1, Octnode* node2, vector<ObjectModel *> outCollisions){
+	for (int i = 0; i < node1->nodeObjectList.size(); i++){
+
+	}
 	return 0;
 }

@@ -18,14 +18,17 @@
  *this system uses recursive division of space to increase the precision of the space modelling
  */
  
- /*
+/*
   *the spacial system will move with the player's craft centred in the root's cube
   *so this means it will be located on the origin of the roots 7th child
-  *it, as it "moves", will apply its movement to every other object in the world
-  *so the origin points will not be constant and will change as the player moves
-  */
+  *it, as it "moves", will apply the negation of its movement to every other object in the world
+  *so the OctTree will not move and neither will the player but everything else will
+  *this simplifies the updating of the OctTree by not requiring mass culling and additions to the tree
+*/
+#pragma once
+
 #include "ObjectModel.h"
-#include "oct_node.h"
+#include "Oct_node.h"
 #include <vector>
 
 using namespace std;
@@ -41,7 +44,9 @@ class Octtree {
 		
 	protected:
 		Octnode * rootNode;
+		int maxDepth;
 		vector<ObjectModel *> completeObjectList;
 		
 		int checkCollisions(vector<ObjectModel *> outCollidingObjects);
-}
+		int checkCollisionsBetween(Octnode* node1, Octnode* node2, vector<ObjectModel *> outCollisions);
+};
