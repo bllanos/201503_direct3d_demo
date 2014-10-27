@@ -76,7 +76,7 @@ public:
 		// CS // Compute shader - Direct3D 11
 	};
 
-public:
+protected:
 
 	template<typename ConfigIOClass> Texture(
 		const bool enableLogging, const std::wstring& msgPrefix,
@@ -84,6 +84,8 @@ public:
 		const std::wstring filename,
 		const std::wstring path = L""
 		);
+
+public:
 
 	virtual ~Texture(void);
 

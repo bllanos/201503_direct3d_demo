@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -129,6 +129,12 @@
     <ClCompile Include="test\cpp\AlbedoTextureTestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\geometry\GridSphereTextured.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\TexturedSphereTestState.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -200,9 +206,6 @@
     <ClInclude Include="Camera.h">
       <Filter>header</Filter>
     </ClInclude>
-    <ClInclude Include="header\geometry\sphereModel.h">
-      <Filter>header\geometry</Filter>
-    </ClInclude>
     <ClInclude Include="header\util\TextureFromDDS.h">
       <Filter>header\util</Filter>
     </ClInclude>
@@ -219,6 +222,15 @@
       <Filter>header\geometry</Filter>
     </ClInclude>
     <ClInclude Include="test\header\AlbedoTextureTestState.h">
+      <Filter>test\header</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\SphereModel.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\GridSphereTextured.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\TexturedSphereTestState.h">
       <Filter>test\header</Filter>
     </ClInclude>
   </ItemGroup>

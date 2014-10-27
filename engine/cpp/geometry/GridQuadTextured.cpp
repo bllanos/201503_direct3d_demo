@@ -65,7 +65,6 @@ HRESULT GridQuadTextured::configure(const std::wstring& scope, const std::wstrin
 			// Data retrieval helper variables
 			const bool* boolValue = 0;
 			const int* intValue = 0;
-			const DirectX::XMFLOAT4* float4Value = 0;
 
 			// Query for initialization data
 			if( retrieve<Config::DataType::INT, int>(scope, GRIDQUADTEXTURED_COLUMNS_FIELD, intValue) ) {

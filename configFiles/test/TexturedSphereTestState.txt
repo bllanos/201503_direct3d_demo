@@ -1,0 +1,80 @@
+# Configuration file for the TexturedSphereTestState class
+# as well as its GridSphereTextured data member.
+
+# GridSphereTextured LogUser configuration
+# -----------------------------------------------
+BOOL -- GridSphereTextured_LogUser::enableLogging = true
+WSTRING -- GridSphereTextured_LogUser::msgPrefix = L"Test GridSphereTextured Object"
+BOOL -- GridSphereTextured_LogUser::useGlobalLog = false
+BOOL -- GridSphereTextured_LogUser::allocConsole = false
+BOOL -- GridSphereTextured_LogUser::allocLogFile = true
+FILENAME -- GridSphereTextured_LogUser::logFileName = "TexturedSphereTestState.txt"
+DIRECTORY -- GridSphereTextured_LogUser::logFilePath = "..\logFiles\test"
+BOOL -- GridSphereTextured_LogUser::overwriteFile = false
+BOOL -- GridSphereTextured_LogUser::timestampEnable = true
+
+# GridSphereTextured ConfigUser configuration
+# -----------------------------------------
+BOOL -- GridSphereTextured_ConfigUser::enableConfigUseLogging = true
+
+# GridSphereTextured geometry configuration
+# -----------------------------------------------
+INT -- GridSphereTextured::nColumns = 512
+INT -- GridSphereTextured::nRows = 384
+DOUBLE -- GridSphereTextured::transparencyMultiplier = 1.0
+BOOL -- GridSphereTextured::debugWinding = false
+
+# GridSphereTextured material configuration
+# ---------------------------------------
+FLOAT4 -- GridSphereTextured::ambientAlbedo = (1.0, 1.0, 1.0, 1.0)
+FLOAT4 -- GridSphereTextured::diffuseAlbedo = (1.0, 1.0, 1.0, 1.0)
+FLOAT4 -- GridSphereTextured::specularAlbedo = (1.0, 1.0, 1.0, 1.0)
+DOUBLE -- GridSphereTextured::specularPower = 10.0
+
+# GridSphereTextured lighting configuration
+# ---------------------------------------
+BOOL -- GridSphereTextured::renderWithLighting = true
+
+# GridSphereTextured albedo texture controls
+# ----------------------------------------------
+BOOL -- GridSphereTextured::createAlbedoTexture = true
+BOOL -- GridSphereTextured::renderAlbedoTexture = true
+
+# GridSphereTextured albedo texture configuration
+# ----------------------------------------------
+BOOL -- GridSphereTextured::albedoTexture_enableLogging = true
+WSTRING -- GridSphereTextured::albedoTexture_msgPrefix = L"Test Albedo Texture Object"
+WSTRING -- GridSphereTextured::albedoTextureScope = L"albedoTexture"
+WSTRING -- GridSphereTextured::albedoTextureScope_LogUser = L"albedoTexture_LogUser"
+WSTRING -- GridSphereTextured::albedoTextureScope_ConfigUser = L"albedoTexture_ConfigUser"
+FILENAME -- GridSphereTextured::albedoTexture_inputConfigFileName = "TexturedSphereTestState.txt"
+DIRECTORY -- GridSphereTextured::albedoTexture_inputConfigFilePath = "..\configFiles\test"
+
+# Albedo texture object configuration
+# ----------------------------------------------
+# LogUser
+BOOL -- albedoTexture_LogUser::enableLogging = true
+WSTRING -- albedoTexture_LogUser::msgPrefix = L"Test Albedo Texture Object"
+BOOL -- albedoTexture_LogUser::useGlobalLog = false
+BOOL -- albedoTexture_LogUser::allocConsole = false
+BOOL -- albedoTexture_LogUser::allocLogFile = true
+FILENAME -- albedoTexture_LogUser::logFileName = "TexturedSphereTestState.txt"
+DIRECTORY -- albedoTexture_LogUser::logFilePath = "..\logFiles\test"
+BOOL -- albedoTexture_LogUser::overwriteFile = false
+BOOL -- albedoTexture_LogUser::timestampEnable = true
+
+# ConfigUser
+BOOL -- albedoTexture_ConfigUser::enableConfigUseLogging = true
+
+# Sampler State
+INT -- albedoTexture::filter = 21
+INT -- albedoTexture::addressU = 4
+INT -- albedoTexture::addressV = 4
+INT -- albedoTexture::addressW = 4
+INT -- albedoTexture::maxAnisotropy = 1
+INT -- albedoTexture::comparisonFunc = 1
+COLOR -- albedoTexture::borderColor = (255, 255, 255, 255)
+
+# Texture
+FILENAME -- albedoTexture::textureFileName = "kingfire_oli_2014262_swir_lrg_512x512.dds"
+DIRECTORY -- albedoTexture::textureFilePath = "..\textures\test"
