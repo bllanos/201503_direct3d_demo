@@ -1,7 +1,8 @@
 #include "oct_node.h"
+#include "ObjectModel.h"
 
 Octnode::Octnode(XMFLOAT3 position, float length, int depth, int depthThis, Octnode * parent){
-	nodeObjectList = new vector<*T>();
+	nodeObjectList = new vector<ObjectModel *>();
 	depthMe = depthThis;
 	
 	origin = position;
@@ -41,7 +42,7 @@ Octnode::~Octnode(){
 	delete nodeObjectList;
 }
 
-int Octnode::fits(T * newGameObject){
+int Octnode::fits(ObjectModel * newGameObject){
 	//check to make sure the object's bounded size is less than or equal to the size of the node cube
 	//this is the fast check to make sure it would be able to fit
 	if(newGameObject->getBoundingRadius()*2 > length){

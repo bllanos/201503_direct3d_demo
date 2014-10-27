@@ -1,4 +1,5 @@
 #include "oct_tree.h"
+#include "ObjectModel.h"
 
 Octtree::~Octtree(){
 	delete rootNode;
@@ -16,7 +17,7 @@ int Octtree::advance(){
 	return 0;
 }
 
-int Octtree::addObject(<*T> newGameObject){
+int Octtree::addObject(ObjectModel * newGameObject){
 	//start a recursive call to put the object in the tree
 	if(rootNode->fits(newGameObject) == 0){
 		//only add the object to the list if it is put into the list at some point
@@ -27,6 +28,6 @@ int Octtree::addObject(<*T> newGameObject){
 	return -1;
 }
 
-int Octtree::checkCollisions(vector<*T> outCollidingObjects){
+int Octtree::checkCollisions(vector<ObjectModel *> outCollidingObjects){
 	return 0;
 }

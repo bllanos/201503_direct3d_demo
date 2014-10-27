@@ -24,26 +24,24 @@
   *it, as it "moves", will apply its movement to every other object in the world
   *so the origin points will not be constant and will change as the player moves
   */
-  
-  #include <vector>
-  #include <oct_node.h>
-  
-  using namespace std;
-  
-  template<typename T>;
-  
-  class Octtree {
+#include "ObjectModel.h"
+#include "oct_node.h"
+#include <vector>
+
+using namespace std;
+
+class Octtree {
 	public:
 		Octtree();
 		Octtree(XMFLOAT3 position, float length, int depth);
 		~Octree();
 		
 		int advance();
-		int addObject(<T*> newGameObject);
+		int addObject(<ObjectModel *> newGameObject);
 		
 	protected:
 		Octnode * rootNode;
-		vector<*T> completeObjectList;
+		vector<ObjectModel *> completeObjectList;
 		
-		int checkCollisions(vector<*T> outCollidingObjects);
-  }
+		int checkCollisions(vector<ObjectModel *> outCollidingObjects);
+}
