@@ -33,3 +33,7 @@ enum class BindLocation : unsigned int {
 	PS, // Pixel shader
 	// CS // Compute shader - Direct3D 11
 };
+/* When adding new data types to this enumeration, also do the following:
+   - Update the 's_shaderTypeNames' and 's_shaderBindLocations' static members
+     of the Shader class.
+ */

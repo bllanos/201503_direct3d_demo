@@ -285,9 +285,6 @@ HRESULT SkinnedRenderer::configureRendering(
 
 HRESULT SkinnedRenderer::createShaders(ID3D11Device* const device) {
 	HRESULT result = ERROR_SUCCESS;
-	ID3D10Blob* errorMessage = 0;
-	ID3D10Blob* vertexShaderBuffer = 0;
-	ID3D10Blob* pixelShaderBuffer = 0;
 
 	// Retrieve shader parameters
 	wstring vsFilename;
@@ -303,16 +300,8 @@ HRESULT SkinnedRenderer::createShaders(ID3D11Device* const device) {
 	}
 
 	// Compile the vertex shader code.
-	std::string entryPoint_string;
-	std::string shaderModel_string;
-	if( FAILED(toString(entryPoint_string, vsEntryPoint)) ) {
-		logMessage(L"Failed to convert the following to a single-byte character string: " + vsEntryPoint);
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-	if( FAILED(toString(shaderModel_string, vsShaderModel)) ) {
-		logMessage(L"Failed to convert the following to a single-byte character string: " + vsShaderModel);
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
+
+
 	result = D3DCompileFromFile(vsFilename.c_str(), NULL, NULL, entryPoint_string.c_str(), shaderModel_string.c_str(), D3D10_SHADER_ENABLE_STRICTNESS, 0,
 		&vertexShaderBuffer, &errorMessage);
 	if( FAILED(result) ) {

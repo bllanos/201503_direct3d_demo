@@ -39,12 +39,29 @@ Description
     or constructor/function arguments (where necessary)
 */
 
+#define SHADER_TYPE_FIELD L"type"
 #define SHADER_FILE_PATH_FIELD L"filePath"
-#define SHADER_FILE_NAME_FIELD_LIGHT L"fileName"
+#define SHADER_FILE_NAME_FIELD L"fileName"
 #define SHADER_SHADER_MODEL_FIELD L"shaderModel"
 #define SHADER_ENTRYPOINT_FIELD L"entryPoint"
 
 class Shader : public ConfigUser {
+
+	// Static function members
+protected:
+	/* Outputs the BindLocation constant that corresponds to
+	   the shader type named in the input string (case-sensitive).
+	   Returns a failure code if there is no corresponding BindLocation constant.
+	*/
+	static HRESULT wstringToBindLocation(BindLocation& out, const std::wstring& in);
+
+	// Static data members
+private:
+	static const std::wstring s_shaderTypeNames[];
+
+	static const BindLocation s_shaderBindLocations[];
+
+	static const size_t s_nShaderTypes;
 
 protected:
 
@@ -107,7 +124,9 @@ public:
 
 	// Data members
 private:
-	/* Only one of the following pointers will be used. */
+	/* Only one of the non-void pointers will be used
+	   to interact with the shader.
+	 */
 	union {
 		ID3D11VertexShader* m_vertexShader;
 		ID3D11GeometryShader* m_geometryShader;
@@ -145,5 +164,6 @@ template<typename ConfigIOClass> Shader::Shader(
 	filename,
 	path
 	),
-	m_vertexShader(0), m_bindLocation(0)
+	m_shader(0), m_bindLocation(0),
+	m_filename(0), m_shaderModel(0), m_entryPoint(0)
 {}
