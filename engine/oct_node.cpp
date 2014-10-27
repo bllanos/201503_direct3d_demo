@@ -2,7 +2,7 @@
 #include "ObjectModel.h"
 
 Octnode::Octnode(XMFLOAT3 position, float length, int depth, int depthThis, Octnode * parent){
-	nodeObjectList = new vector<ObjectModel *>();
+	nodeObjectList = vector<ObjectModel *>();
 	depthMe = depthThis;
 	
 	origin = position;
@@ -27,7 +27,7 @@ Octnode::Octnode(XMFLOAT3 position, float length, int depth, int depthThis, Octn
 	}
 	
 	//set the vertex positions of this node
-	vertices[0] = position;
+	vertices[0] = XMFLOAT3(position.x,			position.y,			position.z);
 	vertices[1] = XMFLOAT3(position.x, 			position.y-length, 	position.z);
 	vertices[2] = XMFLOAT3(position.x+length, 	position.y, 		position.z);
 	vertices[3] = XMFLOAT3(position.x+length, 	position.y-length, 	position.z);
@@ -39,7 +39,10 @@ Octnode::Octnode(XMFLOAT3 position, float length, int depth, int depthThis, Octn
 }
 
 Octnode::~Octnode(){
-	delete nodeObjectList;
+	//delete nodeObjectList;
+	for (int i = 0; i < nodeObjectList.size(); i++){
+		delete nodeObjectList.at[i];
+	}
 }
 
 int Octnode::fits(ObjectModel * newGameObject){
@@ -53,28 +56,28 @@ int Octnode::fits(ObjectModel * newGameObject){
 	
 	//first vector 0th and 4th
 	//second vector 0th and 1st
-	XMFLOAT3[3]plane1 = [vertices[0], vertices[4], vertices[1]];
-	if(!spherePlaneCheck(plane1, newGameObject->getOrigin(), length, sphereRadi)) return -1;
-	
+	XMFLOAT3 plane1[] = { vertices[0], vertices[4], vertices[1] };
+	if (!spherePlaneCheck(plane1, newGameObject->getBoundingOrigin(), length, newGameObject->getBoundingRadius())) return -1;
+
 	/*this checks if the object is contained within the node's cubic boundaries by checking against 3 planes
 	 *these planes are defined as the left side of the cube, the top side of the cube, the front side of the cube
 	 *the check against the cube is defined as checking the distance from the bounding sphere's origin against the bounds of the cube
-	 *how this bounds checking works is by 
+	 *how this bounds checking works is by
 	 */
-	
-//top plane
+
+	//top plane
 
 	//first vector 0th and 4th
 	//second vector 0th and 2nd
-	XMFLOAT3[3]plane2 = [vertices[0], vertices[4], vertices[2]];
-	if(!spherePlaneCheck(plane2, newGameObject->getOrigin(), length, sphereRadi)) return -1;
+	XMFLOAT3 plane2[] = { vertices[0], vertices[4], vertices[2] };
+	if (!spherePlaneCheck(plane2, newGameObject->getBoundingOrigin(), length, newGameObject->getBoundingRadius())) return -1;
 
 //front plane
 	
 	//first vector 0th and 2nd
 	//second vector 0th and 1st
-	XMFLOAT3[3]plane3 = [vertices[0], vertices[2], vertices[1]];
-	if(!spherePlaneCheck(plane3, newGameObject->getOrigin(), length, sphereRadi)) return -1;
+	XMFLOAT3 plane3[] = { vertices[0], vertices[2], vertices[1] };
+	if (!spherePlaneCheck(plane3, newGameObject->getBoundingOrigin(), length, newGameObject->getBoundingRadius())) return -1;
 	
 //it fits in this node but we have to check if it fits in a smaller node
 	
@@ -86,12 +89,12 @@ int Octnode::fits(ObjectModel * newGameObject){
 	}
 	
 //doesn't fit in children but fits here so add it to this node
-	nodeObjectList.add(newGameObject);
+	nodeObjectList.push_back(newGameObject);
 	
 	return 0;
 }
 
-bool Octnode::spherePlaneCheck(XMFLOAT3[3] planePoints, XMFLOAT3 sphereOrigin, float squareLength, float sphereRadi){
+bool Octnode::spherePlaneCheck(XMFLOAT3 planePoints[3] , XMFLOAT3 sphereOrigin, float squareLength, float sphereRadi){
 	//first vector 0th and 2nd
 	XMFLOAT3 vector1(planePoints[2].x - planePoints[0].x, 
 					 planePoints[2].y - planePoints[0].y, 

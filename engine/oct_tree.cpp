@@ -3,12 +3,14 @@
 
 Octtree::~Octtree(){
 	delete rootNode;
-	delete completeObjectList;
+	for (int i = 0; i < completeObjectList.size(); i++){
+		delete completeObjectList.at[i];
+	}
 }
 
 Octtree::Octtree(XMFLOAT3 position, float length, int depth){
 	rootNode = new Octnode(position, length, depth, 0, NULL);
-	completeObjectList = new vector<*T>();
+	completeObjectList = vector<ObjectModel *>();
 }
 
 int Octtree::advance(){
@@ -21,7 +23,7 @@ int Octtree::addObject(ObjectModel * newGameObject){
 	//start a recursive call to put the object in the tree
 	if(rootNode->fits(newGameObject) == 0){
 		//only add the object to the list if it is put into the list at some point
-		completeObjectList.add(newGameObject);
+		completeObjectList.push_back(newGameObject);
 		return 0;
 	}
 	//something went wrong and the object doesn't fit anywhere in the tree

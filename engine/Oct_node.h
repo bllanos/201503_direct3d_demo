@@ -31,13 +31,13 @@ class Octnode{
 		int fits(ObjectModel * newGameObject);
 		
 	protected:
-		Octnode[8] * children;
+		Octnode* children[8];
 		vector<ObjectModel *> nodeObjectList;
 		Octnode * parentNode;
 		XMFLOAT3 origin;
 		float length;
 		int depthMe;
-		XMFLOAT3[8] vertices;
+		XMFLOAT3 vertices[8];
 		
-		bool spherePlaneCheck(XMFLOAT3[3] planePoints, XMFLOAT3 sphereOrigin, float squareLength, float sphereRadi);
-}
+		bool spherePlaneCheck(XMFLOAT3 planePoints[3], XMFLOAT3 sphereOrigin, float squareLength, float sphereRadi);
+};

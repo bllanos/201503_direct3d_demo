@@ -34,10 +34,10 @@ class Octtree {
 	public:
 		Octtree();
 		Octtree(XMFLOAT3 position, float length, int depth);
-		~Octree();
+		~Octtree();
 		
 		int advance();
-		int addObject(<ObjectModel *> newGameObject);
+		int addObject(ObjectModel * newGameObject);
 		
 	protected:
 		Octnode * rootNode;
