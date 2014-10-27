@@ -29,6 +29,7 @@ Description
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include "ConfigUser.h"
+#include "pipelineDefs.h"
 
 /* The following definitions are:
    -Key parameters used to retrieve configuration data
@@ -60,21 +61,6 @@ Description
 #define TEXTURE_SAMPLER_MIPMAPLODBIAS_DEFAULT	0.0f
 
 class Texture : public ConfigUser {
-
-public:
-
-	/* The possible pipeline shader stages
-	   to which sampler states and textures
-	   can be bound.
-	*/
-	enum class BindLocation : unsigned int {
-		VS, // Vertex shader
-		// HS, // Hull shader - Direct3D 11
-		// DS, // Domain shader - Direct3D 11
-		GS, // Geometry shader
-		PS, // Pixel shader
-		// CS // Compute shader - Direct3D 11
-	};
 
 protected:
 

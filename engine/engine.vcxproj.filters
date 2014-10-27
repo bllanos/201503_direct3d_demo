@@ -233,5 +233,8 @@
     <ClInclude Include="test\header\TexturedSphereTestState.h">
       <Filter>test\header</Filter>
     </ClInclude>
+    <ClInclude Include="header\util\pipelineDefs.h">
+      <Filter>header\util</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
