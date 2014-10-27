@@ -36,6 +36,7 @@ Description
 #include "ConfigUser.h"
 #include "FlatAtomicConfigIO.h"
 #include "SkinnedColorGeometry.h"
+#include "Shader.h"
 
 // Type of loader to use for configuration data
 #define SKINNEDRENDERER_CONFIGIO_CLASS FlatAtomicConfigIO
@@ -55,22 +56,7 @@ Description
 #define SKINNEDRENDERER_LOGUSER_SCOPE L"SkinnedRenderer_LogUser"
 #define SKINNEDRENDERER_CONFIGUSER_SCOPE L"SkinnedRenderer_ConfigUser"
 
-#define SKINNEDRENDERER_SHADER_FILE_PATH_FIELD L"shaderFilePath"
-
 #define SKINNEDRENDERER_LIGHT_FLAG_FIELD L"enableLighting"
-
-#define SKINNEDRENDERER_VS_FILE_NAME_FIELD_NO_LIGHT L"vsFileName_noLighting"
-#define SKINNEDRENDERER_VS_FILE_NAME_FIELD_LIGHT L"vsFileName_withLighting"
-#define SKINNEDRENDERER_PS_FILE_NAME_FIELD_NO_LIGHT L"psFileName_noLighting"
-#define SKINNEDRENDERER_PS_FILE_NAME_FIELD_LIGHT L"psFileName_withLighting"
-
-#define SKINNEDRENDERER_VS_SHADER_MODEL_FIELD L"vsShaderModel"
-#define SKINNEDRENDERER_PS_SHADER_MODEL_FIELD L"psShaderModel"
-
-#define SKINNEDRENDERER_VS_ENTRYPOINT_FIELD_NO_LIGHT L"vsEntryPoint_noLighting"
-#define SKINNEDRENDERER_VS_ENTRYPOINT_FIELD_LIGHT L"vsEntryPoint_withLighting"
-#define SKINNEDRENDERER_PS_ENTRYPOINT_FIELD_NO_LIGHT L"psEntryPoint_noLighting"
-#define SKINNEDRENDERER_PS_ENTRYPOINT_FIELD_LIGHT L"psEntryPoint_withLighting"
 
 // Lighting parameters
 #define SKINNEDRENDERER_LIGHT_POSITION_DEFAULT DirectX::XMFLOAT4(-1000.0f, 0.0f, 0.0f, 1.0f)
@@ -114,12 +100,12 @@ public:
 
 public:
 	/* Configuration data is needed to know which
-	shader files to compile.
+	   shader files to compile.
 
-	The 'filename' and 'path' parameters describe
-	the location of the configuration file.
-	(Documented in ConfigUser.h)
-	*/
+	   The 'filename' and 'path' parameters describe
+	   the location of the configuration file.
+	   (Documented in ConfigUser.h)
+	 */
 	SkinnedRenderer(
 		const std::wstring filename,
 		const std::wstring path = L""
@@ -133,19 +119,12 @@ public:
 
 	// Helper functions
 protected:
-	/* Retrieves shader details from configuration data.
-	   Returns a failure result if any values are not found.
-	   Note that the filename parameters are output
-	   as combined filenames and paths.
 
-	   The output pixel shader filename will depend on
-	   whether lighting is enabled or disabled by the
-	   configuration data. (This function queries
-	   the configuration data for this setting.)
+	/* Retrieves configuration data
+	   If 'configUserScope' is null, it defaults to SKINNEDRENDERER_CONFIGUSER_SCOPE.
+	   If 'logUserScope' is null, it defaults to SKINNEDRENDERER_LOGUSER_SCOPE.
 	*/
-	virtual HRESULT configureRendering(
-		std::wstring& vsFilename, std::wstring& vsShaderModel, std::wstring& vsEntryPoint,
-		std::wstring& psFilename, std::wstring& psShaderModel, std::wstring& psEntryPoint);
+	virtual HRESULT configure(const std::wstring& scope = SKINNEDRENDERER_SCOPE, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0);
 
 	/* Creates the pipeline shaders
 	   Also responsible for calling configureRendering()
@@ -193,8 +172,8 @@ protected:
 
 	// Data members
 private:
-	ID3D11VertexShader* m_vertexShader;
-	ID3D11PixelShader* m_pixelShader;
+	Shader* m_vertexShader;
+	Shader* m_pixelShader;
 	ID3D11InputLayout* m_layout;
 	ID3D11Buffer* m_cameraBuffer;
 	ID3D11Buffer* m_materialBuffer;

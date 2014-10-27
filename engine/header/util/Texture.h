@@ -91,7 +91,7 @@ protected:
 	   If 'logUserScope' is null, it will default to 'configUserScope'.
 	   If 'configUserScope' is null, it will default to 'scope'.
 
-	   This function must be called by derived classes;
+	   This function must be called externally;
 	   it is not called by the Texture class.
 	 */
 	virtual HRESULT configure(const std::wstring& scope, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0);
