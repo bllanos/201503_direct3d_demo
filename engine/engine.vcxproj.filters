@@ -129,6 +129,12 @@
     <ClCompile Include="test\cpp\AlbedoTextureTestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\geometry\GridSphereTextured.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\TexturedSphereTestState.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -220,6 +226,12 @@
     </ClInclude>
     <ClInclude Include="header\geometry\SphereModel.h">
       <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\GridSphereTextured.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\TexturedSphereTestState.h">
+      <Filter>test\header</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

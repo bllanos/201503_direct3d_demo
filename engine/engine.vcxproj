@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cpp\geometry\GridQuadTextured.cpp" />
+    <ClCompile Include="cpp\geometry\GridSphereTextured.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedTexturedGeometry.cpp" />
     <ClCompile Include="cpp\rendering\SkinnedRenderer.cpp" />
     <ClCompile Include="cpp\util\Texture.cpp" />
@@ -34,10 +35,12 @@
     <ClCompile Include="cpp\StateControl.cpp" />
     <ClCompile Include="test\cpp\Phase1TestState.cpp" />
     <ClCompile Include="test\cpp\Phase1TestTransformable.cpp" />
+    <ClCompile Include="test\cpp\TexturedSphereTestState.cpp" />
     <ClCompile Include="Transformable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\geometry\GridQuadTextured.h" />
+    <ClInclude Include="header\geometry\GridSphereTextured.h" />
     <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h" />
     <ClInclude Include="header\geometry\SphereModel.h" />
     <ClInclude Include="header\rendering\SkinnedRenderer.h" />
@@ -66,6 +69,7 @@
     <ClInclude Include="header\State.h" />
     <ClInclude Include="header\StateControl.h" />
     <ClInclude Include="header\rendering\IGeometryRenderer.h" />
+    <ClInclude Include="test\header\TexturedSphereTestState.h" />
     <ClInclude Include="Transformable.h" />
   </ItemGroup>
   <ItemGroup>
