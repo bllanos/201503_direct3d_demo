@@ -31,7 +31,6 @@ m_timeReleased(static_cast<DWORD>(0)), m_ScreenDimensions(0.0f, 0.0f)
 	m_LastButtonStates = new bool[nButtons];
 	m_timePressed = new DWORD[nButtons];
 	m_timeReleased = new DWORD[nButtons];
-	m_Position = XMFLOAT2(-1.0f, -1.0f);
 	for (int i = 0; i < nButtons; ++i)
 	{
 			m_ButtonStates[i] = false;
@@ -189,22 +188,16 @@ LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPA
 		result = C_BAD_INPUT; // Someone else must process this message
 	}
 
-	
 	// Update the position of the mouse
-	POINTS mousePts; // Mouse position in integer format
 	if (m_Tracking && positionMustChange)
 	{
-		// Save the previous position and time
-		if (m_Moving)
-		{
-			m_pastMoveTime = m_moveTime;
-			m_PastPosition = m_Position;
-		}
-
 		// update the time since last WM_MOUSEMOVE processed
+		m_pastMoveTime = m_moveTime;
 		m_moveTime = GetTickCount();
 
 		// Retrieve mouse position
+		m_PastPosition = m_Position;
+		POINTS mousePts; // Mouse position in integer format
 		mousePts = MAKEPOINTS(lparam);
 		m_Position.x = static_cast<float>(mousePts.x);
 		m_Position.y = static_cast<float>(mousePts.y);
@@ -480,12 +473,18 @@ int Mouse::Update(void)
 	if ((t - m_moveTime) >= maxMotionSamplingInterval)
 	{
 		// Set the mouse speed to zero
-		m_pastMoveTime = m_moveTime;
 		m_PastPosition = m_Position;
+		m_pastMoveTime = m_moveTime;
 		m_moveTime = t;
+	}
 
-		// Indicate that speed data is available
-		m_Moving = true;
+	// if the old mouse position is the same as the current mouse position
+	// the mouse has stopped moving
+	// set moving to false and clear the move timings
+	if (m_Position.x == m_PastPosition.x && m_Position.y == m_PastPosition.y) {
+		m_Moving = false;
+		m_moveTime = static_cast<DWORD>(0);
+		m_pastMoveTime = static_cast<DWORD>(0);
 	}
 
 	// update process timing
