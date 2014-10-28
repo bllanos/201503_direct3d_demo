@@ -16,11 +16,12 @@ using namespace std;
 class ObjectModel{
 	public:
 		ObjectModel();
-		virtual ~ObjectModel(void) {};
+		~ObjectModel() {};
 
-		virtual XMFLOAT3 getBoundingOrigin();
-		virtual float getBoundingRadius();
+		XMFLOAT3 getBoundingOrigin();
+		float getBoundingRadius();
 	protected:
-		//IGeometry model;
-		vector<ITransformable *> transformations;
+		IGeometry* model;
+		vector<const ITransformable *>* tForm_shared;
+		vector<ITransformable *>* tFrom;
 };
