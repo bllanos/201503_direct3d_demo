@@ -141,30 +141,31 @@ The following works were consulted for ideas during development:
 
 ## Camera Controls
 Move Camera with Mouse:
-    - Pan/Tilt: CTRL + Move Mouse
+- Pan/Tilt: CTRL + Move Mouse
     
 Move Camera:
-    - Left:     SHIFT + LEFT ARROW
-    - Right:    SHIFT + Right ARROW
-    - Forward:  SHIFT + UP ARROW
-    - Backward: SHIFT + DOWN ARROW
+- Left:     SHIFT + LEFT ARROW
+- Right:    SHIFT + Right ARROW
+- Forward:  SHIFT + UP ARROW
+- Backward: SHIFT + DOWN ARROW
     
 Pan Camera:
-    - Left:  CTRL + LEFT ARROW
-    - Right: CTRL + RIGHT ARROW
+- Left:  CTRL + LEFT ARROW
+- Right: CTRL + RIGHT ARROW
     
 Tilt Camera:
-    - Up:   CTRL + DOWN ARROW
-    - Down: CTRL + UP ARROW
+- Up:   CTRL + DOWN ARROW
+- Down: CTRL + UP ARROW
     
 Crane Camera:
-    - Up:   C + UP ARROW
-    - Down: C + DOWN ARROW
+
+- Up:   C + UP ARROW
+- Down: C + DOWN ARROW
     
 Roll Camera:
-    - Left:  R + LEFT ARROW
-    - Right: R + RIGHT ARROW
+- Left:  R + LEFT ARROW
+- Right: R + RIGHT ARROW
     
 Zoom Camera:
-    - In:  Z + UP ARROW
-    - Out: Z + DOWN ARROW
+- In:  Z + UP ARROW
+- Out: Z + DOWN ARROW
