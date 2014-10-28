@@ -63,7 +63,7 @@ private:
 
 	static const size_t s_nShaderTypes;
 
-protected:
+public:
 
 	template<typename ConfigIOClass> Shader(
 		const bool enableLogging, const std::wstring& msgPrefix,
@@ -76,7 +76,6 @@ public:
 
 	virtual ~Shader(void);
 
-protected:
 	/* Retrieves configuration data, using default values,
 	   if possible, when configuration data is not found.
 	   Calls the base class's configuration function
@@ -122,6 +121,30 @@ public:
 	 */
 	virtual HRESULT bind(ID3D11DeviceContext* const context);
 
+	/* Returns a failure code if this is not
+	   a vertex shader.
+
+	   The last parameter, 'once', will cause this object
+	   to release the data needed to create input layouts
+	   if the function call succeeds.
+
+	   For descriptions of the other parameters,
+	   see http://msdn.microsoft.com/en-us/library/windows/desktop/ff476512(v=vs.85).aspx
+	 */
+	HRESULT createInputLayout(ID3D11Device* const device,
+		const D3D11_INPUT_ELEMENT_DESC *pInputElementDescs,
+		UINT NumElements,
+		ID3D11InputLayout **ppInputLayout,
+		const bool once = false
+		);
+
+protected:
+
+	/* Retrieves and logs shader compilation error messages.
+	Also releases the input argument.
+	*/
+	void outputShaderErrorMessage(ID3D10Blob* const);
+
 	// Data members
 private:
 	/* Only one of the non-void pointers will be used
@@ -145,6 +168,11 @@ private:
 	std::wstring* m_shaderModel;
 	std::wstring* m_entryPoint;
 
+	/* Retained for a vertex shader
+	   for use in creating input layout objects
+	 */
+	ID3D10Blob* m_shaderBuffer;
+
 	// Currently not implemented - will cause linker errors if called
 private:
 	Shader(const Shader& other);
@@ -165,5 +193,6 @@ template<typename ConfigIOClass> Shader::Shader(
 	path
 	),
 	m_shader(0), m_bindLocation(0),
-	m_filename(0), m_shaderModel(0), m_entryPoint(0)
+	m_filename(0), m_shaderModel(0), m_entryPoint(0),
+	m_shaderBuffer(0)
 {}

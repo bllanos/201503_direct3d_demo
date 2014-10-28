@@ -20,6 +20,7 @@ Description
 
 #include "Shader.h"
 #include "fileUtil.h"
+#include <D3Dcompiler.h>
 #include <exception>
 
 using namespace DirectX;
@@ -91,6 +92,11 @@ Shader::~Shader(void) {
 	if (m_entryPoint != 0) {
 		delete m_entryPoint;
 		m_entryPoint = 0;
+	}
+
+	if (m_shaderBuffer != 0) {
+		m_shaderBuffer->Release();
+		m_shaderBuffer = 0;
 	}
 }
 
@@ -167,11 +173,18 @@ HRESULT Shader::initialize(ID3D11Device* device,
 	const UINT NumStrides,
 	const UINT RasterizedStream) {
 
-	if ( m_bindLocation )
+	if (m_shader != 0) {
+		logMessage(L"Shader is already initialized.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	} else if (m_bindLocation == 0 || m_filename == 0 || m_shaderModel == 0 || m_entryPoint == 0 ) {
+		logMessage(L"Initialization of this object's shader cannot proceed as some members have not been configured.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
 
 	HRESULT result = ERROR_SUCCESS;
+
+	// Preliminary initialization
 	ID3D10Blob* errorMessage = 0;
-	ID3D10Blob* shaderBuffer = 0;
 	std::string entryPoint_string;
 	std::string shaderModel_string;
 	if (FAILED(toString(entryPoint_string, *m_entryPoint))) {
@@ -182,8 +195,185 @@ HRESULT Shader::initialize(ID3D11Device* device,
 		logMessage(L"Failed to convert the following to a single-byte character string: " + *m_shaderModel);
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
+
+	// Compile shader code
+	result = D3DCompileFromFile(
+		m_filename->c_str(),
+		NULL,
+		NULL,
+		entryPoint_string.c_str(),
+		shaderModel_string.c_str(),
+		D3D10_SHADER_ENABLE_STRICTNESS,
+		0,
+		&m_shaderBuffer,
+		&errorMessage);
+
+	if (FAILED(result)) {
+		// If the shader failed to compile it should have writen something to the error message.
+		if (errorMessage) {
+			logMessage(L"Problem compiling: " + *m_filename);
+			outputShaderErrorMessage(errorMessage);
+		} else {
+			// If there was  nothing in the error message then it simply could not find the shader file itself.
+			logMessage(L"Missing shader file: " + *m_filename);
+		}
+
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FILE_NOT_FOUND);
+	}
+
+	// Create the shader from the buffer.
+	switch (*m_bindLocation) {
+	case BindLocation::GS:
+	{
+		if (pSODeclaration != 0) {
+			logMessage(L"Creating geometry shader with stream output.");
+			result = device->CreateGeometryShaderWithStreamOutput(
+				m_shaderBuffer->GetBufferPointer(),
+				m_shaderBuffer->GetBufferSize(),
+				pSODeclaration,
+				NumEntries,
+				pBufferStrides,
+				NumStrides,
+				RasterizedStream,
+				NULL,
+				&m_geometryShader
+				);
+		} else {
+			result = device->CreateGeometryShader(m_shaderBuffer->GetBufferPointer(), m_shaderBuffer->GetBufferSize(), NULL, &m_geometryShader);
+		}
+		m_shaderBuffer->Release();
+		m_shaderBuffer = 0;
+	}
+	case BindLocation::PS:
+	{
+		result = device->CreatePixelShader(m_shaderBuffer->GetBufferPointer(), m_shaderBuffer->GetBufferSize(), NULL, &m_pixelShader);
+		m_shaderBuffer->Release();
+		m_shaderBuffer = 0;
+	}
+	case BindLocation::VS:
+	{
+		result = device->CreateVertexShader(m_shaderBuffer->GetBufferPointer(), m_shaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
+	}
+	default:
+	{
+		logMessage(L"Unanticipated value of m_bindLocation. Code is broken.");
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);
+	}
+	}
+	if (FAILED(result)) {
+		logMessage(L"Failed to create shader after compiling from: " + *m_filename);
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	// Delete unneeded data
+	delete m_filename;
+	m_filename = 0;
+
+	delete m_shaderModel;
+	m_shaderModel = 0;
+
+	delete m_entryPoint;
+	m_entryPoint = 0;
+
+	return ERROR_SUCCESS;
 }
 
-HRESULT bind(ID3D11DeviceContext* const context) {
+HRESULT Shader::bind(ID3D11DeviceContext* const context) {
 
+	if (m_shader == 0) {
+		logMessage(L"Cannot bind shader to the pipeline as it has not been initialized.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	if (m_bindLocation != 0) {
+		switch (*m_bindLocation) {
+		case BindLocation::GS:
+		{
+			context->GSSetShader(m_geometryShader, NULL, 0);
+		}
+		case BindLocation::PS:
+		{
+			context->PSSetShader(m_pixelShader, NULL, 0);
+		}
+		case BindLocation::VS:
+		{
+			context->VSSetShader(m_vertexShader, NULL, 0);
+		}
+		default:
+		{
+			logMessage(L"Unanticipated value of m_bindLocation. Code is broken.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);
+		}
+		}
+	} else {
+		logMessage(L"Cannot bind shader to the pipeline as configuration and initialization have yet to occur.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	return ERROR_SUCCESS;
+}
+
+void Shader::outputShaderErrorMessage(ID3D10Blob* const errorMessage) {
+	char* compileErrors;
+	wstring prefix(L"Compilation error: ");
+	wstring errorMsg;
+	std::string errorMsg_str;
+
+	// Get a pointer to the error message text buffer.
+	compileErrors = static_cast<char*>(errorMessage->GetBufferPointer());
+
+	// Write out the error message.
+	errorMsg_str = compileErrors;
+	if (FAILED(toWString(errorMsg, errorMsg_str))) {
+		logMessage(prefix + L" [problem converting error message to a wide-character string]");
+	} else {
+		logMessage(prefix + errorMsg);
+	}
+
+	// Release the error message.
+	errorMessage->Release();
+}
+
+HRESULT Shader::createInputLayout(ID3D11Device* const device,
+	const D3D11_INPUT_ELEMENT_DESC *pInputElementDescs,
+	UINT NumElements,
+	ID3D11InputLayout **ppInputLayout,
+	const bool once
+	) {
+
+	if (pInputElementDescs == 0 || NumElements == 0 || ppInputLayout == 0) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	}
+
+	// Check for shader initialization
+	if (m_shader == 0) {
+		logMessage(L"Cannot create an input layout as the shader has not been initialized.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	// Check for buffer existence
+	if (m_shaderBuffer == 0) {
+		logMessage(L"Cannot create an input layout as the shader bytecode buffer has been deleted.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	// Check for type of shader
+	if (*m_bindLocation != BindLocation::VS) {
+		logMessage(L"Cannot create an input layout for a non-vertex shader.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	HRESULT result = device->CreateInputLayout(pInputElementDescs, NumElements, m_shaderBuffer->GetBufferPointer(),
+		m_shaderBuffer->GetBufferSize(), ppInputLayout);
+
+	if (FAILED(result)) {
+		logMessage(L"Failed to create input layout object.");
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	} else {
+		if (once) {
+			m_shaderBuffer->Release();
+			m_shaderBuffer = 0;
+		}
+		return ERROR_SUCCESS;
+	}
 }
