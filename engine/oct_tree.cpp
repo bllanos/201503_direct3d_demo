@@ -57,7 +57,9 @@ int Octtree::checkCollisionsBetween(Octnode* node1, Octnode* node2, vector<Objec
 			if (distBetween < (	node1->nodeObjectList.at[i]->getBoundingRadius() +
 								node2->nodeObjectList.at[j]->getBoundingRadius())){
 				//if they are colliding add them to the list of pairs of collisions
-				ObjectModel newCollision[] = { node1->nodeObjectList.at[i], node2->nodeObjectList.at[j] };
+				ObjectModel **newCollision = new ObjectModel*[2];
+				newCollision[0] = node1->nodeObjectList.at[i];
+				newCollision[1] = node2->nodeObjectList.at[j];
 				outCollisions.push_back(newCollision);
 			}
 		}
@@ -82,7 +84,9 @@ int Octtree::checkCollisionsWithin(Octnode* node, vector<ObjectModel **> outColl
 			if (distBetween < (node->nodeObjectList.at[i]->getBoundingRadius() +
 				node->nodeObjectList.at[j]->getBoundingRadius())){
 				//if they are colliding add them to the list of pairs of collisions
-				ObjectModel newCollision[] = { node->nodeObjectList.at[i], node->nodeObjectList.at[j] };
+				ObjectModel **newCollision = new ObjectModel*[2];
+				newCollision[0] = node->nodeObjectList.at[i];
+				newCollision[1] = node->nodeObjectList.at[j];
 				outCollisions.push_back(newCollision);
 			}
 		}
