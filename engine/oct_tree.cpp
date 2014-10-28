@@ -10,7 +10,7 @@ Octtree::Octtree(XMFLOAT3 position, float length, int depth){
 Octtree::~Octtree(){
 	delete rootNode;
 	for (int i = 0; i < completeObjectList.size(); i++){
-		//delete completeObjectList.at[i];
+		delete completeObjectList.at(i);
 	}
 }
 
