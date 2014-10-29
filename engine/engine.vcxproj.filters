@@ -248,5 +248,8 @@
     <ClInclude Include="header\geometry\InvariantParticles.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
+    <ClInclude Include="header\rendering\InvariantParticlesRenderer.h">
+      <Filter>header\rendering</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

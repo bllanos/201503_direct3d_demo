@@ -46,6 +46,7 @@
     <ClInclude Include="header\geometry\GridSphereTextured.h" />
     <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h" />
     <ClInclude Include="header\geometry\SphereModel.h" />
+    <ClInclude Include="header\rendering\InvariantParticlesRenderer.h" />
     <ClInclude Include="header\rendering\SkinnedRenderer.h" />
     <ClInclude Include="header\util\pipelineDefs.h" />
     <ClInclude Include="header\util\Shader.h" />
