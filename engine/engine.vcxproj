@@ -40,6 +40,7 @@
     <ClCompile Include="Transformable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\geometry\InvariantParticles.h" />
     <ClInclude Include="header\geometry\GridQuadTextured.h" />
     <ClInclude Include="header\geometry\GridSphereTextured.h" />
     <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h" />
