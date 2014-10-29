@@ -26,15 +26,15 @@ Description
 #include <windows.h>
 #include <DirectXMath.h>
 #include "ITransformable.h"
+#include "Transformable.h"
 #include "engineGlobals.h"
 
 class SkinnedColorTestTransformable : public ITransformable {
 
 	// Data members
 private:
-	DirectX::XMFLOAT4X4 m_worldTransform;
-	DirectX::XMFLOAT3 m_position;
-	DirectX::XMFLOAT3 m_scale;
+	Transformable* m_transform;
+
 	bool m_fixed;
 	bool m_orbit;
 	DirectX::XMFLOAT3 m_axis;
@@ -58,7 +58,7 @@ public:
 
 	virtual ~SkinnedColorTestTransformable(void);
 
-	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const override;
+	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const;
 
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
 

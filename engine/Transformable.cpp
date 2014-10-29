@@ -44,20 +44,32 @@ Transformable::Transformable(DirectX::XMFLOAT3& scale, DirectX::XMFLOAT3& positi
 Transformable::~Transformable(void)
 {}
 
-HRESULT Transformable::getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const {
+HRESULT Transformable::getScale(XMFLOAT3& theScale) const
+{
+	theScale = m_scale;
+	return ERROR_SUCCESS;
+}
+
+HRESULT Transformable::getWorldTransform(XMFLOAT4X4& worldTransform) const {
 	worldTransform = m_worldTransform;
 	return ERROR_SUCCESS;
 }
 
-HRESULT Transformable::getWorldTransformNoScale(DirectX::XMFLOAT4X4& worldTransformNoScale) {
+HRESULT Transformable::getWorldTransformNoScale(XMFLOAT4X4& worldTransformNoScale) {
 	worldTransformNoScale = m_worldTransformNoScale;
+	return ERROR_SUCCESS;
+}
+
+HRESULT Transformable::setWorldTransform(DirectX::XMFLOAT4X4& newWorldTransform)
+{
+	m_worldTransformNoScale = newWorldTransform;
 	return ERROR_SUCCESS;
 }
 
 HRESULT Transformable::update(const DWORD currentTime, const DWORD updateTimeInterval) {
 
 	// First get parent's world transform
-	DirectX::XMFLOAT4X4 parentWorldTransform;
+	XMFLOAT4X4 parentWorldTransform;
 	if (m_parent != 0) {
 		m_parent->getWorldTransformNoScale(parentWorldTransform);
 	}
@@ -163,6 +175,10 @@ void Transformable::updateCameraProperties()
 
 XMFLOAT3 Transformable::getPosition(void) const {
 	return m_position;
+}
+
+XMFLOAT4 Transformable::getOrientation(void) const {
+	return m_orientation;
 }
 
 XMFLOAT3 Transformable::getForwardWorldDirection(void) {

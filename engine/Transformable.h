@@ -62,9 +62,13 @@ public:
 
 	virtual ~Transformable(void);
 
+	virtual HRESULT getScale(DirectX::XMFLOAT3&) const;
+
 	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const override;
 
 	virtual HRESULT getWorldTransformNoScale(DirectX::XMFLOAT4X4& worldTransformNoScale);
+
+	virtual HRESULT setWorldTransform(DirectX::XMFLOAT4X4& newWorldTransform);
 
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
 
@@ -76,6 +80,7 @@ public:
 	void Spin(float roll, float pitch, float yaw); // spin the object (tilt, pan)
 
 	DirectX::XMFLOAT3 getPosition(void) const;
+	DirectX::XMFLOAT4 getOrientation(void) const;
 
 	DirectX::XMFLOAT3 getForwardWorldDirection(void);
 
