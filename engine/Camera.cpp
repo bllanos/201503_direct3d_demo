@@ -263,12 +263,11 @@ HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 	}
 	else if (input.IsKeyDown(VK_CONTROL)){
 
-		XMFLOAT2 mouseVel(0.0f, 0.0f);
+		XMFLOAT2 mouseVel;
 		if (mouse.GetWindowVelocity(mouseVel)) {
 			m_transform->Spin(0.0f, 0.0f, mouseVel.x);
 			m_transform->Spin(0.0f, -mouseVel.y, 0.0f);
 		}
-
 		
 		if (input.IsKeyDown(VK_LEFT)) //Pan Camera Left
 			PanLeft();
