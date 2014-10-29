@@ -53,26 +53,31 @@ HRESULT Shader::wstringToBindLocation(BindLocation& out, const std::wstring& in)
 
 Shader::~Shader(void) {
 	if (m_bindLocation != 0) {
-		switch (*m_bindLocation) {
-		case BindLocation::GS:
-		{
-			m_geometryShader->Release();
-			m_geometryShader = 0;
-		}
-		case BindLocation::PS:
-		{
-			m_pixelShader->Release();
-			m_pixelShader = 0;
-		}
-		case BindLocation::VS:
-		{
-			m_vertexShader->Release();
-			m_vertexShader = 0;
-		}
-		default:
-		{
-			throw std::exception("Unanticipated value of m_bindLocation. Code is broken.");
-		}
+		if (m_shader != 0) {
+			switch (*m_bindLocation) {
+			case BindLocation::GS:
+			{
+				m_geometryShader->Release();
+				m_geometryShader = 0;
+				break;
+			}
+			case BindLocation::PS:
+			{
+				m_pixelShader->Release();
+				m_pixelShader = 0;
+				break;
+			}
+			case BindLocation::VS:
+			{
+				m_vertexShader->Release();
+				m_vertexShader = 0;
+				break;
+			}
+			default:
+			{
+				throw std::exception("Unanticipated value of m_bindLocation. Code is broken.");
+			}
+			}
 		}
 
 		delete m_bindLocation;
@@ -243,16 +248,19 @@ HRESULT Shader::initialize(ID3D11Device* device,
 		}
 		m_shaderBuffer->Release();
 		m_shaderBuffer = 0;
+		break;
 	}
 	case BindLocation::PS:
 	{
 		result = device->CreatePixelShader(m_shaderBuffer->GetBufferPointer(), m_shaderBuffer->GetBufferSize(), NULL, &m_pixelShader);
 		m_shaderBuffer->Release();
 		m_shaderBuffer = 0;
+		break;
 	}
 	case BindLocation::VS:
 	{
 		result = device->CreateVertexShader(m_shaderBuffer->GetBufferPointer(), m_shaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
+		break;
 	}
 	default:
 	{
@@ -290,14 +298,17 @@ HRESULT Shader::bind(ID3D11DeviceContext* const context) {
 		case BindLocation::GS:
 		{
 			context->GSSetShader(m_geometryShader, NULL, 0);
+			break;
 		}
 		case BindLocation::PS:
 		{
 			context->PSSetShader(m_pixelShader, NULL, 0);
+			break;
 		}
 		case BindLocation::VS:
 		{
 			context->VSSetShader(m_vertexShader, NULL, 0);
+			break;
 		}
 		default:
 		{
@@ -368,7 +379,7 @@ HRESULT Shader::createInputLayout(ID3D11Device* const device,
 
 	if (FAILED(result)) {
 		logMessage(L"Failed to create input layout object.");
-		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
 	} else {
 		if (once) {
 			m_shaderBuffer->Release();

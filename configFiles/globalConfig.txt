@@ -11,8 +11,8 @@ BOOL -- main::outputConfigFlag = true
 BOOL -- BasicWindow_LogUser::enableLogging = true
 WSTRING -- BasicWindow_LogUser::msgPrefix = L"Main Window"
 BOOL -- BasicWindow_LogUser::useGlobalLog = true
-# Note: The timestamping change will not affect the global Logger if uncommented
-# BOOL -- BasicWindow_LogUser::timestampEnable = true
+# Note: The timestamping change will not affect the global Logger
+BOOL -- BasicWindow_LogUser::timestampEnable = true
 BOOL -- BasicWindow_ConfigUser::enableConfigUseLogging = true
 # The title will appear only in the logs, being overwritten with FPS data by the StateControl instance
 WSTRING -- BasicWindow::windowTitle = L"Main Window"

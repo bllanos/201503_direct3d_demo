@@ -44,7 +44,7 @@ Description
 #define SKINNEDRENDERER_MATERIAL_STRUCT SkinnedColorGeometry::Material
 
 // Default log message prefix used before more information is available
-#define SKINNEDRENDERER_START_MSG_PREFIX L"SkinnedRenderer "
+#define SKINNEDRENDERER_START_MSG_PREFIX L"SkinnedRenderer"
 
 /* The following definitions are:
   -Key parameters used to retrieve configuration data
@@ -60,22 +60,22 @@ Description
 #define SKINNEDRENDERER_PSSHADER_FIELD_PREFIX L"PS_"
 
 #define SKINNEDRENDERER_SHADER_ENABLELOGGING_FLAG_DEFAULT true
-#define SKINNEDRENDERER_SHADER_ENABLELOGGING_FLAG_FIELD L"_enableLogging"
+#define SKINNEDRENDERER_SHADER_ENABLELOGGING_FLAG_FIELD L"enableLogging"
 
 #define SKINNEDRENDERER_SHADER_MSGPREFIX_DEFAULT L"Shader (Shader class)"
-#define SKINNEDRENDERER_SHADER_MSGPREFIX_FIELD L"_msgPrefix"
+#define SKINNEDRENDERER_SHADER_MSGPREFIX_FIELD L"msgPrefix"
 
 #define SKINNEDRENDERER_SHADER_SCOPE_DEFAULT L"shader"
-#define SKINNEDRENDERER_SHADER_SCOPE_FIELD L"_scope"
+#define SKINNEDRENDERER_SHADER_SCOPE_FIELD L"scope"
 
 #define SKINNEDRENDERER_SHADER_SCOPE_LOGUSER_DEFAULT L"shader_LogUser"
-#define SKINNEDRENDERER_SHADER_SCOPE_LOGUSER_FIELD L"_scope_LogUser"
+#define SKINNEDRENDERER_SHADER_SCOPE_LOGUSER_FIELD L"scope_LogUser"
 
 #define SKINNEDRENDERER_SHADER_SCOPE_CONFIGUSER_DEFAULT L"shader_ConfigUser"
-#define SKINNEDRENDERER_SHADER_SCOPE_CONFIGUSER_FIELD L"_scope_ConfigUser"
+#define SKINNEDRENDERER_SHADER_SCOPE_CONFIGUSER_FIELD L"scope_ConfigUser"
 
-#define SKINNEDRENDERER_SHADER_CONFIGFILE_NAME_FIELD L"_inputConfigFileName"
-#define SKINNEDRENDERER_SHADER_CONFIGFILE_PATH_FIELD L"_inputConfigFilePath"
+#define SKINNEDRENDERER_SHADER_CONFIGFILE_NAME_FIELD L"inputConfigFileName"
+#define SKINNEDRENDERER_SHADER_CONFIGFILE_PATH_FIELD L"inputConfigFilePath"
 
 // Lighting parameters
 #define SKINNEDRENDERER_LIGHT_FLAG_FIELD L"enableLighting"
@@ -222,6 +222,9 @@ private:
 	   mechanism for changing the light data between frames.
 	 */
 	Light* m_light;
+
+	/* True if configuration was completed successfully. */
+	bool m_configured;
 
 	// Currently not implemented - will cause linker errors if called
 private:

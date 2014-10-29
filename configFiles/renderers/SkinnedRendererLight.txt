@@ -6,7 +6,6 @@
 BOOL -- SkinnedRenderer_LogUser::enableLogging = true
 WSTRING -- SkinnedRenderer_LogUser::msgPrefix = L"SkinnedRenderer"
 BOOL -- SkinnedRenderer_LogUser::useGlobalLog = true
-# BOOL -- SkinnedRenderer_LogUser::timestampEnable = true
 
 # ConfigUser configuration
 # ------------------------

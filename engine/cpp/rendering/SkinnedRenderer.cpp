@@ -38,7 +38,7 @@ SkinnedRenderer::SkinnedRenderer(
 	filename, path),
 	m_vertexShader(0), m_pixelShader(0), m_layout(0),
 	m_cameraBuffer(0), m_materialBuffer(0), m_lightBuffer(0),
-	m_lighting(false), m_light(0)
+	m_lighting(false), m_light(0), m_configured(false)
 {
 	std::wstring logUserScopeDefault(SKINNEDRENDERER_LOGUSER_SCOPE);
 	std::wstring configUserScopeDefault(SKINNEDRENDERER_CONFIGUSER_SCOPE);
@@ -85,6 +85,11 @@ SkinnedRenderer::~SkinnedRenderer(void) {
 }
 
 HRESULT SkinnedRenderer::initialize(ID3D11Device* const device) {
+
+	if (!m_configured) {
+		logMessage(L"Initialization cannot proceed as configuration has not been completed successfully.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
 
 	if( FAILED(createShaders(device)) ) {
 		logMessage(L"Call to createShaders() failed.");
@@ -220,19 +225,16 @@ HRESULT SkinnedRenderer::configure(const std::wstring& scope, const std::wstring
 			wstring* shaderStringVariables[] = {
 				&shaderMsgPrefix,
 				&shaderScope,
-				&shaderScope_configUser,
 				&shaderScope_logUser,
-				&shaderInputConfigFileName,
-				&shaderInputConfigFilePath
+				&shaderScope_configUser
 			};
 
+			const size_t nStringDefaults = 4;
 			wstring shaderStringDefaults[] = {
 				SKINNEDRENDERER_SHADER_MSGPREFIX_DEFAULT,
 				SKINNEDRENDERER_SHADER_SCOPE_DEFAULT,
 				SKINNEDRENDERER_SHADER_SCOPE_LOGUSER_DEFAULT,
 				SKINNEDRENDERER_SHADER_SCOPE_CONFIGUSER_DEFAULT,
-				L"",
-				L""
 			};
 
 			const size_t nShaders = 2;
@@ -248,7 +250,7 @@ HRESULT SkinnedRenderer::configure(const std::wstring& scope, const std::wstring
 				SKINNEDRENDERER_PSSHADER_FIELD_PREFIX
 			};
 
-			const size_t nStringFields = 6;
+			const size_t nStringFields = 4;
 			wstring suffixes[] = {
 				SKINNEDRENDERER_SHADER_MSGPREFIX_FIELD,
 				SKINNEDRENDERER_SHADER_SCOPE_FIELD,
@@ -267,7 +269,7 @@ HRESULT SkinnedRenderer::configure(const std::wstring& scope, const std::wstring
 				}
 
 				// Set default string values
-				for (j = 0; j < nStringFields; ++j) {
+				for (j = 0; j < nStringDefaults; ++j) {
 					*shaderStringVariables[j] = shaderStringDefaults[j];
 				}
 
@@ -275,6 +277,21 @@ HRESULT SkinnedRenderer::configure(const std::wstring& scope, const std::wstring
 					if (retrieve<Config::DataType::WSTRING, wstring>(scope, prefixes[i] + suffixes[j], stringValue)) {
 						*shaderStringVariables[j] = *stringValue;
 					}
+				}
+
+				// Filename and path
+				shaderInputConfigFileName = L"";
+				shaderInputConfigFilePath = L"";
+				if (retrieve<Config::DataType::FILENAME, wstring>(scope, prefixes[i] + suffixes[4], stringValue)) {
+					shaderInputConfigFileName = *stringValue;
+
+					if (retrieve<Config::DataType::DIRECTORY, wstring>(scope, prefixes[i] + suffixes[5], stringValue)) {
+						shaderInputConfigFilePath = *stringValue;
+					}
+				} else {
+					logMessage(L"No shader configuration filename found in configuration data.");
+					result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
+					break;
 				}
 
 				// Try to create the shader
@@ -300,6 +317,11 @@ HRESULT SkinnedRenderer::configure(const std::wstring& scope, const std::wstring
 				}
 			}
 		}
+
+		if (SUCCEEDED(result)) {
+			m_configured = true;
+		}
+
 	} else {
 		logMessage(L"Initialization from configuration data: No Config instance to use.");
 	}
