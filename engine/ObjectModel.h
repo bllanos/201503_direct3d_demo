@@ -9,6 +9,7 @@
 using namespace std;
 
 #include "Transformable.h"
+#include "Phase1TestTransformable.h"
 #include "IGeometry.h"
 #include "ConfigUser.h"
 
@@ -23,9 +24,12 @@ class ObjectModel : public ConfigUser {
 		virtual XMFLOAT3 getBoundingOrigin();
 		virtual float getBoundingRadius();
 
+		virtual HRESULT updateContainedTransforms(const DWORD currentTime, const DWORD updateTimeInterval);
+		virtual HRESULT addITransformable(ITransformable*);
+		virtual HRESULT draw(ID3D11DeviceContext* const context, GeometryRendererManager& manager, Camera * camera);
 
 	protected:
 		IGeometry* model;
-		vector<const ITransformable *>* tForm_shared;
+		vector<ITransformable *>* tForm_shared;
 		Transformable* tForm;
 };

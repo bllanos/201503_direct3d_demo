@@ -20,6 +20,7 @@ ObjectModel::ObjectModel(IGeometry* geometry) : ConfigUser(true, OBJECTMODEL_STA
 	ENGINE_DEFAULT_CONFIG_PATH_TEST
 	), model(0), tForm_shared(0){
 	model = geometry;
+	tForm_shared = new vector<ITransformable *>();
 }
 
 ObjectModel::~ObjectModel(){
@@ -43,4 +44,30 @@ XMFLOAT3 ObjectModel::getBoundingOrigin(){
 float ObjectModel::getBoundingRadius(){
 	//TODO
 	return 0;
+}
+
+HRESULT ObjectModel::updateContainedTransforms(const DWORD currentTime, const DWORD updateTimeInterval){
+	HRESULT result;
+	for (int i = 0; i < tForm_shared->size(); i++){
+		result = ((Phase1TestTransformable*)(*tForm_shared)[i])->update(currentTime, updateTimeInterval);
+		if (FAILED(result)){
+			return result;
+		}
+	}
+	return ERROR_SUCCESS;
+}
+
+HRESULT ObjectModel::addITransformable(ITransformable * newTrans){
+	tForm_shared->push_back(newTrans);
+	return ERROR_SUCCESS;
+}
+
+HRESULT ObjectModel::draw(ID3D11DeviceContext* const context, GeometryRendererManager& manager, Camera * camera){
+	HRESULT result;
+	result = model->drawUsingAppropriateRenderer(context, manager, camera);
+	if (FAILED(result)){
+		logMessage(L"failed so hard at rendering a fucking asteriod you n00b.");
+	}
+
+	return result;
 }

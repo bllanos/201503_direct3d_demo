@@ -103,12 +103,6 @@ HRESULT GameState::drawContents(ID3D11DeviceContext* const context, GeometryRend
 }
 
 HRESULT GameState::update(const DWORD currentTime, const DWORD updateTimeInterval) {
-	/*
-	if (FAILED(m_tree->update(currentTime, updateTimeInterval))) {
-		logMessage(L"Call to oct_tree update() function failed");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-	*/
 	if (FAILED(((Phase1TestTransformable*)(*transformations_Shared)[0])->update(currentTime, updateTimeInterval))){
 		logMessage(L"call to asteroid update() function failed");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
