@@ -117,48 +117,48 @@ void Transformable::computeLocalTransform(DirectX::XMFLOAT4X4& localTransformNoS
 
 void Transformable::Move(float ahead)
 {
-	updateCameraProperties();
+	updateTransformProperties();
 
-	// move the camera ahead by the given amount
+	// move ahead by the given amount
 	XMVECTOR aheadv = XMVectorScale(XMLoadFloat3(&m_forward), ahead);
 	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), aheadv));
 }
 
 void Transformable::Strafe(float side)
 {
-	updateCameraProperties();
+	updateTransformProperties();
 
-	// move the camera horizontally by the given amount
+	// move horizontally by the given amount
 	XMVECTOR sidev = XMVectorScale(XMLoadFloat3(&m_left), side);
 	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), sidev));
 }
 
 void Transformable::Crane(float vertical)
 {
-	updateCameraProperties();
+	updateTransformProperties();
 
-	// move the camera vertically by the given amount
+	// move vertically by the given amount
 	XMVECTOR verticalv = XMVectorScale(XMLoadFloat3(&m_up), vertical);
 	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), verticalv));
 }
 
 void Transformable::Spin(float roll, float pitch, float yaw) {
-	updateCameraProperties();
+	updateTransformProperties();
 
-	// apply camera-relative orientation changes
-	XMVECTOR rollq = XMQuaternionRotationAxis(XMLoadFloat3(&m_forward), roll * CAMERA_ORI_CHANGE_FACTOR);
-	XMVECTOR pitchq = XMQuaternionRotationAxis(XMLoadFloat3(&m_left), pitch * CAMERA_ORI_CHANGE_FACTOR);
-	XMVECTOR yawq = XMQuaternionRotationAxis(XMLoadFloat3(&m_up), yaw * CAMERA_ORI_CHANGE_FACTOR);
+	// apply transform-relative orientation changes
+	XMVECTOR rollq = XMQuaternionRotationAxis(XMLoadFloat3(&m_forward), roll * TRANSFORM_ORI_CHANGE_FACTOR);
+	XMVECTOR pitchq = XMQuaternionRotationAxis(XMLoadFloat3(&m_left), pitch * TRANSFORM_ORI_CHANGE_FACTOR);
+	XMVECTOR yawq = XMQuaternionRotationAxis(XMLoadFloat3(&m_up), yaw * TRANSFORM_ORI_CHANGE_FACTOR);
 
-	// update camera orientation with roll, pitch, and yaw
+	// update transform orientation with roll, pitch, and yaw
 	XMStoreFloat4(&m_orientation, XMQuaternionMultiply(XMLoadFloat4(&m_orientation), rollq));
 	XMStoreFloat4(&m_orientation, XMQuaternionMultiply(XMLoadFloat4(&m_orientation), pitchq));
 	XMStoreFloat4(&m_orientation, XMQuaternionMultiply(XMLoadFloat4(&m_orientation), yawq));
 }
 
-void Transformable::updateCameraProperties()
+void Transformable::updateTransformProperties()
 {
-	// make sure camera properties are up to date
+	// make sure transform properties are up to date
 	// NB: actually unnecessary, since they are updated every frame anyway; done here for clarity
 	m_forward = XMFLOAT3(0.0f, 0.0f, 1.0f);
 	m_up = XMFLOAT3(0.0f, 1.0f, 0.0f);

@@ -30,7 +30,7 @@ Description
 // Class name: Transformable
 ////////////////////////////////////////////////////////////////////////////////
 
-const float CAMERA_ORI_CHANGE_FACTOR = 0.01f; // amount to change the roll, pitch, and yaw by
+const float TRANSFORM_ORI_CHANGE_FACTOR = 0.01f; // amount to change the roll, pitch, and yaw by
 
 class Transformable : public ITransformable
 {
@@ -86,7 +86,7 @@ public:
 
 protected:
 	virtual void computeLocalTransform(DirectX::XMFLOAT4X4& localTransformNoScale, const DWORD updateTimeInterval);
-	void updateCameraProperties();
+	void updateTransformProperties();
 
 	// Currently not implemented - will cause linker errors if called
 private:

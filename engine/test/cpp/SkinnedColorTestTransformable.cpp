@@ -72,6 +72,8 @@ HRESULT SkinnedColorTestTransformable::getWorldTransform(DirectX::XMFLOAT4X4& wo
 }
 
 HRESULT SkinnedColorTestTransformable::update(const DWORD currentTime, const DWORD updateTimeInterval) {
+	m_transform->update(currentTime, updateTimeInterval);
+	
 	// Initialization
 	XMMATRIX worldTransform = XMMatrixIdentity();
 
