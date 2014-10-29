@@ -33,12 +33,12 @@ DOUBLE -- GridSphereTextured::specularPower = 10.0
 
 # GridSphereTextured lighting configuration
 # ---------------------------------------
-BOOL -- GridSphereTextured::renderWithLighting = false
+BOOL -- GridSphereTextured::renderWithLighting = true
 
 # GridSphereTextured albedo texture controls
 # ----------------------------------------------
 BOOL -- GridSphereTextured::createAlbedoTexture = true
-BOOL -- GridSphereTextured::renderAlbedoTexture = false
+BOOL -- GridSphereTextured::renderAlbedoTexture = true
 
 # GridSphereTextured albedo texture configuration
 # ----------------------------------------------
