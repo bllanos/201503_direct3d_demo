@@ -35,6 +35,18 @@ m_blend(1.0f), m_pColors(pColors)
 	}
 }
 
+CubeModel::CubeModel(Transformable* transform, float lengthX, float lengthY, float lengthZ, XMFLOAT4 * pColors) :
+SimpleColorGeometry(true, CUBEMODEL_START_MSG_PREFIX, 0),
+m_xlen(lengthX), m_ylen(lengthY), m_zlen(lengthZ),
+m_blend(1.0f), m_pColors(pColors)
+{
+	m_transform = transform;
+	if (m_xlen <= 0.0f || m_ylen <= 0.0f || m_zlen <= 0.0f) {
+		// This is a Microsoft-specific constructor
+		throw std::exception("Attempt to construct a CubeModel object with one or more negative or zero dimensions.");
+	}
+}
+
 CubeModel::~CubeModel(void)
 {
 	if( m_transform != 0 ) {
@@ -253,6 +265,16 @@ float CubeModel::setTransparencyBlendFactor(float newFactor) {
 
 	m_blend = newFactor;
 	return temp;
+}
+
+void CubeModel::setParentTransformable(Transformable* theParent)
+{
+	m_transform->setParent(theParent);
+}
+
+Transformable* CubeModel::getTransformable() const
+{
+	return m_transform;
 }
 
 HRESULT CubeModel::update(const DWORD currentTime, const DWORD updateTimeInterval)

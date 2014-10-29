@@ -38,7 +38,7 @@ HRESULT CubeTransformable::getWorldTransform(DirectX::XMFLOAT4X4& worldTransform
 
 HRESULT CubeTransformable::update(const DWORD currentTime, const DWORD updateTimeInterval)
 {
-	Transformable::update(currentTime, updateTimeInterval);
+	//Transformable::update(currentTime, updateTimeInterval);
 
 	float endTime = static_cast<float>(currentTime + updateTimeInterval);
 	float nPeriods = endTime / CUBE_PERIOD;
@@ -46,22 +46,66 @@ HRESULT CubeTransformable::update(const DWORD currentTime, const DWORD updateTim
 	float sine = XMScalarSin(nRadians);
 
 	// Initialization
-	XMMATRIX worldTransform = XMMatrixIdentity();
+	//XMMATRIX worldTransform = XMMatrixIdentity();
+	/*
+	if (m_parent != 0) {
+		XMFLOAT4X4 parentTrans;
+		m_parent->getWorldTransformNoScale(parentTrans);
+		XMMATRIX parentMatrix;
+		XMStoreFloat4x4(&parentTrans, parentMatrix);
+
+		worldTransform = XMMatrixMultiply(worldTransform, parentMatrix);
+	}*/
+
+	// First get parent's world transform
+	XMFLOAT4X4 t_worldTransform;
+	if (m_parent != 0) {
+		m_parent->getWorldTransformNoScale(t_worldTransform);
+	}
+	else {
+		XMStoreFloat4x4(&t_worldTransform, XMMatrixIdentity());
+	}
+
+	XMMATRIX currMatrix;
+	currMatrix = XMLoadFloat4x4(&t_worldTransform);
 
 	// Rotation first
-	worldTransform = XMMatrixMultiply(worldTransform, XMMatrixRotationX(nRadians));
-	worldTransform = XMMatrixMultiply(worldTransform, XMMatrixRotationY(nRadians / 3.0f));
-	worldTransform = XMMatrixMultiply(worldTransform, XMMatrixRotationY(nRadians / 2.0f));
+	currMatrix = XMMatrixMultiply(currMatrix, XMMatrixRotationX(nRadians));
+	currMatrix = XMMatrixMultiply(currMatrix, XMMatrixRotationY(nRadians / 3.0f));
+	currMatrix = XMMatrixMultiply(currMatrix, XMMatrixRotationY(nRadians / 2.0f));
+
+	currMatrix = XMMatrixMultiply(currMatrix,
+		XMMatrixTranslation(5.0f, 0.0f, 0.0f));
+
+	// Get local transform
+	computeLocalTransform(m_worldTransformNoScale, updateTimeInterval);
+
+	XMStoreFloat4x4(&t_worldTransform, currMatrix);
+
+	// Compute transformation without scaling
+	XMStoreFloat4x4(&m_worldTransformNoScale,
+		XMMatrixMultiply(XMLoadFloat4x4(&m_worldTransformNoScale), XMLoadFloat4x4(&t_worldTransform)));
+
+	// Compute transformation with scaling
+	XMStoreFloat4x4(&m_worldTransform,
+		XMMatrixMultiply(XMMatrixScalingFromVector(XMLoadFloat3(&m_scale)), XMLoadFloat4x4(&m_worldTransformNoScale)));
+
+	// Rotation first
+	//worldTransform = XMMatrixMultiply(worldTransform, XMMatrixRotationX(nRadians));
+	//worldTransform = XMMatrixMultiply(worldTransform, XMMatrixRotationY(nRadians / 3.0f));
+	//worldTransform = XMMatrixMultiply(worldTransform, XMMatrixRotationY(nRadians / 2.0f));
 
 	// Translation
-	worldTransform = XMMatrixMultiply(worldTransform,
+	/*worldTransform = XMMatrixMultiply(worldTransform,
 		XMMatrixTranslation(
 		sine*CUBE_TRANSLATE,
 		sine*CUBE_TRANSLATE,
 		sine*CUBE_TRANSLATE
-		));
+		));*/
 
-	XMStoreFloat4x4(&m_worldTransformNoScale, worldTransform);
+	
+	currMatrix = XMLoadFloat4x4(&t_worldTransform);
+	XMStoreFloat4x4(&m_worldTransformNoScale, currMatrix);
 
 	return ERROR_SUCCESS;
 }

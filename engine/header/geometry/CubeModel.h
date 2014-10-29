@@ -26,6 +26,7 @@ Description
 #include "vertexTypes.h"
 #include "SimpleColorGeometry.h"
 #include "CubeTransformable.h"
+#include "Transformable.h"
 
 #include <string>
 
@@ -42,6 +43,9 @@ public:
 	CubeModel(float lengthX, float lengthY, float lengthZ,
 		DirectX::XMFLOAT4 * pColors = 0);
 
+	CubeModel(Transformable* transform, float lengthX, float lengthY, float lengthZ,
+		DirectX::XMFLOAT4 * pColors = 0);
+
 	virtual ~CubeModel(void);
 
 	virtual HRESULT initialize(ID3D11Device* const d3dDevice);
@@ -55,6 +59,9 @@ public:
 
 	HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
 
+	void setParentTransformable(Transformable* theParent);
+	Transformable* getTransformable() const;
+
 	// Data members
 protected:
 	/* The Transformable object is responsible for making this
@@ -63,7 +70,7 @@ protected:
 	   The CubeModel object assumes that it owns this pointer
 	   (i.e. the CubeModel destructor will delete the pointer).
 	 */
-	CubeTransformable* m_transform;
+	Transformable* m_transform;
 
 	/* Model dimensions */
 	float m_xlen;

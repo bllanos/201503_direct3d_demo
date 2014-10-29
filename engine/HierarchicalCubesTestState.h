@@ -25,6 +25,7 @@ Description
 #include "Camera.h"
 #include "CubeModel.h"
 #include "engineGlobals.h"
+#include "CubeTransformableTwo.h"
 
 // Action period in milliseconds
 #define HIERARCHICAL_STATE_PERIOD (5.0f * MILLISECS_PER_SEC_FLOAT)
@@ -38,6 +39,7 @@ class HierarchicalCubesTestState : public State, public LogUser {
 private:
 	Camera* m_camera;
 	CubeModel* m_cubeModel;
+	CubeModel* m_cubeModelTwo;
 
 public:
 	HierarchicalCubesTestState(void);
