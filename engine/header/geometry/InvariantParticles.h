@@ -133,7 +133,7 @@ protected:
 	/* Initializes the model's vertex buffer only.
 	   Note: 'vertexSize' = sizeof(vertexTypeUsedByThisClass)
 	*/
-	virtual HRESULT initializeVertexAndIndexBuffers(ID3D11Device* const device,
+	virtual HRESULT initializeVertexBuffer(ID3D11Device* const device,
 		const INVARIANTPARTICLES_VERTEX_TYPE* const vertices, const size_t nVertices,
 		const D3D_PRIMITIVE_TOPOLOGY topology,
 		const unsigned int vertexSize);
@@ -167,15 +167,20 @@ public:
 
 	virtual HRESULT drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const Camera* const camera) override;
 
+	/* Allows for changing the position, motion, etc., of the model
+	   in the world.
+	*/
+	virtual HRESULT setTransformable(const ITransformable* const transform);
+
 	// Functions to support rendering
 public:
 
-	virtual float getTransparencyBlendFactor(void) const;
+	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform);
 
-	/* Allows for changing the position, motion, etc., of the model
-	   in the world.
-	 */
-	virtual HRESULT setTransformable(const ITransformable* const transform);
+	// Number of particles
+	size_t getVertexCount(void) const;
+
+	virtual float getTransparencyBlendFactor(void) const;
 
 	const Material* getMaterial(void) const;
 
@@ -214,8 +219,8 @@ public:
 
 	/* Used for determining vertex array size needed when initializing compound geometry.
 	   This function is not to be called during rendering, for instance.
-	*/
-	virtual size_t getNumberOfVertices(void) const = 0;
+	 */
+	virtual size_t getNumberOfVerticesToAdd(void) const = 0;
 
 	// Data members
 private:

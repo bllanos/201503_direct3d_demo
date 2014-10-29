@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="cpp\geometry\GridQuadTextured.cpp" />
     <ClCompile Include="cpp\geometry\GridSphereTextured.cpp" />
+    <ClCompile Include="cpp\geometry\InvariantParticles.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedTexturedGeometry.cpp" />
     <ClCompile Include="cpp\rendering\SkinnedRenderer.cpp" />
     <ClCompile Include="cpp\util\Shader.cpp" />

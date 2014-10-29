@@ -138,6 +138,9 @@
     <ClCompile Include="cpp\util\Shader.cpp">
       <Filter>source\util</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\geometry\InvariantParticles.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
