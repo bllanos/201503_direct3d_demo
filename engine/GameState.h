@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "Phase1TestTransformable.h"
 #include "State.h"
 #include "ConfigUser.h"
 #include "Camera.h"
@@ -25,7 +26,7 @@ private:
 
 	Octtree* m_tree;
 
-	SphereModel* asteroid;
+	vector<SphereModel*>* asteroids;
 
 	vector<Transformable*>* transformations;
 

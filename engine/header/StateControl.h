@@ -24,8 +24,8 @@ Description
 #pragma once // This is a Microsoft-specific way to prevent multiple inclusions of a header file
 
 // Class of the first State to be run
-#include "TexturedSphereTestState.h"
-#define STATECONTROL_FIRST_STATE TexturedSphereTestState
+#include "GameState.h"
+#define STATECONTROL_FIRST_STATE GameState
 
 
 #include "BasicWindow.h"
