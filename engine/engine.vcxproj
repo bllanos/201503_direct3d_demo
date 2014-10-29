@@ -17,6 +17,7 @@
     <ClCompile Include="cpp\rendering\SkinnedRenderer.cpp" />
     <ClCompile Include="cpp\util\Texture.cpp" />
     <ClCompile Include="cpp\util\TextureFromDDS.cpp" />
+    <ClCompile Include="GameState.cpp" />
     <ClCompile Include="ObjectModel.cpp" />
     <ClCompile Include="oct_node.cpp" />
     <ClCompile Include="oct_tree.cpp" />
@@ -42,6 +43,7 @@
     <ClCompile Include="Transformable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameState.h" />
     <ClInclude Include="header\geometry\GridQuadTextured.h" />
     <ClInclude Include="header\geometry\GridSphereTextured.h" />
     <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h" />

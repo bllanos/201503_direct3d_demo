@@ -12,6 +12,7 @@
 #include "oct_tree.h"
 #include "Transformable.h"
 #include "ITransformable.h"
+#include "SphereModel.h"
 #include <vector>
 
 // Logging message prefix
@@ -23,6 +24,12 @@ private:
 	Camera* m_camera;
 
 	Octtree* m_tree;
+
+	SphereModel* asteroid;
+
+	vector<Transformable*>* transformations;
+
+	vector<ITransformable*>* transformations_Shared;
 
 public:
 	GameState(void);

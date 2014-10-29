@@ -144,6 +144,9 @@
     <ClCompile Include="ObjectModel.cpp">
       <Filter>Unprocessed Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -250,6 +253,9 @@
     </ClInclude>
     <ClInclude Include="oct_tree.h">
       <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
