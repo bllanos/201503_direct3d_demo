@@ -28,7 +28,7 @@ SimpleColorGeometry(true, CUBEMODEL_START_MSG_PREFIX, 0),
 m_xlen(lengthX), m_ylen(lengthY), m_zlen(lengthZ),
 m_blend(1.0f), m_pColors(pColors)
 {
-	m_transform = new Transformable(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	m_transform = new CubeTransformable(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	if( m_xlen <= 0.0f || m_ylen <= 0.0f || m_zlen <= 0.0f ) {
 		// This is a Microsoft-specific constructor
 		throw std::exception("Attempt to construct a CubeModel object with one or more negative or zero dimensions.");
@@ -257,32 +257,5 @@ float CubeModel::setTransparencyBlendFactor(float newFactor) {
 
 HRESULT CubeModel::update(const DWORD currentTime, const DWORD updateTimeInterval)
 {
-	m_transform->update(currentTime, updateTimeInterval);
-
-	float endTime = static_cast<float>(currentTime + updateTimeInterval);
-	float nPeriods = endTime / CUBE_PERIOD;
-	float nRadians = nPeriods * XM_2PI;
-	float sine = XMScalarSin(nRadians);
-
-	// Initialization
-	XMMATRIX worldTransform = XMMatrixIdentity();
-
-	// Rotation first
-	worldTransform = XMMatrixMultiply(worldTransform, XMMatrixRotationX(nRadians));
-	worldTransform = XMMatrixMultiply(worldTransform, XMMatrixRotationY(nRadians / 3.0f));
-	worldTransform = XMMatrixMultiply(worldTransform, XMMatrixRotationY(nRadians / 2.0f));
-
-	// Translation
-	worldTransform = XMMatrixMultiply(worldTransform,
-		XMMatrixTranslation(
-		sine*CUBE_TRANSLATE,
-		sine*CUBE_TRANSLATE,
-		sine*CUBE_TRANSLATE
-		));
-
-	XMFLOAT4X4 newWorldTransform;
-	XMStoreFloat4x4(&newWorldTransform, worldTransform);
-	m_transform->setWorldTransform(newWorldTransform);
-
-	return ERROR_SUCCESS;
+	return m_transform->update(currentTime, updateTimeInterval);
 }

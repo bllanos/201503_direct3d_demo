@@ -25,18 +25,12 @@ Description
 #include <DirectXMath.h>
 #include "vertexTypes.h"
 #include "SimpleColorGeometry.h"
-#include "Transformable.h"
+#include "CubeTransformable.h"
 
 #include <string>
 
 // Default log message prefix used before more information is available
 #define CUBEMODEL_START_MSG_PREFIX L"CubeModel "
-
-// Action period in milliseconds
-#define CUBE_PERIOD (10.0f * MILLISECS_PER_SEC_FLOAT)
-
-// Extent of translation (half of full range)
-#define CUBE_TRANSLATE 1.0f
 
 class CubeModel : public SimpleColorGeometry
 {
@@ -69,7 +63,7 @@ protected:
 	   The CubeModel object assumes that it owns this pointer
 	   (i.e. the CubeModel destructor will delete the pointer).
 	 */
-	Transformable* m_transform;
+	CubeTransformable* m_transform;
 
 	/* Model dimensions */
 	float m_xlen;
