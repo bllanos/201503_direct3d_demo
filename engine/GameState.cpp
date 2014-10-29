@@ -18,7 +18,7 @@ using std::wstring;
 #define TREEDEPTH 4
 #define TREELENGTH 20
 #define TREELOCATION_X -10
-#define TREELOCATION_Y -10
+#define TREELOCATION_Y 10
 #define TREELOCATION_Z -10
 
 #define NUMBER_OF_ASTEROIDS 10
