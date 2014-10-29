@@ -1,6 +1,5 @@
 /*
 	This is supposed to be for the OctTree as a general object for storage of the game geometry
-
 */
 
 #pragma once
@@ -9,19 +8,24 @@
 
 using namespace std;
 
-#include "ITransformable.h"
+#include "Transformable.h"
 #include "IGeometry.h"
+#include "ConfigUser.h"
 
+// Logging message prefix
+#define OBJECTMODEL_START_MSG_PREFIX L"ObjectModel "
 
-class ObjectModel{
+class ObjectModel : public ConfigUser {
 	public:
-		ObjectModel();
-		~ObjectModel(void);
+		ObjectModel(IGeometry* geometry);
+		virtual ~ObjectModel(void);
 
-		XMFLOAT3 getBoundingOrigin();
-		float getBoundingRadius();
+		virtual XMFLOAT3 getBoundingOrigin();
+		virtual float getBoundingRadius();
+
+
 	protected:
 		IGeometry* model;
 		vector<const ITransformable *>* tForm_shared;
-		vector<ITransformable *>* tForm;
+		Transformable* tForm;
 };

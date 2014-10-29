@@ -33,13 +33,11 @@
 
 using namespace std;
 
-class Octtree {
+class Octtree{
 	public:
-		Octtree();
 		Octtree(XMFLOAT3 position, float length, int depth);
 		~Octtree();
 		
-		int advance();
 		int addObject(ObjectModel * newGameObject);
 		
 	protected:
