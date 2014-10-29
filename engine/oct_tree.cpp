@@ -16,13 +16,13 @@ Octtree::~Octtree(){
 
 int Octtree::addObject(ObjectModel * newGameObject){
 	//start a recursive call to put the object in the tree
-	//if(rootNode->fits(newGameObject) == 0){
+	if(rootNode->fits(newGameObject) == 0){
 		//only add the object to the list if it is put into the list at some point
 		completeObjectList->push_back(newGameObject);
 		return 0;
-	//}
+	}
 	//something went wrong and the object doesn't fit anywhere in the tree
-	//return -1;
+	return -1;
 }
 
 int Octtree::checkCollisions(vector<ObjectModel **>* outCollidingObjects){
@@ -35,24 +35,24 @@ int Octtree::checkCollisions(vector<ObjectModel **>* outCollidingObjects){
 
 int Octtree::checkCollisionsBetween(Octnode* node1, Octnode* node2, vector<ObjectModel **>* outCollisions){
 	//check all objects in the 2 passed nodes for collisions and pass back a list of all the collisions
-	for (int i = 0; i < node1->nodeObjectList.size(); i++){
-		for (int j = 0; j < node2->nodeObjectList.size(); j++){
+	for (int i = 0; i < node1->nodeObjectList->size(); i++){
+		for (int j = 0; j < node2->nodeObjectList->size(); j++){
 			//sphere vs sphere collision checks
 			//distace between the spheres
-			float distBetween = sqrt(	pow(node1->nodeObjectList.at(i)->getBoundingOrigin().x - 
-										node2->nodeObjectList.at(j)->getBoundingOrigin().x, 2) +
-										pow(node1->nodeObjectList.at(i)->getBoundingOrigin().y -
-										node2->nodeObjectList.at(j)->getBoundingOrigin().y, 2) +
-										pow(node1->nodeObjectList.at(i)->getBoundingOrigin().z -
-										node2->nodeObjectList.at(j)->getBoundingOrigin().z, 2)
+			float distBetween = sqrt(	pow(node1->nodeObjectList->at(i)->getBoundingOrigin().x - 
+										node2->nodeObjectList->at(j)->getBoundingOrigin().x, 2) +
+										pow(node1->nodeObjectList->at(i)->getBoundingOrigin().y -
+										node2->nodeObjectList->at(j)->getBoundingOrigin().y, 2) +
+										pow(node1->nodeObjectList->at(i)->getBoundingOrigin().z -
+										node2->nodeObjectList->at(j)->getBoundingOrigin().z, 2)
 				);
 			//check if distance is less than the sum of the radiis
-			if (distBetween < (	node1->nodeObjectList.at(i)->getBoundingRadius() +
-								node2->nodeObjectList.at(j)->getBoundingRadius())){
+			if (distBetween < (	node1->nodeObjectList->at(i)->getBoundingRadius() +
+								node2->nodeObjectList->at(j)->getBoundingRadius())){
 				//if they are colliding add them to the list of pairs of collisions
 				ObjectModel **newCollision = new ObjectModel*[2];
-				newCollision[0] = node1->nodeObjectList.at(i);
-				newCollision[1] = node2->nodeObjectList.at(j);
+				newCollision[0] = node1->nodeObjectList->at(i);
+				newCollision[1] = node2->nodeObjectList->at(j);
 				outCollisions->push_back(newCollision);
 			}
 		}
@@ -62,24 +62,24 @@ int Octtree::checkCollisionsBetween(Octnode* node1, Octnode* node2, vector<Objec
 
 int Octtree::checkCollisionsWithin(Octnode* node, vector<ObjectModel **>* outCollisions){
 	//check for all possible collisions between this node and all other nodes
-	for (int i = 0; i < node->nodeObjectList.size(); i++){
-		for (int j = i; j < node->nodeObjectList.size(); j++){
+	for (int i = 0; i < node->nodeObjectList->size(); i++){
+		for (int j = i; j < node->nodeObjectList->size(); j++){
 			//sphere vs sphere collision checks
 			//distace between the spheres
-			float distBetween = sqrt(pow(node->nodeObjectList.at(i)->getBoundingOrigin().x -
-				node->nodeObjectList.at(j)->getBoundingOrigin().x, 2) +
-				pow(node->nodeObjectList.at(i)->getBoundingOrigin().y -
-				node->nodeObjectList.at(j)->getBoundingOrigin().y, 2) +
-				pow(node->nodeObjectList.at(i)->getBoundingOrigin().z -
-				node->nodeObjectList.at(j)->getBoundingOrigin().z, 2)
+			float distBetween = sqrt(pow(node->nodeObjectList->at(i)->getBoundingOrigin().x -
+				node->nodeObjectList->at(j)->getBoundingOrigin().x, 2) +
+				pow(node->nodeObjectList->at(i)->getBoundingOrigin().y -
+				node->nodeObjectList->at(j)->getBoundingOrigin().y, 2) +
+				pow(node->nodeObjectList->at(i)->getBoundingOrigin().z -
+				node->nodeObjectList->at(j)->getBoundingOrigin().z, 2)
 				);
 			//check if distance is less than the sum of the radiis
-			if (distBetween < (node->nodeObjectList.at(i)->getBoundingRadius() +
-				node->nodeObjectList.at(j)->getBoundingRadius())){
+			if (distBetween < (node->nodeObjectList->at(i)->getBoundingRadius() +
+				node->nodeObjectList->at(j)->getBoundingRadius())){
 				//if they are colliding add them to the list of pairs of collisions
 				ObjectModel **newCollision = new ObjectModel*[2];
-				newCollision[0] = node->nodeObjectList.at(i);
-				newCollision[1] = node->nodeObjectList.at(j);
+				newCollision[0] = node->nodeObjectList->at(i);
+				newCollision[1] = node->nodeObjectList->at(j);
 				outCollisions->push_back(newCollision);
 			}
 		}

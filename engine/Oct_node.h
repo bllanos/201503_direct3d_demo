@@ -32,7 +32,7 @@ class Octnode{
 		
 	protected:
 		Octnode* children[8];
-		vector<ObjectModel *> nodeObjectList;
+		vector<ObjectModel *>* nodeObjectList;
 		Octnode * parentNode;
 		XMFLOAT3 origin;
 		float length;
