@@ -25,12 +25,18 @@ Description
 #include <DirectXMath.h>
 #include "vertexTypes.h"
 #include "SimpleColorGeometry.h"
-#include "ITransformable.h"
+#include "Transformable.h"
 
 #include <string>
 
 // Default log message prefix used before more information is available
 #define CUBEMODEL_START_MSG_PREFIX L"CubeModel "
+
+// Action period in milliseconds
+#define CUBE_PERIOD (10.0f * MILLISECS_PER_SEC_FLOAT)
+
+// Extent of translation (half of full range)
+#define CUBE_TRANSLATE 1.0f
 
 class CubeModel : public SimpleColorGeometry
 {
@@ -39,8 +45,7 @@ public:
 	   as with the 'transformable' argument.
 	   (Both will be deleted by this object's destructor.)
 	 */
-	CubeModel(ITransformable* const transformable,
-		float lengthX, float lengthY, float lengthZ,
+	CubeModel(float lengthX, float lengthY, float lengthZ,
 		DirectX::XMFLOAT4 * pColors = 0);
 
 	virtual ~CubeModel(void);
@@ -54,15 +59,17 @@ public:
 	/* Returns the previous value */
 	virtual float setTransparencyBlendFactor(float newFactor);
 
+	HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
+
 	// Data members
 protected:
-	/* The ITransformable object is responsible for making this
+	/* The Transformable object is responsible for making this
 	   model behave like a physical entity.
 
 	   The CubeModel object assumes that it owns this pointer
 	   (i.e. the CubeModel destructor will delete the pointer).
 	 */
-	ITransformable* m_transformable;
+	Transformable* m_transform;
 
 	/* Model dimensions */
 	float m_xlen;

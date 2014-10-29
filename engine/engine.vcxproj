@@ -17,6 +17,7 @@
     <ClCompile Include="cpp\rendering\SkinnedRenderer.cpp" />
     <ClCompile Include="cpp\util\Texture.cpp" />
     <ClCompile Include="cpp\util\TextureFromDDS.cpp" />
+    <ClCompile Include="HierarchicalCubesTestState.cpp" />
     <ClCompile Include="test\cpp\AlbedoTextureTestState.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp" />
@@ -46,6 +47,7 @@
     <ClInclude Include="header\rendering\SkinnedRenderer.h" />
     <ClInclude Include="header\util\Texture.h" />
     <ClInclude Include="header\util\TextureFromDDS.h" />
+    <ClInclude Include="HierarchicalCubesTestState.h" />
     <ClInclude Include="test\header\AlbedoTextureTestState.h" />
     <ClInclude Include="test\header\SkinnedColorTestState.h" />
     <ClInclude Include="test\header\SkinnedColorTestTransformable.h" />
