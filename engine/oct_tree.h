@@ -1,4 +1,5 @@
-/*
+/*oct_tree.h
+ *
  *Mark Wilkes 100884169
  *
  *Oct-tree is an organizing system for objects in 3-d space
@@ -40,10 +41,14 @@ class Octtree{
 		
 		int addObject(ObjectModel * newGameObject);
 		
+		virtual HRESULT drawContents(ID3D11DeviceContext* const context, GeometryRendererManager& manager, Camera * camera);
+
+		virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
+
 	protected:
 		Octnode * rootNode;
 		int maxDepth;
-		vector<ObjectModel *> completeObjectList;
+		vector<ObjectModel *>* completeObjectList;
 		
 		int checkCollisions(vector<ObjectModel **>* outCollidingObjects);
 		int checkCollisionsBetween(Octnode* node1, Octnode* node2, vector<ObjectModel **>* outCollisions);

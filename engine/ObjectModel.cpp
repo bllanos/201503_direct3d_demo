@@ -38,12 +38,12 @@ ObjectModel::~ObjectModel(){
 
 XMFLOAT3 ObjectModel::getBoundingOrigin(){
 	//TODO
-	return XMFLOAT3(0,0,0);
+	return XMFLOAT3(1,1,1);
 }
 
 float ObjectModel::getBoundingRadius(){
 	//TODO
-	return 0;
+	return 1;
 }
 
 HRESULT ObjectModel::updateContainedTransforms(const DWORD currentTime, const DWORD updateTimeInterval){

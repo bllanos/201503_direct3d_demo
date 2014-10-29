@@ -16,10 +16,10 @@ using std::wstring;
 #define GAMESTATE_FILE_NAME L"GameState.txt"
 
 #define TREEDEPTH 4
-#define TREELENGTH 100
-#define TREELOCATION_X 0
-#define TREELOCATION_Y 0
-#define TREELOCATION_Z 0
+#define TREELENGTH 20
+#define TREELOCATION_X -10
+#define TREELOCATION_Y -10
+#define TREELOCATION_Z -10
 
 #define NUMBER_OF_ASTEROIDS 10
 
@@ -36,6 +36,7 @@ m_camera(0), m_tree(0){
 	if (FAILED(setLogger(true, logFilename, false, false))) {
 		logMessage(L"Failed to redirect logging output to: " + logFilename);
 	}
+	m_tree = new Octtree(XMFLOAT3(TREELOCATION_X, TREELOCATION_Y, TREELOCATION_Z), TREELENGTH, TREEDEPTH);
 	asteroids = new vector<ObjectModel*>();
 }
 
@@ -72,7 +73,11 @@ HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenH
 
 	asteroids->push_back(newObject);
 
-	(*asteroids)[0]->addITransformable(newTransform);
+	newObject->addITransformable(newTransform);
+
+	if (m_tree->addObject(newObject) == -1){
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
 
 	if (FAILED(result)) {
 		logMessage(L"Failed to initialize stuff and things object.");
@@ -95,20 +100,11 @@ HRESULT GameState::drawContents(ID3D11DeviceContext* const context, GeometryRend
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	*/
-
-	if (FAILED((*asteroids)[0]->draw(context, manager, m_camera))){
-		logMessage(L"failed so hard at rendering a fucking asteriod you n00b.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-	return ERROR_SUCCESS;
+	return m_tree->drawContents(context, manager, m_camera);
 }
 
 HRESULT GameState::update(const DWORD currentTime, const DWORD updateTimeInterval) {
-	if (FAILED(((*asteroids)[0]->updateContainedTransforms(currentTime, updateTimeInterval)))){
-		logMessage(L"call to asteroid update() function failed");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-	return ERROR_SUCCESS;
+	return m_tree->update(currentTime, updateTimeInterval);
 }
 
 HRESULT GameState::poll(Keyboard& input, Mouse& mouse) {

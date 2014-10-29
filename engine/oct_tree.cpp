@@ -4,25 +4,25 @@
 Octtree::Octtree(XMFLOAT3 position, float length, int depth){
 	maxDepth = depth;
 	rootNode = new Octnode(position, length, depth, 0, NULL);
-	completeObjectList = vector<ObjectModel *>();
+	completeObjectList = new vector<ObjectModel *>();
 }
 
 Octtree::~Octtree(){
 	delete rootNode;
-	for (int i = 0; i < completeObjectList.size(); i++){
-		delete completeObjectList.at(i);
+	for (int i = 0; i < completeObjectList->size(); i++){
+		delete completeObjectList->at(i);
 	}
 }
 
 int Octtree::addObject(ObjectModel * newGameObject){
 	//start a recursive call to put the object in the tree
-	if(rootNode->fits(newGameObject) == 0){
+	//if(rootNode->fits(newGameObject) == 0){
 		//only add the object to the list if it is put into the list at some point
-		completeObjectList.push_back(newGameObject);
+		completeObjectList->push_back(newGameObject);
 		return 0;
-	}
+	//}
 	//something went wrong and the object doesn't fit anywhere in the tree
-	return -1;
+	//return -1;
 }
 
 int Octtree::checkCollisions(vector<ObjectModel **>* outCollidingObjects){
@@ -105,4 +105,29 @@ int Octtree::traverseTreeDown(Octnode* node, vector<ObjectModel**>* outcollision
 		traverseTreeDown(node->children[i], outcollisions);
 	}
 	return 0;
+}
+
+
+HRESULT Octtree::drawContents(ID3D11DeviceContext* const context, GeometryRendererManager& manager, Camera * camera) {
+	/*
+	if (FAILED(m_tree->drawUsingAppropriateRenderer(context, manager, m_camera))) {
+	logMessage(L"Failed to render Tree of game objects.");
+	return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	*/
+	for (int i = 0; i < completeObjectList->size(); i++){
+		if (FAILED((*completeObjectList)[i]->draw(context, manager, camera))){
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+	return ERROR_SUCCESS;
+}
+
+HRESULT Octtree::update(const DWORD currentTime, const DWORD updateTimeInterval) {
+	for (int i = 0; i < completeObjectList->size(); i++){
+		if (FAILED(((*completeObjectList)[i]->updateContainedTransforms(currentTime, updateTimeInterval)))){
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+	return ERROR_SUCCESS;
 }
