@@ -29,15 +29,14 @@ static_cast<GAMESTATE_CONFIGIO_CLASS*>(0),
 GAMESTATE_FILE_NAME,
 ENGINE_DEFAULT_CONFIG_PATH_TEST
 ),
-m_camera(0), m_tree(0), transformations_Shared(0){
+m_camera(0), m_tree(0){
 	// Set up a custom logging output stream
 	wstring logFilename;
 	fileUtil::combineAsPath(logFilename, ENGINE_DEFAULT_LOG_PATH_TEST, GAMESTATE_FILE_NAME);
 	if (FAILED(setLogger(true, logFilename, false, false))) {
 		logMessage(L"Failed to redirect logging output to: " + logFilename);
 	}
-	transformations_Shared = new vector<ITransformable*>();
-	asteroids = new vector<SphereModel*>();
+	asteroids = new vector<ObjectModel*>();
 }
 
 GameState::~GameState(void) {
@@ -58,8 +57,6 @@ HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenH
 	m_camera = new Camera(screenWidth, screenHeight);
 
 	Phase1TestTransformable * newTransform = new Phase1TestTransformable();
-
-	transformations_Shared->push_back(newTransform);
 	
 	SphereModel * asteroid = new SphereModel(
 		newTransform,
@@ -71,7 +68,11 @@ HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenH
 
 	result = asteroid->initialize(device);
 
-	asteroids->push_back(asteroid);
+	ObjectModel * newObject = new ObjectModel(asteroid);
+
+	asteroids->push_back(newObject);
+
+	(*asteroids)[0]->addITransformable(newTransform);
 
 	if (FAILED(result)) {
 		logMessage(L"Failed to initialize stuff and things object.");
@@ -95,7 +96,7 @@ HRESULT GameState::drawContents(ID3D11DeviceContext* const context, GeometryRend
 	}
 	*/
 
-	if (FAILED((*asteroids)[0]->drawUsingAppropriateRenderer(context, manager, m_camera))){
+	if (FAILED((*asteroids)[0]->draw(context, manager, m_camera))){
 		logMessage(L"failed so hard at rendering a fucking asteriod you n00b.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
@@ -103,7 +104,7 @@ HRESULT GameState::drawContents(ID3D11DeviceContext* const context, GeometryRend
 }
 
 HRESULT GameState::update(const DWORD currentTime, const DWORD updateTimeInterval) {
-	if (FAILED(((Phase1TestTransformable*)(*transformations_Shared)[0])->update(currentTime, updateTimeInterval))){
+	if (FAILED(((*asteroids)[0]->updateContainedTransforms(currentTime, updateTimeInterval)))){
 		logMessage(L"call to asteroid update() function failed");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
