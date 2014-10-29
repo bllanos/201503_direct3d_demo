@@ -4,7 +4,7 @@
 # LogUser configuration
 # ---------------------
 BOOL -- SkinnedRenderer_LogUser::enableLogging = true
-WSTRING -- SkinnedRenderer_LogUser::msgPrefix = L"SkinnedRenderer"
+WSTRING -- SkinnedRenderer_LogUser::msgPrefix = L"SkinnedRendererNoLight"
 BOOL -- SkinnedRenderer_LogUser::useGlobalLog = true
 
 # ConfigUser configuration
@@ -18,7 +18,7 @@ BOOL -- SkinnedRenderer::enableLighting = false
 # Vertex Shader setup
 # -------------------
 BOOL -- SkinnedRenderer::VS_enableLogging = true
-WSTRING -- SkinnedRenderer::VS_msgPrefix = L"SkinnedRenderer VS"
+WSTRING -- SkinnedRenderer::VS_msgPrefix = L"SkinnedRendererNoLight VS"
 WSTRING -- SkinnedRenderer::VS_scope = L"VS"
 WSTRING -- SkinnedRenderer::VS_scope_LogUser = L"shader_LogUser"
 WSTRING -- SkinnedRenderer::VS_scope_ConfigUser = L"shader_ConfigUser"
@@ -34,7 +34,7 @@ WSTRING -- VS::entryPoint = L"VSMAIN"
 # Pixel Shader setup
 # -------------------
 BOOL -- SkinnedRenderer::PS_enableLogging = true
-WSTRING -- SkinnedRenderer::PS_msgPrefix = L"SkinnedRenderer PS"
+WSTRING -- SkinnedRenderer::PS_msgPrefix = L"SkinnedRendererNoLight PS"
 WSTRING -- SkinnedRenderer::PS_scope = L"PS"
 WSTRING -- SkinnedRenderer::PS_scope_LogUser = L"shader_LogUser"
 WSTRING -- SkinnedRenderer::PS_scope_ConfigUser = L"shader_ConfigUser"
@@ -50,6 +50,6 @@ WSTRING -- PS::entryPoint = L"PSMAIN"
 # Common shader setup
 # ---------------------
 BOOL -- shader_LogUser::enableLogging = true
-WSTRING -- shader_LogUser::msgPrefix = L"SkinnedRenderer VS"
+# WSTRING -- shader_LogUser::msgPrefix = L"SkinnedRendererNoLight Shader"
 BOOL -- shader_LogUser::useGlobalLog = true
 BOOL -- shader_ConfigUser::enableConfigUseLogging = true

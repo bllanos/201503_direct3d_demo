@@ -4,26 +4,55 @@
 # LogUser configuration
 # ---------------------
 BOOL -- SkinnedRenderer_LogUser::enableLogging = true
-WSTRING -- SkinnedRenderer_LogUser::msgPrefix = L"SkinnedRenderer"
+WSTRING -- SkinnedRenderer_LogUser::msgPrefix = L"SkinnedTexturedRendererLight"
 BOOL -- SkinnedRenderer_LogUser::useGlobalLog = true
 
 # ConfigUser configuration
 # ------------------------
 BOOL -- SkinnedRenderer_ConfigUser::enableConfigUseLogging = true
 
-# Disable lighting
+# Enable lighting
 # ----------------
 BOOL -- SkinnedRenderer::enableLighting = true
 
-# Shader setup
-# ------------
-DIRECTORY -- SkinnedRenderer::shaderFilePath = "..\shaderCode"
-FILENAME -- SkinnedRenderer::vsFileName_withLighting = "skinnedColorVS_phongLight.hlsl"
-WSTRING -- SkinnedRenderer::vsShaderModel = L"vs_4_0"
-WSTRING -- SkinnedRenderer::vsEntryPoint_withLighting = L"VSMAIN"
-FILENAME -- SkinnedRenderer::psFileName_withLighting = "skinnedColorPS_phongLight_albedo.hlsl"
-WSTRING -- SkinnedRenderer::psShaderModel = L"ps_4_0"
-WSTRING -- SkinnedRenderer::psEntryPoint_withLighting = L"PSMAIN"
+# Vertex Shader setup
+# -------------------
+BOOL -- SkinnedRenderer::VS_enableLogging = true
+WSTRING -- SkinnedRenderer::VS_msgPrefix = L"SkinnedTexturedRendererLight VS"
+WSTRING -- SkinnedRenderer::VS_scope = L"VS"
+WSTRING -- SkinnedRenderer::VS_scope_LogUser = L"shader_LogUser"
+WSTRING -- SkinnedRenderer::VS_scope_ConfigUser = L"shader_ConfigUser"
+FILENAME -- SkinnedRenderer::VS_inputConfigFileName = "SkinnedTexturedRendererLight.txt"
+DIRECTORY -- SkinnedRenderer::VS_inputConfigFilePath = "..\configFiles\renderers"
+
+WSTRING -- VS::type = L"VertexShader"
+FILENAME -- VS::fileName = "skinnedColorVS_phongLight.hlsl"
+DIRECTORY -- VS::filePath = "..\shaderCode"
+WSTRING -- VS::shaderModel = L"vs_4_0"
+WSTRING -- VS::entryPoint = L"VSMAIN"
+
+# Pixel Shader setup
+# -------------------
+BOOL -- SkinnedRenderer::PS_enableLogging = true
+WSTRING -- SkinnedRenderer::PS_msgPrefix = L"SkinnedTexturedRendererLight PS"
+WSTRING -- SkinnedRenderer::PS_scope = L"PS"
+WSTRING -- SkinnedRenderer::PS_scope_LogUser = L"shader_LogUser"
+WSTRING -- SkinnedRenderer::PS_scope_ConfigUser = L"shader_ConfigUser"
+FILENAME -- SkinnedRenderer::PS_inputConfigFileName = "SkinnedTexturedRendererLight.txt"
+DIRECTORY -- SkinnedRenderer::PS_inputConfigFilePath = "..\configFiles\renderers"
+
+WSTRING -- PS::type = L"PixelShader"
+FILENAME -- PS::fileName = "skinnedColorPS_phongLight_albedo.hlsl"
+DIRECTORY -- PS::filePath = "..\shaderCode"
+WSTRING -- PS::shaderModel = L"ps_4_0"
+WSTRING -- PS::entryPoint = L"PSMAIN"
+
+# Common shader setup
+# ---------------------
+BOOL -- shader_LogUser::enableLogging = true
+# WSTRING -- shader_LogUser::msgPrefix = L"SkinnedTexturedRendererLight Shader"
+BOOL -- shader_LogUser::useGlobalLog = true
+BOOL -- shader_ConfigUser::enableConfigUseLogging = true
 
 # Light parameters
 # ----------------
