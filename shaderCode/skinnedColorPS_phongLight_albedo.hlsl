@@ -82,11 +82,12 @@ float4 PSMAIN(in PSInput input) : SV_TARGET
 	float4 albedoSample = txAlbedo.Sample(smpAlbedo, input.index);
 
 	// Final colour
-	float4 color = saturate(
+	float4 color =
 		lightAmbientWeight * ambient +
 		lightDiffuseWeight * diffuse +
-		lightSpecularWeight * specular);
+		lightSpecularWeight * specular;
 	color *= (lightColor*albedoSample);
+	color = saturate(color);
 	color.w = albedoSample.w; // Correct alpha value (should not be lighting-dependent)
 	color.w *= blendAmount;
 	return color;

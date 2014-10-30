@@ -59,5 +59,5 @@ BOOL -- shader_ConfigUser::enableConfigUseLogging = true
 FLOAT4 -- SkinnedRenderer::lightPosition = (0.0, 0.0, -30.0, 1.0)
 COLOR -- SkinnedRenderer::lightColor = (255, 255, 200, 255)
 DOUBLE -- SkinnedRenderer::lightAmbientWeight = 0.1
-DOUBLE -- SkinnedRenderer::lightDiffuseWeight = 0.5
-DOUBLE -- SkinnedRenderer::lightSpecularWeight = 0.4
+DOUBLE -- SkinnedRenderer::lightDiffuseWeight = 0.8
+DOUBLE -- SkinnedRenderer::lightSpecularWeight = 1.0

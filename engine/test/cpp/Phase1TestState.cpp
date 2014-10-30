@@ -47,12 +47,10 @@ Phase1TestState::~Phase1TestState(void) {
 		m_sphereModel = 0;
 	}
 
-	/*
-	if( m_cubeModel != 0 ) {
-	delete m_cubeModel;
-	m_cubeModel = 0;
+	if( m_sphereModelTransformable != 0 ) {
+		delete m_sphereModelTransformable;
+		m_sphereModelTransformable = 0;
 	}
-	*/
 }
 
 HRESULT Phase1TestState::initialize(ID3D11Device* device, int screenWidth, int screenHeight) {
@@ -60,7 +58,7 @@ HRESULT Phase1TestState::initialize(ID3D11Device* device, int screenWidth, int s
 	// Initialize the camera
 	m_camera = new Camera(screenWidth, screenHeight);
 
-	m_sphereModelTransformable = new Transformable(XMFLOAT3(1.0f, 2.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
+	m_sphereModelTransformable = new Transformable(XMFLOAT3(1.0f, 2.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	m_sphereModel = new SphereModel(
 		m_sphereModelTransformable,
