@@ -226,7 +226,7 @@ public:
 	   Ensure that the number of elements in 'bones' matches the length
 	   of the 'bones' parameter passed to initialize().
 	 */
-	virtual HRESULT setTransformables(const std::vector<Transformable*>* const bones);
+	virtual HRESULT setTransformables(const std::vector<Transformable*>* const bones) override;
 
 	const Material* getMaterial(void) const;
 

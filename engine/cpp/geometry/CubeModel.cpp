@@ -38,11 +38,6 @@ m_blend(1.0f), m_pColors(pColors)
 
 CubeModel::~CubeModel(void)
 {
-	if( m_transformable != 0 ) {
-		delete m_transformable;
-		m_transformable = 0;
-	}
-
 	if( m_pColors != 0 ) {
 		delete m_pColors;
 		m_pColors = 0;
