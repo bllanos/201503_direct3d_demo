@@ -135,5 +135,35 @@ HRESULT Octtree::update(const DWORD currentTime, const DWORD updateTimeInterval)
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}
+
+	refitting();
+
+	return ERROR_SUCCESS;
+}
+
+HRESULT Octtree::refitting(){
+	vector<ObjectModel*>* newList = new vector<ObjectModel*>();
+
+	//call the recursive function to find all the objects that don't fit in the node any more
+	rootNode->checkObjectUpdates(newList);
+
+	//find them a new home or they don't need to be around anymore
+	for (size_t i = 0; i < newList->size(); i++){
+		//can't fit it anymore so it needs to get gone
+		if (rootNode->fits((*newList)[i]) == -1){
+			//find the not so fitting object in the master list
+			vector<ObjectModel*>::iterator loc = find(completeObjectList->begin(), completeObjectList->end(), (*newList)[i]);
+			//make sure we found it in case of some magic happening (read as something breaking and going unnoticed)
+			if (loc != completeObjectList->end()){
+				 completeObjectList->erase(loc);
+			}
+			else{
+				return ERROR_DATA_NOT_FOUND;
+			}
+		}
+	}
+
+	delete newList;
+
 	return ERROR_SUCCESS;
 }

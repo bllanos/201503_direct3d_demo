@@ -151,8 +151,19 @@ int Octnode::refit(ObjectModel * gameObject){
 
 HRESULT Octnode::checkObjectUpdates(vector<ObjectModel*>* outRefit){
 	for (size_t i = 0; i < nodeObjectList->size(); i++){
-
+		if (refit((*nodeObjectList)[i]) == -1){
+			outRefit->push_back((*nodeObjectList)[i]);
+			(*nodeObjectList)[i] = 0;
+			nodeObjectList->erase(nodeObjectList->begin() + i);
+		}
 	}
+
+	for (size_t j = 0; j < 8; j++){
+		if (children[j] != NULL){
+			children[j]->checkObjectUpdates(outRefit);
+		}
+	}
+
 	return ERROR_SUCCESS;
 }
 

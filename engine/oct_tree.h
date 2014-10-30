@@ -31,6 +31,7 @@
 #include "ObjectModel.h"
 #include "Oct_node.h"
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -49,6 +50,8 @@ class Octtree{
 		Octnode * rootNode;
 		int maxDepth;
 		vector<ObjectModel *>* completeObjectList;
+		
+		virtual HRESULT refitting();
 		
 		int checkCollisions(vector<ObjectModel **>* outCollidingObjects);
 		int checkCollisionsBetween(Octnode* node1, Octnode* node2, vector<ObjectModel **>* outCollisions);
