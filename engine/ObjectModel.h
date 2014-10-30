@@ -24,11 +24,10 @@ class ObjectModel : public ConfigUser {
 		virtual float getBoundingRadius();
 
 		virtual HRESULT updateContainedTransforms(const DWORD currentTime, const DWORD updateTimeInterval);
-		virtual HRESULT addITransformable(ITransformable*);
+		virtual HRESULT addTransformable(Transformable*);
 		virtual HRESULT draw(ID3D11DeviceContext* const context, GeometryRendererManager& manager, Camera * camera);
 
 	protected:
 		IGeometry* model;
-		vector<ITransformable *>* tForm_shared;
-		Transformable* tForm;
+		vector<Transformable *>* tForms;
 };

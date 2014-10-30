@@ -48,6 +48,13 @@ Octnode::~Octnode(){
 	//delete nodeObjectList;
 	for (std::vector<ObjectModel*>::size_type i = 0; i < nodeObjectList->size(); i++){
 		delete nodeObjectList->at(i);
+		(*nodeObjectList)[i] = 0;
+	}
+	delete nodeObjectList;
+	nodeObjectList = 0;
+	for (size_t i = 0; i < 8; ++i) {
+		delete children[i];
+		children[i] = 0;
 	}
 }
 

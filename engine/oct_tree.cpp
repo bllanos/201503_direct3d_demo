@@ -9,9 +9,11 @@ Octtree::Octtree(XMFLOAT3 position, float length, int depth){
 
 Octtree::~Octtree(){
 	delete rootNode;
+	/*
 	for (std::vector<ObjectModel*>::size_type i = 0; i < completeObjectList->size(); i++){
 		delete completeObjectList->at(i);
 	}
+	*/
 }
 
 int Octtree::addObject(ObjectModel * newGameObject){

@@ -11,8 +11,6 @@
 #include "ConfigUser.h"
 #include "Camera.h"
 #include "oct_tree.h"
-#include "Transformable.h"
-#include "ITransformable.h"
 #include "SphereModel.h"
 #include <vector>
 
