@@ -95,7 +95,7 @@ int Octnode::fits(ObjectModel * newGameObject){
 	if (!spherePlaneCheck(plane3, newGameObject->getBoundingOrigin(), length, newGameObject->getBoundingRadius())) return -1;
 	
 	//if (!spherePlaneCheck(plane3, XMFLOAT3(1, 1, 1), 10, 1.0f)) return -1;
-	/*
+	
 //it fits in this node but we have to check if it fits in a smaller node
 	for(int i = 0; i < 8; i++){
 		//make sure that the children exist
@@ -103,7 +103,7 @@ int Octnode::fits(ObjectModel * newGameObject){
 		//oh hey look the object fit into a child, not this nodes problem to put it in
 		if(children[i]->fits(newGameObject) == 0) return 0;
 	}
-	*/
+	
 	
 //doesn't fit in children but fits here so add it to this node
 	nodeObjectList->push_back(newGameObject);
