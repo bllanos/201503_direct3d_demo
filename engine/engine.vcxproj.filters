@@ -129,6 +129,15 @@
     <ClCompile Include="test\cpp\TexturedSphereTestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
+    <ClCompile Include="test\cpp\CubeTransformable.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\CubeTransformableTwo.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\HierarchicalCubesTestState.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
     <ClCompile Include="oct_node.cpp">
       <Filter>Unprocessed Source Files</Filter>
     </ClCompile>
@@ -234,6 +243,15 @@
       <Filter>header\geometry</Filter>
     </ClInclude>
     <ClInclude Include="test\header\TexturedSphereTestState.h">
+      <Filter>test\header</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\CubeTransformable.h">
+      <Filter>test\header</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\CubeTransformableTwo.h">
+      <Filter>test\header</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\HierarchicalCubesTestState.h">
       <Filter>test\header</Filter>
     </ClInclude>
     <ClInclude Include="ObjectModel.h">

@@ -24,6 +24,9 @@
     <ClCompile Include="oct_tree.cpp" />
     <ClCompile Include="test\cpp\AlbedoTextureTestState.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp" />
+    <ClCompile Include="test\cpp\CubeTransformable.cpp" />
+    <ClCompile Include="test\cpp\CubeTransformableTwo.cpp" />
+    <ClCompile Include="test\cpp\HierarchicalCubesTestState.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp" />
     <ClCompile Include="cpp\geometry\GridQuad.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -56,6 +59,9 @@
     <ClInclude Include="Oct_node.h" />
     <ClInclude Include="oct_tree.h" />
     <ClInclude Include="test\header\AlbedoTextureTestState.h" />
+    <ClInclude Include="test\header\CubeTransformable.h" />
+    <ClInclude Include="test\header\CubeTransformableTwo.h" />
+    <ClInclude Include="test\header\HierarchicalCubesTestState.h" />
     <ClInclude Include="test\header\SkinnedColorTestState.h" />
     <ClInclude Include="header\geometry\GridQuad.h" />
     <ClInclude Include="header\geometry\SkinnedColorGeometry.h" />

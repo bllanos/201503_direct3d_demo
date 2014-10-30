@@ -44,42 +44,63 @@ Transformable::Transformable(DirectX::XMFLOAT3& scale, DirectX::XMFLOAT3& positi
 Transformable::~Transformable(void)
 {}
 
-HRESULT Transformable::getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const {
+HRESULT Transformable::getWorldTransform(XMFLOAT4X4& worldTransform) const {
 	worldTransform = m_worldTransform;
 	return ERROR_SUCCESS;
 }
 
-HRESULT Transformable::getWorldTransformNoScale(DirectX::XMFLOAT4X4& worldTransformNoScale) {
+HRESULT Transformable::getWorldTransformNoScale(XMFLOAT4X4& worldTransformNoScale) {
 	worldTransformNoScale = m_worldTransformNoScale;
 	return ERROR_SUCCESS;
 }
 
 HRESULT Transformable::update(const DWORD currentTime, const DWORD updateTimeInterval) {
 
+	XMFLOAT4X4 newWorldTransform;
+
 	// First get parent's world transform
-	DirectX::XMFLOAT4X4 parentWorldTransform;
 	if (m_parent != 0) {
-		m_parent->getWorldTransformNoScale(parentWorldTransform);
+		m_parent->getWorldTransformNoScale(newWorldTransform);
 	}
 	else {
-		XMStoreFloat4x4(&parentWorldTransform, XMMatrixIdentity());
+		XMStoreFloat4x4(&newWorldTransform, XMMatrixIdentity());
 	}
 
+	// perform all matrix transformations on the transform
+	transformations(newWorldTransform, currentTime, updateTimeInterval);
+
+	// compute the final world transforms (with scale and without)
+	computeTransforms(newWorldTransform, updateTimeInterval);
+	
+	return ERROR_SUCCESS;
+}
+
+HRESULT Transformable::transformations(XMFLOAT4X4& transform, const DWORD currentTime, const DWORD updateTimeInterval)
+{
+	
+    // Compute Rotations
+
+	// Then compute Orbits
+
+	// Then compute Translations
+
+	// To scale the object, simply alter m_scale
+
+	return ERROR_SUCCESS;
+}
+
+void Transformable::computeTransforms(XMFLOAT4X4 newWorldTransform, const DWORD updateTimeInterval)
+{
 	// Get local transform
 	computeLocalTransform(m_worldTransformNoScale, updateTimeInterval);
 
 	// Compute transformation without scaling
 	XMStoreFloat4x4(&m_worldTransformNoScale,
-		XMMatrixMultiply(XMLoadFloat4x4(&m_worldTransformNoScale), XMLoadFloat4x4(&parentWorldTransform)));
+		XMMatrixMultiply(XMLoadFloat4x4(&m_worldTransformNoScale), XMLoadFloat4x4(&newWorldTransform)));
 
 	// Compute transformation with scaling
 	XMStoreFloat4x4(&m_worldTransform,
 		XMMatrixMultiply(XMMatrixScalingFromVector(XMLoadFloat3(&m_scale)), XMLoadFloat4x4(&m_worldTransformNoScale)));
-	return ERROR_SUCCESS;
-}
-
-void Transformable::setParent(Transformable* const parent) {
-	m_parent = parent;
 }
 
 void Transformable::computeLocalTransform(DirectX::XMFLOAT4X4& localTransformNoScale, const DWORD updateTimeInterval) {
@@ -105,67 +126,68 @@ void Transformable::computeLocalTransform(DirectX::XMFLOAT4X4& localTransformNoS
 
 void Transformable::Move(float ahead)
 {
-	updateCameraProperties();
+	updateTransformProperties();
 
-	// move the camera ahead by the given amount
+	// move ahead by the given amount
 	XMVECTOR aheadv = XMVectorScale(XMLoadFloat3(&m_forward), ahead);
 	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), aheadv));
 }
 
 void Transformable::Strafe(float side)
 {
-	updateCameraProperties();
+	updateTransformProperties();
 
-	// move the camera horizontally by the given amount
+	// move horizontally by the given amount
 	XMVECTOR sidev = XMVectorScale(XMLoadFloat3(&m_left), side);
 	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), sidev));
 }
 
 void Transformable::Crane(float vertical)
 {
-	updateCameraProperties();
+	updateTransformProperties();
 
-	// move the camera vertically by the given amount
+	// move vertically by the given amount
 	XMVECTOR verticalv = XMVectorScale(XMLoadFloat3(&m_up), vertical);
 	XMStoreFloat3(&m_position, XMVectorAdd(XMLoadFloat3(&m_position), verticalv));
 }
 
 void Transformable::Spin(float roll, float pitch, float yaw) {
-	updateCameraProperties();
+	updateTransformProperties();
 
-	// apply camera-relative orientation changes
-	XMVECTOR rollq = XMQuaternionRotationAxis(XMLoadFloat3(&m_forward), roll * CAMERA_ORI_CHANGE_FACTOR);
-	XMVECTOR pitchq = XMQuaternionRotationAxis(XMLoadFloat3(&m_left), pitch * CAMERA_ORI_CHANGE_FACTOR);
-	XMVECTOR yawq = XMQuaternionRotationAxis(XMLoadFloat3(&m_up), yaw * CAMERA_ORI_CHANGE_FACTOR);
+	// apply transform-relative orientation changes
+	XMVECTOR rollq = XMQuaternionRotationAxis(XMLoadFloat3(&m_forward), roll * TRANSFORM_ORI_CHANGE_FACTOR);
+	XMVECTOR pitchq = XMQuaternionRotationAxis(XMLoadFloat3(&m_left), pitch * TRANSFORM_ORI_CHANGE_FACTOR);
+	XMVECTOR yawq = XMQuaternionRotationAxis(XMLoadFloat3(&m_up), yaw * TRANSFORM_ORI_CHANGE_FACTOR);
 
-	// update camera orientation with roll, pitch, and yaw
+	// update transform orientation with roll, pitch, and yaw
 	XMStoreFloat4(&m_orientation, XMQuaternionMultiply(XMLoadFloat4(&m_orientation), rollq));
 	XMStoreFloat4(&m_orientation, XMQuaternionMultiply(XMLoadFloat4(&m_orientation), pitchq));
 	XMStoreFloat4(&m_orientation, XMQuaternionMultiply(XMLoadFloat4(&m_orientation), yawq));
 }
 
-void Transformable::updateCameraProperties()
-{
-	// make sure camera properties are up to date
-	// NB: actually unnecessary, since they are updated every frame anyway; done here for clarity
-	m_forward = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	m_up = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	m_left = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+HRESULT Transformable::setParent(Transformable* const parent) {
+	m_parent = parent;
+	return ERROR_SUCCESS;
+}
 
-	XMMATRIX oriTransform = XMMatrixRotationQuaternion(XMLoadFloat4(&m_orientation));
-	XMStoreFloat3(&m_forward,
-		XMVector4Transform(XMLoadFloat3(&m_forward), oriTransform));
-	XMStoreFloat3(&m_up,
-		XMVector4Transform(XMLoadFloat3(&m_up), oriTransform));
-	XMStoreFloat3(&m_left,
-		XMVector3Cross(XMLoadFloat3(&m_forward), XMLoadFloat3(&m_up)));
+XMFLOAT3 Transformable::getScale() const
+{
+	return m_scale;
 }
 
 XMFLOAT3 Transformable::getPosition(void) const {
 	return m_position;
 }
 
-XMFLOAT3 Transformable::getForwardWorldDirection(void) {
+XMFLOAT4 Transformable::getOrientation(void) const {
+	return m_orientation;
+}
+
+XMFLOAT3 Transformable::getForwardWorldDirection(void) 
+{
+	updateTransformProperties();
+	return m_forward;
+	/*
 	XMFLOAT3 forward = XMFLOAT3(0.0f, 0.0f, 1.0f);
 	XMFLOAT4X4 worldMatrix;
 	getWorldTransformNoScale(worldMatrix);
@@ -175,4 +197,35 @@ XMFLOAT3 Transformable::getForwardWorldDirection(void) {
 	XMStoreFloat3(&forward,
 		XMVector4Transform(XMLoadFloat3(&forward), oriTransform));
 	return forward;
+	*/
+}
+
+XMFLOAT3 Transformable::getUpWorldDirection()
+{
+	updateTransformProperties();
+	return m_up;
+}
+
+XMFLOAT3 Transformable::getLeftWorldDirection()
+{
+	updateTransformProperties();
+	return m_left;
+}
+
+void Transformable::updateTransformProperties()
+{
+	// make sure transform properties are up to date
+	// NB: actually unnecessary, since they are updated every frame anyway; done here for clarity
+	m_forward = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	m_up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	m_left = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+
+	XMMATRIX oriTransform = XMMatrixRotationQuaternion(XMLoadFloat4(&m_orientation));
+
+	XMStoreFloat3(&m_forward,
+		XMVector4Transform(XMLoadFloat3(&m_forward), oriTransform));
+	XMStoreFloat3(&m_up,
+		XMVector4Transform(XMLoadFloat3(&m_up), oriTransform));
+	XMStoreFloat3(&m_left,
+		XMVector3Cross(XMLoadFloat3(&m_forward), XMLoadFloat3(&m_up)));
 }
