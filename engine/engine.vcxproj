@@ -15,6 +15,7 @@
     <ClCompile Include="cpp\geometry\GridSphereTextured.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedTexturedGeometry.cpp" />
     <ClCompile Include="cpp\rendering\SkinnedRenderer.cpp" />
+    <ClCompile Include="cpp\util\Shader.cpp" />
     <ClCompile Include="cpp\util\Texture.cpp" />
     <ClCompile Include="cpp\util\TextureFromDDS.cpp" />
     <ClCompile Include="GameState.cpp" />
@@ -49,6 +50,8 @@
     <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h" />
     <ClInclude Include="header\geometry\SphereModel.h" />
     <ClInclude Include="header\rendering\SkinnedRenderer.h" />
+    <ClInclude Include="header\util\pipelineDefs.h" />
+    <ClInclude Include="header\util\Shader.h" />
     <ClInclude Include="header\util\Texture.h" />
     <ClInclude Include="header\util\TextureFromDDS.h" />
     <ClInclude Include="ObjectModel.h" />

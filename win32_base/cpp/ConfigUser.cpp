@@ -366,14 +366,12 @@ HRESULT ConfigUser::configureLogUserOnly(const wstring& scope) {
 		}
 
 		// Flag indicating whether or not to timestamp logging output
-		if( retrieve<Config::DataType::BOOL, bool>(scope, LOGUSER_TIMESTAMP_FLAG_FIELD, boolValue) ) {
-			if( useGlobalLogger ) {
-				logMessage(L"ConfigUser::configureLogUserOnly() : Changing the timestamping behaviour of the global Logger from configuration data is prohibited.");
-			} else {
+		if (!useGlobalLogger) {
+			if (retrieve<Config::DataType::BOOL, bool>(scope, LOGUSER_TIMESTAMP_FLAG_FIELD, boolValue)) {
 				toggleTimestamp(*boolValue);
+			} else {
+				toggleTimestamp(LOGUSER_TIMESTAMP_FLAG);
 			}
-		} else if( !useGlobalLogger ) {
-			toggleTimestamp(LOGUSER_TIMESTAMP_FLAG);
 		}
 
 	} else {

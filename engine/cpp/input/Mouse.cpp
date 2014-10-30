@@ -19,11 +19,12 @@ using std::wostringstream;
 
 const int Mouse::nButtons = 5;
 
-const DWORD Mouse::maxMotionSamplingInterval = static_cast<DWORD>(100); // measured milliseconds
+// higher means small delay in detecting when the mouse has stopped moving
+const DWORD Mouse::maxMotionSamplingInterval = static_cast<DWORD>(5); // measured milliseconds
 
 Mouse::Mouse(void) :
 m_Tracking(false), m_Position(0.0f, 0.0f), m_PastPosition(0.0f, 0.0f), m_ButtonStates(0), m_LastButtonStates(0),
-m_Moving(false), m_t(static_cast<DWORD>(0)), m_tPast(static_cast<DWORD>(0)), m_timePressed(static_cast<DWORD>(0)), 
+m_Moving(false), m_t(static_cast<DWORD>(0)), m_tPast(static_cast<DWORD>(0)), m_moveTime(static_cast<DWORD>(0)), m_pastMoveTime(static_cast<DWORD>(0)), m_timePressed(static_cast<DWORD>(0)),
 m_timeReleased(static_cast<DWORD>(0)), m_ScreenDimensions(0.0f, 0.0f)
 {
 	m_ButtonStates = new bool[nButtons];
@@ -99,101 +100,6 @@ LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPA
 
 	//HWND hwnd = bwin.getHWND();
 
-	switch (umsg)
-	{
-	case WM_LBUTTONDOWN:
-		m_ButtonStates[Button::LEFT] = true;
-		//startTracking = true;
-		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Left mouse button down.\n");
-		break;
-
-	case WM_LBUTTONUP:
-		m_ButtonStates[Button::LEFT] = false;
-		//stopTracking = true;
-		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Left mouse button up.\n");
-		break;
-
-	case WM_MBUTTONDOWN:
-		m_ButtonStates[Button::MIDDLE] = true;
-		//startTracking = true;
-		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Middle mouse button down.\n");
-		break;
-
-	case WM_MBUTTONUP:
-		m_ButtonStates[Button::MIDDLE] = false;
-		//stopTracking = true;
-		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Middle mouse button up.\n");
-		break;
-
-	case WM_RBUTTONDOWN:
-		m_ButtonStates[Button::RIGHT] = true;
-		//startTracking = true;
-		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Right mouse button down.\n");
-		break;
-
-	case WM_RBUTTONUP:
-		m_ButtonStates[Button::RIGHT] = false;
-		//stopTracking = true;
-		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Right mouse button up.\n");
-		break;
-
-	case WM_XBUTTONDOWN:
-		if (wparam & MK_XBUTTON1)
-		{
-			m_ButtonStates[Button::X1] = true;
-			//startTracking = true;
-			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X1 mouse button down.\n");
-		}
-		else if (wparam & MK_XBUTTON2)
-		{
-			m_ButtonStates[Button::X2] = true;
-			//startTracking = true;
-			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X2 mouse button down.\n");
-		}
-		break;
-
-	case WM_XBUTTONUP:
-		if (wparam & MK_XBUTTON1)
-		{
-			m_ButtonStates[Button::X1] = false;
-			//stopTracking = true;
-			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X1 mouse button up.\n");
-		}
-		else if (wparam & MK_XBUTTON2)
-		{
-			m_ButtonStates[Button::X2] = false;
-			//stopTracking = true;
-			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X2 mouse button up.\n");
-		}
-		break;
-
-	case WM_MOUSEMOVE:
-		if (m_Tracking)
-		{
-			m_Moving = true;
-			positionMustChange = true;
-		}
-
-		// if the mouse is being tracked and is moving, get ready for a HOVER or LEAVE message
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_HOVER;
-		tme.dwHoverTime = 1; // interval of time (currently 1ms) to check mouse position
-		tme.hwndTrack = bwin->getHWND();
-		TrackMouseEvent(&tme);
-
-		break;
-
-	case WM_MOUSEHOVER:
-		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Starting Tracking\n");
-		m_Tracking = true;
-
-		break;
-
-	default:
-		result = C_BAD_INPUT; // Someone else must process this message
-	}
-
 	// get the position of the current window relative to the desktop 
 	// (where 0,0 is the top left corner of the desktop)
 	RECT rc;
@@ -208,37 +114,95 @@ LRESULT CALLBACK Mouse::winProc(BasicWindow* bwin, UINT umsg, WPARAM wparam, LPA
 	{
 		m_Tracking = false;
 	}
+	else {
+		m_Tracking = true;
+	}
+
+	switch (umsg)
+	{
+	case WM_LBUTTONDOWN:
+		m_ButtonStates[Button::LEFT] = true;
+		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Left mouse button down.\n");
+		break;
+
+	case WM_LBUTTONUP:
+		m_ButtonStates[Button::LEFT] = false;
+		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Left mouse button up.\n");
+		break;
+
+	case WM_MBUTTONDOWN:
+		m_ButtonStates[Button::MIDDLE] = true;
+		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Middle mouse button down.\n");
+		break;
+
+	case WM_MBUTTONUP:
+		m_ButtonStates[Button::MIDDLE] = false;
+		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Middle mouse button up.\n");
+		break;
+
+	case WM_RBUTTONDOWN:
+		m_ButtonStates[Button::RIGHT] = true;
+		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Right mouse button down.\n");
+		break;
+
+	case WM_RBUTTONUP:
+		m_ButtonStates[Button::RIGHT] = false;
+		// if (verbose_mouse) writeToDebugConsole(L"Mouse -- Right mouse button up.\n");
+		break;
+
+	case WM_XBUTTONDOWN:
+		if (wparam & MK_XBUTTON1)
+		{
+			m_ButtonStates[Button::X1] = true;
+			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X1 mouse button down.\n");
+		}
+		else if (wparam & MK_XBUTTON2)
+		{
+			m_ButtonStates[Button::X2] = true;
+			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X2 mouse button down.\n");
+		}
+		break;
+
+	case WM_XBUTTONUP:
+		if (wparam & MK_XBUTTON1)
+		{
+			m_ButtonStates[Button::X1] = false;
+			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X1 mouse button up.\n");
+		}
+		else if (wparam & MK_XBUTTON2)
+		{
+			m_ButtonStates[Button::X2] = false;
+			// if (verbose_mouse) writeToDebugConsole(L"Mouse -- X2 mouse button up.\n");
+		}
+		break;
+
+	case WM_MOUSEMOVE:
+		if (m_Tracking) {
+			m_Moving = true;
+			positionMustChange = true;
+		}
+
+		break;
+
+	default:
+		result = C_BAD_INPUT; // Someone else must process this message
+	}
 
 	// Update the position of the mouse
-	POINTS mousePts; // Mouse position in integer format
 	if (m_Tracking && positionMustChange)
 	{
-		// Save the previous position and time
-		if (m_Moving)
-		{
-			//m_tPast = m_t;
+		if (m_Moving) {
+			// update the time since last WM_MOUSEMOVE processed
+			m_pastMoveTime = m_moveTime;
+			// Retrieve mouse position
 			m_PastPosition = m_Position;
 		}
+		m_moveTime = GetTickCount();
 		
-		// Update the time
-		//m_t = GetTickCount();
-
-		// Retrieve mouse position
+		POINTS mousePts; // Mouse position in integer format
 		mousePts = MAKEPOINTS(lparam);
 		m_Position.x = static_cast<float>(mousePts.x);
 		m_Position.y = static_cast<float>(mousePts.y);
-
-		// Output mouse position
-		//if (verbose_mouse)
-		//{
-		//	wostringstream mousePosWOSStream;
-		//	mousePosWOSStream << L"Mouse -- Position in window: ( x, y ) = ( ";
-		//	mousePosWOSStream << m_Position.x;
-		//	mousePosWOSStream << L", ";
-		//	mousePosWOSStream << m_Position.y;
-		//	mousePosWOSStream << L" )\n";
-		//	// writeToDebugConsole(mousePosWOSStream.str().c_str());
-		//}
 	}
 
 	return result;
@@ -506,20 +470,36 @@ int Mouse::Update(void)
 		return C_OK;
 	}
 
-	m_tPast = m_t;
+	// if the old mouse position is the same as the current mouse position
+	// the mouse has stopped moving
+	// set moving to false and clear the move timings
+	if (m_Position.x == m_PastPosition.x && m_Position.y == m_PastPosition.y) {
+		m_Moving = false;
+		m_moveTime = static_cast<DWORD>(0);
+		m_pastMoveTime = static_cast<DWORD>(0);
+	}
 
 	// Check the time
 	DWORD t = GetTickCount();
-	if ((t - m_t) >= maxMotionSamplingInterval )
+	if ((t - m_moveTime) >= maxMotionSamplingInterval)
 	{
 		// Set the mouse speed to zero
-		//m_tPast = m_t;
 		m_PastPosition = m_Position;
-		//m_t = t;
-
-		// Indicate that speed data is available
-		m_Moving = true;
+		m_pastMoveTime = m_moveTime;
+		m_moveTime = t;
 	}
+
+	// Check the time
+	if ((t - m_t) >= maxMotionSamplingInterval)
+	{
+		// Set the mouse speed to zero
+		m_tPast = m_t;
+		m_t = t;
+	}
+
+	// update process timing
+	//m_tPast = m_t;
+	//m_t = GetTickCount();
 
 	// track metrics for all buttons
 	for (int i = 0; i < nButtons; ++i)
@@ -543,8 +523,6 @@ int Mouse::Update(void)
 		// handle Up and Down function requirements
 		m_LastButtonStates[i] = m_ButtonStates[i];
 	}
-
-	m_t = GetTickCount();
 
 	return C_OK;
 }

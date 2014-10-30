@@ -73,6 +73,14 @@ private:
 	DWORD m_t;
 	// Time of the last message processing round
 	DWORD m_tPast;
+
+	// these variables track the WM_MOUSEMOVE message processing time
+	
+	// this tracks the current time since the message has been received
+	DWORD m_moveTime;
+	// time of the last move time message processing round
+	DWORD m_pastMoveTime;
+
 	// the time each button has been held down
 	DWORD* m_timePressed;
 	// the time each button has been released

@@ -38,14 +38,31 @@ SkinnedRenderer::SkinnedRenderer(
 	filename, path),
 	m_vertexShader(0), m_pixelShader(0), m_layout(0),
 	m_cameraBuffer(0), m_materialBuffer(0), m_lightBuffer(0),
-	m_lighting(false), m_light(0)
+	m_lighting(false), m_light(0), m_configured(false)
 {
-	// Configure base members
-	const wstring configUserScope(SKINNEDRENDERER_CONFIGUSER_SCOPE);
-	configureConfigUser(SKINNEDRENDERER_LOGUSER_SCOPE, &configUserScope);
+	std::wstring logUserScopeDefault(SKINNEDRENDERER_LOGUSER_SCOPE);
+	std::wstring configUserScopeDefault(SKINNEDRENDERER_CONFIGUSER_SCOPE);
+	if (FAILED(configure(SKINNEDRENDERER_SCOPE, &configUserScopeDefault, &logUserScopeDefault))) {
+		logMessage(L"Configuration failed.");
+	}
 }
 
 SkinnedRenderer::~SkinnedRenderer(void) {
+	if (m_vertexShader) {
+		delete m_vertexShader;
+		m_vertexShader = 0;
+	}
+
+	if (m_pixelShader) {
+		delete m_pixelShader;
+		m_pixelShader = 0;
+	}
+
+	if (m_layout) {
+		m_layout->Release();
+		m_layout = 0;
+	}
+
 	if( m_cameraBuffer ) {
 		m_cameraBuffer->Release();
 		m_cameraBuffer = 0;
@@ -61,21 +78,6 @@ SkinnedRenderer::~SkinnedRenderer(void) {
 		m_lightBuffer = 0;
 	}
 
-	if( m_layout ) {
-		m_layout->Release();
-		m_layout = 0;
-	}
-
-	if( m_pixelShader ) {
-		m_pixelShader->Release();
-		m_pixelShader = 0;
-	}
-
-	if( m_vertexShader ) {
-		m_vertexShader->Release();
-		m_vertexShader = 0;
-	}
-
 	if( m_light != 0 ) {
 		delete m_light;
 		m_light = 0;
@@ -83,6 +85,11 @@ SkinnedRenderer::~SkinnedRenderer(void) {
 }
 
 HRESULT SkinnedRenderer::initialize(ID3D11Device* const device) {
+
+	if (!m_configured) {
+		logMessage(L"Initialization cannot proceed as configuration has not been completed successfully.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
 
 	if( FAILED(createShaders(device)) ) {
 		logMessage(L"Call to createShaders() failed.");
@@ -144,251 +151,210 @@ HRESULT SkinnedRenderer::render(ID3D11DeviceContext* const context, const IGeome
 	return result;
 }
 
-HRESULT SkinnedRenderer::configureRendering(
-	std::wstring& vsFilename, std::wstring& vsShaderModel, std::wstring& vsEntryPoint,
-	std::wstring& psFilename, std::wstring& psShaderModel, std::wstring& psEntryPoint) {
+HRESULT SkinnedRenderer::configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope) {
 
-	// Helper variables
-	const wstring* stringValue = 0;
-	const bool* boolValue = 0;
-	const DirectX::XMFLOAT4* float4Value = 0;
-	const double* doubleValue = 0;
-	wstring field;
-	wstring path; // Directory containing shaders
-	wstring criticalErrorMsg(L"Critical configuration data not found. Aborting shader setup.");
+	HRESULT result = ERROR_SUCCESS;
 
-	// Enable or disable lighting
-	if( retrieve<Config::DataType::BOOL, bool>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_FLAG_FIELD, boolValue) ) {
-		m_lighting = *boolValue;
-		if( m_lighting ) {
-			logMessage(L"Lighting is enabled in configuration data.");
+	if (hasConfigToUse()) {
+
+		// Configure base members
+		const std::wstring* configUserScopeToUse = (configUserScope == 0) ? &scope : configUserScope;
+		const std::wstring* logUserScopeToUse = (logUserScope == 0) ? configUserScopeToUse : logUserScope;
+
+		if (FAILED(configureConfigUser(*logUserScopeToUse, configUserScopeToUse))) {
+			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		} else {
-			logMessage(L"Lighting is disabled in configuration data.");
+
+			// Data retrieval helper variables
+			const wstring* stringValue = 0;
+			const bool* boolValue = 0;
+			const DirectX::XMFLOAT4* float4Value = 0;
+			const double* doubleValue = 0;
+
+			// Query for initialization data
+			// -----------------------------
+
+			// Enable or disable lighting
+			if (retrieve<Config::DataType::BOOL, bool>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_FLAG_FIELD, boolValue)) {
+				m_lighting = *boolValue;
+				if (m_lighting) {
+					logMessage(L"Lighting is enabled in configuration data.");
+				} else {
+					logMessage(L"Lighting is disabled in configuration data.");
+				}
+			} else {
+				logMessage(L"Expected a flag indicating whether to enable or disable lighting in configuration data.");
+				return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
+			}
+
+			// Light parameters
+			if (m_lighting) {
+				m_light = new Light;
+				m_light->lightPosition = SKINNEDRENDERER_LIGHT_POSITION_DEFAULT;
+				m_light->lightColor = SKINNEDRENDERER_LIGHT_COLOR_DEFAULT;
+				m_light->lightAmbientWeight = SKINNEDRENDERER_LIGHT_AMBIENT_WEIGHT_DEFAULT;
+				m_light->lightDiffuseWeight = SKINNEDRENDERER_LIGHT_DIFFUSE_WEIGHT_DEFAULT;
+				m_light->lightSpecularWeight = SKINNEDRENDERER_LIGHT_SPECULAR_WEIGHT_DEFAULT;
+
+				if (retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_POSITION_FIELD, float4Value)) {
+					m_light->lightPosition = *float4Value;
+				}
+				if (retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_COLOR_FIELD, float4Value)) {
+					m_light->lightColor = *float4Value;
+				}
+				if (retrieve<Config::DataType::DOUBLE, double>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_AMBIENT_WEIGHT_FIELD, doubleValue)) {
+					m_light->lightAmbientWeight = static_cast<float>(*doubleValue);
+				}
+				if (retrieve<Config::DataType::DOUBLE, double>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_DIFFUSE_WEIGHT_FIELD, doubleValue)) {
+					m_light->lightDiffuseWeight = static_cast<float>(*doubleValue);
+				}
+				if (retrieve<Config::DataType::DOUBLE, double>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_SPECULAR_WEIGHT_FIELD, doubleValue)) {
+					m_light->lightSpecularWeight = static_cast<float>(*doubleValue);
+				}
+			}
+
+			// Shader variables
+			bool shaderEnableLogging;
+			wstring shaderMsgPrefix;
+			wstring shaderScope;
+			wstring shaderScope_configUser;
+			wstring shaderScope_logUser;
+			wstring shaderInputConfigFileName;
+			wstring shaderInputConfigFilePath;
+
+			wstring* shaderStringVariables[] = {
+				&shaderMsgPrefix,
+				&shaderScope,
+				&shaderScope_logUser,
+				&shaderScope_configUser
+			};
+
+			const size_t nStringDefaults = 4;
+			wstring shaderStringDefaults[] = {
+				SKINNEDRENDERER_SHADER_MSGPREFIX_DEFAULT,
+				SKINNEDRENDERER_SHADER_SCOPE_DEFAULT,
+				SKINNEDRENDERER_SHADER_SCOPE_LOGUSER_DEFAULT,
+				SKINNEDRENDERER_SHADER_SCOPE_CONFIGUSER_DEFAULT,
+			};
+
+			const size_t nShaders = 2;
+			Shader** shaders[] = {
+				&m_vertexShader,
+				&m_pixelShader
+			};
+
+			// Shader configuration keys
+			
+			wstring prefixes[] = {
+				SKINNEDRENDERER_VSSHADER_FIELD_PREFIX,
+				SKINNEDRENDERER_PSSHADER_FIELD_PREFIX
+			};
+
+			const size_t nStringFields = 4;
+			wstring suffixes[] = {
+				SKINNEDRENDERER_SHADER_MSGPREFIX_FIELD,
+				SKINNEDRENDERER_SHADER_SCOPE_FIELD,
+				SKINNEDRENDERER_SHADER_SCOPE_LOGUSER_FIELD,
+				SKINNEDRENDERER_SHADER_SCOPE_CONFIGUSER_FIELD,
+				SKINNEDRENDERER_SHADER_CONFIGFILE_NAME_FIELD,
+				SKINNEDRENDERER_SHADER_CONFIGFILE_PATH_FIELD
+			};
+
+			size_t j = 0;
+			for (size_t i = 0; i < nShaders; ++i) {
+				shaderEnableLogging = SKINNEDRENDERER_SHADER_ENABLELOGGING_FLAG_DEFAULT;
+
+				if (retrieve<Config::DataType::BOOL, bool>(scope, prefixes[i] + SKINNEDRENDERER_SHADER_ENABLELOGGING_FLAG_FIELD, boolValue)) {
+					shaderEnableLogging = *boolValue;
+				}
+
+				// Set default string values
+				for (j = 0; j < nStringDefaults; ++j) {
+					*shaderStringVariables[j] = shaderStringDefaults[j];
+				}
+
+				for (j = 0; j < nStringFields; ++j) {
+					if (retrieve<Config::DataType::WSTRING, wstring>(scope, prefixes[i] + suffixes[j], stringValue)) {
+						*shaderStringVariables[j] = *stringValue;
+					}
+				}
+
+				// Filename and path
+				shaderInputConfigFileName = L"";
+				shaderInputConfigFilePath = L"";
+				if (retrieve<Config::DataType::FILENAME, wstring>(scope, prefixes[i] + suffixes[4], stringValue)) {
+					shaderInputConfigFileName = *stringValue;
+
+					if (retrieve<Config::DataType::DIRECTORY, wstring>(scope, prefixes[i] + suffixes[5], stringValue)) {
+						shaderInputConfigFilePath = *stringValue;
+					}
+				} else {
+					logMessage(L"No shader configuration filename found in configuration data.");
+					result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
+					break;
+				}
+
+				// Try to create the shader
+				*(shaders[i]) = new Shader(
+					shaderEnableLogging,
+					shaderMsgPrefix,
+					static_cast<SKINNEDRENDERER_CONFIGIO_CLASS*>(0),
+					shaderInputConfigFileName,
+					shaderInputConfigFilePath
+					);
+
+				// Try to configure the shader
+				if (FAILED((*(shaders[i]))->configure(
+					shaderScope,
+					&shaderScope_configUser,
+					&shaderScope_logUser)) ) {
+
+					logMessage(L"Configuration of shader object failed. (Scope used = \"" + shaderScope +L"\".)");
+					delete *(shaders[i]);
+					*(shaders[i]) = 0;
+					result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+					break;
+				}
+			}
 		}
-	} else {
-		logMessage(criticalErrorMsg);
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
-	}
 
-	// Shader file path
-	if( retrieve<Config::DataType::DIRECTORY, wstring>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_SHADER_FILE_PATH_FIELD, stringValue) ) {
-		path = *stringValue;
-	} else {
-		logMessage(criticalErrorMsg);
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
-	}
-
-	// Vertex shader file name
-	if( m_lighting ) {
-		field = SKINNEDRENDERER_VS_FILE_NAME_FIELD_LIGHT;
-	} else {
-		field = SKINNEDRENDERER_VS_FILE_NAME_FIELD_NO_LIGHT;
-	}
-	if( retrieve<Config::DataType::FILENAME, wstring>(SKINNEDRENDERER_SCOPE, field, stringValue) ) {
-		vsFilename = *stringValue;
-	} else {
-		logMessage(criticalErrorMsg);
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
-	}
-	if( FAILED(fileUtil::combineAsPath(vsFilename, path, vsFilename)) ) {
-		logMessage(L"fileUtil::combineAsPath() failed to combine shader file name and path.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-
-	// Pixel shader file name
-	if( m_lighting ) {
-		field = SKINNEDRENDERER_PS_FILE_NAME_FIELD_LIGHT;
-	} else {
-		field = SKINNEDRENDERER_PS_FILE_NAME_FIELD_NO_LIGHT;
-	}
-	if( retrieve<Config::DataType::FILENAME, wstring>(SKINNEDRENDERER_SCOPE, field, stringValue) ) {
-		psFilename = *stringValue;
-	} else {
-		logMessage(criticalErrorMsg);
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
-	}
-	if( FAILED(fileUtil::combineAsPath(psFilename, path, psFilename)) ) {
-		logMessage(L"fileUtil::combineAsPath() failed to combine shader file name and path.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-
-	// Vertex shader model version
-	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_VS_SHADER_MODEL_FIELD, stringValue) ) {
-		vsShaderModel = *stringValue;
-	} else {
-		logMessage(criticalErrorMsg);
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
-	}
-
-	// Pixel shader model version
-	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_PS_SHADER_MODEL_FIELD, stringValue) ) {
-		psShaderModel = *stringValue;
-	} else {
-		logMessage(criticalErrorMsg);
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
-	}
-
-	// Vertex shader entry point
-	if( m_lighting ) {
-		field = SKINNEDRENDERER_VS_ENTRYPOINT_FIELD_LIGHT;
-	} else {
-		field = SKINNEDRENDERER_VS_ENTRYPOINT_FIELD_NO_LIGHT;
-	}
-	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDRENDERER_SCOPE, field, stringValue) ) {
-		vsEntryPoint = *stringValue;
-	} else {
-		logMessage(criticalErrorMsg);
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
-	}
-
-	// Pixel shader entry point
-	if( m_lighting ) {
-		field = SKINNEDRENDERER_PS_ENTRYPOINT_FIELD_LIGHT;
-	} else {
-		field = SKINNEDRENDERER_PS_ENTRYPOINT_FIELD_NO_LIGHT;
-	}
-	if( retrieve<Config::DataType::WSTRING, wstring>(SKINNEDRENDERER_SCOPE, field, stringValue) ) {
-		psEntryPoint = *stringValue;
-	} else {
-		logMessage(criticalErrorMsg);
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
-	}
-
-	// Light parameters
-	if( m_lighting ) {
-		m_light = new Light;
-		m_light->lightPosition = SKINNEDRENDERER_LIGHT_POSITION_DEFAULT;
-		m_light->lightColor = SKINNEDRENDERER_LIGHT_COLOR_DEFAULT;
-		m_light->lightAmbientWeight = SKINNEDRENDERER_LIGHT_AMBIENT_WEIGHT_DEFAULT;
-		m_light->lightDiffuseWeight = SKINNEDRENDERER_LIGHT_DIFFUSE_WEIGHT_DEFAULT;
-		m_light->lightSpecularWeight = SKINNEDRENDERER_LIGHT_SPECULAR_WEIGHT_DEFAULT;
-
-		if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_POSITION_FIELD, float4Value) ) {
-			m_light->lightPosition = *float4Value;
+		if (SUCCEEDED(result)) {
+			m_configured = true;
 		}
-		if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_COLOR_FIELD, float4Value) ) {
-			m_light->lightColor = *float4Value;
-		}
-		if( retrieve<Config::DataType::DOUBLE, double>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_AMBIENT_WEIGHT_FIELD, doubleValue) ) {
-			m_light->lightAmbientWeight = static_cast<float>(*doubleValue);
-		}
-		if( retrieve<Config::DataType::DOUBLE, double>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_DIFFUSE_WEIGHT_FIELD, doubleValue) ) {
-			m_light->lightDiffuseWeight = static_cast<float>(*doubleValue);
-		}
-		if( retrieve<Config::DataType::DOUBLE, double>(SKINNEDRENDERER_SCOPE, SKINNEDRENDERER_LIGHT_SPECULAR_WEIGHT_FIELD, doubleValue) ) {
-			m_light->lightSpecularWeight = static_cast<float>(*doubleValue);
-		}
+
+	} else {
+		logMessage(L"Initialization from configuration data: No Config instance to use.");
 	}
 
-	return ERROR_SUCCESS;
+	return result;
 }
 
 HRESULT SkinnedRenderer::createShaders(ID3D11Device* const device) {
 	HRESULT result = ERROR_SUCCESS;
-	ID3D10Blob* errorMessage = 0;
-	ID3D10Blob* vertexShaderBuffer = 0;
-	ID3D10Blob* pixelShaderBuffer = 0;
 
-	// Retrieve shader parameters
-	wstring vsFilename;
-	wstring vsShaderModel;
-	wstring vsEntryPoint;
-	wstring psFilename;
-	wstring psShaderModel;
-	wstring psEntryPoint;
-	if( FAILED(configureRendering(
-		vsFilename, vsShaderModel, vsEntryPoint,
-		psFilename, psShaderModel, psEntryPoint)) ) {
+	result = m_vertexShader->initialize(device);
+	if (FAILED(result)) {
+		logMessage(L"Vertex shader initialization failed.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
-	// Compile the vertex shader code.
-	std::string entryPoint_string;
-	std::string shaderModel_string;
-	if( FAILED(toString(entryPoint_string, vsEntryPoint)) ) {
-		logMessage(L"Failed to convert the following to a single-byte character string: " + vsEntryPoint);
+	result = m_pixelShader->initialize(device);
+	if (FAILED(result)) {
+		logMessage(L"Pixel shader initialization failed.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-	if( FAILED(toString(shaderModel_string, vsShaderModel)) ) {
-		logMessage(L"Failed to convert the following to a single-byte character string: " + vsShaderModel);
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-	result = D3DCompileFromFile(vsFilename.c_str(), NULL, NULL, entryPoint_string.c_str(), shaderModel_string.c_str(), D3D10_SHADER_ENABLE_STRICTNESS, 0,
-		&vertexShaderBuffer, &errorMessage);
-	if( FAILED(result) ) {
-		// If the shader failed to compile it should have writen something to the error message.
-		if( errorMessage ) {
-			logMessage(L"Problem compiling: " + vsFilename);
-			outputShaderErrorMessage(errorMessage);
-		}
-		// If there was  nothing in the error message then it simply could not find the shader file itself.
-		else {
-			logMessage(L"Missing vertex shader file: " + vsFilename);
-		}
-
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FILE_NOT_FOUND);
-	}
-
-	// Compile the pixel shader code.
-	if( FAILED(toString(entryPoint_string, psEntryPoint)) ) {
-		logMessage(L"Failed to convert the following to a single-byte character string: " + psEntryPoint);
-		vertexShaderBuffer->Release();
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-	if( FAILED(toString(shaderModel_string, psShaderModel)) ) {
-		logMessage(L"Failed to convert the following to a single-byte character string: " + psShaderModel);
-		vertexShaderBuffer->Release();
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-	result = D3DCompileFromFile(psFilename.c_str(), NULL, NULL, entryPoint_string.c_str(), shaderModel_string.c_str(), D3D10_SHADER_ENABLE_STRICTNESS, 0,
-		&pixelShaderBuffer, &errorMessage);
-	if( FAILED(result) ) {
-		// If the shader failed to compile it should have writen something to the error message.
-		if( errorMessage ) {
-			logMessage(L"Problem compiling: " + psFilename);
-			outputShaderErrorMessage(errorMessage);
-		}
-		// If there was nothing in the error message then it simply could not find the file itself.
-		else {
-			logMessage(L"Missing pixel shader file: " + psFilename);
-		}
-		vertexShaderBuffer->Release();
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FILE_NOT_FOUND);
-	}
-
-	// Create the vertex shader from the buffer.
-	result = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
-	if( FAILED(result) ) {
-		logMessage(L"Failed to create vertex shader after compiling from: " + vsFilename);
-		vertexShaderBuffer->Release();
-		pixelShaderBuffer->Release();
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
-	}
-
-	// Create the pixel shader from the buffer.
-	result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &m_pixelShader);
-	if( FAILED(result) ) {
-		logMessage(L"Failed to create pixel shader after compiling from: " + psFilename);
-		vertexShaderBuffer->Release();
-		pixelShaderBuffer->Release();
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
 	}
 
 	// Create the input layout
-	result = createInputLayout(device, vertexShaderBuffer);
+	result = createInputLayout(device);
 	if( FAILED(result) ) {
 		logMessage(L"Call to createInputLayout() failed.");
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
-	// Release the vertex shader buffer and pixel shader buffer since they are no longer needed.
-	vertexShaderBuffer->Release();
-	pixelShaderBuffer->Release();
-
 	return result;
 }
 
-HRESULT SkinnedRenderer::createInputLayout(ID3D11Device* const device, ID3D10Blob* const vertexShaderBuffer) {
+HRESULT SkinnedRenderer::createInputLayout(ID3D11Device* const device) {
 	HRESULT result = ERROR_SUCCESS;
 	const unsigned int numElements = SKINNEDCOLORVERTEXTYPE_COMPONENTS;
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[numElements];
@@ -442,11 +408,10 @@ HRESULT SkinnedRenderer::createInputLayout(ID3D11Device* const device, ID3D10Blo
 	++i;
 
 	// Create the vertex input layout.
-	result = device->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(),
-		vertexShaderBuffer->GetBufferSize(), &m_layout);
+	result = m_vertexShader->createInputLayout(device, polygonLayout, numElements, &m_layout, true);
 	if( FAILED(result) ) {
-		logMessage(L"Failed to create input layout object.");
-		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+		logMessage(L"Failed to create input layout object through the vertex shader object.");
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	return result;
 }
@@ -510,29 +475,6 @@ HRESULT SkinnedRenderer::createLightConstantBuffers(ID3D11Device* const device) 
 	return result;
 }
 
-void SkinnedRenderer::outputShaderErrorMessage(ID3D10Blob* const errorMessage) {
-	char* compileErrors;
-	wstring prefix(L"Compilation error: ");
-	wstring errorMsg;
-	std::string errorMsg_str;
-
-	// Get a pointer to the error message text buffer.
-	compileErrors = (char*) (errorMessage->GetBufferPointer());
-
-	// Write out the error message.
-	errorMsg_str = compileErrors;
-	if( FAILED(toWString(errorMsg, errorMsg_str)) ) {
-		m_msgStore.emplace_back(prefix + L" [problem converting error message to a wide-character string]");
-	} else {
-		m_msgStore.emplace_back(prefix + errorMsg);
-	}
-
-	// Log all messages
-	logMsgStore();
-
-	// Release the error message.
-	errorMessage->Release();
-}
 
 HRESULT SkinnedRenderer::setShaderParameters(
 	ID3D11DeviceContext* const context,
@@ -689,8 +631,12 @@ void SkinnedRenderer::renderShader(ID3D11DeviceContext* const context, const siz
 	context->IASetInputLayout(m_layout);
 
 	// Set the vertex and pixel shaders that will be used to render this triangle.
-	context->VSSetShader(m_vertexShader, NULL, 0);
-	context->PSSetShader(m_pixelShader, NULL, 0);
+	if (FAILED(m_vertexShader->bind(context))) {
+		logMessage(L"Failed to bind vertex shader.");
+	}
+	if (FAILED(m_pixelShader->bind(context))) {
+		logMessage(L"Failed to bind pixel shader.");
+	}
 
 	// Render the geometry.
 	context->DrawIndexed(indexCount, 0, 0);

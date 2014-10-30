@@ -5,7 +5,6 @@
 BOOL -- SimpleColorRenderer_LogUser::enableLogging = true
 WSTRING -- SimpleColorRenderer_LogUser::msgPrefix = L"SimpleColorRenderer"
 BOOL -- SimpleColorRenderer_LogUser::useGlobalLog = true
-# BOOL -- SimpleColorRenderer_LogUser::timestampEnable = true
 
 # ConfigUser configuration
 # ------------------------

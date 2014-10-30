@@ -29,6 +29,7 @@ Description
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include "ConfigUser.h"
+#include "pipelineDefs.h"
 
 /* The following definitions are:
    -Key parameters used to retrieve configuration data
@@ -61,21 +62,6 @@ Description
 
 class Texture : public ConfigUser {
 
-public:
-
-	/* The possible pipeline shader stages
-	   to which sampler states and textures
-	   can be bound.
-	*/
-	enum class BindLocation : unsigned int {
-		VS, // Vertex shader
-		// HS, // Hull shader - Direct3D 11
-		// DS, // Domain shader - Direct3D 11
-		GS, // Geometry shader
-		PS, // Pixel shader
-		// CS // Compute shader - Direct3D 11
-	};
-
 protected:
 
 	template<typename ConfigIOClass> Texture(
@@ -105,7 +91,7 @@ protected:
 	   If 'logUserScope' is null, it will default to 'configUserScope'.
 	   If 'configUserScope' is null, it will default to 'scope'.
 
-	   This function must be called by derived classes;
+	   This function must be called externally;
 	   it is not called by the Texture class.
 	 */
 	virtual HRESULT configure(const std::wstring& scope, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0);
