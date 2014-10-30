@@ -129,6 +129,17 @@
     <ClCompile Include="test\cpp\TexturedSphereTestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
+    <ClCompile Include="oct_node.cpp">
+      <Filter>Unprocessed Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="oct_tree.cpp">
+      <Filter>Unprocessed Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectModel.cpp">
+      <Filter>Unprocessed Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>source</Filter>
     <ClCompile Include="cpp\util\Shader.cpp">
       <Filter>source\util</Filter>
     </ClCompile>
@@ -224,6 +235,17 @@
     <ClInclude Include="test\header\TexturedSphereTestState.h">
       <Filter>test\header</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectModel.h">
+      <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Oct_node.h">
+      <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="oct_tree.h">
+      <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>header</Filter>
     <ClInclude Include="header\util\pipelineDefs.h">
       <Filter>header\util</Filter>
     </ClInclude>
