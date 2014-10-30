@@ -30,7 +30,7 @@ Description
 // Class name: Transformable
 ////////////////////////////////////////////////////////////////////////////////
 
-const float CAMERA_ORI_CHANGE_FACTOR = 0.01f; // amount to change the roll, pitch, and yaw by
+const float TRANSFORM_ORI_CHANGE_FACTOR = 0.01f; // amount to change the roll, pitch, and yaw by
 
 class Transformable : public ITransformable
 {
@@ -68,20 +68,29 @@ public:
 
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
 
-	void setParent(Transformable* const parent);
+	// override this function in the child and use it for matrix transformations
+	virtual HRESULT transformations(DirectX::XMFLOAT4X4& transform, const DWORD currentTime, const DWORD updateTimeInterval);
+
+	HRESULT setParent(Transformable* const parent);
 
 	void Move(float amount); // move forward and back (move forward, move backward)
 	void Strafe(float amount); // move left and right
 	void Crane(float amount); // move up and down
 	void Spin(float roll, float pitch, float yaw); // spin the object (tilt, pan)
 
-	DirectX::XMFLOAT3 getPosition(void) const;
+	DirectX::XMFLOAT3 getScale() const;
+	DirectX::XMFLOAT3 getPosition() const;
+	DirectX::XMFLOAT4 getOrientation() const;
 
-	DirectX::XMFLOAT3 getForwardWorldDirection(void);
+	// computes and returns the respective direction
+	DirectX::XMFLOAT3 getForwardWorldDirection();
+	DirectX::XMFLOAT3 getUpWorldDirection();
+	DirectX::XMFLOAT3 getLeftWorldDirection();
 
 protected:
 	virtual void computeLocalTransform(DirectX::XMFLOAT4X4& localTransformNoScale, const DWORD updateTimeInterval);
-	void updateCameraProperties();
+	virtual void computeTransforms(DirectX::XMFLOAT4X4 newWorldTransform, const DWORD updateTimeInterval);
+	void updateTransformProperties();
 
 	// Currently not implemented - will cause linker errors if called
 private:
