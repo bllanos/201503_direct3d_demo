@@ -140,6 +140,7 @@
     </ClCompile>
     <ClCompile Include="GameState.cpp">
       <Filter>source</Filter>
+	</ClCompile>
     <ClCompile Include="cpp\util\Shader.cpp">
       <Filter>source\util</Filter>
     </ClCompile>
@@ -246,6 +247,7 @@
     </ClInclude>
     <ClInclude Include="GameState.h">
       <Filter>header</Filter>
+	</ClInclude>
     <ClInclude Include="header\util\pipelineDefs.h">
       <Filter>header\util</Filter>
     </ClInclude>
