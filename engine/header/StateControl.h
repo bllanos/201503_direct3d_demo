@@ -31,11 +31,11 @@ Description
 //#include "HierarchicalCubesTestState.h"
 //#define STATECONTROL_FIRST_STATE HierarchicalCubesTestState
 
-//#include "GameState.h"
-//#define STATECONTROL_FIRST_STATE GameState
+#include "GameState.h"
+#define STATECONTROL_FIRST_STATE GameState
 
-#include "ShipModelTestState.h"
-#define STATECONTROL_FIRST_STATE ShipModelTestState
+//#include "ShipModelTestState.h"
+//#define STATECONTROL_FIRST_STATE ShipModelTestState
 
 
 
