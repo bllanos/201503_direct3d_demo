@@ -38,7 +38,7 @@ private:
 	Camera* m_camera;
 	GridSphereTextured* m_gridSphere;
 	std::vector<SkinnedColorTestTransformable*>* m_bones;
-	std::vector<const ITransformable*>* m_bones_shared;
+	std::vector<Transformable*>* m_bones_shared;
 
 public:
 	TexturedSphereTestState(void);

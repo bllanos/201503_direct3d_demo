@@ -39,7 +39,7 @@ private:
 	Camera* m_camera;
 	GridQuad* m_gridQuad;
 	std::vector<SkinnedColorTestTransformable*>* m_quadBones;
-	std::vector<const ITransformable*>* m_quadBones_shared;
+	std::vector<Transformable*>* m_quadBones_shared;
 
 public:
 	SkinnedColorTestState(void);

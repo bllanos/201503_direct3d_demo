@@ -128,7 +128,7 @@ HRESULT SkinnedColorTestState::initialize(ID3D11Device* device, int screenWidth,
 			cornerAxes[i]);
 	}
 
-	m_quadBones_shared = new std::vector<const ITransformable*>();
+	m_quadBones_shared = new std::vector<Transformable*>();
 	for( size_t i = 0; i < SKINNEDCOLORTESTSTATE_NQUADBONES; ++i ) {
 		m_quadBones_shared->push_back((*m_quadBones)[i]);
 	}

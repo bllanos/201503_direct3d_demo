@@ -176,7 +176,7 @@ HRESULT SkinnedTexturedGeometry::configure(const std::wstring& scope, const std:
 HRESULT SkinnedTexturedGeometry::initialize(ID3D11Device* const device,
 	const SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices, const size_t nVertices,
 	const unsigned long* const indices, const size_t nIndices,
-	const std::vector<const ITransformable*>* const bones,
+	const std::vector<Transformable*>* const bones,
 	const DirectX::XMFLOAT4X4* const bindMatrices,
 	const D3D_PRIMITIVE_TOPOLOGY topology) {
 

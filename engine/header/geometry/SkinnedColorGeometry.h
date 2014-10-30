@@ -166,7 +166,7 @@ protected:
 	virtual HRESULT initialize(ID3D11Device* const device,
 		const SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices, const size_t nVertices,
 		const unsigned long* const indices, const size_t nIndices,
-		const std::vector<const ITransformable*>* const bones,
+		const std::vector<Transformable*>* const bones,
 		const DirectX::XMFLOAT4X4* const bindMatrices = 0,
 		const D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -181,7 +181,7 @@ protected:
 
 	/* Initializes the model's bone data only. */
 	virtual HRESULT initializeBoneData(ID3D11Device* const device,
-		const std::vector<const ITransformable*>* const bones,
+		const std::vector<Transformable*>* const bones,
 		const DirectX::XMFLOAT4X4* const bindMatrices);
 
 	/* Objects of this class can use renderers
@@ -226,7 +226,7 @@ public:
 	   Ensure that the number of elements in 'bones' matches the length
 	   of the 'bones' parameter passed to initialize().
 	 */
-	virtual HRESULT setTransformables(const std::vector<const ITransformable*>* const bones);
+	virtual HRESULT setTransformables(const std::vector<Transformable*>* const bones);
 
 	const Material* getMaterial(void) const;
 
@@ -296,11 +296,11 @@ private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 	ID3D11Buffer *m_bonePositionBuffer, *m_boneNormalBuffer;
 	ID3D11ShaderResourceView *m_bonePositionView, *m_boneNormalView;
-	const std::vector<const ITransformable*>* m_bones;
+	const std::vector<Transformable*>* m_bones;
 	DirectX::XMFLOAT4X4* m_invBindMatrices;
 	D3D_PRIMITIVE_TOPOLOGY m_primitive_topology;
 	size_t m_vertexCount, m_indexCount;
-	std::vector<const ITransformable*>::size_type m_boneCount;
+	std::vector<Transformable*>::size_type m_boneCount;
 
 	Material* m_material;
 

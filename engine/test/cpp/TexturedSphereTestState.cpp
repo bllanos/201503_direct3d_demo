@@ -121,7 +121,7 @@ HRESULT TexturedSphereTestState::initialize(ID3D11Device* device, int screenWidt
 			boneAxes[i]);
 	}
 
-	m_bones_shared = new std::vector<const ITransformable*>();
+	m_bones_shared = new std::vector<Transformable*>();
 	for (size_t i = 0; i < TEXTUREDSPHERETESTSTATE_NBONES; ++i) {
 		m_bones_shared->push_back((*m_bones)[i]);
 	}
