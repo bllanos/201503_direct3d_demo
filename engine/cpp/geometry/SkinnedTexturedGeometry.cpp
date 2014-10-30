@@ -176,7 +176,7 @@ HRESULT SkinnedTexturedGeometry::configure(const std::wstring& scope, const std:
 HRESULT SkinnedTexturedGeometry::initialize(ID3D11Device* const device,
 	const SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices, const size_t nVertices,
 	const unsigned long* const indices, const size_t nIndices,
-	const std::vector<const ITransformable*>* const bones,
+	const std::vector<Transformable*>* const bones,
 	const DirectX::XMFLOAT4X4* const bindMatrices,
 	const D3D_PRIMITIVE_TOPOLOGY topology) {
 
@@ -293,7 +293,7 @@ HRESULT SkinnedTexturedGeometry::setTexturesOnContext(ID3D11DeviceContext* const
 			logMessage(L"This object's albedo texture object is null and therefore cannot be used for rendering. Code is likely broken.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);
 		}
-		if( FAILED(m_albedoTexture->bind(context, 0, 0, Texture::BindLocation::PS)) ) {
+		if( FAILED(m_albedoTexture->bind(context, 0, 0, BindLocation::PS)) ) {
 			logMessage(L"Failed to bind the albedo texture object's data to the pixel shader.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}

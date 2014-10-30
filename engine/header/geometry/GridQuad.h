@@ -17,7 +17,7 @@ Primary basis: CubeModel.h
 Description
   -A rectangular grid with model space dimensions (-1, -1, 0) to (1, 1, 0),
      facing in the negative-Z direction.
-  -Each corner is pinned to an ITransformable object serving as a bone
+  -Each corner is pinned to an Transformable object serving as a bone
   -Bone weights for interior vertices are calculated using
      bilinear interpolation.
 */
@@ -27,7 +27,7 @@ Description
 #include <DirectXMath.h>
 #include "vertexTypes.h"
 #include "SkinnedColorGeometry.h"
-#include "ITransformable.h"
+#include "Transformable.h"
 
 #include <string>
 
@@ -104,7 +104,7 @@ public:
 	bind pose transformations.
 	*/
 	virtual HRESULT initialize(ID3D11Device* const device,
-		const std::vector<const ITransformable*>* const bones,
+		const std::vector<Transformable*>* const bones,
 		const DirectX::XMFLOAT4X4* const bindMatrices = 0);
 
 public:

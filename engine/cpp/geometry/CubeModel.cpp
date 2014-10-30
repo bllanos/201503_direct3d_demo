@@ -23,13 +23,14 @@ Description
 #include "CubeModel.h"
 #include <exception>
 
+
 CubeModel::CubeModel(float lengthX, float lengthY, float lengthZ, XMFLOAT4 * pColors) :
 SimpleColorGeometry(true, CUBEMODEL_START_MSG_PREFIX, 0),
 m_xlen(lengthX), m_ylen(lengthY), m_zlen(lengthZ),
 m_blend(1.0f), m_pColors(pColors)
 {
 	m_transform = new CubeTransformable(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-	if( m_xlen <= 0.0f || m_ylen <= 0.0f || m_zlen <= 0.0f ) {
+	if (m_xlen <= 0.0f || m_ylen <= 0.0f || m_zlen <= 0.0f) {
 		// This is a Microsoft-specific constructor
 		throw std::exception("Attempt to construct a CubeModel object with one or more negative or zero dimensions.");
 	}
@@ -280,4 +281,15 @@ Transformable* CubeModel::getTransformable() const
 HRESULT CubeModel::update(const DWORD currentTime, const DWORD updateTimeInterval)
 {
 	return m_transform->update(currentTime, updateTimeInterval);
+}
+
+HRESULT CubeModel::setTransformables(const std::vector<Transformable*>* const transform) {
+	if (transform == 0) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	}
+	else if (transform->size() != static_cast<std::vector<Transformable*>::size_type>(1)) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	}
+	m_transform = (*transform)[0];
+	return ERROR_SUCCESS;
 }

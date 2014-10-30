@@ -78,9 +78,6 @@
     <ClCompile Include="cpp\engineMain.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="test\cpp\Phase1TestTransformable.cpp">
-      <Filter>test\source</Filter>
-    </ClCompile>
     <ClCompile Include="test\cpp\Phase1TestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
@@ -92,9 +89,6 @@
     </ClCompile>
     <ClCompile Include="cpp\geometry\GridQuad.cpp">
       <Filter>source\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="test\cpp\SkinnedColorTestTransformable.cpp">
-      <Filter>test\source</Filter>
     </ClCompile>
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp">
       <Filter>test\source</Filter>
@@ -144,6 +138,21 @@
     <ClCompile Include="test\cpp\HierarchicalCubesTestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
+    <ClCompile Include="oct_node.cpp">
+      <Filter>Unprocessed Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="oct_tree.cpp">
+      <Filter>Unprocessed Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectModel.cpp">
+      <Filter>Unprocessed Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>source</Filter>
+	</ClCompile>
+    <ClCompile Include="cpp\util\Shader.cpp">
+      <Filter>source\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -188,9 +197,6 @@
     <ClInclude Include="test\header\Phase1TestState.h">
       <Filter>test\header</Filter>
     </ClInclude>
-    <ClInclude Include="test\header\Phase1TestTransformable.h">
-      <Filter>test\header</Filter>
-    </ClInclude>
     <ClInclude Include="header\input\Mouse.h">
       <Filter>header\input</Filter>
     </ClInclude>
@@ -204,9 +210,6 @@
       <Filter>header\geometry</Filter>
     </ClInclude>
     <ClInclude Include="test\header\SkinnedColorTestState.h">
-      <Filter>test\header</Filter>
-    </ClInclude>
-    <ClInclude Include="test\header\SkinnedColorTestTransformable.h">
       <Filter>test\header</Filter>
     </ClInclude>
     <ClInclude Include="Transformable.h">
@@ -250,6 +253,24 @@
     </ClInclude>
     <ClInclude Include="test\header\HierarchicalCubesTestState.h">
       <Filter>test\header</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectModel.h">
+      <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Oct_node.h">
+      <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="oct_tree.h">
+      <Filter>Unprocessed Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>header</Filter>
+	</ClInclude>
+    <ClInclude Include="header\util\pipelineDefs.h">
+      <Filter>header\util</Filter>
+    </ClInclude>
+    <ClInclude Include="header\util\Shader.h">
+      <Filter>header\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

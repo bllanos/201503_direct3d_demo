@@ -22,7 +22,7 @@ Description
 #include "TextureFromDDS.h"
 #include "fileUtil.h"
 #include "globals.h"
-#include <DDSTextureLoader.h>
+#include "DDSTextureLoader.h"
 
 using namespace DirectX;
 using std::wstring;

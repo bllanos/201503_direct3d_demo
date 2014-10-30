@@ -60,7 +60,7 @@ HRESULT Phase1TestState::initialize(ID3D11Device* device, int screenWidth, int s
 	// Initialize the camera
 	m_camera = new Camera(screenWidth, screenHeight);
 
-	m_sphereModelTransformable = new Phase1TestTransformable();
+	m_sphereModelTransformable = new Transformable(XMFLOAT3(1.0f, 2.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
 
 	m_sphereModel = new SphereModel(
 		m_sphereModelTransformable,
@@ -74,7 +74,7 @@ HRESULT Phase1TestState::initialize(ID3D11Device* device, int screenWidth, int s
 	}
 	return ERROR_SUCCESS;
 	/*
-	m_cubeModelTransformable = new Phase1TestTransformable();
+	m_cubeModelTransformable = new Transformable();
 
 	m_cubeModel = new CubeModel(
 	m_cubeModelTransformable, // Now owned by m_cubeModelTransformable
@@ -120,7 +120,7 @@ HRESULT Phase1TestState::drawContents(ID3D11DeviceContext* const context, Geomet
 HRESULT Phase1TestState::update(const DWORD currentTime, const DWORD updateTimeInterval) {
 	m_sphereModelTransformable->update(currentTime, updateTimeInterval);
 	if (FAILED(m_sphereModelTransformable->update(currentTime, updateTimeInterval))) {
-		logMessage(L"Call to Phase1TestTransformable update() function failed.");
+		logMessage(L"Call to Transformable update() function failed.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	else {

@@ -107,7 +107,7 @@ protected:
 	virtual HRESULT initialize(ID3D11Device* const device,
 		const SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices, const size_t nVertices,
 		const unsigned long* const indices, const size_t nIndices,
-		const std::vector<const ITransformable*>* const bones,
+		const std::vector<Transformable*>* const bones,
 		const DirectX::XMFLOAT4X4* const bindMatrices = 0,
 		const D3D_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) override;
 

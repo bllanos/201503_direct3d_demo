@@ -29,7 +29,7 @@ Description
 #include <DirectXMath.h>
 #include "vertexTypes.h"
 #include "SkinnedTexturedGeometry.h"
-#include "ITransformable.h"
+#include "Transformable.h"
 
 #include <string>
 
@@ -101,7 +101,7 @@ public:
 	   bind pose transformations.
 	 */
 	virtual HRESULT initialize(ID3D11Device* const device,
-		const std::vector<const ITransformable*>* const bones,
+		const std::vector<Transformable*>* const bones,
 		const DirectX::XMFLOAT4X4* const bindMatrices = 0);
 
 public:

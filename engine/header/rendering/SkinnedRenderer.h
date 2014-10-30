@@ -30,12 +30,12 @@ Description
 
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include <D3Dcompiler.h>
 #include <string>
 #include "IGeometryRenderer.h"
 #include "ConfigUser.h"
 #include "FlatAtomicConfigIO.h"
 #include "SkinnedColorGeometry.h"
+#include "Shader.h"
 
 // Type of loader to use for configuration data
 #define SKINNEDRENDERER_CONFIGIO_CLASS FlatAtomicConfigIO
@@ -44,7 +44,7 @@ Description
 #define SKINNEDRENDERER_MATERIAL_STRUCT SkinnedColorGeometry::Material
 
 // Default log message prefix used before more information is available
-#define SKINNEDRENDERER_START_MSG_PREFIX L"SkinnedRenderer "
+#define SKINNEDRENDERER_START_MSG_PREFIX L"SkinnedRenderer"
 
 /* The following definitions are:
   -Key parameters used to retrieve configuration data
@@ -55,24 +55,31 @@ Description
 #define SKINNEDRENDERER_LOGUSER_SCOPE L"SkinnedRenderer_LogUser"
 #define SKINNEDRENDERER_CONFIGUSER_SCOPE L"SkinnedRenderer_ConfigUser"
 
-#define SKINNEDRENDERER_SHADER_FILE_PATH_FIELD L"shaderFilePath"
+/* Shader constructor and configuration parameters */
+#define SKINNEDRENDERER_VSSHADER_FIELD_PREFIX L"VS_"
+#define SKINNEDRENDERER_PSSHADER_FIELD_PREFIX L"PS_"
 
-#define SKINNEDRENDERER_LIGHT_FLAG_FIELD L"enableLighting"
+#define SKINNEDRENDERER_SHADER_ENABLELOGGING_FLAG_DEFAULT true
+#define SKINNEDRENDERER_SHADER_ENABLELOGGING_FLAG_FIELD L"enableLogging"
 
-#define SKINNEDRENDERER_VS_FILE_NAME_FIELD_NO_LIGHT L"vsFileName_noLighting"
-#define SKINNEDRENDERER_VS_FILE_NAME_FIELD_LIGHT L"vsFileName_withLighting"
-#define SKINNEDRENDERER_PS_FILE_NAME_FIELD_NO_LIGHT L"psFileName_noLighting"
-#define SKINNEDRENDERER_PS_FILE_NAME_FIELD_LIGHT L"psFileName_withLighting"
+#define SKINNEDRENDERER_SHADER_MSGPREFIX_DEFAULT L"Shader (Shader class)"
+#define SKINNEDRENDERER_SHADER_MSGPREFIX_FIELD L"msgPrefix"
 
-#define SKINNEDRENDERER_VS_SHADER_MODEL_FIELD L"vsShaderModel"
-#define SKINNEDRENDERER_PS_SHADER_MODEL_FIELD L"psShaderModel"
+#define SKINNEDRENDERER_SHADER_SCOPE_DEFAULT L"shader"
+#define SKINNEDRENDERER_SHADER_SCOPE_FIELD L"scope"
 
-#define SKINNEDRENDERER_VS_ENTRYPOINT_FIELD_NO_LIGHT L"vsEntryPoint_noLighting"
-#define SKINNEDRENDERER_VS_ENTRYPOINT_FIELD_LIGHT L"vsEntryPoint_withLighting"
-#define SKINNEDRENDERER_PS_ENTRYPOINT_FIELD_NO_LIGHT L"psEntryPoint_noLighting"
-#define SKINNEDRENDERER_PS_ENTRYPOINT_FIELD_LIGHT L"psEntryPoint_withLighting"
+#define SKINNEDRENDERER_SHADER_SCOPE_LOGUSER_DEFAULT L"shader_LogUser"
+#define SKINNEDRENDERER_SHADER_SCOPE_LOGUSER_FIELD L"scope_LogUser"
+
+#define SKINNEDRENDERER_SHADER_SCOPE_CONFIGUSER_DEFAULT L"shader_ConfigUser"
+#define SKINNEDRENDERER_SHADER_SCOPE_CONFIGUSER_FIELD L"scope_ConfigUser"
+
+#define SKINNEDRENDERER_SHADER_CONFIGFILE_NAME_FIELD L"inputConfigFileName"
+#define SKINNEDRENDERER_SHADER_CONFIGFILE_PATH_FIELD L"inputConfigFilePath"
 
 // Lighting parameters
+#define SKINNEDRENDERER_LIGHT_FLAG_FIELD L"enableLighting"
+
 #define SKINNEDRENDERER_LIGHT_POSITION_DEFAULT DirectX::XMFLOAT4(-1000.0f, 0.0f, 0.0f, 1.0f)
 #define SKINNEDRENDERER_LIGHT_POSITION_FIELD L"lightPosition"
 #define SKINNEDRENDERER_LIGHT_COLOR_DEFAULT DirectX::XMFLOAT4(1.0, 1.0f, 1.0f, 1.0f)
@@ -83,6 +90,10 @@ Description
 #define SKINNEDRENDERER_LIGHT_DIFFUSE_WEIGHT_FIELD L"lightDiffuseWeight"
 #define SKINNEDRENDERER_LIGHT_SPECULAR_WEIGHT_DEFAULT 1.0f
 #define SKINNEDRENDERER_LIGHT_SPECULAR_WEIGHT_FIELD L"lightSpecularWeight"
+
+// Type of loader to use for configuration data when creating shaders
+#include "FlatAtomicConfigIO.h"
+#define SKINNEDRENDERER_CONFIGIO_CLASS FlatAtomicConfigIO
 
 class SkinnedRenderer : public IGeometryRenderer, public ConfigUser {
 private:
@@ -114,12 +125,12 @@ public:
 
 public:
 	/* Configuration data is needed to know which
-	shader files to compile.
+	   shader files to compile.
 
-	The 'filename' and 'path' parameters describe
-	the location of the configuration file.
-	(Documented in ConfigUser.h)
-	*/
+	   The 'filename' and 'path' parameters describe
+	   the location of the configuration file.
+	   (Documented in ConfigUser.h)
+	 */
 	SkinnedRenderer(
 		const std::wstring filename,
 		const std::wstring path = L""
@@ -133,19 +144,26 @@ public:
 
 	// Helper functions
 protected:
-	/* Retrieves shader details from configuration data.
-	   Returns a failure result if any values are not found.
-	   Note that the filename parameters are output
-	   as combined filenames and paths.
 
-	   The output pixel shader filename will depend on
-	   whether lighting is enabled or disabled by the
-	   configuration data. (This function queries
-	   the configuration data for this setting.)
-	*/
-	virtual HRESULT configureRendering(
-		std::wstring& vsFilename, std::wstring& vsShaderModel, std::wstring& vsEntryPoint,
-		std::wstring& psFilename, std::wstring& psShaderModel, std::wstring& psEntryPoint);
+	/* Retrieves configuration data, using default values,
+	   if possible, when configuration data is not found.
+	   Calls the base class's configuration function
+	   if there is a Config instance to use (which results
+	   in a cascade of configuration function calls).
+
+	   'scope' will override the scope used to find configuration data
+	   for this class.
+
+	   The 'configUserScope' and 'logUserScope' parameters
+	   will override the scopes used to find configuration data for the
+	   ConfigUser and LogUser base classes.
+	   If 'logUserScope' is null, it will default to 'configUserScope'.
+	   If 'configUserScope' is null, it will default to 'scope'.
+
+	   Notes:
+	   - Called by the class constructor, 'SkinnedRenderer(filename, path)'.
+	 */
+	virtual HRESULT configure(const std::wstring& scope = SKINNEDRENDERER_SCOPE, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0);
 
 	/* Creates the pipeline shaders
 	   Also responsible for calling configureRendering()
@@ -154,18 +172,13 @@ protected:
 	virtual HRESULT createShaders(ID3D11Device* const);
 
 	/* Creates the vertex input layout */
-	virtual HRESULT createInputLayout(ID3D11Device* const, ID3D10Blob* const vertexShaderBuffer);
+	virtual HRESULT createInputLayout(ID3D11Device* const);
 
 	/* Creates lighting-independent constant buffers */
 	virtual HRESULT createNoLightConstantBuffers(ID3D11Device* const);
 
 	/* Creates lighting-dependent constant buffers */
 	virtual HRESULT createLightConstantBuffers(ID3D11Device* const);
-
-	/* Retrieves and logs shader compilation error messages.
-	   Also releases the input argument.
-	 */
-	void outputShaderErrorMessage(ID3D10Blob* const);
 
 	virtual HRESULT setShaderParameters(
 		ID3D11DeviceContext* const,
@@ -193,8 +206,8 @@ protected:
 
 	// Data members
 private:
-	ID3D11VertexShader* m_vertexShader;
-	ID3D11PixelShader* m_pixelShader;
+	Shader* m_vertexShader;
+	Shader* m_pixelShader;
 	ID3D11InputLayout* m_layout;
 	ID3D11Buffer* m_cameraBuffer;
 	ID3D11Buffer* m_materialBuffer;
@@ -209,6 +222,9 @@ private:
 	   mechanism for changing the light data between frames.
 	 */
 	Light* m_light;
+
+	/* True if configuration was completed successfully. */
+	bool m_configured;
 
 	// Currently not implemented - will cause linker errors if called
 private:

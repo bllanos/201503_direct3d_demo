@@ -27,7 +27,7 @@ Description
 #include "ConfigUser.h"
 #include "Camera.h"
 #include "GridQuad.h"
-#include "SkinnedColorTestTransformable.h"
+#include "Transformable.h"
 
 // Logging message prefix
 #define SKINNEDCOLORTESTSTATE_START_MSG_PREFIX L"SkinnedColorTestState "
@@ -38,8 +38,8 @@ class SkinnedColorTestState : public State, public ConfigUser {
 private:
 	Camera* m_camera;
 	GridQuad* m_gridQuad;
-	std::vector<SkinnedColorTestTransformable*>* m_quadBones;
-	std::vector<const ITransformable*>* m_quadBones_shared;
+	std::vector<Transformable*>* m_quadBones;
+	std::vector<Transformable*>* m_quadBones_shared;
 
 public:
 	SkinnedColorTestState(void);

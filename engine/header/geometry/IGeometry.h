@@ -54,6 +54,8 @@ public:
 		const Camera* const camera
 		) = 0;
 
+	virtual HRESULT setTransformables(const std::vector<Transformable*>* const transforms) = 0;
+
 	// Currently not implemented - will cause linker errors if called
 private:
 	IGeometry(const IGeometry& other);
