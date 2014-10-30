@@ -59,7 +59,7 @@ HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenH
 	HRESULT result = ERROR_SUCCESS;
 
 	for (int i = 0; i < NUMBER_OF_ASTEROIDS; i ++){
-		Transformable * newTransform = new Transformable(XMFLOAT3(1.0f, 2.0f, 1.0f), XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i)), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
+		Transformable * newTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i)), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
 	
 		SphereModel * asteroid = new SphereModel(
 			newTransform,

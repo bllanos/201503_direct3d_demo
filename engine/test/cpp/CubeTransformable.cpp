@@ -51,17 +51,17 @@ HRESULT CubeTransformable::transformations(DirectX::XMFLOAT4X4& transform, const
 		XMMatrixTranslation(5.0f, 0.0f, 0.0f));
 
 	// Get local transform
-	computeLocalTransform(m_worldTransformNoScale, updateTimeInterval);
+	//computeLocalTransform(m_worldTransformNoScale, updateTimeInterval);
 
 	XMStoreFloat4x4(&transform, currMatrix);
 
 	// Compute transformation without scaling
-	XMStoreFloat4x4(&m_worldTransformNoScale,
-		XMMatrixMultiply(XMLoadFloat4x4(&m_worldTransformNoScale), XMLoadFloat4x4(&transform)));
+	//XMStoreFloat4x4(&m_worldTransformNoScale,
+	//	XMMatrixMultiply(XMLoadFloat4x4(&m_worldTransformNoScale), XMLoadFloat4x4(&transform)));
 
 	// Compute transformation with scaling
-	XMStoreFloat4x4(&m_worldTransform,
-		XMMatrixMultiply(XMMatrixScalingFromVector(XMLoadFloat3(&m_scale)), XMLoadFloat4x4(&m_worldTransformNoScale)));
+	//XMStoreFloat4x4(&m_worldTransform,
+	//	XMMatrixMultiply(XMMatrixScalingFromVector(XMLoadFloat3(&m_scale)), XMLoadFloat4x4(&m_worldTransformNoScale)));
 
 	currMatrix = XMLoadFloat4x4(&transform);
 	XMStoreFloat4x4(&transform, currMatrix);
