@@ -26,7 +26,7 @@ Description
 #include "ConfigUser.h"
 #include "Camera.h"
 #include "GridSphereTextured.h"
-#include "SkinnedColorTestTransformable.h"
+#include "Transformable.h"
 
 // Logging message prefix
 #define TEXTUREDSPHERETESTSTATE_START_MSG_PREFIX L"TexturedSphereTestState "
@@ -37,7 +37,7 @@ class TexturedSphereTestState : public State, public ConfigUser {
 private:
 	Camera* m_camera;
 	GridSphereTextured* m_gridSphere;
-	std::vector<SkinnedColorTestTransformable*>* m_bones;
+	std::vector<Transformable*>* m_bones;
 	std::vector<Transformable*>* m_bones_shared;
 
 public:

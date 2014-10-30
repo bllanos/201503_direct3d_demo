@@ -78,9 +78,6 @@
     <ClCompile Include="cpp\engineMain.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="test\cpp\Phase1TestTransformable.cpp">
-      <Filter>test\source</Filter>
-    </ClCompile>
     <ClCompile Include="test\cpp\Phase1TestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
@@ -92,9 +89,6 @@
     </ClCompile>
     <ClCompile Include="cpp\geometry\GridQuad.cpp">
       <Filter>source\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="test\cpp\SkinnedColorTestTransformable.cpp">
-      <Filter>test\source</Filter>
     </ClCompile>
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp">
       <Filter>test\source</Filter>
@@ -182,9 +176,6 @@
     <ClInclude Include="test\header\Phase1TestState.h">
       <Filter>test\header</Filter>
     </ClInclude>
-    <ClInclude Include="test\header\Phase1TestTransformable.h">
-      <Filter>test\header</Filter>
-    </ClInclude>
     <ClInclude Include="header\input\Mouse.h">
       <Filter>header\input</Filter>
     </ClInclude>
@@ -198,9 +189,6 @@
       <Filter>header\geometry</Filter>
     </ClInclude>
     <ClInclude Include="test\header\SkinnedColorTestState.h">
-      <Filter>test\header</Filter>
-    </ClInclude>
-    <ClInclude Include="test\header\SkinnedColorTestTransformable.h">
       <Filter>test\header</Filter>
     </ClInclude>
     <ClInclude Include="Transformable.h">

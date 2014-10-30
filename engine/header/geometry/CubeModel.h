@@ -54,13 +54,13 @@ public:
 	/* Returns the previous value */
 	virtual float setTransparencyBlendFactor(float newFactor);
 
+	/* Expects only a single Transformable */
+	virtual HRESULT setTransformables(const std::vector<Transformable*>* const transform) override;
+
 	// Data members
 protected:
 	/* The Transformable object is responsible for making this
 	   model behave like a physical entity.
-
-	   The CubeModel object assumes that it owns this pointer
-	   (i.e. the CubeModel destructor will delete the pointer).
 	 */
 	Transformable* m_transformable;
 

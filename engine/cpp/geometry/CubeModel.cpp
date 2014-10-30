@@ -255,3 +255,14 @@ float CubeModel::setTransparencyBlendFactor(float newFactor) {
 	m_blend = newFactor;
 	return temp;
 }
+
+HRESULT CubeModel::setTransformables(const std::vector<Transformable*>* const transform) {
+	if (transform == 0) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	}
+	else if (transform->size() != static_cast<std::vector<Transformable*>::size_type>(1)) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	}
+	m_transformable = (*transform)[0];
+	return ERROR_SUCCESS;
+}
