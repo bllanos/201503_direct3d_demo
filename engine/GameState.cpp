@@ -36,6 +36,7 @@ m_camera(0), m_tree(0){
 	if (FAILED(setLogger(true, logFilename, false, false))) {
 		logMessage(L"Failed to redirect logging output to: " + logFilename);
 	}
+
 	m_tree = new Octtree(XMFLOAT3(TREELOCATION_X, TREELOCATION_Y, TREELOCATION_Z), TREELENGTH, TREEDEPTH);
 }
 
@@ -59,8 +60,8 @@ HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenH
 	HRESULT result = ERROR_SUCCESS;
 
 	for (int i = 0; i < NUMBER_OF_ASTEROIDS; i ++){
-		Transformable * newTransform = new Transformable(XMFLOAT3(1.0f, 2.0f, 1.0f), XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i)), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
-	
+		Transformable * newTransform = new Transformable(XMFLOAT3(1.0f, 2.0f, 1.0f), XMFLOAT3(static_cast<float>(i*5), static_cast<float>(i*5), static_cast<float>(i*5)), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
+
 		SphereModel * asteroid = new SphereModel(
 			newTransform,
 			2.0f,
