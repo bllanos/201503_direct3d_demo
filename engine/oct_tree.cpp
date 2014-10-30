@@ -14,6 +14,10 @@ Octtree::~Octtree(){
 		delete completeObjectList->at(i);
 	}
 	*/
+	if (completeObjectList != 0){
+		delete completeObjectList;
+		completeObjectList = 0;
+	}
 }
 
 int Octtree::addObject(ObjectModel * newGameObject){

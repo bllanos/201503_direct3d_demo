@@ -24,6 +24,15 @@ ObjectModel::ObjectModel(IGeometry* geometry) : ConfigUser(true, OBJECTMODEL_STA
 }
 
 ObjectModel::~ObjectModel(){
+	for (size_t i = 0; i < tForms->size(); i++){
+		delete (*tForms)[i];
+	}
+
+	if (model != 0){
+		delete model;
+		model = 0;
+	}
+
 	if (tForms != 0){
 		delete tForms;
 		tForms = 0;
