@@ -13,30 +13,32 @@
 	*6th vertex is back, top, right
 	*7th vertex is back, bottom, right 
  */
+
+#pragma once
+
+#include <vector>
+#include "ObjectModel.h"
+
+using namespace std;
  
- #include <vector>
- 
- using namespace std;
- 
- template<typename T>;
- 
- class Octnode{
+class Octnode{
 	friend class Octtree;
  
 	public:
 		Octnode(XMFLOAT3 position, float length, int depth, int depthThis, Octnode * parent);
 		~Octnode();
 		
-		int fits(T * newGameObject);
+		int fits(ObjectModel * newGameObject);
 		
 	protected:
-		Octnode[8] * children;
-		vector<T*> nodeObjectList;
+		Octnode* children[8];
+		vector<ObjectModel *>* nodeObjectList;
 		Octnode * parentNode;
 		XMFLOAT3 origin;
 		float length;
 		int depthMe;
-		XMFLOAT3[8] vertices;
+		int depthMax;
+		XMFLOAT3 vertices[8];
 		
-		bool spherePlaneCheck(XMFLOAT3[3] planePoints, XMFLOAT3 sphereOrigin, float squareLength, float sphereRadi);
- }
+		bool spherePlaneCheck(XMFLOAT3 planePoints[3], XMFLOAT3 sphereOrigin, float squareLength, float sphereRadi);
+};

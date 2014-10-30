@@ -8,7 +8,7 @@
 #include <DirectXMath.h>
 #include <vertexTypes.h>
 #include "SimpleColorGeometry.h"
-#include "ITransformable.h"
+#include "Transformable.h"
 
 #include <string>
 
@@ -21,7 +21,7 @@ public:
 	as with the 'transformable' argument.
 	(Both will be deleted by this object's destructor.)
 	*/
-	SphereModel(ITransformable* const transformable,
+	SphereModel(Transformable* const transformable,
 		float radius, DirectX::XMFLOAT4 * pColors = 0);
 
 	virtual ~SphereModel(void);
@@ -39,15 +39,15 @@ public:
 
 	//XMFLOAT3 getBoundingOrigin();
 
+	/* Expects only a single Transformable */
+	virtual HRESULT setTransformables(const std::vector<Transformable*>* const transform) override;
+
 	// Data members
 protected:
-	/* The ITransformable object is responsible for making this
-	model behave like a physical entity.
-
-	The SphereModel object assumes that it owns this pointer
-	(i.e. the CubeModel destructor will delete the pointer).
+	/* The Transformable object is responsible for making this
+	   model behave like a physical entity.
 	*/
-	ITransformable* m_transformable;
+	const Transformable* m_transformable;
 
 	/* Model dimensions */
 	float m_radius;

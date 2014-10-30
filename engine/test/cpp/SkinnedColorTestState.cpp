@@ -62,8 +62,8 @@ SkinnedColorTestState::~SkinnedColorTestState(void) {
 	}
 
 	if( m_quadBones != 0 ) {
-		std::vector<SkinnedColorTestTransformable*>::size_type i = 0;
-		std::vector<SkinnedColorTestTransformable*>::size_type size = m_quadBones->size();
+		std::vector<Transformable*>::size_type i = 0;
+		std::vector<Transformable*>::size_type size = m_quadBones->size();
 		for( i = 0; i < size; ++i ) {
 			if( (*m_quadBones)[i] != 0 ) {
 				delete (*m_quadBones)[i];
@@ -99,36 +99,18 @@ HRESULT SkinnedColorTestState::initialize(ID3D11Device* device, int screenWidth,
 	cornerScales[2] = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	cornerScales[3] = XMFLOAT3(1.0f, 1.0f, 1.0f);
 
-	bool cornerFixed[SKINNEDCOLORTESTSTATE_NQUADBONES];
-	cornerFixed[0] = true;
-	cornerFixed[1] = false;
-	cornerFixed[2] = true;
-	cornerFixed[3] = true;
+	XMFLOAT4 cornerOrientations[SKINNEDCOLORTESTSTATE_NQUADBONES];
+	cornerOrientations[0] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	cornerOrientations[1] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	cornerOrientations[2] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	cornerOrientations[3] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
-	bool cornerOrbit[SKINNEDCOLORTESTSTATE_NQUADBONES];
-	cornerOrbit[0] = true;
-	cornerOrbit[1] = true;
-	cornerOrbit[2] = false;
-	cornerOrbit[3] = false;
-
-	XMFLOAT3 cornerAxes[SKINNEDCOLORTESTSTATE_NQUADBONES];
-	cornerAxes[0] = XMFLOAT3(1.0f, 0.0f, 0.0f);
-	cornerAxes[1] = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	cornerAxes[2] = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	cornerAxes[3] = XMFLOAT3(1.0f, -1.0f, 0.0f);
-
-	m_quadBones = new std::vector<SkinnedColorTestTransformable*>();
+	m_quadBones = new std::vector<Transformable*>();
 	for( size_t i = 0; i < SKINNEDCOLORTESTSTATE_NQUADBONES; ++i ) {
-		m_quadBones->push_back(new SkinnedColorTestTransformable());
-		(*m_quadBones)[i]->initialize(
-			cornerPositions[i],
-			cornerScales[i],
-			cornerFixed[i],
-			cornerOrbit[i],
-			cornerAxes[i]);
+		m_quadBones->push_back(new Transformable(cornerScales[i], cornerPositions[i], cornerOrientations[i]));
 	}
 
-	m_quadBones_shared = new std::vector<const ITransformable*>();
+	m_quadBones_shared = new std::vector<Transformable*>();
 	for( size_t i = 0; i < SKINNEDCOLORTESTSTATE_NQUADBONES; ++i ) {
 		m_quadBones_shared->push_back((*m_quadBones)[i]);
 	}
@@ -196,7 +178,7 @@ HRESULT SkinnedColorTestState::drawContents(ID3D11DeviceContext* const context, 
 HRESULT SkinnedColorTestState::update(const DWORD currentTime, const DWORD updateTimeInterval) {
 	for( size_t i = 0; i < SKINNEDCOLORTESTSTATE_NQUADBONES; ++i ) {
 		if( FAILED((*m_quadBones)[i]->update(currentTime, updateTimeInterval)) ) {
-			logMessage(L"Call to SkinnedColorTestTransformable update() function failed at index " + std::to_wstring(i));
+			logMessage(L"Call to Transformable update() function failed at index " + std::to_wstring(i));
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}

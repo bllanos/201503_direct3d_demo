@@ -19,10 +19,16 @@
     <ClCompile Include="cpp\util\Shader.cpp" />
     <ClCompile Include="cpp\util\Texture.cpp" />
     <ClCompile Include="cpp\util\TextureFromDDS.cpp" />
+    <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="ObjectModel.cpp" />
+    <ClCompile Include="oct_node.cpp" />
+    <ClCompile Include="oct_tree.cpp" />
     <ClCompile Include="test\cpp\AlbedoTextureTestState.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp" />
+    <ClCompile Include="test\cpp\CubeTransformable.cpp" />
+    <ClCompile Include="test\cpp\CubeTransformableTwo.cpp" />
+    <ClCompile Include="test\cpp\HierarchicalCubesTestState.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp" />
-    <ClCompile Include="test\cpp\SkinnedColorTestTransformable.cpp" />
     <ClCompile Include="cpp\geometry\GridQuad.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="cpp\d3dclass.cpp" />
@@ -36,12 +42,12 @@
     <ClCompile Include="cpp\rendering\SimpleColorRenderer.cpp" />
     <ClCompile Include="cpp\StateControl.cpp" />
     <ClCompile Include="test\cpp\Phase1TestState.cpp" />
-    <ClCompile Include="test\cpp\Phase1TestTransformable.cpp" />
     <ClCompile Include="test\cpp\TexturedSphereTestState.cpp" />
     <ClCompile Include="Transformable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\geometry\InvariantParticles.h" />
+    <ClInclude Include="GameState.h" />
     <ClInclude Include="header\geometry\GridQuadTextured.h" />
     <ClInclude Include="header\geometry\GridSphereTextured.h" />
     <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h" />
@@ -52,16 +58,20 @@
     <ClInclude Include="header\util\Shader.h" />
     <ClInclude Include="header\util\Texture.h" />
     <ClInclude Include="header\util\TextureFromDDS.h" />
+    <ClInclude Include="ObjectModel.h" />
+    <ClInclude Include="Oct_node.h" />
+    <ClInclude Include="oct_tree.h" />
     <ClInclude Include="test\header\AlbedoTextureTestState.h" />
+    <ClInclude Include="test\header\CubeTransformable.h" />
+    <ClInclude Include="test\header\CubeTransformableTwo.h" />
+    <ClInclude Include="test\header\HierarchicalCubesTestState.h" />
     <ClInclude Include="test\header\SkinnedColorTestState.h" />
-    <ClInclude Include="test\header\SkinnedColorTestTransformable.h" />
     <ClInclude Include="header\geometry\GridQuad.h" />
     <ClInclude Include="header\geometry\SkinnedColorGeometry.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="header\input\Keyboard.h" />
     <ClInclude Include="header\input\Mouse.h" />
     <ClInclude Include="test\header\Phase1TestState.h" />
-    <ClInclude Include="test\header\Phase1TestTransformable.h" />
     <ClInclude Include="header\d3dclass.h" />
     <ClInclude Include="header\engineGlobals.h" />
     <ClInclude Include="header\GeometryRendererManager.h" />

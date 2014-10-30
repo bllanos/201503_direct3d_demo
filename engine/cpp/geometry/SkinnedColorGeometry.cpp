@@ -61,7 +61,7 @@ SkinnedColorGeometry::SkinnedColorGeometry(const bool enableLogging, const std::
 HRESULT SkinnedColorGeometry::initialize(ID3D11Device* const device,
 	const SKINNEDCOLORGEOMETRY_VERTEX_TYPE* const vertices, const size_t nVertices,
 	const unsigned long* const indices, const size_t nIndices,
-	const std::vector<const ITransformable*>* const bones,
+	const std::vector<Transformable*>* const bones,
 	const DirectX::XMFLOAT4X4* const bindMatrices,
 	const D3D_PRIMITIVE_TOPOLOGY topology) {
 
@@ -145,7 +145,7 @@ HRESULT SkinnedColorGeometry::initializeVertexAndIndexBuffers(ID3D11Device* cons
 }
 
 HRESULT SkinnedColorGeometry::initializeBoneData(ID3D11Device* const device,
-	const std::vector<const ITransformable*>* const bones,
+	const std::vector<Transformable*>* const bones,
 	const DirectX::XMFLOAT4X4* const bindMatrices) {
 
 	// Simple member initialization
@@ -195,7 +195,7 @@ HRESULT SkinnedColorGeometry::initializeBoneData(ID3D11Device* const device,
 
 	// Compute the bind pose transformations
 	m_invBindMatrices = new DirectX::XMFLOAT4X4[m_boneCount];
-	std::vector<const ITransformable*>::size_type i = 0;
+	std::vector<Transformable*>::size_type i = 0;
 	if( bindMatrices != 0 ) {
 		for( i = 0; i < m_boneCount; ++i ) {
 			XMStoreFloat4x4(m_invBindMatrices + i,
@@ -359,11 +359,11 @@ HRESULT SkinnedColorGeometry::updateAndBindBoneBuffers(ID3D11DeviceContext* cons
 	normalTransformPtr = static_cast<DirectX::XMFLOAT4X4*>(mappedNormalBuffer.pData);
 
 	// Copy the matrices into the buffer.
-	std::vector<const ITransformable*>::size_type i = 0;
+	std::vector<Transformable*>::size_type i = 0;
 	for( i = 0; i < m_boneCount; ++i ) {
 		result = (*m_bones)[i]->getWorldTransform(storedWorldMatrix);
 		if( FAILED(result) ) {
-			logMessage(L"Failed to obtain bone world transformation from ITransformable at index " + std::to_wstring(i));
+			logMessage(L"Failed to obtain bone world transformation from Transformable at index " + std::to_wstring(i));
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 			continue;
 		}
@@ -389,7 +389,7 @@ HRESULT SkinnedColorGeometry::updateAndBindBoneBuffers(ID3D11DeviceContext* cons
 	return result;
 }
 
-HRESULT SkinnedColorGeometry::setTransformables(const std::vector<const ITransformable*>* const bones) {
+HRESULT SkinnedColorGeometry::setTransformables(const std::vector<Transformable*>* const bones) {
 	if( bones == 0 ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
 	} else if( bones->size() != m_boneCount ) {

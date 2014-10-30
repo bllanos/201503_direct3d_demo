@@ -24,7 +24,7 @@ Description
 #include "LogUser.h"
 #include "Camera.h"
 #include "CubeModel.h"
-#include "Phase1TestTransformable.h"
+#include "Transformable.h"
 #include "engineGlobals.h"
 #include "sphereModel.h"
 
@@ -43,9 +43,9 @@ private:
 	SphereModel* m_sphereModel;
 
 	// Owned by the CubeModel object
-	//Phase1TestTransformable* m_cubeModelTransformable;
-	Phase1TestTransformable* m_sphereModelTransformable;
-	Phase1TestTransformable* m_sphereModelTransformable2;
+	//Transformable* m_cubeModelTransformable;
+	Transformable* m_sphereModelTransformable;
+	Transformable* m_sphereModelTransformable2;
 
 public:
 	Phase1TestState(void);

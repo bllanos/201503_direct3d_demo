@@ -10,7 +10,7 @@
 #include "SphereModel.h"
 #include <exception>
 
-SphereModel::SphereModel(ITransformable* const transformable,
+SphereModel::SphereModel(Transformable* const transformable,
 	float radius, XMFLOAT4 * pColors) :
 	SimpleColorGeometry(true, SPHEREMODEL_START_MSG_PREFIX, 0),
 	m_transformable(transformable),
@@ -29,11 +29,6 @@ SphereModel::SphereModel(ITransformable* const transformable,
 
 SphereModel::~SphereModel(void)
 {
-	if (m_transformable != 0) {
-		delete m_transformable;
-		m_transformable = 0;
-	}
-
 	if (m_pColors != 0) {
 		delete m_pColors;
 		m_pColors = 0;
@@ -134,4 +129,15 @@ float SphereModel::setTransparencyBlendFactor(float newFactor) {
 
 	m_blend = newFactor;
 	return temp;
+}
+
+HRESULT SphereModel::setTransformables(const std::vector<Transformable*>* const transform) {
+	if (transform == 0) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	}
+	else if (transform->size() != static_cast<std::vector<Transformable*>::size_type>(1)) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	}
+	m_transformable = (*transform)[0];
+	return ERROR_SUCCESS;
 }

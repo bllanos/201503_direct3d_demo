@@ -113,7 +113,7 @@ HRESULT GridSphereTextured::configure(const std::wstring& scope, const std::wstr
 }
 
 HRESULT GridSphereTextured::initialize(ID3D11Device* const device,
-	const std::vector<const ITransformable*>* const bones,
+	const std::vector<Transformable*>* const bones,
 	const DirectX::XMFLOAT4X4* const bindMatrices) {
 
 	if( bones == 0 ) {

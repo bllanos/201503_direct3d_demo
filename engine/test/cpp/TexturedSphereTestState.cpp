@@ -60,8 +60,8 @@ TexturedSphereTestState::~TexturedSphereTestState(void) {
 	}
 
 	if (m_bones != 0) {
-		std::vector<SkinnedColorTestTransformable*>::size_type i = 0;
-		std::vector<SkinnedColorTestTransformable*>::size_type size = m_bones->size();
+		std::vector<Transformable*>::size_type i = 0;
+		std::vector<Transformable*>::size_type size = m_bones->size();
 		for (i = 0; i < size; ++i) {
 			if ((*m_bones)[i] != 0) {
 				delete (*m_bones)[i];
@@ -95,33 +95,17 @@ HRESULT TexturedSphereTestState::initialize(ID3D11Device* device, int screenWidt
 	boneScales[1] = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	boneScales[2] = XMFLOAT3(1.0f, 1.0f, 1.0f);
 
-	bool boneFixed[TEXTUREDSPHERETESTSTATE_NBONES];
-	boneFixed[0] = true;
-	boneFixed[1] = true;
-	boneFixed[2] = false;
+	XMFLOAT4 boneOrientations[TEXTUREDSPHERETESTSTATE_NBONES];
+	boneOrientations[0] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	boneOrientations[1] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	boneOrientations[2] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
-	bool boneOrbit[TEXTUREDSPHERETESTSTATE_NBONES];
-	boneOrbit[0] = true;
-	boneOrbit[1] = true;
-	boneOrbit[2] = true;
-
-	XMFLOAT3 boneAxes[TEXTUREDSPHERETESTSTATE_NBONES];
-	boneAxes[0] = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	boneAxes[1] = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	boneAxes[2] = XMFLOAT3(0.0f, 1.0f, 0.0f);
-
-	m_bones = new std::vector<SkinnedColorTestTransformable*>();
+	m_bones = new std::vector<Transformable*>();
 	for (size_t i = 0; i < TEXTUREDSPHERETESTSTATE_NBONES; ++i) {
-		m_bones->push_back(new SkinnedColorTestTransformable());
-		(*m_bones)[i]->initialize(
-			bonePositions[i],
-			boneScales[i],
-			boneFixed[i],
-			boneOrbit[i],
-			boneAxes[i]);
+		m_bones->push_back(new Transformable(boneScales[i], bonePositions[i], boneOrientations[i]));
 	}
 
-	m_bones_shared = new std::vector<const ITransformable*>();
+	m_bones_shared = new std::vector<Transformable*>();
 	for (size_t i = 0; i < TEXTUREDSPHERETESTSTATE_NBONES; ++i) {
 		m_bones_shared->push_back((*m_bones)[i]);
 	}
@@ -190,7 +174,7 @@ HRESULT TexturedSphereTestState::drawContents(ID3D11DeviceContext* const context
 HRESULT TexturedSphereTestState::update(const DWORD currentTime, const DWORD updateTimeInterval) {
 	for (size_t i = 0; i < TEXTUREDSPHERETESTSTATE_NBONES; ++i) {
 		if (FAILED((*m_bones)[i]->update(currentTime, updateTimeInterval))) {
-			logMessage(L"Call to SkinnedColorTestTransformable update() function failed at index " + std::to_wstring(i));
+			logMessage(L"Call to Transformable update() function failed at index " + std::to_wstring(i));
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}

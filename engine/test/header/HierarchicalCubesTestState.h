@@ -1,6 +1,6 @@
 /*
-SkinnedColorTestState.h
------------------------
+HierarchicalCubesTestState.h
+-----------------
 
 Created for: COMP3501A Project
 Fall 2014, Carleton University
@@ -10,41 +10,41 @@ Brandon Keyes, ID: 100897196
 Bernard Llanos, ID: 100793648
 Mark Wilkes, ID: 100884169
 
-Created October 13, 2014
+Created September 22, 2014
 
-Primary basis: Phase1TestState.h
+Primary basis: None
 
 Description
-  -A class derived from State used for testing vertex skinning
-   with coloured geometry (not textured geometry),
-   with or without lighting.
+-A class derived from State used for testing hierarchical cube transformations
 */
 
 #pragma once // This is a Microsoft-specific way to prevent multiple inclusions of a header file
 
-#include <vector>
 #include "State.h"
-#include "ConfigUser.h"
+#include "LogUser.h"
 #include "Camera.h"
-#include "GridQuad.h"
-#include "Transformable.h"
+#include "CubeModel.h"
+#include "engineGlobals.h"
+#include "CubeTransformableTwo.h"
+
+// Action period in milliseconds
+#define HIERARCHICAL_STATE_PERIOD (5.0f * MILLISECS_PER_SEC_FLOAT)
 
 // Logging message prefix
-#define SKINNEDCOLORTESTSTATE_START_MSG_PREFIX L"SkinnedColorTestState "
+#define HIERARCHICAL_STATE_START_MSG_PREFIX L"HierarchicalCubesTestState "
 
-class SkinnedColorTestState : public State, public ConfigUser {
+class HierarchicalCubesTestState : public State, public LogUser {
 
 	// Data members
 private:
 	Camera* m_camera;
-	GridQuad* m_gridQuad;
-	std::vector<Transformable*>* m_quadBones;
-	std::vector<Transformable*>* m_quadBones_shared;
+	CubeModel* m_cubeModel;
+	CubeModel* m_cubeModelTwo;
 
 public:
-	SkinnedColorTestState(void);
+	HierarchicalCubesTestState(void);
 
-	virtual ~SkinnedColorTestState(void);
+	virtual ~HierarchicalCubesTestState(void);
 
 	virtual HRESULT initialize(ID3D11Device* device, int screenWidth, int screenHeight) override;
 
@@ -58,6 +58,6 @@ public:
 
 	// Currently not implemented - will cause linker errors if called
 private:
-	SkinnedColorTestState(const SkinnedColorTestState& other);
-	SkinnedColorTestState& operator=(const SkinnedColorTestState& other);
+	HierarchicalCubesTestState(const HierarchicalCubesTestState& other);
+	HierarchicalCubesTestState& operator=(const HierarchicalCubesTestState& other);
 };

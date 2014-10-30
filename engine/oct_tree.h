@@ -1,4 +1,5 @@
-/*
+/*oct_tree.h
+ *
  *Mark Wilkes 100884169
  *
  *Oct-tree is an organizing system for objects in 3-d space
@@ -18,32 +19,40 @@
  *this system uses recursive division of space to increase the precision of the space modelling
  */
  
- /*
+/*
   *the spacial system will move with the player's craft centred in the root's cube
   *so this means it will be located on the origin of the roots 7th child
-  *it, as it "moves", will apply its movement to every other object in the world
-  *so the origin points will not be constant and will change as the player moves
-  */
-  
-  #include <vector>
-  #include <oct_node.h>
-  
-  using namespace std;
-  
-  template<typename T>;
-  
-  class Octtree {
+  *it, as it "moves", will apply the negation of its movement to every other object in the world
+  *so the OctTree will not move and neither will the player but everything else will
+  *this simplifies the updating of the OctTree by not requiring mass culling and additions to the tree
+*/
+#pragma once
+
+#include "ObjectModel.h"
+#include "Oct_node.h"
+#include <vector>
+
+using namespace std;
+
+class Octtree{
 	public:
-		Octtree();
 		Octtree(XMFLOAT3 position, float length, int depth);
-		~Octree();
+		~Octtree();
 		
-		int advance();
-		int addObject(<T*> newGameObject);
+		int addObject(ObjectModel * newGameObject);
 		
+		virtual HRESULT drawContents(ID3D11DeviceContext* const context, GeometryRendererManager& manager, Camera * camera);
+
+		virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
+
 	protected:
 		Octnode * rootNode;
-		vector<*T> completeObjectList;
+		int maxDepth;
+		vector<ObjectModel *>* completeObjectList;
 		
-		int checkCollisions(vector<*T> outCollidingObjects);
-  }
+		int checkCollisions(vector<ObjectModel **>* outCollidingObjects);
+		int checkCollisionsBetween(Octnode* node1, Octnode* node2, vector<ObjectModel **>* outCollisions);
+		int checkCollisionsWithin(Octnode* node, vector<ObjectModel **>* outCollisions);
+		int checkUpTree(Octnode* currNode, Octnode* checkNode, vector<ObjectModel**>* outcollisions);
+		int traverseTreeDown(Octnode* node, vector<ObjectModel**>* outcollisions);
+};
