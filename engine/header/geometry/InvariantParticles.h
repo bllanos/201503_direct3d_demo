@@ -172,6 +172,15 @@ public:
 	*/
 	virtual HRESULT setTransformable(const ITransformable* const transform);
 
+	/* Allows for changing the position, motion, etc., of the model
+	   in the world.
+
+	   Proxy for setTransformable() - Expects a vector of length 1.
+	 */
+	virtual HRESULT setTransformables(const std::vector<Transformable*>* const transforms) override;
+
+	virtual HRESULT setTime(const DirectX::XMFLOAT2& time);
+
 	// Functions to support rendering
 public:
 
@@ -183,6 +192,8 @@ public:
 	virtual float getTransparencyBlendFactor(void) const;
 
 	const Material* getMaterial(void) const;
+
+	virtual HRESULT getTime(DirectX::XMFLOAT2& time) const;
 
 protected:
 	/* Performs vertex buffer and index buffer-related pipeline
@@ -236,6 +247,11 @@ private:
 	 */
 	float m_blend;
 
+	/* (currentTimeOffset, updateTimeInterval) [milliseconds]
+	   The currentTimeOffset is the offset relative to the creation time
+	 */
+	DirectX::XMFLOAT2 m_time;
+
 	// Renderer selection data members
 protected:
 	// Null if not set
@@ -275,7 +291,8 @@ template<typename ConfigIOClass> InvariantParticles::InvariantParticles(
 	m_vertexCount(0), m_material(0),
 	m_blend(INVARIANTPARTICLES_BLEND_DEFAULT),
 	m_rendererType(0),
-	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT) {}
+	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT),
+	m_time(XMFLOAT2(0.0f, 0.0f)) {}
 
 template<typename ConfigIOClass> InvariantParticles::InvariantParticles(
 	const bool enableLogging, const std::wstring& msgPrefix,
@@ -296,4 +313,5 @@ template<typename ConfigIOClass> InvariantParticles::InvariantParticles(
 	m_vertexCount(0), m_material(0),
 	m_blend(INVARIANTPARTICLES_BLEND_DEFAULT),
 	m_rendererType(0),
-	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT) {}
+	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT),
+	m_time(XMFLOAT2(0.0f, 0.0f)) {}

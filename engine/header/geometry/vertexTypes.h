@@ -52,9 +52,16 @@ struct ParticleVertexType {
 #define PARTICLEVERTEXTYPE_COMPONENTS 5
 struct ParticleVertexType {
 	DirectX::XMFLOAT3 position; // World-space position offset (at time zero) from a base position
-	DirectX::XMFLOAT3 billboard;	// x = billboard width (view-space units),
+	DirectX::XMFLOAT3 billboard;	// Defines billboard dimensions and orientation
+									// x = billboard width (view-space units),
 									// y = billboard height (view-space units),
 									// z = per-millisecond clockwise turn around view-space 'look' axis (radians)
-	DirectX::XMFLOAT3 linearVelocity; // Non-normalized world-space linear velocity vector
+	DirectX::XMFLOAT4 linearVelocity;	// xyz = Normalized world-space linear direction vector,
+										// w = speed (world-space units per millisecond)
+	DirectX::XMFLOAT4 life;	// Possibly multiple interpretations. Suggested interpetation is as follows:
+							// x = creation time offset from base time (milliseconds)
+							// y = lifespan (milliseconds) or "health"
+							// z = decay factor (e.g. for linear or exponential decrease in life)
+							// w = cutoff (amount below which life is clamped to zero)
 	DirectX::XMFLOAT4 index; // Multi-purpose: Color/albedo, or 1D to 4D texture coordinates
 };

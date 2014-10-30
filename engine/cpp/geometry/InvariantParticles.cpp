@@ -34,7 +34,8 @@ InvariantParticles::InvariantParticles(const bool enableLogging, const std::wstr
 	m_vertexCount(0), m_material(0),
 	m_blend(INVARIANTPARTICLES_BLEND_DEFAULT),
 	m_rendererType(0),
-	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT)
+	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT),
+	m_time(XMFLOAT2(0.0f, 0.0f))
 {}
 
 InvariantParticles::InvariantParticles(const bool enableLogging, const std::wstring& msgPrefix,
@@ -46,7 +47,8 @@ InvariantParticles::InvariantParticles(const bool enableLogging, const std::wstr
 	m_vertexCount(0), m_material(0),
 	m_blend(INVARIANTPARTICLES_BLEND_DEFAULT),
 	m_rendererType(0),
-	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT)
+	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT),
+	m_time(XMFLOAT2(0.0f, 0.0f))
 {}
 
 HRESULT InvariantParticles::configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope) {
@@ -157,7 +159,7 @@ HRESULT InvariantParticles::initializeVertexBuffer(ID3D11Device* const device,
 	HRESULT result = ERROR_SUCCESS;
 
 	// Set up the description of the static vertex buffer.
-	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = vertexSize * m_vertexCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
@@ -268,7 +270,24 @@ HRESULT InvariantParticles::drawUsingAppropriateRenderer(ID3D11DeviceContext* co
 }
 
 HRESULT InvariantParticles::setTransformable(const ITransformable* const transform) {
+	if (transform == 0) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	}
 	m_transform = transform;
+	return ERROR_SUCCESS;
+}
+
+HRESULT InvariantParticles::setTransformables(const std::vector<Transformable*>* const transform) {
+	if (transform == 0) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	} else if (transform->size() != static_cast<std::vector<Transformable*>::size_type>(1)) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	}
+	return setTransformable((*transform)[0]);
+}
+
+HRESULT InvariantParticles::setTime(const DirectX::XMFLOAT2& time) {
+	m_time = time;
 	return ERROR_SUCCESS;
 }
 
@@ -291,6 +310,12 @@ float InvariantParticles::getTransparencyBlendFactor(void) const {
 const InvariantParticles::Material* InvariantParticles::getMaterial(void) const {
 	return m_material;
 }
+
+HRESULT InvariantParticles::getTime(DirectX::XMFLOAT2& time) const {
+	time = m_time;
+	return ERROR_SUCCESS;
+}
+
 
 HRESULT InvariantParticles::setVerticesOnContext(ID3D11DeviceContext* const context) {
 	unsigned int stride = INVARIANTPARTICLES_VERTEX_SIZE;
