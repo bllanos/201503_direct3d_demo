@@ -24,3 +24,8 @@ INT -- BasicWindow::height = 600
 # -----------------------------
 FILENAME -- GeometryRendererManager::configFileName = "GeometryRendererManagerConfig.txt"
 DIRECTORY -- GeometryRendererManager::configFilePath = "..\configFiles"
+
+# GameState setup
+# -----------------------------
+FILENAME -- GameState::configFileName = "GameState.txt"
+DIRECTORY -- GameState::configFilePath = "..\configFiles"

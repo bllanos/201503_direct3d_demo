@@ -96,9 +96,9 @@ HRESULT TexturedSphereTestState::initialize(ID3D11Device* device, int screenWidt
 	boneScales[2] = XMFLOAT3(1.0f, 1.0f, 1.0f);
 
 	XMFLOAT4 boneOrientations[TEXTUREDSPHERETESTSTATE_NBONES];
-	boneOrientations[0] = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	boneOrientations[1] = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	boneOrientations[2] = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+	boneOrientations[0] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	boneOrientations[1] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	boneOrientations[2] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	m_bones = new std::vector<Transformable*>();
 	for (size_t i = 0; i < TEXTUREDSPHERETESTSTATE_NBONES; ++i) {

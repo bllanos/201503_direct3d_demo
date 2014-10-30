@@ -100,9 +100,10 @@ HRESULT SkinnedColorTestState::initialize(ID3D11Device* device, int screenWidth,
 	cornerScales[3] = XMFLOAT3(1.0f, 1.0f, 1.0f);
 
 	XMFLOAT4 cornerOrientations[SKINNEDCOLORTESTSTATE_NQUADBONES];
-	cornerOrientations[0] = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	cornerOrientations[1] = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	cornerOrientations[2] = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+	cornerOrientations[0] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	cornerOrientations[1] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	cornerOrientations[2] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	cornerOrientations[3] = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	m_quadBones = new std::vector<Transformable*>();
 	for( size_t i = 0; i < SKINNEDCOLORTESTSTATE_NQUADBONES; ++i ) {
