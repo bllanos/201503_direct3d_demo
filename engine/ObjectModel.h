@@ -9,7 +9,6 @@
 using namespace std;
 
 #include "Transformable.h"
-#include "Phase1TestTransformable.h"
 #include "IGeometry.h"
 #include "ConfigUser.h"
 

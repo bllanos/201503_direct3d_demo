@@ -46,7 +46,7 @@ Octnode::Octnode(XMFLOAT3 position, float length, int depth, int depthThis, Octn
 
 Octnode::~Octnode(){
 	//delete nodeObjectList;
-	for (int i = 0; i < nodeObjectList->size(); i++){
+	for (std::vector<ObjectModel*>::size_type i = 0; i < nodeObjectList->size(); i++){
 		delete nodeObjectList->at(i);
 	}
 }

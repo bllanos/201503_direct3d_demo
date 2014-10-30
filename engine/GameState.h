@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Phase1TestTransformable.h"
+#include "Transformable.h"
 #include "State.h"
 #include "ConfigUser.h"
 #include "Camera.h"

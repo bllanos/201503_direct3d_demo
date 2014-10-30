@@ -9,7 +9,7 @@ Octtree::Octtree(XMFLOAT3 position, float length, int depth){
 
 Octtree::~Octtree(){
 	delete rootNode;
-	for (int i = 0; i < completeObjectList->size(); i++){
+	for (std::vector<ObjectModel*>::size_type i = 0; i < completeObjectList->size(); i++){
 		delete completeObjectList->at(i);
 	}
 }
@@ -35,8 +35,8 @@ int Octtree::checkCollisions(vector<ObjectModel **>* outCollidingObjects){
 
 int Octtree::checkCollisionsBetween(Octnode* node1, Octnode* node2, vector<ObjectModel **>* outCollisions){
 	//check all objects in the 2 passed nodes for collisions and pass back a list of all the collisions
-	for (int i = 0; i < node1->nodeObjectList->size(); i++){
-		for (int j = 0; j < node2->nodeObjectList->size(); j++){
+	for (std::vector<ObjectModel*>::size_type i = 0; i < node1->nodeObjectList->size(); i++){
+		for (std::vector<ObjectModel*>::size_type j = 0; j < node2->nodeObjectList->size(); j++){
 			//sphere vs sphere collision checks
 			//distace between the spheres
 			float distBetween = sqrt(	pow(node1->nodeObjectList->at(i)->getBoundingOrigin().x - 
@@ -62,8 +62,8 @@ int Octtree::checkCollisionsBetween(Octnode* node1, Octnode* node2, vector<Objec
 
 int Octtree::checkCollisionsWithin(Octnode* node, vector<ObjectModel **>* outCollisions){
 	//check for all possible collisions between this node and all other nodes
-	for (int i = 0; i < node->nodeObjectList->size(); i++){
-		for (int j = i; j < node->nodeObjectList->size(); j++){
+	for (std::vector<ObjectModel*>::size_type i = 0; i < node->nodeObjectList->size(); i++){
+		for (std::vector<ObjectModel*>::size_type j = i; j < node->nodeObjectList->size(); j++){
 			//sphere vs sphere collision checks
 			//distace between the spheres
 			float distBetween = sqrt(pow(node->nodeObjectList->at(i)->getBoundingOrigin().x -
@@ -115,7 +115,7 @@ HRESULT Octtree::drawContents(ID3D11DeviceContext* const context, GeometryRender
 	return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	*/
-	for (int i = 0; i < completeObjectList->size(); i++){
+	for (std::vector<ObjectModel*>::size_type i = 0; i < completeObjectList->size(); i++){
 		if (FAILED((*completeObjectList)[i]->draw(context, manager, camera))){
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
@@ -124,7 +124,7 @@ HRESULT Octtree::drawContents(ID3D11DeviceContext* const context, GeometryRender
 }
 
 HRESULT Octtree::update(const DWORD currentTime, const DWORD updateTimeInterval) {
-	for (int i = 0; i < completeObjectList->size(); i++){
+	for (std::vector<ObjectModel*>::size_type i = 0; i < completeObjectList->size(); i++){
 		if (FAILED(((*completeObjectList)[i]->updateContainedTransforms(currentTime, updateTimeInterval)))){
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
