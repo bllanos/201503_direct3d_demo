@@ -136,13 +136,13 @@ HRESULT Octtree::update(const DWORD currentTime, const DWORD updateTimeInterval)
 		}
 	}
 
-	refitting();
-
-	return ERROR_SUCCESS;
+	return refitting();
 }
 
 HRESULT Octtree::refitting(){
 	vector<ObjectModel*>* newList = new vector<ObjectModel*>();
+
+	HRESULT result = ERROR_SUCCESS;
 
 	//call the recursive function to find all the objects that don't fit in the node any more
 	rootNode->checkObjectUpdates(newList);
@@ -158,12 +158,12 @@ HRESULT Octtree::refitting(){
 				 completeObjectList->erase(loc);
 			}
 			else{
-				return ERROR_DATA_NOT_FOUND;
+				result = ERROR_DATA_NOT_FOUND;
 			}
 		}
 	}
 
 	delete newList;
 
-	return ERROR_SUCCESS;
+	return result;
 }
