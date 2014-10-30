@@ -25,10 +25,10 @@ Description
 
 #include <windows.h>
 #include <DirectXMath.h>
-#include "ITransformable.h"
+#include "Transformable.h"
 #include "engineGlobals.h"
 
-class SkinnedColorTestTransformable : public ITransformable {
+class SkinnedColorTestTransformable : public Transformable {
 
 	// Data members
 private:

@@ -10,7 +10,7 @@
 #include "SphereModel.h"
 #include <exception>
 
-SphereModel::SphereModel(ITransformable* const transformable,
+SphereModel::SphereModel(Transformable* const transformable,
 	float radius, XMFLOAT4 * pColors) :
 	SimpleColorGeometry(true, SPHEREMODEL_START_MSG_PREFIX, 0),
 	m_transformable(transformable),

@@ -33,7 +33,7 @@ Description
 #include "vertexTypes.h"
 #include "IGeometry.h"
 #include "ConfigUser.h"
-#include "ITransformable.h"
+#include "Transformable.h"
 
 #define SKINNEDCOLORGEOMETRY_VERTEX_TYPE SkinnedColorVertexType
 
@@ -134,8 +134,8 @@ protected:
 	// The effective constructor for the SkinnedColorGeometry class itself
 protected:
 
-	/* The 'bones' argument is a vector of ITransformable objects.
-	   Each rendering pass, the ITransformable objects
+	/* The 'bones' argument is a vector of Transformable objects.
+	   Each rendering pass, the Transformable objects
 	   will be queried for their world transforms. These world transforms
 	   are the bone matrices.
 
@@ -148,7 +148,7 @@ protected:
 		 This means that each bone will provide its transformation
 		 relative to the root bone of the model.
 
-		 (For ITransformable objects that implement a hierarchy
+		 (For Transformable objects that implement a hierarchy
 		  of transformations, this can be achieved by temporarily setting
 		  the world transformation of the root to the identity matrix
 		  before calling this function.

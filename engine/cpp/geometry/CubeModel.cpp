@@ -23,7 +23,7 @@ Description
 #include "CubeModel.h"
 #include <exception>
 
-CubeModel::CubeModel(ITransformable* const transformable,
+CubeModel::CubeModel(Transformable* const transformable,
 	float lengthX, float lengthY, float lengthZ, XMFLOAT4 * pColors) :
 SimpleColorGeometry(true, CUBEMODEL_START_MSG_PREFIX, 0),
 m_transformable(transformable),

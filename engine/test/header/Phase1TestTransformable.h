@@ -25,7 +25,7 @@ Description
 
 #include <windows.h>
 #include <DirectXMath.h>
-#include "ITransformable.h"
+#include "Transformable.h"
 #include "engineGlobals.h"
 
 // Action period in milliseconds
@@ -34,7 +34,7 @@ Description
 // Extent of translation (half of full range)
 #define PHASE1TESTTRANSFORMABLE_TRANSLATE 1.0f
 
-class Phase1TestTransformable : public ITransformable {
+class Phase1TestTransformable : public Transformable {
 
 	// Data members
 private:

@@ -363,7 +363,7 @@ HRESULT SkinnedColorGeometry::updateAndBindBoneBuffers(ID3D11DeviceContext* cons
 	for( i = 0; i < m_boneCount; ++i ) {
 		result = (*m_bones)[i]->getWorldTransform(storedWorldMatrix);
 		if( FAILED(result) ) {
-			logMessage(L"Failed to obtain bone world transformation from ITransformable at index " + std::to_wstring(i));
+			logMessage(L"Failed to obtain bone world transformation from Transformable at index " + std::to_wstring(i));
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 			continue;
 		}

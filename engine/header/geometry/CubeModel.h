@@ -25,7 +25,7 @@ Description
 #include <DirectXMath.h>
 #include "vertexTypes.h"
 #include "SimpleColorGeometry.h"
-#include "ITransformable.h"
+#include "Transformable.h"
 
 #include <string>
 
@@ -39,7 +39,7 @@ public:
 	   as with the 'transformable' argument.
 	   (Both will be deleted by this object's destructor.)
 	 */
-	CubeModel(ITransformable* const transformable,
+	CubeModel(Transformable* const transformable,
 		float lengthX, float lengthY, float lengthZ,
 		DirectX::XMFLOAT4 * pColors = 0);
 
@@ -56,13 +56,13 @@ public:
 
 	// Data members
 protected:
-	/* The ITransformable object is responsible for making this
+	/* The Transformable object is responsible for making this
 	   model behave like a physical entity.
 
 	   The CubeModel object assumes that it owns this pointer
 	   (i.e. the CubeModel destructor will delete the pointer).
 	 */
-	ITransformable* m_transformable;
+	Transformable* m_transformable;
 
 	/* Model dimensions */
 	float m_xlen;

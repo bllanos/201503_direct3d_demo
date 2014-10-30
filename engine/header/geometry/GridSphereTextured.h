@@ -29,7 +29,7 @@ Description
 #include <DirectXMath.h>
 #include "vertexTypes.h"
 #include "SkinnedTexturedGeometry.h"
-#include "ITransformable.h"
+#include "Transformable.h"
 
 #include <string>
 
