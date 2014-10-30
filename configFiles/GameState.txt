@@ -1,0 +1,27 @@
+# GameState configuration file
+
+# GameState LogUser configuration
+# -----------------------------------------------
+BOOL -- GameState_LogUser::enableLogging = true
+WSTRING -- GameState_LogUser::msgPrefix = L"GameState"
+BOOL -- GameState_LogUser::useGlobalLog = false
+BOOL -- GameState_LogUser::allocConsole = false
+BOOL -- GameState_LogUser::allocLogFile = true
+FILENAME -- GameState_LogUser::logFileName = "GameStateLog.txt"
+DIRECTORY -- GameState_LogUser::logFilePath = "..\logFiles"
+BOOL -- GameState_LogUser::overwriteFile = true
+BOOL -- GameState_LogUser::timestampEnable = true
+
+# GameState ConfigUser configuration
+# -----------------------------------------
+BOOL -- GameState_ConfigUser::enableConfigUseLogging = true
+
+# Octree configuration
+# --------------------
+INT -- GameState::treeDepth = 4
+DOUBLE -- GameState::treeLength = 20.0
+FLOAT4 -- GameState::treeLocation = (-10.0, 10.0, -10.0, 0.0)
+
+# Asteroids configuration
+# -----------------------
+INT -- GameState::nAsteroids = 3

@@ -3,40 +3,28 @@
 */
 
 #include "GameState.h"
-#include "fileUtil.h"
 #include <string>
 #include "FlatAtomicConfigIO.h"
+#include <exception>
 
 using namespace DirectX;
 using std::wstring;
 
 #define GAMESTATE_CONFIGIO_CLASS FlatAtomicConfigIO
 
-// Logging output and configuration input filename
-#define GAMESTATE_FILE_NAME L"GameState.txt"
-
-#define TREEDEPTH 4
-#define TREELENGTH 20
-#define TREELOCATION_X -10
-#define TREELOCATION_Y 10
-#define TREELOCATION_Z -10
-
-#define NUMBER_OF_ASTEROIDS 10
-
 GameState::GameState(void) :
 ConfigUser(true, GAMESTATE_START_MSG_PREFIX,
 static_cast<GAMESTATE_CONFIGIO_CLASS*>(0),
-GAMESTATE_FILE_NAME,
-ENGINE_DEFAULT_CONFIG_PATH_TEST
+static_cast<Config*>(0),
+L"GameState",
+L"configFileName",
+L"GameState",
+L"configFilePath"
 ),
-m_camera(0), m_tree(0){
-	// Set up a custom logging output stream
-	wstring logFilename;
-	fileUtil::combineAsPath(logFilename, ENGINE_DEFAULT_LOG_PATH_TEST, GAMESTATE_FILE_NAME);
-	if (FAILED(setLogger(true, logFilename, false, false))) {
-		logMessage(L"Failed to redirect logging output to: " + logFilename);
+m_camera(0), m_tree(0), m_nAsteroids(0) {
+	if (FAILED(configure())) {
+		throw std::exception("GameState configuration failed.");
 	}
-	m_tree = new Octtree(XMFLOAT3(TREELOCATION_X, TREELOCATION_Y, TREELOCATION_Z), TREELENGTH, TREEDEPTH);
 }
 
 GameState::~GameState(void) {
@@ -58,7 +46,7 @@ HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenH
 
 	HRESULT result = ERROR_SUCCESS;
 
-	for (int i = 0; i < NUMBER_OF_ASTEROIDS; i ++){
+	for (size_t i = 0; i < m_nAsteroids; i++){
 		Transformable * newTransform = new Transformable(XMFLOAT3(1.0f, 2.0f, 1.0f), XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i)), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
 	
 		SphereModel * asteroid = new SphereModel(
@@ -108,4 +96,81 @@ HRESULT GameState::poll(Keyboard& input, Mouse& mouse) {
 	else {
 		return ERROR_SUCCESS;
 	}
+}
+
+HRESULT GameState::configure(void) {
+
+	HRESULT result = ERROR_SUCCESS;
+
+	// Initialization with default values
+	// ----------------------------------
+	int treeDepth = GAMESTATE_TREEDEPTH_DEFAULT;
+	double treeLength = GAMESTATE_TREELENGTH_DEFAULT;
+	XMFLOAT3 treeLocation = XMFLOAT3(
+		GAMESTATE_TREELOCATION_X_DEFAULT,
+		GAMESTATE_TREELOCATION_Y_DEFAULT,
+		GAMESTATE_TREELOCATION_Z_DEFAULT);
+	int nAsteroids = GAMESTATE_NUMBER_OF_ASTEROIDS_DEFAULT;
+
+	if (hasConfigToUse()) {
+
+		// Configure base members
+		const std::wstring logUserScope(GAMESTATE_LOGUSER_SCOPE);
+		const std::wstring configUserScope(GAMESTATE_CONFIGUSER_SCOPE);
+		if (FAILED(configureConfigUser(logUserScope, &configUserScope))) {
+			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+
+		// Data retrieval helper variables
+		const int* intValue = 0;
+		const double* doubleValue = 0;
+		const DirectX::XMFLOAT4* float4Value = 0;
+
+		// Query for initialization data
+		// -----------------------------
+
+		if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_TREEDEPTH_FIELD, intValue)) {
+			treeDepth = *intValue;
+		}
+
+		if (retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_TREELENGTH_FIELD, doubleValue)) {
+			treeLength = *doubleValue;
+		}
+
+		if (retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(GAMESTATE_SCOPE, GAMESTATE_TREELOCATION_FIELD, float4Value)) {
+			treeLocation.x = float4Value->x;
+			treeLocation.y = float4Value->y;
+			treeLocation.z = float4Value->z;
+		}
+
+		if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_FIELD, intValue)) {
+			nAsteroids = *intValue;
+		}
+
+	}
+	else {
+		logMessage(L"GameState initialization from configuration data: No Config instance to use.");
+		result = MAKE_HRESULT(SEVERITY_SUCCESS, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
+	}
+
+	// Validation
+	// -----------
+	if (treeDepth <= 0) {
+		treeDepth = GAMESTATE_TREEDEPTH_DEFAULT;
+		logMessage(L"treeDepth cannot be zero or negative. Reverting to default value of " + std::to_wstring(treeDepth));
+	}
+	if (treeLength <= 0) {
+		treeLength = GAMESTATE_TREELENGTH_DEFAULT;
+		logMessage(L"treeLength cannot be zero or negative. Reverting to default value of " + std::to_wstring(treeLength));
+	}
+	if (nAsteroids < 0) {
+		nAsteroids = GAMESTATE_NUMBER_OF_ASTEROIDS_DEFAULT;
+		logMessage(L"nAsteroids cannot be zero or negative. Reverting to default value of " + std::to_wstring(nAsteroids));
+	}
+
+	// Initialization
+	m_nAsteroids = nAsteroids;
+	m_tree = new Octtree(treeLocation, static_cast<float>(treeLength), treeDepth);
+
+	return result;
 }

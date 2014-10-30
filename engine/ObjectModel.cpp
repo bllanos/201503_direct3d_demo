@@ -14,11 +14,10 @@ It is used for the storage of these attributes in the OctTree
 // Logging output and configuration input filename
 #define OBJECTMODEL_FILE_NAME L"ObjectModel.txt"
 
-ObjectModel::ObjectModel(IGeometry* geometry) : ConfigUser(true, OBJECTMODEL_START_MSG_PREFIX,
-	static_cast<OBJECTMODEL_CONFIGIO_CLASS*>(0),
-	OBJECTMODEL_FILE_NAME,
-	ENGINE_DEFAULT_CONFIG_PATH_TEST
-	), model(0), tForms(0) {
+ObjectModel::ObjectModel(IGeometry* geometry) :
+LogUser(true, OBJECTMODEL_START_MSG_PREFIX),
+model(0), tForms(0)
+{
 	model = geometry;
 	tForms = new vector<Transformable *>();
 }

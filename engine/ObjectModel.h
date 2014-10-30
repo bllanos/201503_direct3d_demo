@@ -10,12 +10,12 @@ using namespace std;
 
 #include "Transformable.h"
 #include "IGeometry.h"
-#include "ConfigUser.h"
+#include "LogUser.h"
 
 // Logging message prefix
 #define OBJECTMODEL_START_MSG_PREFIX L"ObjectModel "
 
-class ObjectModel : public ConfigUser {
+class ObjectModel : public LogUser {
 	public:
 		ObjectModel(IGeometry* geometry);
 		virtual ~ObjectModel(void);
