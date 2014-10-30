@@ -42,7 +42,8 @@ ObjectModel::~ObjectModel(){
 
 XMFLOAT3 ObjectModel::getBoundingOrigin(){
 	//TODO
-	return XMFLOAT3(1,1,1);
+	//return tForm->getPosition();
+	return XMFLOAT3(1, 1, 1);
 }
 
 float ObjectModel::getBoundingRadius(){
