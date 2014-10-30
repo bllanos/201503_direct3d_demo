@@ -31,27 +31,23 @@ using namespace DirectX;
 // Extent of orbit (radians) (half of full range)
 #define SKINNEDCOLORTESTTRANSFORMABLE_ORBIT DirectX::XM_PIDIV2
 
-SkinnedColorTestTransformable::SkinnedColorTestTransformable(void) :
-m_fixed(true), m_orbit(false), m_axis(0.0f, 0.0f, 1.0f) {
-	m_transform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-	XMFLOAT4X4 worldTrans;
-	m_transform->getWorldTransformNoScale(worldTrans);
-	XMStoreFloat4x4(&worldTrans, XMMatrixIdentity());
-}
+SkinnedColorTestTransformable::SkinnedColorTestTransformable(void) 
+	: Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)),
+m_fixed(true), m_orbit(false), m_axis(0.0f, 0.0f, 1.0f) 
+{}
 
 HRESULT SkinnedColorTestTransformable::initialize(const DirectX::XMFLOAT3& position,
 	const DirectX::XMFLOAT3& scale, const bool fixed, const bool orbit,
 	const DirectX::XMFLOAT3& axis) {
 
-	m_transform = new Transformable(XMFLOAT3(scale), XMFLOAT3(position), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	m_scale = scale;
+	m_position = position;
 	
 	m_fixed = fixed;
 	m_orbit = orbit;
 	m_axis = axis;
 
-	XMFLOAT4X4 worldTrans;
-	m_transform->getWorldTransformNoScale(worldTrans);
-	XMStoreFloat4x4(&worldTrans, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_worldTransformNoScale, XMMatrixIdentity());
 	if( !m_orbit ) {
 		XMStoreFloat3(&m_axis, XMVector3Normalize(XMLoadFloat3(&m_axis)));
 	}
@@ -60,27 +56,17 @@ HRESULT SkinnedColorTestTransformable::initialize(const DirectX::XMFLOAT3& posit
 
 SkinnedColorTestTransformable::~SkinnedColorTestTransformable(void)
 {
-	if (m_transform) {
-		delete m_transform;
-		m_transform = 0;
-	}
 }
 
-HRESULT SkinnedColorTestTransformable::getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const {
-	m_transform->getWorldTransformNoScale(worldTransform);
-	return ERROR_SUCCESS;
-}
-
-HRESULT SkinnedColorTestTransformable::update(const DWORD currentTime, const DWORD updateTimeInterval) {
-	m_transform->update(currentTime, updateTimeInterval);
-	
+HRESULT SkinnedColorTestTransformable::transformations(XMFLOAT4X4& transform, const DWORD currentTime, const DWORD updateTimeInterval)
+{	
 	// Initialization
 	XMMATRIX worldTransform = XMMatrixIdentity();
 
 	// Translation to location
 	worldTransform = XMMatrixMultiply(worldTransform,
 		XMMatrixTranslationFromVector(
-		XMLoadFloat3(&m_transform->getPosition())
+		XMLoadFloat3(&m_position)
 		));
 
 	if( !m_fixed ) {
@@ -110,14 +96,9 @@ HRESULT SkinnedColorTestTransformable::update(const DWORD currentTime, const DWO
 		}
 	}
 
-	// Scale
-	XMFLOAT4X4 worldTrans;
-	m_transform->getWorldTransformNoScale(worldTrans);
-	XMFLOAT3 theScale;
-	m_transform->getScale(theScale);
-	XMStoreFloat4x4(&worldTrans,
-		XMMatrixMultiply(XMMatrixScalingFromVector(XMLoadFloat3(&theScale)), worldTransform));
-	m_transform->setWorldTransform(worldTrans);
+	XMStoreFloat4x4(&transform, worldTransform);
+
+	
 
 	return ERROR_SUCCESS;
 }

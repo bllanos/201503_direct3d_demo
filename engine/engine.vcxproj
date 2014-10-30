@@ -17,11 +17,11 @@
     <ClCompile Include="cpp\rendering\SkinnedRenderer.cpp" />
     <ClCompile Include="cpp\util\Texture.cpp" />
     <ClCompile Include="cpp\util\TextureFromDDS.cpp" />
-    <ClCompile Include="CubeTransformable.cpp" />
-    <ClCompile Include="CubeTransformableTwo.cpp" />
-    <ClCompile Include="HierarchicalCubesTestState.cpp" />
     <ClCompile Include="test\cpp\AlbedoTextureTestState.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp" />
+    <ClCompile Include="test\cpp\CubeTransformable.cpp" />
+    <ClCompile Include="test\cpp\CubeTransformableTwo.cpp" />
+    <ClCompile Include="test\cpp\HierarchicalCubesTestState.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestTransformable.cpp" />
     <ClCompile Include="cpp\geometry\GridQuad.cpp" />
@@ -42,8 +42,6 @@
     <ClCompile Include="Transformable.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CubeTransformable.h" />
-    <ClInclude Include="CubeTransformableTwo.h" />
     <ClInclude Include="header\geometry\GridQuadTextured.h" />
     <ClInclude Include="header\geometry\GridSphereTextured.h" />
     <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h" />
@@ -51,8 +49,10 @@
     <ClInclude Include="header\rendering\SkinnedRenderer.h" />
     <ClInclude Include="header\util\Texture.h" />
     <ClInclude Include="header\util\TextureFromDDS.h" />
-    <ClInclude Include="HierarchicalCubesTestState.h" />
     <ClInclude Include="test\header\AlbedoTextureTestState.h" />
+    <ClInclude Include="test\header\CubeTransformable.h" />
+    <ClInclude Include="test\header\CubeTransformableTwo.h" />
+    <ClInclude Include="test\header\HierarchicalCubesTestState.h" />
     <ClInclude Include="test\header\SkinnedColorTestState.h" />
     <ClInclude Include="test\header\SkinnedColorTestTransformable.h" />
     <ClInclude Include="header\geometry\GridQuad.h" />

@@ -25,16 +25,13 @@ Description
 
 #include <windows.h>
 #include <DirectXMath.h>
-#include "ITransformable.h"
 #include "Transformable.h"
 #include "engineGlobals.h"
 
-class SkinnedColorTestTransformable : public ITransformable {
+class SkinnedColorTestTransformable : public Transformable {
 
 	// Data members
 private:
-	Transformable* m_transform;
-
 	bool m_fixed;
 	bool m_orbit;
 	DirectX::XMFLOAT3 m_axis;
@@ -52,15 +49,13 @@ public:
 	   used for orbiting, depending on the values of 'fixed' and 'orbit'.
 	   (The vector will be normalized automatically.)
 	 */
-	virtual HRESULT initialize(const DirectX::XMFLOAT3& position,
+	HRESULT initialize(const DirectX::XMFLOAT3& position,
 		const DirectX::XMFLOAT3& scale, const bool fixed, const bool orbit,
 		const DirectX::XMFLOAT3& axis);
 
 	virtual ~SkinnedColorTestTransformable(void);
 
-	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const;
-
-	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
+	virtual HRESULT transformations(DirectX::XMFLOAT4X4& transform, const DWORD currentTime, const DWORD updateTimeInterval);
 
 	// Currently not implemented - will cause linker errors if called
 private:

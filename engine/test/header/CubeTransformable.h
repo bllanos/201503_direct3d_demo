@@ -43,7 +43,7 @@ public:
 
 	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const override;
 
-	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval) override;
+	virtual HRESULT transformations(DirectX::XMFLOAT4X4& transform, const DWORD currentTime, const DWORD updateTimeInterval) override;
 
 	// Currently not implemented - will cause linker errors if called
 private:

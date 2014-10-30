@@ -62,30 +62,34 @@ public:
 
 	virtual ~Transformable(void);
 
-	virtual HRESULT getScale(DirectX::XMFLOAT3&) const;
-
 	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const override;
 
 	virtual HRESULT getWorldTransformNoScale(DirectX::XMFLOAT4X4& worldTransformNoScale);
 
-	virtual HRESULT setWorldTransform(DirectX::XMFLOAT4X4& newWorldTransform);
-
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
 
-	void setParent(Transformable* const parent);
+	// override this function in the child and use it for matrix transformations
+	virtual HRESULT transformations(DirectX::XMFLOAT4X4& transform, const DWORD currentTime, const DWORD updateTimeInterval);
+
+	HRESULT setParent(Transformable* const parent);
 
 	void Move(float amount); // move forward and back (move forward, move backward)
 	void Strafe(float amount); // move left and right
 	void Crane(float amount); // move up and down
 	void Spin(float roll, float pitch, float yaw); // spin the object (tilt, pan)
 
-	DirectX::XMFLOAT3 getPosition(void) const;
-	DirectX::XMFLOAT4 getOrientation(void) const;
+	DirectX::XMFLOAT3 getScale() const;
+	DirectX::XMFLOAT3 getPosition() const;
+	DirectX::XMFLOAT4 getOrientation() const;
 
-	DirectX::XMFLOAT3 getForwardWorldDirection(void);
+	// computes and returns the respective direction
+	DirectX::XMFLOAT3 getForwardWorldDirection();
+	DirectX::XMFLOAT3 getUpWorldDirection();
+	DirectX::XMFLOAT3 getLeftWorldDirection();
 
 protected:
 	virtual void computeLocalTransform(DirectX::XMFLOAT4X4& localTransformNoScale, const DWORD updateTimeInterval);
+	virtual void computeTransforms(DirectX::XMFLOAT4X4 newWorldTransform, const DWORD updateTimeInterval);
 	void updateTransformProperties();
 
 	// Currently not implemented - will cause linker errors if called

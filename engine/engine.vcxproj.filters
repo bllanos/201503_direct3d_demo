@@ -135,13 +135,13 @@
     <ClCompile Include="test\cpp\TexturedSphereTestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
-    <ClCompile Include="HierarchicalCubesTestState.cpp">
+    <ClCompile Include="test\cpp\CubeTransformable.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
-    <ClCompile Include="CubeTransformable.cpp">
+    <ClCompile Include="test\cpp\CubeTransformableTwo.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
-    <ClCompile Include="CubeTransformableTwo.cpp">
+    <ClCompile Include="test\cpp\HierarchicalCubesTestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -242,13 +242,13 @@
     <ClInclude Include="test\header\TexturedSphereTestState.h">
       <Filter>test\header</Filter>
     </ClInclude>
-    <ClInclude Include="HierarchicalCubesTestState.h">
+    <ClInclude Include="test\header\CubeTransformable.h">
       <Filter>test\header</Filter>
     </ClInclude>
-    <ClInclude Include="CubeTransformable.h">
+    <ClInclude Include="test\header\CubeTransformableTwo.h">
       <Filter>test\header</Filter>
     </ClInclude>
-    <ClInclude Include="CubeTransformableTwo.h">
+    <ClInclude Include="test\header\HierarchicalCubesTestState.h">
       <Filter>test\header</Filter>
     </ClInclude>
   </ItemGroup>
