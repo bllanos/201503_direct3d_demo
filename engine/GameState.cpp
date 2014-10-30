@@ -37,7 +37,7 @@ m_camera(0), m_tree(0){
 		logMessage(L"Failed to redirect logging output to: " + logFilename);
 	}
 	m_tree = new Octtree(XMFLOAT3(TREELOCATION_X, TREELOCATION_Y, TREELOCATION_Z), TREELENGTH, TREEDEPTH);
-	asteroids = new vector<ObjectModel*>();
+	//asteroids = new vector<ObjectModel*>();
 }
 
 GameState::~GameState(void) {
@@ -71,7 +71,7 @@ HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenH
 
 	ObjectModel * newObject = new ObjectModel(asteroid);
 
-	asteroids->push_back(newObject);
+	//asteroids->push_back(newObject);
 
 	newObject->addITransformable(newTransform);
 

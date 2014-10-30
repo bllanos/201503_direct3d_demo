@@ -47,28 +47,23 @@ Octnode::Octnode(XMFLOAT3 position, float length, int depth, int depthThis, Octn
 Octnode::~Octnode(){
 	//delete nodeObjectList;
 	for (int i = 0; i < nodeObjectList->size(); i++){
-		//delete nodeObjectList.at[i];
+		delete nodeObjectList->at(i);
 	}
 }
 
 int Octnode::fits(ObjectModel * newGameObject){
 	//check to make sure the object's bounded size is less than or equal to the size of the node cube
 	//this is the fast check to make sure it would be able to fit
-	/*
 	if(newGameObject->getBoundingRadius()*2 > length){
 		return -1;
 	}
-	*/
 	
 //left plane
 	
 	//first vector 0th and 4th
 	//second vector 0th and 1st
 	XMFLOAT3 plane1[] = { vertices[0], vertices[4], vertices[1] };
-	//XMFLOAT3 plane1[] = { XMFLOAT3(-5,5,-5), XMFLOAT3(-5,5,5), XMFLOAT3(-5,-5,-5) };
 	if (!spherePlaneCheck(plane1, newGameObject->getBoundingOrigin(), length, newGameObject->getBoundingRadius())) return -1;
-
-	//if (!spherePlaneCheck(plane1, XMFLOAT3(1,1,1), 10, 1.0f)) return -1;
 
 	/*this checks if the object is contained within the node's cubic boundaries by checking against 3 planes
 	 *these planes are defined as the left side of the cube, the top side of the cube, the front side of the cube
@@ -81,20 +76,14 @@ int Octnode::fits(ObjectModel * newGameObject){
 	//first vector 0th and 4th
 	//second vector 0th and 2nd
 	XMFLOAT3 plane2[] = { vertices[0], vertices[4], vertices[2] };
-	//XMFLOAT3 plane2[] = { XMFLOAT3(-5,5,-5), XMFLOAT3(-5,5,5), XMFLOAT3(5,5,-5)};
 	if (!spherePlaneCheck(plane2, newGameObject->getBoundingOrigin(), length, newGameObject->getBoundingRadius())) return -1;
-
-	//if (!spherePlaneCheck(plane2, XMFLOAT3(1, 1, 1), 10, 1.0f)) return -1;
 
 //front plane
 	
 	//first vector 0th and 2nd
 	//second vector 0th and 1st
 	XMFLOAT3 plane3[] = { vertices[0], vertices[2], vertices[1] };
-	//XMFLOAT3 plane3[] = { XMFLOAT3(-5, 5, -5), XMFLOAT3(5, 5, -5), XMFLOAT3(-5, -5, -5) };
 	if (!spherePlaneCheck(plane3, newGameObject->getBoundingOrigin(), length, newGameObject->getBoundingRadius())) return -1;
-	
-	//if (!spherePlaneCheck(plane3, XMFLOAT3(1, 1, 1), 10, 1.0f)) return -1;
 	
 //it fits in this node but we have to check if it fits in a smaller node
 	for(int i = 0; i < 8; i++){
@@ -159,12 +148,6 @@ bool Octnode::spherePlaneCheck(XMFLOAT3 planePoints[3] , XMFLOAT3 sphereOrigin, 
 											(firstCrossSecond.z * firstCrossSecond.z));
 	
 	//check bounding
-	/*
-	if((distPlanePoint < sphereRadi) || 
-	   ((distPlanePoint + (sphereRadi)) > squareLength)){
-		return false;
-	}
-	*/
 
 	if (distPlanePoint < sphereRadi) return false;
 

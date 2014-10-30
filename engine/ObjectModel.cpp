@@ -18,7 +18,7 @@ ObjectModel::ObjectModel(IGeometry* geometry) : ConfigUser(true, OBJECTMODEL_STA
 	static_cast<OBJECTMODEL_CONFIGIO_CLASS*>(0),
 	OBJECTMODEL_FILE_NAME,
 	ENGINE_DEFAULT_CONFIG_PATH_TEST
-	), model(0), tForm_shared(0){
+	), model(0), tForm_shared(0), tForm(0){
 	model = geometry;
 	tForm_shared = new vector<ITransformable *>();
 }
@@ -66,7 +66,7 @@ HRESULT ObjectModel::draw(ID3D11DeviceContext* const context, GeometryRendererMa
 	HRESULT result;
 	result = model->drawUsingAppropriateRenderer(context, manager, camera);
 	if (FAILED(result)){
-		logMessage(L"failed so hard at rendering a fucking asteriod you n00b.");
+		logMessage(L"failed to render model.");
 	}
 
 	return result;

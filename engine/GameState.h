@@ -26,9 +26,9 @@ private:
 
 	Octtree* m_tree;
 
-	vector<ObjectModel*>* asteroids;
+	//vector<ObjectModel*>* asteroids;
 
-	vector<Transformable*>* transformations;
+	//vector<Transformable*>* transformations;
 
 public:
 	GameState(void);
