@@ -37,7 +37,6 @@ m_camera(0), m_tree(0){
 		logMessage(L"Failed to redirect logging output to: " + logFilename);
 	}
 	m_tree = new Octtree(XMFLOAT3(TREELOCATION_X, TREELOCATION_Y, TREELOCATION_Z), TREELENGTH, TREEDEPTH);
-	//asteroids = new vector<ObjectModel*>();
 }
 
 GameState::~GameState(void) {
@@ -57,26 +56,26 @@ HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenH
 	// Initialize the camera
 	m_camera = new Camera(screenWidth, screenHeight);
 
-	Phase1TestTransformable * newTransform = new Phase1TestTransformable();
-	
-	SphereModel * asteroid = new SphereModel(
-		newTransform,
-		2.0f,
-		0
-		);
-
 	HRESULT result = ERROR_SUCCESS;
 
-	result = asteroid->initialize(device);
+	for (int i = 0; i < NUMBER_OF_ASTEROIDS; i ++){
+		Phase1TestTransformable * newTransform = new Phase1TestTransformable();
+	
+		SphereModel * asteroid = new SphereModel(
+			newTransform,
+			2.0f,
+			0
+			);
 
-	ObjectModel * newObject = new ObjectModel(asteroid);
+		result = asteroid->initialize(device);
 
-	//asteroids->push_back(newObject);
+		ObjectModel * newObject = new ObjectModel(asteroid);
 
-	newObject->addITransformable(newTransform);
+		newObject->addITransformable(newTransform);
 
-	if (m_tree->addObject(newObject) == -1){
-		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		if (m_tree->addObject(newObject) == -1){
+			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
 	}
 
 	if (FAILED(result)) {
@@ -94,12 +93,6 @@ HRESULT GameState::next(State*& nextState) {
 }
 
 HRESULT GameState::drawContents(ID3D11DeviceContext* const context, GeometryRendererManager& manager) {
-	/*
-	if (FAILED(m_tree->drawUsingAppropriateRenderer(context, manager, m_camera))) {
-		logMessage(L"Failed to render Tree of game objects.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-	*/
 	return m_tree->drawContents(context, manager, m_camera);
 }
 
