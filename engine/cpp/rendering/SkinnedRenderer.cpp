@@ -18,11 +18,8 @@ Description
   -Implementation of the SkinnedRenderer class
 */
 
-#pragma once
-
 #include "SkinnedRenderer.h"
 #include "SkinnedColorGeometry.h"
-#include "fileUtil.h"
 
 using namespace DirectX;
 using std::wstring;

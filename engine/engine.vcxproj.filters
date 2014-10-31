@@ -162,7 +162,7 @@
     <ClCompile Include="cpp\physics\Transformable.cpp">
       <Filter>source\physics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\..\Bernard%27s work\Carleton\Fall 2014 Term\COMP3501A\Project\Code\engine\cpp\rendering\InvariantParticlesRenderer.cpp">
+    <ClCompile Include="cpp\rendering\InvariantParticlesRenderer.cpp">
       <Filter>source\rendering</Filter>
     </ClCompile>
   </ItemGroup>
