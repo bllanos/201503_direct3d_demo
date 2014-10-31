@@ -26,8 +26,8 @@ BOOL -- GridSphereTextured::debugWinding = false
 
 # GridSphereTextured material configuration
 # ---------------------------------------
-FLOAT4 -- GridSphereTextured::ambientAlbedo = (1.0, 1.0, 1.0, 1.0)
-FLOAT4 -- GridSphereTextured::diffuseAlbedo = (1.0, 1.0, 1.0, 1.0)
+FLOAT4 -- GridSphereTextured::ambientAlbedo = (1.5, 0.8, 1.0, 1.0)
+FLOAT4 -- GridSphereTextured::diffuseAlbedo = (1.2, 0.8, 1.0, 1.0)
 FLOAT4 -- GridSphereTextured::specularAlbedo = (1.0, 1.0, 1.0, 1.0)
 DOUBLE -- GridSphereTextured::specularPower = 10.0
 
@@ -76,5 +76,7 @@ INT -- albedoTexture::comparisonFunc = 1
 COLOR -- albedoTexture::borderColor = (255, 255, 255, 255)
 
 # Texture
-FILENAME -- albedoTexture::textureFileName = "pia18092_mahli-sol627-windjana_500x537.dds"
+# Note: Dashes were replaced with underscores in the filename
+#   (Otherwise the filename will not be deemed valid - Errors would be appended to this file.)
+FILENAME -- albedoTexture::textureFileName = "pia18092_mahli_sol627_windjana_500x537.dds"
 DIRECTORY -- albedoTexture::textureFilePath = "..\textures"

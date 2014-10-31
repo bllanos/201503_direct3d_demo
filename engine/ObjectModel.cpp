@@ -61,10 +61,16 @@ HRESULT ObjectModel::addTransformable(Transformable * newTrans){
 }
 
 HRESULT ObjectModel::draw(ID3D11DeviceContext* const context, GeometryRendererManager& manager, Camera * camera){
-	HRESULT result;
+	HRESULT result = ERROR_SUCCESS;
+
+	result = model->setTransformables(tForms);
+	if (FAILED(result)){
+		logMessage(L"Failed to set geometry bones.");
+	}
+
 	result = model->drawUsingAppropriateRenderer(context, manager, camera);
 	if (FAILED(result)){
-		logMessage(L"failed to render model.");
+		logMessage(L"Failed to render model.");
 	}
 
 	return result;

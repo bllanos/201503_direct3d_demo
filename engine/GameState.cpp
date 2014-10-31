@@ -268,7 +268,7 @@ HRESULT GameState::initializeAsteroid(ID3D11Device* device) {
 	/* Note: The data used to initialize the bones is not arbitrary,
 	         even if the bones are only used temporarily!
 	 */
-	vector<Transformable*>* const bones = new vector<Transformable*>(GRIDSPHERETEXTURED_NBONES);
+	vector<Transformable*>* const bones = new vector<Transformable*>();
 	bones->push_back(new Transformable(
 		XMFLOAT3(1.0f, 1.0f, 1.0f),
 		XMFLOAT3(0.0f, 0.0f, 0.0f), // Center of the sphere
