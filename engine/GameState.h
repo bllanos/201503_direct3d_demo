@@ -13,6 +13,7 @@
 #include "Camera.h"
 #include "oct_tree.h"
 #include "GridSphereTextured.h"
+#include "ShipModel.h"
 
 // Logging message prefix
 #define GAMESTATE_START_MSG_PREFIX L"GameState"
@@ -61,6 +62,9 @@
 // Asteroid configuration
 #define GAMESTATE_GEOMETRY_ASTEROID_SCOPE L"asteroid"
 
+// Ship configuration
+#define GAMESTATE_GEOMETRY_SHIP_SCOPE L"shipmodel"
+
 class GameState : public State, public ConfigUser{
 private:
 	Camera* m_camera;
@@ -68,6 +72,8 @@ private:
 	Octtree* m_tree;
 
 	GridSphereTextured* m_asteroid;
+
+	ShipModel* m_ship;
 
 	// spawn grid of asteroids or not
 	bool m_bSpawnGrid;
@@ -111,6 +117,8 @@ protected:
 
 	virtual HRESULT initializeAsteroid(ID3D11Device* device);
 
+	virtual HRESULT initializeShip(ID3D11Device* device);
+
 	// Octree setup helpers
 protected:
 	/* For first-time setup */
@@ -121,5 +129,8 @@ protected:
 
 	/* Adds asteroids to the octree */
 	virtual HRESULT spawnAsteroidsGrid(const size_t x, const size_t y, const size_t z);
+
+	/* Adds 'n' ships to the octree */
+	virtual HRESULT spawnShip(const size_t n);
 
 };

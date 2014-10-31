@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="cpp\geometry\GridQuadTextured.cpp" />
     <ClCompile Include="cpp\geometry\GridSphereTextured.cpp" />
+    <ClCompile Include="cpp\geometry\ShipModel.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedTexturedGeometry.cpp" />
     <ClCompile Include="cpp\physics\Transformable.cpp" />
     <ClCompile Include="cpp\rendering\SkinnedRenderer.cpp" />
@@ -48,6 +49,7 @@
     <ClInclude Include="GameState.h" />
     <ClInclude Include="header\geometry\GridQuadTextured.h" />
     <ClInclude Include="header\geometry\GridSphereTextured.h" />
+    <ClInclude Include="header\geometry\ShipModel.h" />
     <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h" />
     <ClInclude Include="header\geometry\SphereModel.h" />
     <ClInclude Include="header\physics\Transformable.h" />

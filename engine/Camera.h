@@ -33,8 +33,8 @@ Pan-Tilt-Roll-Strafe-Dolly-Crane-Zooom
 	const float CAMERA_DOLLY_SPEED = 0.4f;; //used for forward and backward travel along the camera direction vector
 	const float CAMERA_STRAFE_SPEED = 0.4f; //sideways translation along the sideways vector direction
 	const float CAMERA_CRANE_SPEED = 0.4f; //up and down translation along the up vector direction
-	const float CAMERA_ZOOM_IN_FACTOR = 3.6f; //field of view mult. factor to zoom in
-	const float CAMERA_ZOOM_OUT_FACTOR = 4.4f; //field of view mult. factor to zoom out
+	const float CAMERA_ZOOM_IN_FACTOR = 0.9f; //field of view mult. factor to zoom in
+	const float CAMERA_ZOOM_OUT_FACTOR = 1.1f; //field of view mult. factor to zoom out
 
 	const float	NOMINAL_FIELD_OF_VIEW = (float)XM_PI / 4.0f;
 

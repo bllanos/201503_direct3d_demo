@@ -24,7 +24,7 @@ CONFIGUSER_INPUT_FILE_NAME_FIELD,
 GAMESTATE_SCOPE,
 CONFIGUSER_INPUT_FILE_PATH_FIELD
 ),
-m_camera(0), m_tree(0), m_asteroid(0), m_bSpawnGrid(false), m_nAsteroids(0), m_asteroidGridSpacing(1.0f), m_nAsteroidsX(0), m_nAsteroidsY(0), m_nAsteroidsZ(0) {
+m_camera(0), m_tree(0), m_asteroid(0), m_ship(0), m_bSpawnGrid(false), m_nAsteroids(0), m_asteroidGridSpacing(1.0f), m_nAsteroidsX(0), m_nAsteroidsY(0), m_nAsteroidsZ(0) {
 	if (FAILED(configure())) {
 		throw std::exception("GameState configuration failed.");
 	}
@@ -44,6 +44,11 @@ GameState::~GameState(void) {
 	if (m_asteroid != 0) {
 		delete m_asteroid;
 		m_asteroid = 0;
+	}
+
+	if (m_ship != 0) {
+		delete m_ship;
+		m_ship = 0;
 	}
 }
 
@@ -285,6 +290,7 @@ HRESULT GameState::configureGeometry(void) {
 
 	// Actually construct and configure geometry
 	// -----------------------------------------
+	/*
 	m_asteroid = new GridSphereTextured(
 		&configIO, // Used to load configuration file
 		&config, // Queried for location of configuration file
@@ -293,13 +299,24 @@ HRESULT GameState::configureGeometry(void) {
 		GAMESTATE_GEOMETRY_ASTEROID_SCOPE,
 		CONFIGUSER_INPUT_FILE_PATH_FIELD
 		);
+	*/
+
+	m_ship = new ShipModel(
+		&configIO, // Used to load configuration file
+		&config, // Queried for location of configuration file
+		GAMESTATE_GEOMETRY_SHIP_SCOPE, // Configuration file location query parameters
+		CONFIGUSER_INPUT_FILE_NAME_FIELD,
+		GAMESTATE_GEOMETRY_SHIP_SCOPE,
+		CONFIGUSER_INPUT_FILE_PATH_FIELD
+		);
 
 	return result;
 }
 
 HRESULT GameState::initializeGeometry(ID3D11Device* device) {
 
-	if (FAILED(initializeAsteroid(device))) {
+	//if (FAILED(initializeAsteroid(device)) ||
+	if(	FAILED(initializeShip(device))) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	
@@ -358,7 +375,60 @@ HRESULT GameState::initializeAsteroid(ID3D11Device* device) {
 	return result;
 }
 
+HRESULT GameState::initializeShip(ID3D11Device* device) {
+
+	if (m_ship == 0) {
+		logMessage(L"Initialization cannot proceed before the asteroid has been constructed and configured.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	// Temporary bones needed to initialize the asteroid
+	/* Note: The data used to initialize the bones is not arbitrary,
+	even if the bones are only used temporarily!
+	*/
+	vector<Transformable*>* const bones = new vector<Transformable*>();
+	bones->push_back(new Transformable(
+		XMFLOAT3(1.0f, 1.0f, 1.0f),
+		XMFLOAT3(0.0f, 0.0f, 0.0f), // Center of the sphere
+		XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
+		));
+	bones->push_back(new Transformable(
+		XMFLOAT3(1.0f, 1.0f, 1.0f),
+		XMFLOAT3(0.0f, -1.0f, 0.0f), // South pole
+		XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
+		));
+	bones->push_back(new Transformable(
+		XMFLOAT3(1.0f, 1.0f, 1.0f),
+		XMFLOAT3(0.0f, 1.0f, 0.0f), // North pole
+		XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
+		));
+
+	// Initialize the asteroid
+	HRESULT result = ERROR_SUCCESS;
+	result = m_ship->initialize(device, bones, 0);
+	if (FAILED(result)) {
+		logMessage(L"Failed to initialize ship geometry.");
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	// Delete temporary bones
+	if (bones != 0) {
+		vector<Transformable*>::size_type i = 0;
+		vector<Transformable*>::size_type size = bones->size();
+		for (i = 0; i < size; ++i) {
+			if ((*bones)[i] != 0) {
+				delete (*bones)[i];
+				(*bones)[i] = 0;
+			}
+		}
+		delete bones;
+	}
+
+	return result;
+}
+
 HRESULT GameState::fillOctree(void) {
+	/*
 	if (m_bSpawnGrid) {
 		if (FAILED(spawnAsteroidsGrid(m_nAsteroidsX, m_nAsteroidsY, m_nAsteroidsZ))) {
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -368,6 +438,11 @@ HRESULT GameState::fillOctree(void) {
 		if (FAILED(spawnAsteroids(m_nAsteroids))) {
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
+	}
+	*/
+
+	if (FAILED(spawnShip(1))) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
 	return ERROR_SUCCESS;
@@ -473,3 +548,52 @@ HRESULT GameState::spawnAsteroidsGrid(const size_t x, const size_t y, const size
 
 	return ERROR_SUCCESS;
 }
+
+HRESULT GameState::spawnShip(const size_t n) {
+
+	if (m_ship == 0) {
+		logMessage(L"Cannot spawn the ship before the ship has been constructed and configured.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	XMFLOAT3 offset(0.0f, 0.0f, 0.0f);
+	XMFLOAT3 southOffset(0.0f, -1.0f, 0.0f);
+	XMFLOAT3 northOffset(0.0f, 1.0f, 0.0f);
+
+	XMFLOAT3 scale(1.0f, 1.0f, 1.0f);
+	XMFLOAT4 orientation(0.0f, 0.0f, 0.0f, 1.0f);
+
+	ObjectModel* newObject = 0;
+	Transformable* bone = 0;
+	Transformable* parent = 0;
+
+	for (size_t i = 0; i < n; ++i){
+
+		newObject = new ObjectModel(m_ship);
+
+		offset = XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i) - 2.0f);
+
+		// Center
+		bone = new Transformable(scale, offset, orientation);
+		parent = bone;
+		newObject->addTransformable(bone);
+
+		// South pole
+		bone = new Transformable(scale, southOffset, orientation);
+		bone->setParent(parent);
+		newObject->addTransformable(bone);
+
+		// North pole
+		bone = new Transformable(scale, northOffset, orientation);
+		bone->setParent(parent);
+		newObject->addTransformable(bone);
+
+
+		if (m_tree->addObject(newObject) == -1){
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
+	return ERROR_SUCCESS;
+}
+
