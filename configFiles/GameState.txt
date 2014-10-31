@@ -24,7 +24,12 @@ FLOAT4 -- GameState::treeLocation = (-10.0, 10.0, -10.0, 0.0)
 
 # Asteroids external configuration
 # --------------------------------
+BOOL -- GameState::bSpawnGrid = false
 INT -- GameState::nAsteroids = 3
+DOUBLE -- GameState::asteroidGridSpacing = 8.0
+INT -- GameState::nAsteroidsX = 4
+INT -- GameState::nAsteroidsY = 4
+INT -- GameState::nAsteroidsZ = 4
 
 # Allows the game state to provide a sharable config instance
 # -----------------------------------------------------------

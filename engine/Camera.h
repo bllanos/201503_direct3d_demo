@@ -27,14 +27,14 @@ Pan-Tilt-Roll-Strafe-Dolly-Crane-Zooom
 	//these constants can be adjusted to provide smooth feel for the 
 	//camera moves
 
-	const float CAMERA_TILT_SPEED = 1.0f; //up and down rotation about the sideways vector direction
-	const float CAMERA_PAN_SPEED = 1.0f; //left and right rotation about the up vector
-	const float CAMERA_ROLL_SPEED = 1.0f; //left and right rotation about the camera direction vector
-	const float CAMERA_DOLLY_SPEED = 0.1f;; //used for forward and backward travel along the camera direction vector
-	const float CAMERA_STRAFE_SPEED = 0.1f; //sideways translation along the sideways vector direction
-	const float CAMERA_CRANE_SPEED = 0.1f; //up and down translation along the up vector direction
-	const float CAMERA_ZOOM_IN_FACTOR = 0.9f; //field of view mult. factor to zoom in
-	const float CAMERA_ZOOM_OUT_FACTOR = 1.1f; //field of view mult. factor to zoom out
+	const float CAMERA_TILT_SPEED = 4.0f; //up and down rotation about the sideways vector direction
+	const float CAMERA_PAN_SPEED = 4.0f; //left and right rotation about the up vector
+	const float CAMERA_ROLL_SPEED = 4.0f; //left and right rotation about the camera direction vector
+	const float CAMERA_DOLLY_SPEED = 0.4f;; //used for forward and backward travel along the camera direction vector
+	const float CAMERA_STRAFE_SPEED = 0.4f; //sideways translation along the sideways vector direction
+	const float CAMERA_CRANE_SPEED = 0.4f; //up and down translation along the up vector direction
+	const float CAMERA_ZOOM_IN_FACTOR = 3.6f; //field of view mult. factor to zoom in
+	const float CAMERA_ZOOM_OUT_FACTOR = 4.4f; //field of view mult. factor to zoom out
 
 	const float	NOMINAL_FIELD_OF_VIEW = (float)XM_PI / 4.0f;
 

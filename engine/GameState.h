@@ -1,5 +1,8 @@
 /*
 	GameState.h
+
+	To render the asteroids grid, set the bSpawnGrid boolean
+	in the config file. To render the default asteroids, set to false.
 */
 
 #pragma once
@@ -32,8 +35,23 @@
 #define GAMESTATE_TREELOCATION_Y_DEFAULT 0 // 10
 #define GAMESTATE_TREELOCATION_Z_DEFAULT 0 // -10
 
+#define GAMESTATE_SPAWN_ASTEROIDS_GRID_FIELD L"bSpawnGrid"
+#define GAMESTATE_SPAWN_ASTEROIDS_GRID_DEFAULT false // 10
+
 #define GAMESTATE_NUMBER_OF_ASTEROIDS_FIELD L"nAsteroids"
 #define GAMESTATE_NUMBER_OF_ASTEROIDS_DEFAULT 0 // 10
+
+#define GAMESTATE_ASTEROID_GRID_SPACING_FIELD L"asteroidGridSpacing"
+#define GAMESTATE_ASTEROID_GRID_SPACING_DEFAULT 1 // 10
+
+#define GAMESTATE_NUMBER_OF_ASTEROIDS_X_FIELD L"nAsteroidsX"
+#define GAMESTATE_NUMBER_OF_ASTEROIDS_X_DEFAULT 0 // 10
+
+#define GAMESTATE_NUMBER_OF_ASTEROIDS_Y_FIELD L"nAsteroidsY"
+#define GAMESTATE_NUMBER_OF_ASTEROIDS_Y_DEFAULT 0 // 10
+
+#define GAMESTATE_NUMBER_OF_ASTEROIDS_Z_FIELD L"nAsteroidsZ"
+#define GAMESTATE_NUMBER_OF_ASTEROIDS_Z_DEFAULT 0 // 10
 
 // LogUser and ConfigUser configuration parameters
 // Refer to LogUser.h and ConfigUser.h
@@ -51,8 +69,15 @@ private:
 
 	GridSphereTextured* m_asteroid;
 
+	// spawn grid of asteroids or not
+	bool m_bSpawnGrid;
+
 	// Initial number of asteroids
 	size_t m_nAsteroids;
+
+	// if spawning a grid of asteroids
+	double m_asteroidGridSpacing;
+	size_t m_nAsteroidsX, m_nAsteroidsY, m_nAsteroidsZ;
 
 public:
 	GameState(void);
@@ -93,5 +118,8 @@ protected:
 
 	/* Adds 'n' asteroids to the octree */
 	virtual HRESULT spawnAsteroids(const size_t n);
+
+	/* Adds asteroids to the octree */
+	virtual HRESULT spawnAsteroidsGrid(const size_t x, const size_t y, const size_t z);
 
 };
