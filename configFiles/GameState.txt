@@ -25,7 +25,7 @@ FLOAT4 -- GameState::treeLocation = (-10.0, 10.0, -10.0, 0.0)
 # Asteroids external configuration
 # --------------------------------
 INT -- GameState::nAsteroids = 3
-DOUBLE -- GameState::radiAsteroids = 1.0
+DOUBLE -- GameState::radiAsteroids = 0.5
 
 # Allows the game state to provide a sharable config instance
 # -----------------------------------------------------------

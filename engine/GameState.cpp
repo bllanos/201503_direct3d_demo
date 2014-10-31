@@ -326,10 +326,10 @@ HRESULT GameState::spawnAsteroids(const size_t n) {
 	}
 
 	XMFLOAT3 offset(0.0f, 0.0f, 0.0f);
-	XMFLOAT3 southOffset(0.0f, -1.0f, 0.0f);
-	XMFLOAT3 northOffset(0.0f, 1.0f, 0.0f);
+	XMFLOAT3 southOffset(0.0f, -(asteroid_Radius), 0.0f);
+	XMFLOAT3 northOffset(0.0f, asteroid_Radius, 0.0f);
 
-	XMFLOAT3 scale(1.0f, 1.0f, 1.0f);
+	XMFLOAT3 scale(asteroid_Radius, asteroid_Radius, asteroid_Radius);
 	XMFLOAT4 orientation(0.0f, 0.0f, 0.0f, 1.0f);
 
 	ObjectModel* newObject = 0;
@@ -340,7 +340,7 @@ HRESULT GameState::spawnAsteroids(const size_t n) {
 
 		newObject = new ObjectModel(m_asteroid);
 
-		offset = XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i));
+		offset = XMFLOAT3(static_cast<float>(i*2), static_cast<float>(i*2), static_cast<float>(i*2));
 
 		// Center
 		bone = new Transformable(scale, offset, orientation);
