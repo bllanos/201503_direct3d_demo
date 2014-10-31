@@ -176,8 +176,7 @@ protected:
 		const DirectX::XMFLOAT4X4 viewMatrix,
 		const DirectX::XMFLOAT4X4 projectionMatrix,
 		const DirectX::XMFLOAT4 cameraPosition,
-		const float blendFactor,
-		const INVARIANTPARTICLESRENDERER_MATERIAL_STRUCT* material);
+		const InvariantParticles& geometry);
 
 	/* Sets light-independent pipeline state */
 	virtual HRESULT setNoLightShaderParameters(
@@ -185,7 +184,7 @@ protected:
 		const DirectX::XMFLOAT4X4 viewMatrix,
 		const DirectX::XMFLOAT4X4 projectionMatrix,
 		const DirectX::XMFLOAT4 cameraPosition,
-		const float blendFactor);
+		const InvariantParticles& geometry);
 
 	/* Sets light-dependent pipeline state */
 	virtual HRESULT setLightShaderParameters(
