@@ -16,10 +16,10 @@ GameState::GameState(void) :
 ConfigUser(true, GAMESTATE_START_MSG_PREFIX,
 static_cast<GAMESTATE_CONFIGIO_CLASS*>(0),
 static_cast<Config*>(0),
-L"GameState",
-L"configFileName",
-L"GameState",
-L"configFilePath"
+GAMESTATE_SCOPE,
+CONFIGUSER_INPUT_FILE_NAME_FIELD,
+GAMESTATE_SCOPE,
+CONFIGUSER_INPUT_FILE_PATH_FIELD
 ),
 m_camera(0), m_tree(0), m_nAsteroids(0) {
 	if (FAILED(configure())) {
@@ -47,7 +47,7 @@ HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenH
 	HRESULT result = ERROR_SUCCESS;
 
 	for (size_t i = 0; i < m_nAsteroids; i++){
-		Transformable * newTransform = new Transformable(XMFLOAT3(1.0f, 2.0f, 1.0f), XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i)), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
+		Transformable * newTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i)), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
 	
 		SphereModel * asteroid = new SphereModel(
 			newTransform,

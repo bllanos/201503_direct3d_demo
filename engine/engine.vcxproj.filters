@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -55,6 +55,9 @@
     <Filter Include="source\util">
       <UniqueIdentifier>{66af0f04-f30f-4694-9c9b-7a311a94144b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\physics">
+      <UniqueIdentifier>{e8288cf9-dfa8-461a-97e7-557d48d3fd3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cpp\rendering\SimpleColorRenderer.cpp">
@@ -92,9 +95,6 @@
     </ClCompile>
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp">
       <Filter>test\source</Filter>
-    </ClCompile>
-    <ClCompile Include="Transformable.cpp">
-      <Filter>Unprocessed Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>source</Filter>
@@ -149,12 +149,18 @@
     </ClCompile>
     <ClCompile Include="GameState.cpp">
       <Filter>source</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="cpp\util\Shader.cpp">
       <Filter>source\util</Filter>
     </ClCompile>
     <ClCompile Include="cpp\geometry\InvariantParticles.cpp">
       <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="test\cpp\ShipModelTestState.cpp">
+      <Filter>test\source</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\physics\Transformable.cpp">
+      <Filter>source\physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -215,9 +221,6 @@
     <ClInclude Include="test\header\SkinnedColorTestState.h">
       <Filter>test\header</Filter>
     </ClInclude>
-    <ClInclude Include="Transformable.h">
-      <Filter>Unprocessed Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>header</Filter>
     </ClInclude>
@@ -268,7 +271,7 @@
     </ClInclude>
     <ClInclude Include="GameState.h">
       <Filter>header</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="header\util\pipelineDefs.h">
       <Filter>header\util</Filter>
     </ClInclude>
@@ -280,6 +283,12 @@
     </ClInclude>
     <ClInclude Include="header\rendering\InvariantParticlesRenderer.h">
       <Filter>header\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="test\header\ShipModelTestState.h">
+      <Filter>test\header</Filter>
+    </ClInclude>
+    <ClInclude Include="header\physics\Transformable.h">
+      <Filter>header\physics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
