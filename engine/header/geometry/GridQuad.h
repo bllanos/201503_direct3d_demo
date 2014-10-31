@@ -155,6 +155,9 @@ protected:
 
 	// Data members
 protected:
+	/*Vector of Transformables
+	*/
+	const std::vector<Transformable*>* transformation;
 
 	/* Grid resolution,
 	   which can be obtained from configuration data.

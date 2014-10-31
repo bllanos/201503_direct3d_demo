@@ -28,7 +28,8 @@ GridQuad::GridQuad(const bool enableLogging, const std::wstring& msgPrefix,
 	Config* sharedConfig) :
 	SkinnedColorGeometry(enableLogging, msgPrefix, sharedConfig),
 	m_nColumns(0), m_nRows(0),
-	m_debugWinding(GRIDQUAD_DEBUG_FLAG_DEFAULT), m_colors(0)
+	m_debugWinding(GRIDQUAD_DEBUG_FLAG_DEFAULT), m_colors(0),
+	transformation(0)
 {
 	if( FAILED(configure()) ) {
 		logMessage(L"Configuration failed.");
@@ -127,6 +128,10 @@ GridQuad::~GridQuad(void) {
 		delete[] m_colors;
 		m_colors = 0;
 	}
+	if (transformation != 0){
+		delete transformation;
+		transformation = 0;
+	}
 }
 
 HRESULT GridQuad::initialize(ID3D11Device* const device,
@@ -147,6 +152,8 @@ HRESULT GridQuad::initialize(ID3D11Device* const device,
 	unsigned long* indices = new unsigned long[getNumberOfIndices()];
 
 	result = addIndexedVertices(vertices, nVertices, indices, nIndices);
+
+	transformation = bones;
 
 	if( FAILED(result) ) {
 		logMessage(L"Failed to load temporary index and vertex arrays with data.");
@@ -410,14 +417,44 @@ HRESULT GridQuad::uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, const float u,
 }
 
 float GridQuad::getRadius(){
-	/*
-	float theDiagonal;
+	float theDiagonal = sqrt(2)/2;
 
-	return 0.5*theDiagonal;
-	*/
-	return 1.0f;
+	XMFLOAT3 scale;
+	
+	float largestScale = 0;
+
+	for (size_t i = 0; i < transformation->size(); i++){
+		scale = transformation->at(i)->getScale();
+		if (largestScale < scale.x) largestScale = scale.x;
+		if (largestScale < scale.y) largestScale = scale.y;
+		if (largestScale < scale.z) largestScale = scale.z;
+	}
+
+	theDiagonal *= largestScale*2;
+
+	return 0.5f*theDiagonal;
+	
+	//return 1.0f;
 }
 
 XMFLOAT3 GridQuad::getPosition(){
-	return XMFLOAT3(0, 0, 0);
+	float theX = 0;
+	float theY = 0;
+	float theZ = 0;
+	XMFLOAT3 trans;
+
+	for (size_t i = 0; i < transformation->size(); i++){
+		trans = transformation->at(i)->getPosition();
+		theX += trans.x;
+		theY += trans.y;
+		theZ += trans.z;
+	}
+
+	theX /= transformation->size();
+	theY /= transformation->size();
+	theZ /= transformation->size();
+
+	return XMFLOAT3(theX, theY, theZ);
+
+	//return XMFLOAT3(0, 0, 0);
 }
