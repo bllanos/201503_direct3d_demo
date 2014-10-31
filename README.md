@@ -107,6 +107,12 @@ The following works were consulted for ideas during development:
 
 ## Sources of Assets
 
+- "Mars Rock 'Windjana' After Examination" (`textures\pia18092_mahli-sol627-windjana.jpg`)
+  - Downloaded from http://www.nasa.gov/jpl/msl/pia18092/#.VFOWALHBGnw
+  - Image Credit: NASA/JPL-Caltech/MSSS
+  - Retrieved October 31, 2014
+  - Usage terms: Permissive (http://www.nasa.gov/audience/formedia/features/MP_Photo_Guidelines.html#.VEQBixaDbfc)
+
 ### Textures used by test code only
 
 - "King Fire in California, False-Color Infrared" (`textures\test\kingfire_oli_2014262_swir_lrg.jpg`)

@@ -27,11 +27,6 @@ ObjectModel::~ObjectModel(){
 		delete (*tForms)[i];
 	}
 
-	if (model != 0){
-		delete model;
-		model = 0;
-	}
-
 	if (tForms != 0){
 		delete tForms;
 		tForms = 0;
@@ -53,7 +48,7 @@ float ObjectModel::getBoundingRadius(){
 HRESULT ObjectModel::updateContainedTransforms(const DWORD currentTime, const DWORD updateTimeInterval){
 	HRESULT result;
 	for (std::vector<Transformable*>::size_type i = 0; i < tForms->size(); i++){
-		tForms->at(i)->Spin(1.0f, 1.0f, 1.0f);
+		//tForms->at(i)->Spin(1.0f, 1.0f, 1.0f);
 		result = ((*tForms)[i])->update(currentTime, updateTimeInterval);
 		if (FAILED(result)){
 			return result;
@@ -68,10 +63,16 @@ HRESULT ObjectModel::addTransformable(Transformable * newTrans){
 }
 
 HRESULT ObjectModel::draw(ID3D11DeviceContext* const context, GeometryRendererManager& manager, Camera * camera){
-	HRESULT result;
+	HRESULT result = ERROR_SUCCESS;
+
+	result = model->setTransformables(tForms);
+	if (FAILED(result)){
+		logMessage(L"Failed to set geometry bones.");
+	}
+
 	result = model->drawUsingAppropriateRenderer(context, manager, camera);
 	if (FAILED(result)){
-		logMessage(L"failed to render model.");
+		logMessage(L"Failed to render model.");
 	}
 
 	return result;

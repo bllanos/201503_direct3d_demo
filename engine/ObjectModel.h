@@ -29,5 +29,5 @@ class ObjectModel : public LogUser {
 
 	protected:
 		IGeometry* model;
-		vector<Transformable *>* tForms;
+		vector<Transformable*>* tForms;
 };

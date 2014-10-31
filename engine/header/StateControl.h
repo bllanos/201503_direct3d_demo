@@ -34,6 +34,9 @@ Description
 #include "GameState.h"
 #define STATECONTROL_FIRST_STATE GameState
 
+//#include "ShipModelTestState.h"
+//#define STATECONTROL_FIRST_STATE ShipModelTestState
+
 
 
 #include "BasicWindow.h"

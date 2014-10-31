@@ -14,6 +14,7 @@
     <ClCompile Include="cpp\geometry\GridQuadTextured.cpp" />
     <ClCompile Include="cpp\geometry\GridSphereTextured.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedTexturedGeometry.cpp" />
+    <ClCompile Include="cpp\physics\Transformable.cpp" />
     <ClCompile Include="cpp\rendering\SkinnedRenderer.cpp" />
     <ClCompile Include="cpp\util\Shader.cpp" />
     <ClCompile Include="cpp\util\Texture.cpp" />
@@ -27,6 +28,7 @@
     <ClCompile Include="test\cpp\CubeTransformable.cpp" />
     <ClCompile Include="test\cpp\CubeTransformableTwo.cpp" />
     <ClCompile Include="test\cpp\HierarchicalCubesTestState.cpp" />
+    <ClCompile Include="test\cpp\ShipModelTestState.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp" />
     <ClCompile Include="cpp\geometry\GridQuad.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -42,7 +44,6 @@
     <ClCompile Include="cpp\StateControl.cpp" />
     <ClCompile Include="test\cpp\Phase1TestState.cpp" />
     <ClCompile Include="test\cpp\TexturedSphereTestState.cpp" />
-    <ClCompile Include="Transformable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameState.h" />
@@ -50,6 +51,7 @@
     <ClInclude Include="header\geometry\GridSphereTextured.h" />
     <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h" />
     <ClInclude Include="header\geometry\SphereModel.h" />
+    <ClInclude Include="header\physics\Transformable.h" />
     <ClInclude Include="header\rendering\SkinnedRenderer.h" />
     <ClInclude Include="header\util\pipelineDefs.h" />
     <ClInclude Include="header\util\Shader.h" />
@@ -62,6 +64,7 @@
     <ClInclude Include="test\header\CubeTransformable.h" />
     <ClInclude Include="test\header\CubeTransformableTwo.h" />
     <ClInclude Include="test\header\HierarchicalCubesTestState.h" />
+    <ClInclude Include="test\header\ShipModelTestState.h" />
     <ClInclude Include="test\header\SkinnedColorTestState.h" />
     <ClInclude Include="header\geometry\GridQuad.h" />
     <ClInclude Include="header\geometry\SkinnedColorGeometry.h" />
@@ -83,7 +86,6 @@
     <ClInclude Include="header\StateControl.h" />
     <ClInclude Include="header\rendering\IGeometryRenderer.h" />
     <ClInclude Include="test\header\TexturedSphereTestState.h" />
-    <ClInclude Include="Transformable.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DirectXTK\DirectXTK_Desktop_2013.vcxproj">
