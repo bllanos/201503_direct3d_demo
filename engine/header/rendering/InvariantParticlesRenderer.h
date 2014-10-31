@@ -98,8 +98,13 @@ private:
 
 	struct MaterialBufferType {
 		DirectX::XMFLOAT4 ambientAlbedo;
+	};
+
+	struct GlobalBufferType {
+		DirectX::XMFLOAT4X4 world;
+		DirectX::XMFLOAT2 time;
 		float blendAmount;
-		DirectX::XMFLOAT3 padding;
+		float padding;
 	};
 
 public:
@@ -198,6 +203,7 @@ private:
 	ID3D11InputLayout* m_layout;
 	ID3D11Buffer* m_cameraBuffer;
 	ID3D11Buffer* m_materialBuffer;
+	ID3D11Buffer* m_globalBuffer;
 	ID3D11Buffer* m_lightBuffer;
 
 	// Is the renderer configured to use lighting?
