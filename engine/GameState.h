@@ -15,6 +15,12 @@
 // Logging message prefix
 #define GAMESTATE_START_MSG_PREFIX L"GameState"
 
+/* The following definitions are:
+   -Key parameters used to retrieve configuration data
+   -Default values used in the absence of configuration data
+    or constructor/function arguments (where necessary)
+*/
+
 #define GAMESTATE_SCOPE L"GameState"
 
 // Default values to use in the absence of configuration data

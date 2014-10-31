@@ -27,5 +27,5 @@ DIRECTORY -- GeometryRendererManager::configFilePath = "..\configFiles"
 
 # GameState setup
 # -----------------------------
-FILENAME -- GameState::configFileName = "GameState.txt"
-DIRECTORY -- GameState::configFilePath = "..\configFiles"
+FILENAME -- GameState::inputConfigFileName = "GameState.txt"
+DIRECTORY -- GameState::inputConfigFilePath = "..\configFiles"

@@ -16,10 +16,10 @@ GameState::GameState(void) :
 ConfigUser(true, GAMESTATE_START_MSG_PREFIX,
 static_cast<GAMESTATE_CONFIGIO_CLASS*>(0),
 static_cast<Config*>(0),
-L"GameState",
-L"configFileName",
-L"GameState",
-L"configFilePath"
+GAMESTATE_SCOPE,
+CONFIGUSER_INPUT_FILE_NAME_FIELD,
+GAMESTATE_SCOPE,
+CONFIGUSER_INPUT_FILE_PATH_FIELD
 ),
 m_camera(0), m_tree(0), m_nAsteroids(0) {
 	if (FAILED(configure())) {
