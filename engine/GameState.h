@@ -29,6 +29,8 @@
 
 #define GAMESTATE_NUMBER_OF_ASTEROIDS_FIELD L"nAsteroids"
 #define GAMESTATE_NUMBER_OF_ASTEROIDS_DEFAULT 0 // 10
+#define GAMESTATE_RADIUS_OF_ASTEROIDS_FIELD L"radiAsteroids"
+#define GAMESTATE_RADIUS_OF_ASTEROIDS_DEFAULT 1 // 1
 
 // LogUser and ConfigUser configuration parameters
 // Refer to LogUser.h and ConfigUser.h
@@ -46,6 +48,7 @@ private:
 	//vector<Transformable*>* transformations;
 
 	size_t m_nAsteroids;
+	float asteroid_Radius;
 
 public:
 	GameState(void);

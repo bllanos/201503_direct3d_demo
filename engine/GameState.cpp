@@ -47,11 +47,11 @@ HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenH
 	HRESULT result = ERROR_SUCCESS;
 
 	for (size_t i = 0; i < m_nAsteroids; i++){
-		Transformable * newTransform = new Transformable(XMFLOAT3(1.0f, 2.0f, 1.0f), XMFLOAT3(static_cast<float>(i*5), static_cast<float>(i*5), static_cast<float>(i*5)), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
+		Transformable * newTransform = new Transformable(XMFLOAT3(2.0f, 2.0f, 2.0f), XMFLOAT3(static_cast<float>(i * 5), static_cast<float>(i * 5), static_cast<float>(i * 5)), XMFLOAT4(0.0f, 2.0f, 0.0f, 1.0f));
 
 		SphereModel * asteroid = new SphereModel(
 			newTransform,
-			2.0f,
+			asteroid_Radius,
 			0
 			);
 
@@ -146,7 +146,9 @@ HRESULT GameState::configure(void) {
 		if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_FIELD, intValue)) {
 			nAsteroids = *intValue;
 		}
-
+		if (retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_RADIUS_OF_ASTEROIDS_FIELD, doubleValue)){
+			asteroid_Radius = static_cast<float>(*doubleValue);
+		}
 	}
 	else {
 		logMessage(L"GameState initialization from configuration data: No Config instance to use.");

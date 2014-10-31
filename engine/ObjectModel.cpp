@@ -53,7 +53,7 @@ float ObjectModel::getBoundingRadius(){
 HRESULT ObjectModel::updateContainedTransforms(const DWORD currentTime, const DWORD updateTimeInterval){
 	HRESULT result;
 	for (std::vector<Transformable*>::size_type i = 0; i < tForms->size(); i++){
-		//tForms->at(i)->Spin(1.0f, 1.0f, 1.0f);
+		tForms->at(i)->Spin(1.0f, 1.0f, 1.0f);
 		result = ((*tForms)[i])->update(currentTime, updateTimeInterval);
 		if (FAILED(result)){
 			return result;
