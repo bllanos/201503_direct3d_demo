@@ -290,7 +290,7 @@ HRESULT GameState::configureGeometry(void) {
 
 	// Actually construct and configure geometry
 	// -----------------------------------------
-	/*
+
 	m_asteroid = new GridSphereTextured(
 		&configIO, // Used to load configuration file
 		&config, // Queried for location of configuration file
@@ -299,7 +299,6 @@ HRESULT GameState::configureGeometry(void) {
 		GAMESTATE_GEOMETRY_ASTEROID_SCOPE,
 		CONFIGUSER_INPUT_FILE_PATH_FIELD
 		);
-	*/
 
 	m_ship = new ShipModel(
 		&configIO, // Used to load configuration file
@@ -315,8 +314,8 @@ HRESULT GameState::configureGeometry(void) {
 
 HRESULT GameState::initializeGeometry(ID3D11Device* device) {
 
-	//if (FAILED(initializeAsteroid(device)) ||
-	if(	FAILED(initializeShip(device))) {
+	if (FAILED(initializeAsteroid(device)) ||
+	    FAILED(initializeShip(device))) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	
@@ -428,7 +427,7 @@ HRESULT GameState::initializeShip(ID3D11Device* device) {
 }
 
 HRESULT GameState::fillOctree(void) {
-	/*
+	
 	if (m_bSpawnGrid) {
 		if (FAILED(spawnAsteroidsGrid(m_nAsteroidsX, m_nAsteroidsY, m_nAsteroidsZ))) {
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -439,7 +438,6 @@ HRESULT GameState::fillOctree(void) {
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}
-	*/
 
 	if (FAILED(spawnShip(1))) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
