@@ -375,3 +375,11 @@ HRESULT GridQuadTextured::uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, const 
 		v));
 	return ERROR_SUCCESS;
 }
+
+float GridQuadTextured::getRadius(){
+	return 1.0f;
+}
+
+XMFLOAT3 GridQuadTextured::getPosition(){
+	return XMFLOAT3(0, 0, 0);
+}

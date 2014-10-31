@@ -141,3 +141,12 @@ HRESULT SphereModel::setTransformables(const std::vector<Transformable*>* const 
 	m_transformable = (*transform)[0];
 	return ERROR_SUCCESS;
 }
+
+float SphereModel::getRadius(){
+	XMFLOAT3 scale = m_transformable->getScale();
+	return ((scale.x > scale.y) ? scale.x : scale.y) > scale.z ? ((scale.x > scale.y) ? scale.x : scale.y):scale.z;
+}
+
+XMFLOAT3 SphereModel::getPosition(){
+	return m_transformable->getPosition();
+}

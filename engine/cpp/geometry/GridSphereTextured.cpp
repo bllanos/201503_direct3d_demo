@@ -469,3 +469,11 @@ HRESULT GridSphereTextured::uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, cons
 
 	return ERROR_SUCCESS;
 }
+
+float GridSphereTextured::getRadius(){
+	return 1.0f;
+}
+
+XMFLOAT3 GridSphereTextured::getPosition(){
+	return XMFLOAT3(0, 0, 0);
+}

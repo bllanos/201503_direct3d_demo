@@ -3,6 +3,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /*
+
+PLEASE READ *HOW TO USE* BELOW
+
 Created for: COMP3501A Game
 Fall 2014, Carleton University
 
@@ -17,6 +20,18 @@ and from the COMP3501A quaternion camera demo posted on cuLearn.
 Description
 -Quaternion orientation
 -Capacity for hierarchichal transformations
+
+How To Use:
+-Either extend the class, or create pointers within the object that needs to use this class.
+-Call Move, Strafe, Crane, Spin if you wish to modify the position/orientation of the object.
+-If you're going to perform transformations, override the transformations function,
+ modify the argument matrix, and save the modified argument matrix. The parent transformation
+ and the calculation of the world transform with and without scale is handled automatically
+ in the update function.
+-If you override the update function instead of transformations, you'll have to handle the parent
+ transformation, object transformations, and you'll have to save the modified matrix to 
+ the world space matrix (worldTransform and worldTransformNoScale).
+-The position of the object in world space is represented by m_worldTransform.
 */
 
 #pragma once
@@ -77,6 +92,12 @@ public:
 	void Strafe(float amount); // move left and right
 	void Crane(float amount); // move up and down
 	void Spin(float roll, float pitch, float yaw); // spin the object (tilt, pan)
+
+	// Only use if object doesn't have a parent (returns true if is parent)
+	bool MoveIfParent(float amount); // move forward and back (move forward, move backward)
+	bool StrafeIfParent(float amount); // move left and right
+	bool CraneIfParent(float amount); // move up and down
+	bool SpinIfParent(float roll, float pitch, float yaw); // spin the object (tilt, pan)
 
 	DirectX::XMFLOAT3 getScale() const;
 	DirectX::XMFLOAT3 getPosition() const;

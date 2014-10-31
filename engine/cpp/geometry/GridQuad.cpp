@@ -408,3 +408,16 @@ HRESULT GridQuad::uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, const float u,
 		v));
 	return ERROR_SUCCESS;
 }
+
+float GridQuad::getRadius(){
+	/*
+	float theDiagonal;
+
+	return 0.5*theDiagonal;
+	*/
+	return 1.0f;
+}
+
+XMFLOAT3 GridQuad::getPosition(){
+	return XMFLOAT3(0, 0, 0);
+}

@@ -169,6 +169,43 @@ void Transformable::Spin(float roll, float pitch, float yaw) {
 	XMStoreFloat4(&m_orientation, XMQuaternionMultiply(XMLoadFloat4(&m_orientation), yawq));
 }
 
+bool Transformable::MoveIfParent(float amount)
+{
+	if (m_parent == 0) {
+		Move(amount);
+		return true;
+	}
+	return false;
+}
+
+bool Transformable::StrafeIfParent(float amount)
+{
+	if (m_parent == 0) {
+		Strafe(amount);
+		return true;
+	}
+	return false;
+}
+
+bool Transformable::CraneIfParent(float amount)
+{
+	if (m_parent == 0) {
+		Crane(amount);
+		return true;
+	}
+	return false;
+}
+
+bool Transformable::SpinIfParent(float roll, float pitch, float yaw)
+{
+	if (m_parent == 0) {
+		Spin(roll, pitch, yaw);
+		return true;
+	}
+	return false;
+}
+
+
 HRESULT Transformable::setParent(Transformable* const parent) {
 	m_parent = parent;
 	return ERROR_SUCCESS;
