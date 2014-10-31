@@ -62,7 +62,7 @@ HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenH
 	}
 
 	// Fill the octree
-	if (FAILED(fillOctree())) ) {
+	if (FAILED(fillOctree())) {
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		return result;
 	}

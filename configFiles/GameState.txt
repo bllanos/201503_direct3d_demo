@@ -33,5 +33,5 @@ DIRECTORY -- GameState::inputConfigFilePath = "..\configFiles"
 
 # Asteroids internal configuration
 # --------------------------------
-FILENAME -- asteroid::inputConfigFileName = "Asteroid.txt"
+FILENAME -- asteroid::inputConfigFileName = "asteroid.txt"
 DIRECTORY -- asteroid::inputConfigFilePath = "..\configFiles\geometry"
