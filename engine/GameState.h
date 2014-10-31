@@ -9,8 +9,7 @@
 #include "ConfigUser.h"
 #include "Camera.h"
 #include "oct_tree.h"
-#include "SphereModel.h"
-#include <vector>
+#include "GridSphereTextured.h"
 
 // Logging message prefix
 #define GAMESTATE_START_MSG_PREFIX L"GameState"
@@ -41,16 +40,18 @@
 #define GAMESTATE_LOGUSER_SCOPE			L"GameState_LogUser"
 #define GAMESTATE_CONFIGUSER_SCOPE		L"GameState_ConfigUser"
 
+// Asteroid configuration
+#define GAMESTATE_GEOMETRY_ASTEROID_SCOPE L"asteroid"
+
 class GameState : public State, public ConfigUser{
 private:
 	Camera* m_camera;
 
 	Octtree* m_tree;
 
-	//vector<ObjectModel*>* asteroids;
+	GridSphereTextured* m_asteroid;
 
-	//vector<Transformable*>* transformations;
-
+	// Initial number of asteroids
 	size_t m_nAsteroids;
 
 public:
@@ -75,5 +76,22 @@ protected:
 	   -Calls ConfigUser::ConfigureConfigUser() if there is a Config instance to use
 	 */
 	virtual HRESULT configure(void);
+
+	/* Constructs geometry objects which require configuration data */
+	virtual HRESULT configureGeometry(void);
+
+	// Geometry initialization helpers
+protected:
+	virtual HRESULT initializeGeometry(ID3D11Device* device);
+
+	virtual HRESULT initializeAsteroid(ID3D11Device* device);
+
+	// Octree setup helpers
+protected:
+	/* For first-time setup */
+	virtual HRESULT fillOctree(void);
+
+	/* Adds 'n' asteroids to the octree */
+	virtual HRESULT spawnAsteroids(const size_t n);
 
 };
