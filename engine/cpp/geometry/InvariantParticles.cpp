@@ -105,11 +105,11 @@ HRESULT InvariantParticles::configure(const std::wstring& scope, const std::wstr
 
 	if (m_renderLighting) {
 		result = setRendererType(
-			GeometryRendererManager::GeometryRendererType::InvariantParticleRendererLight);
+			GeometryRendererManager::GeometryRendererType::InvariantParticlesRendererLight);
 	}
 	else {
 		result = setRendererType(
-			GeometryRendererManager::GeometryRendererType::InvariantParticleRendererNoLight);
+			GeometryRendererManager::GeometryRendererType::InvariantParticlesRendererNoLight);
 	}
 	if (FAILED(result)) {
 		std::wstring msg = L"InvariantParticles::configure(): Error setting the renderer to use based on the lighting flag value of ";
@@ -183,10 +183,10 @@ HRESULT InvariantParticles::initializeVertexBuffer(ID3D11Device* const device,
 
 HRESULT InvariantParticles::setRendererType(const GeometryRendererManager::GeometryRendererType type) {
 	switch (type) {
-	case GeometryRendererManager::GeometryRendererType::InvariantParticleRendererNoLight:
+	case GeometryRendererManager::GeometryRendererType::InvariantParticlesRendererNoLight:
 		m_renderLighting = false;
 		break;
-	case GeometryRendererManager::GeometryRendererType::InvariantParticleRendererLight:
+	case GeometryRendererManager::GeometryRendererType::InvariantParticlesRendererLight:
 		m_renderLighting = true;
 		break;
 	default:

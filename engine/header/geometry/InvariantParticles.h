@@ -108,9 +108,9 @@ protected:
 	   - Derived classes must override setRendererType()
 	     and call it after calling this function if they wish
 	     to make use of renderers other than
-	     'GeometryRendererType::InvariantParticleRendererNoLight'
+	     'GeometryRendererType::InvariantParticlesRendererNoLight'
 		 and
-		 'GeometryRendererType::InvariantParticleRendererLight'
+		 'GeometryRendererType::InvariantParticlesRendererLight'
 	  */
 	virtual HRESULT configure(const std::wstring& scope, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0);
 
@@ -140,8 +140,8 @@ protected:
 
 	/* Objects of this class can use renderers
 	   corresponding to the enumeration constants
-	   'InvariantParticleRendererNoLight'
-	   and 'InvariantParticleRendererLight'.
+	   'InvariantParticlesRendererNoLight'
+	   and 'InvariantParticlesRendererLight'.
 
 	   This function must be called at least once, with a valid argument,
 	   before the object can be rendered for the first time.
