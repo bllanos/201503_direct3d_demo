@@ -8,7 +8,8 @@
 #include "defs.h"
 #include <exception>
 
-Camera::Camera(int screenWidth_in, int screenHeight_in)
+Camera::Camera(int screenWidth_in, int screenHeight_in) 
+	: LogUser(true, CAMERA_START_MSG_PREFIX), m_followTransform(0)
 {
 	screenWidth = static_cast<float>(screenWidth_in);
 	screenHeight = static_cast<float>(screenHeight_in);
@@ -16,6 +17,8 @@ Camera::Camera(int screenWidth_in, int screenHeight_in)
 	fieldOfView = NOMINAL_FIELD_OF_VIEW;
 
 	m_transform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -10.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+
+	cameraMode = CameraMode::FREE_CAMERA;
 
 	UpdateMatrices();
 }
@@ -190,8 +193,12 @@ void Camera::ZoomOut()
     if( fieldOfView * CAMERA_ZOOM_OUT_FACTOR <= MAX_CAMERA_FIELD_OF_VIEW)
 	   fieldOfView = fieldOfView * CAMERA_ZOOM_OUT_FACTOR;
 
-} 
+}
 
+void Camera::SetFollowTransform(Transformable* followTransform)
+{
+	m_followTransform = followTransform;
+}
 
 XMFLOAT3 Camera::GetPosition() const
 {
@@ -201,6 +208,15 @@ XMFLOAT3 Camera::GetPosition() const
 
 int Camera::UpdateMatrices(void)
 {
+	if (cameraMode != CameraMode::FREE_CAMERA && m_followTransform != 0) { // if the player is not in free camera mode then use one of the other two cameras
+		
+		// make the camera follow the object
+		XMFLOAT4X4 followTransformNS;
+		m_followTransform->getWorldTransformNoScale(followTransformNS);
+
+		m_transform->multiplyByMatrix(followTransformNS);
+	}
+
 	m_transform->update(0, 0);
 	m_transform->getWorldTransformNoScale(m_viewMatrix);
 
@@ -247,6 +263,26 @@ HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 	/*
 	We will combinations for a key + arrow keys to control the camera
 	*/
+
+	if (input.Up(Keyboard::ascii_P)) {
+		// toggle the camera modes
+		int nCamMode = cameraMode;
+		nCamMode = (nCamMode + 1) % 3;
+		cameraMode = static_cast<CameraMode>(nCamMode);
+
+		// if the camera has no transform to follow
+		if (m_followTransform == 0) { // simply set camera mode as free camera
+			cameraMode = CameraMode::FREE_CAMERA;
+		}
+		else if (cameraMode == CameraMode::FIRST_PERSON_CAMERA) { // first person camera
+			// adjust the position of the camera depending on camera mode
+			m_transform->Move(1.0f);
+		}
+		else if (cameraMode == CameraMode::THIRD_PERSON_CAMERA) { // third person camera
+			m_transform->Move(-2.0f);
+		}
+	}
+
 	if (input.IsKeyDown(VK_SHIFT)){
 
 		if (input.IsKeyDown(VK_LEFT)) //Move Camera Left

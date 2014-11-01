@@ -22,6 +22,9 @@ Description
 
 using namespace DirectX;
 
+// Action period in milliseconds
+#define CUBE_PERIOD (10.0f * MILLISECS_PER_SEC_FLOAT)
+
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Transformable
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,6 +94,8 @@ HRESULT Transformable::transformations(XMFLOAT4X4& transform, const DWORD curren
 	// Then compute Translations
 
 	// To scale the object, simply alter m_scale
+
+	
 
 	return ERROR_SUCCESS;
 }
@@ -210,6 +215,14 @@ bool Transformable::SpinIfParent(float roll, float pitch, float yaw)
 
 HRESULT Transformable::setParent(Transformable* const parent) {
 	m_parent = parent;
+	return ERROR_SUCCESS;
+}
+
+HRESULT Transformable::multiplyByMatrix(XMFLOAT4X4 theMatrix)
+{
+	XMStoreFloat4x4(&m_worldTransformNoScale,
+		XMMatrixMultiply(XMLoadFloat4x4(&m_worldTransformNoScale), 
+						 XMLoadFloat4x4(&theMatrix)));
 	return ERROR_SUCCESS;
 }
 

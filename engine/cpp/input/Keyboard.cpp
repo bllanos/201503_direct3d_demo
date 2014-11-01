@@ -7,6 +7,9 @@
 #include "engineGlobals.h"
 #include <exception>
 
+// higher means small delay in detecting changes in keyboard timing
+const DWORD Keyboard::maxMotionSamplingInterval = static_cast<DWORD>(0); // measured milliseconds
+
 // Initialize character key codes
 const int Keyboard::ascii_A = 65;
 const int Keyboard::ascii_B = 66;
@@ -167,10 +170,15 @@ DWORD Keyboard::TimeReleased(unsigned int key) const
 
 int Keyboard::Update(void)
 {
-	// save the time from last iteration
-	m_tPast = m_t;
-	// update the time
-	m_t = GetTickCount();
+	// Check the time
+	DWORD t = GetTickCount();
+	if ((t - m_t) >= maxMotionSamplingInterval)
+	{
+		// save the time from last iteration
+		m_tPast = m_t;
+		// update the time
+		m_t = t;
+	}
 
 	for (int i = 0; i < N_KEYS; ++i)
 	{

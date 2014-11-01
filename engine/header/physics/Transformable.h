@@ -87,6 +87,7 @@ public:
 	virtual HRESULT transformations(DirectX::XMFLOAT4X4& transform, const DWORD currentTime, const DWORD updateTimeInterval);
 
 	HRESULT setParent(Transformable* const parent);
+	HRESULT multiplyByMatrix(DirectX::XMFLOAT4X4 theMatrix);
 
 	void Move(float amount); // move forward and back (move forward, move backward)
 	void Strafe(float amount); // move left and right

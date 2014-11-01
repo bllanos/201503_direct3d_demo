@@ -72,6 +72,8 @@ public:
 	static const int Keyboard::ascii_Y;
 	static const int Keyboard::ascii_Z;
 
+	const static DWORD maxMotionSamplingInterval;
+
 private:
 	// this iteration's key values
 	bool* m_keys;
