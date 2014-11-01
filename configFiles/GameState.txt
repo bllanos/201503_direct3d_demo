@@ -9,7 +9,7 @@ BOOL -- GameState_LogUser::allocConsole = false
 BOOL -- GameState_LogUser::allocLogFile = true
 FILENAME -- GameState_LogUser::logFileName = "GameStateLog.txt"
 DIRECTORY -- GameState_LogUser::logFilePath = "..\logFiles"
-BOOL -- GameState_LogUser::overwriteFile = true
+BOOL -- GameState_LogUser::overwriteFile = false
 BOOL -- GameState_LogUser::timestampEnable = true
 
 # GameState ConfigUser configuration

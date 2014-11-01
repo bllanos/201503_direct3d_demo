@@ -26,7 +26,7 @@ Description
 #include "vertexTypes.h"
 #include "IGeometry.h"
 #include "ConfigUser.h"
-#include "ITransformable.h"
+#include "Transformable.h"
 
 #define INVARIANTPARTICLES_VERTEX_TYPE ParticleVertexType
 
@@ -127,7 +127,7 @@ protected:
 	*/
 	virtual HRESULT initialize(ID3D11Device* const device,
 		const INVARIANTPARTICLES_VERTEX_TYPE* const vertices, const size_t nVertices,
-		const ITransformable* const transform,
+		const Transformable* const transform,
 		const D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	/* Initializes the model's vertex buffer only.
@@ -170,7 +170,7 @@ public:
 	/* Allows for changing the position, motion, etc., of the model
 	   in the world.
 	*/
-	virtual HRESULT setTransformable(const ITransformable* const transform);
+	virtual HRESULT setTransformable(const Transformable* const transform);
 
 	/* Allows for changing the position, motion, etc., of the model
 	   in the world.
@@ -236,7 +236,7 @@ public:
 	// Data members
 private:
 	ID3D11Buffer *m_vertexBuffer;
-	const ITransformable* m_transform; // Shared - not deleted by the destructor
+	const Transformable* m_transform; // Shared - not deleted by the destructor
 	D3D_PRIMITIVE_TOPOLOGY m_primitive_topology;
 	size_t m_vertexCount;
 

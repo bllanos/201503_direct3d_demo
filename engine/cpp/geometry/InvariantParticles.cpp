@@ -130,7 +130,7 @@ HRESULT InvariantParticles::configure(const std::wstring& scope, const std::wstr
 
 HRESULT InvariantParticles::initialize(ID3D11Device* const device,
 	const INVARIANTPARTICLES_VERTEX_TYPE* const vertices, const size_t nVertices,
-	const ITransformable* const transform,
+	const Transformable* const transform,
 	const D3D_PRIMITIVE_TOPOLOGY topology) {
 
 	// Set up vertex data
@@ -269,7 +269,7 @@ HRESULT InvariantParticles::drawUsingAppropriateRenderer(ID3D11DeviceContext* co
 	return ERROR_SUCCESS;
 }
 
-HRESULT InvariantParticles::setTransformable(const ITransformable* const transform) {
+HRESULT InvariantParticles::setTransformable(const Transformable* const transform) {
 	if (transform == 0) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
 	}

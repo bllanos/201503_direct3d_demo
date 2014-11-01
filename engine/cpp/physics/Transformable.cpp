@@ -55,7 +55,7 @@ HRESULT Transformable::getWorldTransform(XMFLOAT4X4& worldTransform) const {
 	return ERROR_SUCCESS;
 }
 
-HRESULT Transformable::getWorldTransformNoScale(XMFLOAT4X4& worldTransformNoScale) {
+HRESULT Transformable::getWorldTransformNoScale(XMFLOAT4X4& worldTransformNoScale) const {
 	worldTransformNoScale = m_worldTransformNoScale;
 	return ERROR_SUCCESS;
 }

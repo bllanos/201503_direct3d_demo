@@ -79,7 +79,7 @@ public:
 
 	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const override;
 
-	virtual HRESULT getWorldTransformNoScale(DirectX::XMFLOAT4X4& worldTransformNoScale);
+	virtual HRESULT getWorldTransformNoScale(DirectX::XMFLOAT4X4& worldTransformNoScale) const;
 
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
 
