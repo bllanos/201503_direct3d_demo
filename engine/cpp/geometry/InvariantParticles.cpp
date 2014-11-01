@@ -291,9 +291,9 @@ HRESULT InvariantParticles::setTime(const DirectX::XMFLOAT2& time) {
 	return ERROR_SUCCESS;
 }
 
-HRESULT InvariantParticles::getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) {
+HRESULT InvariantParticles::getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const {
 	if (FAILED(m_transform->getWorldTransform(worldTransform))) {
-		logMessage(L"InvariantParticles::getWorldTransform() Failed to get world transform for rendering.");
+		// logMessage(L"InvariantParticles::getWorldTransform() Failed to get world transform for rendering.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	return ERROR_SUCCESS;

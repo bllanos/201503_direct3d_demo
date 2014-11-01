@@ -184,7 +184,7 @@ public:
 	// Functions to support rendering
 public:
 
-	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform);
+	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const;
 
 	// Number of particles
 	size_t getVertexCount(void) const;

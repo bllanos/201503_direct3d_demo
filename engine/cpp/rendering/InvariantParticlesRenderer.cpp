@@ -331,48 +331,341 @@ HRESULT InvariantParticlesRenderer::configure(const wstring& scope, const wstrin
 	return result;
 }
 
-HRESULT InvariantParticlesRenderer::createShaders(ID3D11Device* const) {
+HRESULT InvariantParticlesRenderer::createShaders(ID3D11Device* const device) {
+	HRESULT result = ERROR_SUCCESS;
 
+	result = m_vertexShader->initialize(device);
+	if( FAILED(result) ) {
+		logMessage(L"Vertex shader initialization failed.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	result = m_geometryShader->initialize(device);
+	if( FAILED(result) ) {
+		logMessage(L"Geometry shader initialization failed.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	result = m_pixelShader->initialize(device);
+	if( FAILED(result) ) {
+		logMessage(L"Pixel shader initialization failed.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	// Create the input layout
+	result = createInputLayout(device);
+	if( FAILED(result) ) {
+		logMessage(L"Call to createInputLayout() failed.");
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	return result;
 }
 
-HRESULT InvariantParticlesRenderer::createInputLayout(ID3D11Device* const) {
+HRESULT InvariantParticlesRenderer::createInputLayout(ID3D11Device* const device) {
+	HRESULT result = ERROR_SUCCESS;
+	const unsigned int numElements = PARTICLEVERTEXTYPE_COMPONENTS;
+	D3D11_INPUT_ELEMENT_DESC polygonLayout[numElements];
+	size_t i = 0;
 
+	// Create the vertex input layout description.
+	// This setup needs to match the vertex stucture used in the appropriate IGeometry class and in the shader.
+	polygonLayout[i].SemanticName = "POSITION";
+	polygonLayout[i].SemanticIndex = 0;
+	polygonLayout[i].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	polygonLayout[i].InputSlot = 0;
+	polygonLayout[i].AlignedByteOffset = 0;
+	polygonLayout[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	polygonLayout[i].InstanceDataStepRate = 0;
+	++i;
+
+	polygonLayout[i].SemanticName = "BILLBOARD";
+	polygonLayout[i].SemanticIndex = 0;
+	polygonLayout[i].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	polygonLayout[i].InputSlot = 0;
+	polygonLayout[i].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	polygonLayout[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	polygonLayout[i].InstanceDataStepRate = 0;
+	++i;
+
+	polygonLayout[i].SemanticName = "LINEAR_VELOCITY";
+	polygonLayout[i].SemanticIndex = 0;
+	polygonLayout[i].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	polygonLayout[i].InputSlot = 0;
+	polygonLayout[i].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	polygonLayout[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	polygonLayout[i].InstanceDataStepRate = 0;
+	++i;
+
+	polygonLayout[i].SemanticName = "LIFE";
+	polygonLayout[i].SemanticIndex = 0;
+	polygonLayout[i].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	polygonLayout[i].InputSlot = 0;
+	polygonLayout[i].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	polygonLayout[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	polygonLayout[i].InstanceDataStepRate = 0;
+	++i;
+
+	polygonLayout[i].SemanticName = "INDEX";
+	polygonLayout[i].SemanticIndex = 0;
+	polygonLayout[i].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	polygonLayout[i].InputSlot = 0;
+	polygonLayout[i].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	polygonLayout[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	polygonLayout[i].InstanceDataStepRate = 0;
+	++i;
+
+	// Create the vertex input layout.
+	result = m_vertexShader->createInputLayout(device, polygonLayout, numElements, &m_layout, true);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create input layout object through the vertex shader object.");
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	return result;
 }
 
-HRESULT InvariantParticlesRenderer::createNoLightConstantBuffers(ID3D11Device* const) {
+HRESULT InvariantParticlesRenderer::createNoLightConstantBuffers(ID3D11Device* const device) {
+	HRESULT result = ERROR_SUCCESS;
+	D3D11_BUFFER_DESC cameraBufferDesc;
+	D3D11_BUFFER_DESC globalBufferDesc;
 
+	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	cameraBufferDesc.ByteWidth = sizeof(CameraBufferType);
+	cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cameraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cameraBufferDesc.MiscFlags = 0;
+	cameraBufferDesc.StructureByteStride = 0;
+
+	result = device->CreateBuffer(&cameraBufferDesc, NULL, &m_cameraBuffer);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create camera transformation constant buffer.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	globalBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	globalBufferDesc.ByteWidth = sizeof(GlobalBufferType);
+	globalBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	globalBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	globalBufferDesc.MiscFlags = 0;
+	globalBufferDesc.StructureByteStride = 0;
+
+	result = device->CreateBuffer(&globalBufferDesc, NULL, &m_globalBuffer);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create globals constant buffer.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	return result;
 }
 
-HRESULT InvariantParticlesRenderer::createLightConstantBuffers(ID3D11Device* const) {
+HRESULT InvariantParticlesRenderer::createLightConstantBuffers(ID3D11Device* const device) {
+	HRESULT result = ERROR_SUCCESS;
+	D3D11_BUFFER_DESC materialBufferDesc;
+	D3D11_BUFFER_DESC lightBufferDesc;
 
+	materialBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	materialBufferDesc.ByteWidth = sizeof(MaterialBufferType);
+	materialBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	materialBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	materialBufferDesc.MiscFlags = 0;
+	materialBufferDesc.StructureByteStride = 0;
+
+	result = device->CreateBuffer(&materialBufferDesc, NULL, &m_materialBuffer);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create material constant buffer.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	lightBufferDesc.ByteWidth = sizeof(Light);
+	lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	lightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	lightBufferDesc.MiscFlags = 0;
+	lightBufferDesc.StructureByteStride = 0;
+
+	result = device->CreateBuffer(&lightBufferDesc, NULL, &m_lightBuffer);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create light constant buffer.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	return result;
 }
 
 HRESULT InvariantParticlesRenderer::setShaderParameters(
-	ID3D11DeviceContext* const,
+	ID3D11DeviceContext* const context,
 	const DirectX::XMFLOAT4X4 viewMatrix,
 	const DirectX::XMFLOAT4X4 projectionMatrix,
 	const DirectX::XMFLOAT4 cameraPosition,
-	const float blendFactor,
-	const INVARIANTPARTICLESRENDERER_MATERIAL_STRUCT* material) {
+	const InvariantParticles& geometry) {
 
+	if( FAILED(setNoLightShaderParameters(context, viewMatrix, projectionMatrix, cameraPosition, geometry)) ) {
+		logMessage(L"Call to setNoLightShaderParameters() failed.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	if( m_lighting ) {
+		if( FAILED(setLightShaderParameters(context, geometry.getMaterial(), geometry.getTransparencyBlendFactor())) ) {
+			logMessage(L"Call to setLightShaderParameters() failed.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
+	return ERROR_SUCCESS;
 }
 
 HRESULT InvariantParticlesRenderer::setNoLightShaderParameters(
-	ID3D11DeviceContext* const,
+	ID3D11DeviceContext* const context,
 	const DirectX::XMFLOAT4X4 viewMatrix,
 	const DirectX::XMFLOAT4X4 projectionMatrix,
 	const DirectX::XMFLOAT4 cameraPosition,
-	const float blendFactor) {
+	const InvariantParticles& geometry) {
 
+	HRESULT result = ERROR_SUCCESS;
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	CameraBufferType* cameraDataPtr = 0;
+	GlobalBufferType* globalDataPtr = 0;
+
+	// Transpose the matrices to prepare them for the shader.
+	DirectX::XMFLOAT4X4 viewMatrixTranspose;
+	DirectX::XMFLOAT4X4 projectionMatrixTranspose;
+	XMStoreFloat4x4(&viewMatrixTranspose, XMMatrixTranspose(XMLoadFloat4x4(&viewMatrix)));
+	XMStoreFloat4x4(&projectionMatrixTranspose, XMMatrixTranspose(XMLoadFloat4x4(&projectionMatrix)));
+
+	// Lock the constant buffer so it can be written to.
+	result = context->Map(m_cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to map camera constant buffer.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	// Get a pointer to the data in the constant buffer.
+	cameraDataPtr = static_cast<CameraBufferType*>(mappedResource.pData);
+
+	// Copy the matrices into the constant buffer.
+	cameraDataPtr->view = viewMatrixTranspose;
+	cameraDataPtr->projection = projectionMatrixTranspose;
+	cameraDataPtr->cameraPosition = cameraPosition;
+
+	// Unlock the constant buffer.
+	context->Unmap(m_cameraBuffer, 0);
+
+	// Finally set the constant buffer in the vertex shader with the updated values.
+	context->VSSetConstantBuffers(0, 1, &m_cameraBuffer);
+
+	// The geometry shader will also use the camera data
+	context->GSGetConstantBuffers(0, 1, &m_cameraBuffer);
+
+	// Lock the globals constant buffer so it can be written to.
+	result = context->Map(m_globalBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if( FAILED(result) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	// Get a pointer to the data in the transparent constant buffer.
+	globalDataPtr = static_cast<GlobalBufferType*>(mappedResource.pData);
+
+	// Copy the blend amount value into the globals constant buffer.
+	float blend = geometry.getTransparencyBlendFactor();
+	if( blend > 1.0f || blend < 0.0f ) {
+		logMessage(L"Blend factor out of range (0.0f to 1.0f) - Defaulted to 1.0f.");
+		blend = 1.0f;
+	}
+	globalDataPtr->blendAmount = blend;
+
+	// World matrix
+	DirectX::XMFLOAT4X4 worldMatrixTranspose;
+	if( FAILED(geometry.getWorldTransform(worldMatrixTranspose)) ) {
+		logMessage(L"Failed to get world transform from geometry.");
+		XMStoreFloat4x4(&worldMatrixTranspose, XMMatrixIdentity());
+	}
+	XMStoreFloat4x4(&worldMatrixTranspose, XMMatrixTranspose(XMLoadFloat4x4(&worldMatrixTranspose)));
+	globalDataPtr->world = worldMatrixTranspose;
+
+	// Time vector
+	DirectX::XMFLOAT2 time;
+	if( FAILED(geometry.getTime(time)) ) {
+		logMessage(L"Failed to get time vector from geometry.");
+		globalDataPtr->time = XMFLOAT2(0.0f, 0.0f);
+	}
+	globalDataPtr->time = time;
+
+	// Unlock the buffer.
+	context->Unmap(m_globalBuffer, 0);
+
+	// Now set the global constant buffer in all shaders
+	context->VSSetConstantBuffers(1, 1, &m_globalBuffer);
+	context->GSSetConstantBuffers(1, 1, &m_globalBuffer);
+	context->PSSetConstantBuffers(1, 1, &m_globalBuffer);
+
+	return result;
 }
 
 HRESULT InvariantParticlesRenderer::setLightShaderParameters(
-	ID3D11DeviceContext* const,
+	ID3D11DeviceContext* const context,
 	const INVARIANTPARTICLESRENDERER_MATERIAL_STRUCT* material,
 	const float blendFactor) {
 
+	HRESULT result = ERROR_SUCCESS;
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	MaterialBufferType* materialDataPtr = 0;
+	Light* lightDataPtr = 0;
+
+	// Lock the material constant buffer so it can be written to.
+	result = context->Map(m_materialBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if( FAILED(result) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	// Get a pointer to the data in the material constant buffer.
+	materialDataPtr = static_cast<MaterialBufferType*>(mappedResource.pData);
+	materialDataPtr->ambientAlbedo = material->ambientAlbedo;
+
+	// Unlock the buffer.
+	context->Unmap(m_materialBuffer, 0);
+
+	// Bind the buffer
+	context->PSSetConstantBuffers(2, 1, &m_materialBuffer);
+
+	// Lock the light constant buffer so it can be written to.
+	result = context->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if( FAILED(result) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	// Get a pointer to the data in the transparent constant buffer.
+	lightDataPtr = static_cast<Light*>(mappedResource.pData);
+
+	// Copy values
+	lightDataPtr->lightColor = m_light->lightColor;
+	lightDataPtr->lightAmbientWeight = m_light->lightAmbientWeight;
+
+	// Unlock the buffer.
+	context->Unmap(m_lightBuffer, 0);
+
+	// Now set the light constant buffer in the pixel shader with the updated values.
+	context->PSSetConstantBuffers(3, 1, &m_lightBuffer);
+
+	// The lighting shader also needs camera properties
+	context->PSSetConstantBuffers(0, 1, &m_cameraBuffer);
+
+	return result;
 }
 
-void InvariantParticlesRenderer::renderShader(ID3D11DeviceContext* const, const size_t) {
+void InvariantParticlesRenderer::renderShader(ID3D11DeviceContext* const context, const size_t particleCount) {
+	// Set the vertex input layout.
+	context->IASetInputLayout(m_layout);
 
+	// Set the vertex and pixel shaders that will be used to render this triangle.
+	if( FAILED(m_vertexShader->bind(context)) ) {
+		logMessage(L"Failed to bind vertex shader.");
+	}
+	if( FAILED(m_geometryShader->bind(context)) ) {
+		logMessage(L"Failed to bind geometry shader.");
+	}
+	if( FAILED(m_pixelShader->bind(context)) ) {
+		logMessage(L"Failed to bind pixel shader.");
+	}
+
+	// Render the geometry.
+	context->DrawIndexed(particleCount, 0, 0);
 }
