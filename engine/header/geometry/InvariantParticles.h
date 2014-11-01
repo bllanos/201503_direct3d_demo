@@ -140,11 +140,11 @@ protected:
 
 	/* Objects of this class can use renderers
 	   corresponding to the enumeration constants
-	  'InvariantParticleRendererNoLight'
-	  and 'InvariantParticleRendererLight'.
+	   'InvariantParticleRendererNoLight'
+	   and 'InvariantParticleRendererLight'.
 
-	  This function must be called at least once, with a valid argument,
-	  before the object can be rendered for the first time.
+	   This function must be called at least once, with a valid argument,
+	   before the object can be rendered for the first time.
 	 */
 	virtual HRESULT setRendererType(const GeometryRendererManager::GeometryRendererType type);
 
