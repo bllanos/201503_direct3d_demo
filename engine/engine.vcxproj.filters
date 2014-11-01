@@ -165,6 +165,9 @@
     <ClCompile Include="cpp\geometry\ShipModel.cpp">
       <Filter>source\geometry</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\geometry\InvariantTexturedParticles.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -291,6 +294,9 @@
       <Filter>header\physics</Filter>
     </ClInclude>
     <ClInclude Include="header\geometry\ShipModel.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\InvariantTexturedParticles.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
   </ItemGroup>
