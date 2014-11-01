@@ -22,6 +22,26 @@ INT -- GameState::treeDepth = 4
 DOUBLE -- GameState::treeLength = 20.0
 FLOAT4 -- GameState::treeLocation = (-10.0, 10.0, -10.0, 0.0)
 
-# Asteroids configuration
-# -----------------------
+# Asteroids external configuration
+# --------------------------------
+BOOL -- GameState::bSpawnGrid = false
 INT -- GameState::nAsteroids = 3
+DOUBLE -- GameState::asteroidGridSpacing = 8.0
+INT -- GameState::nAsteroidsX = 4
+INT -- GameState::nAsteroidsY = 4
+INT -- GameState::nAsteroidsZ = 4
+
+# Allows the game state to provide a sharable config instance
+# -----------------------------------------------------------
+FILENAME -- GameState::inputConfigFileName = "GameState.txt"
+DIRECTORY -- GameState::inputConfigFilePath = "..\configFiles"
+
+# Asteroids internal configuration
+# --------------------------------
+FILENAME -- asteroid::inputConfigFileName = "asteroid.txt"
+DIRECTORY -- asteroid::inputConfigFilePath = "..\configFiles\geometry"
+
+# Ship model internal configuration
+# --------------------------------
+FILENAME -- shipmodel::inputConfigFileName = "shipmodel.txt"
+DIRECTORY -- shipmodel::inputConfigFilePath = "..\configFiles\geometry"

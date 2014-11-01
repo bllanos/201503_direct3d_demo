@@ -1,14 +1,17 @@
 /*
 	GameState.cpp
-*/
+	*/
 
 #include "GameState.h"
 #include <string>
 #include "FlatAtomicConfigIO.h"
+#include "fileUtil.h"
 #include <exception>
+#include <vector>
 
 using namespace DirectX;
 using std::wstring;
+using std::vector;
 
 #define GAMESTATE_CONFIGIO_CLASS FlatAtomicConfigIO
 
@@ -21,7 +24,7 @@ CONFIGUSER_INPUT_FILE_NAME_FIELD,
 GAMESTATE_SCOPE,
 CONFIGUSER_INPUT_FILE_PATH_FIELD
 ),
-m_camera(0), m_tree(0), m_nAsteroids(0) {
+m_camera(0), m_tree(0), m_asteroid(0), m_ship(0), m_bSpawnGrid(false), m_nAsteroids(0), m_asteroidGridSpacing(1.0f), m_nAsteroidsX(0), m_nAsteroidsY(0), m_nAsteroidsZ(0) {
 	if (FAILED(configure())) {
 		throw std::exception("GameState configuration failed.");
 	}
@@ -37,40 +40,38 @@ GameState::~GameState(void) {
 		delete m_tree;
 		m_tree = 0;
 	}
+
+	if (m_asteroid != 0) {
+		delete m_asteroid;
+		m_asteroid = 0;
+	}
+
+	if (m_ship != 0) {
+		delete m_ship;
+		m_ship = 0;
+	}
 }
 
 
 HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenHeight) {
-	// Initialize the camera
-	m_camera = new Camera(screenWidth, screenHeight);
 
 	HRESULT result = ERROR_SUCCESS;
 
-	for (size_t i = 0; i < m_nAsteroids; i++){
-		Transformable * newTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i)), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f));
-	
-		SphereModel * asteroid = new SphereModel(
-			newTransform,
-			2.0f,
-			0
-			);
+	// Initialize the camera
+	m_camera = new Camera(screenWidth, screenHeight);
 
-		result = asteroid->initialize(device);
-
-		ObjectModel * newObject = new ObjectModel(asteroid);
-
-		newObject->addTransformable(newTransform);
-
-		if (m_tree->addObject(newObject) == -1){
-			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-		}
-	}
-
-	if (FAILED(result)) {
-		logMessage(L"Failed to initialize stuff and things object.");
+	// Initialize geometry
+	if (FAILED(initializeGeometry(device))) {
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		return result;
 	}
+
+	// Fill the octree
+	if (FAILED(fillOctree())) {
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		return result;
+	}
+
 	return result;
 }
 
@@ -92,8 +93,7 @@ HRESULT GameState::poll(Keyboard& input, Mouse& mouse) {
 	if (FAILED(m_camera->poll(input, mouse))) {
 		logMessage(L"Call to Camera poll() function failed.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
-	else {
+	} else {
 		return ERROR_SUCCESS;
 	}
 }
@@ -110,7 +110,14 @@ HRESULT GameState::configure(void) {
 		GAMESTATE_TREELOCATION_X_DEFAULT,
 		GAMESTATE_TREELOCATION_Y_DEFAULT,
 		GAMESTATE_TREELOCATION_Z_DEFAULT);
+
+	bool bSpawnGrid = GAMESTATE_SPAWN_ASTEROIDS_GRID_DEFAULT;
 	int nAsteroids = GAMESTATE_NUMBER_OF_ASTEROIDS_DEFAULT;
+
+	double asteroidGridSpacing = GAMESTATE_ASTEROID_GRID_SPACING_DEFAULT;
+	int nAsteroidsX = GAMESTATE_NUMBER_OF_ASTEROIDS_X_DEFAULT;
+	int nAsteroidsY = GAMESTATE_NUMBER_OF_ASTEROIDS_Y_DEFAULT;
+	int nAsteroidsZ = GAMESTATE_NUMBER_OF_ASTEROIDS_Z_DEFAULT;
 
 	if (hasConfigToUse()) {
 
@@ -123,6 +130,7 @@ HRESULT GameState::configure(void) {
 
 		// Data retrieval helper variables
 		const int* intValue = 0;
+		const bool* boolValue = 0;
 		const double* doubleValue = 0;
 		const DirectX::XMFLOAT4* float4Value = 0;
 
@@ -143,8 +151,35 @@ HRESULT GameState::configure(void) {
 			treeLocation.z = float4Value->z;
 		}
 
+		if (retrieve<Config::DataType::BOOL, bool>(GAMESTATE_SCOPE, GAMESTATE_SPAWN_ASTEROIDS_GRID_FIELD, boolValue)) {
+			bSpawnGrid = *boolValue;
+		}
+
 		if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_FIELD, intValue)) {
 			nAsteroids = *intValue;
+		}
+
+		if (retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_ASTEROID_GRID_SPACING_FIELD, doubleValue)) {
+			asteroidGridSpacing = *doubleValue;
+		}
+
+		if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_X_FIELD, intValue)) {
+			nAsteroidsX = *intValue;
+		}
+
+		if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_Y_FIELD, intValue)) {
+			nAsteroidsY = *intValue;
+		}
+
+		if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_Z_FIELD, intValue)) {
+			nAsteroidsZ = *intValue;
+		}
+
+		// Initialize geometry members
+		// ---------------------------
+		if (FAILED(configureGeometry())) {
+			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+			return result;
 		}
 
 	}
@@ -167,10 +202,396 @@ HRESULT GameState::configure(void) {
 		nAsteroids = GAMESTATE_NUMBER_OF_ASTEROIDS_DEFAULT;
 		logMessage(L"nAsteroids cannot be zero or negative. Reverting to default value of " + std::to_wstring(nAsteroids));
 	}
+	if (asteroidGridSpacing < 1.0f) {
+		asteroidGridSpacing = GAMESTATE_NUMBER_OF_ASTEROIDS_X_DEFAULT;
+		logMessage(L"asteroidGridSpacing cannot be below 1. Reverting to default value of " + std::to_wstring(asteroidGridSpacing));
+	}
+	if (nAsteroidsX < 0) {
+		nAsteroidsX = GAMESTATE_NUMBER_OF_ASTEROIDS_X_DEFAULT;
+		logMessage(L"nAsteroidsX cannot be zero or negative. Reverting to default value of " + std::to_wstring(nAsteroidsX));
+	}
+	if (nAsteroidsY < 0) {
+		nAsteroidsY = GAMESTATE_NUMBER_OF_ASTEROIDS_Y_DEFAULT;
+		logMessage(L"nAsteroidsY cannot be zero or negative. Reverting to default value of " + std::to_wstring(nAsteroidsY));
+	}
+	if (nAsteroidsZ < 0) {
+		nAsteroidsZ = GAMESTATE_NUMBER_OF_ASTEROIDS_Z_DEFAULT;
+		logMessage(L"nAsteroidsZ cannot be zero or negative. Reverting to default value of " + std::to_wstring(nAsteroidsZ));
+	}
 
 	// Initialization
+	m_bSpawnGrid = bSpawnGrid;
 	m_nAsteroids = nAsteroids;
+	m_asteroidGridSpacing = asteroidGridSpacing;
+	m_nAsteroidsX = nAsteroidsX;
+	m_nAsteroidsY = nAsteroidsY;
+	m_nAsteroidsZ = nAsteroidsZ;
 	m_tree = new Octtree(treeLocation, static_cast<float>(treeLength), treeDepth);
 
 	return result;
 }
+
+HRESULT GameState::configureGeometry(void) {
+
+	HRESULT result = ERROR_SUCCESS;
+	wstring errorStr;
+
+	// Retrieve logging parameters for the configuration load operation
+	wstring filename;
+	const wstring* stringValue = 0;
+	if (retrieve<Config::DataType::FILENAME, wstring>(GAMESTATE_LOGUSER_SCOPE, LOGUSER_PRIMARYFILE_NAME_FIELD, stringValue)) {
+		filename = *stringValue;
+		if (retrieve<Config::DataType::DIRECTORY, wstring>(GAMESTATE_LOGUSER_SCOPE, LOGUSER_PRIMARYFILE_PATH_FIELD, stringValue)) {
+			if (FAILED(fileUtil::combineAsPath(filename, *stringValue, filename))) {
+				logMessage(L"fileUtil::combineAsPath() failed to combine the log file name and path.");
+				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+				return result;
+			}
+		}
+	}
+
+	// Redirect logging output for the configuration load operation
+	GAMESTATE_CONFIGIO_CLASS configIO;
+	result = configIO.setLogger(true, filename, false, false);
+	if (FAILED(result)) {
+		logMessage(L"Failed to redirect logging output of the IConfigIO object.");
+		prettyPrintHRESULT(errorStr, result);
+		logMessage(errorStr);
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		return result;
+	}
+
+	// Retrieve the filename of the meta-configuration data to load
+	if (retrieve<Config::DataType::FILENAME, wstring>(GAMESTATE_SCOPE, CONFIGUSER_INPUT_FILE_NAME_FIELD, stringValue)) {
+		filename = *stringValue;
+		if (retrieve<Config::DataType::DIRECTORY, wstring>(GAMESTATE_SCOPE, CONFIGUSER_INPUT_FILE_PATH_FIELD, stringValue)) {
+			if (FAILED(fileUtil::combineAsPath(filename, *stringValue, filename))) {
+				logMessage(L"fileUtil::combineAsPath() failed to combine the geometry meta-configuration file name and path.");
+				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+				return result;
+			}
+		}
+	} else {
+		logMessage(L"Cannot find filename for meta-configuration data for geometry.");
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
+		return result;
+	}
+
+	// Load configuration data that will inform the geometry of where to find configuration data
+	Config config;
+	result = configIO.read(filename, config);
+	if (FAILED(result)) {
+		logMessage(L"Failed to read the geometry meta-configuration file: " + filename);
+		prettyPrintHRESULT(errorStr, result);
+		logMessage(errorStr);
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		return result;
+	}
+
+	// Actually construct and configure geometry
+	// -----------------------------------------
+
+	m_asteroid = new GridSphereTextured(
+		&configIO, // Used to load configuration file
+		&config, // Queried for location of configuration file
+		GAMESTATE_GEOMETRY_ASTEROID_SCOPE, // Configuration file location query parameters
+		CONFIGUSER_INPUT_FILE_NAME_FIELD,
+		GAMESTATE_GEOMETRY_ASTEROID_SCOPE,
+		CONFIGUSER_INPUT_FILE_PATH_FIELD
+		);
+
+	m_ship = new ShipModel(
+		&configIO, // Used to load configuration file
+		&config, // Queried for location of configuration file
+		GAMESTATE_GEOMETRY_SHIP_SCOPE, // Configuration file location query parameters
+		CONFIGUSER_INPUT_FILE_NAME_FIELD,
+		GAMESTATE_GEOMETRY_SHIP_SCOPE,
+		CONFIGUSER_INPUT_FILE_PATH_FIELD
+		);
+
+	return result;
+}
+
+HRESULT GameState::initializeGeometry(ID3D11Device* device) {
+
+	if (FAILED(initializeAsteroid(device)) ||
+	    FAILED(initializeShip(device))) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	
+	return ERROR_SUCCESS;
+}
+
+HRESULT GameState::initializeAsteroid(ID3D11Device* device) {
+
+	if (m_asteroid == 0) {
+		logMessage(L"Initialization cannot proceed before the asteroid has been constructed and configured.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	// Temporary bones needed to initialize the asteroid
+	/* Note: The data used to initialize the bones is not arbitrary,
+	         even if the bones are only used temporarily!
+	 */
+	vector<Transformable*>* const bones = new vector<Transformable*>();
+	bones->push_back(new Transformable(
+		XMFLOAT3(1.0f, 1.0f, 1.0f),
+		XMFLOAT3(0.0f, 0.0f, 0.0f), // Center of the sphere
+		XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
+		));
+	bones->push_back(new Transformable(
+		XMFLOAT3(1.0f, 1.0f, 1.0f),
+		XMFLOAT3(0.0f, -1.0f, 0.0f), // South pole
+		XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
+		));
+	bones->push_back(new Transformable(
+		XMFLOAT3(1.0f, 1.0f, 1.0f),
+		XMFLOAT3(0.0f, 1.0f, 0.0f), // North pole
+		XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
+		));
+
+	// Initialize the asteroid
+	HRESULT result = ERROR_SUCCESS;
+	result = m_asteroid->initialize(device, bones, 0);
+	if (FAILED(result)) {
+		logMessage(L"Failed to initialize asteroid geometry.");
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	// Delete temporary bones
+	if (bones != 0) {
+		vector<Transformable*>::size_type i = 0;
+		vector<Transformable*>::size_type size = bones->size();
+		for (i = 0; i < size; ++i) {
+			if ((*bones)[i] != 0) {
+				delete (*bones)[i];
+				(*bones)[i] = 0;
+			}
+		}
+		delete bones;
+	}
+
+	return result;
+}
+
+HRESULT GameState::initializeShip(ID3D11Device* device) {
+
+	if (m_ship == 0) {
+		logMessage(L"Initialization cannot proceed before the asteroid has been constructed and configured.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	// Temporary bones needed to initialize the asteroid
+	/* Note: The data used to initialize the bones is not arbitrary,
+	even if the bones are only used temporarily!
+	*/
+	vector<Transformable*>* const bones = new vector<Transformable*>();
+	bones->push_back(new Transformable(
+		XMFLOAT3(1.0f, 1.0f, 1.0f),
+		XMFLOAT3(0.0f, 0.0f, 0.0f), // Center of the sphere
+		XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
+		));
+	bones->push_back(new Transformable(
+		XMFLOAT3(1.0f, 1.0f, 1.0f),
+		XMFLOAT3(0.0f, -1.0f, 0.0f), // South pole
+		XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
+		));
+	bones->push_back(new Transformable(
+		XMFLOAT3(1.0f, 1.0f, 1.0f),
+		XMFLOAT3(0.0f, 1.0f, 0.0f), // North pole
+		XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
+		));
+
+	// Initialize the asteroid
+	HRESULT result = ERROR_SUCCESS;
+	result = m_ship->initialize(device, bones, 0);
+	if (FAILED(result)) {
+		logMessage(L"Failed to initialize ship geometry.");
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	// Delete temporary bones
+	if (bones != 0) {
+		vector<Transformable*>::size_type i = 0;
+		vector<Transformable*>::size_type size = bones->size();
+		for (i = 0; i < size; ++i) {
+			if ((*bones)[i] != 0) {
+				delete (*bones)[i];
+				(*bones)[i] = 0;
+			}
+		}
+		delete bones;
+	}
+
+	return result;
+}
+
+HRESULT GameState::fillOctree(void) {
+	
+	if (m_bSpawnGrid) {
+		if (FAILED(spawnAsteroidsGrid(m_nAsteroidsX, m_nAsteroidsY, m_nAsteroidsZ))) {
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+	else {
+		if (FAILED(spawnAsteroids(m_nAsteroids))) {
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
+	if (FAILED(spawnShip(1))) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	return ERROR_SUCCESS;
+}
+
+HRESULT GameState::spawnAsteroids(const size_t n) {
+
+	if (m_asteroid == 0) {
+		logMessage(L"Cannot spawn asteroids before the asteroid has been constructed and configured.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	XMFLOAT3 offset(0.0f, 0.0f, 0.0f);
+	XMFLOAT3 southOffset(0.0f, -1.0f, 0.0f);
+	XMFLOAT3 northOffset(0.0f, 1.0f, 0.0f);
+
+	XMFLOAT3 scale(1.0f, 1.0f, 1.0f);
+	XMFLOAT4 orientation(0.0f, 0.0f, 0.0f, 1.0f);
+
+	ObjectModel* newObject = 0;
+	Transformable* bone = 0;
+	Transformable* parent = 0;
+
+	for (size_t i = 0; i < n; ++i){
+
+		newObject = new ObjectModel(m_asteroid);
+
+		offset = XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i));
+
+		// Center
+		bone = new Transformable(scale, offset, orientation);
+		parent = bone;
+		newObject->addTransformable(bone);
+
+		// South pole
+		bone = new Transformable(scale, southOffset, orientation);
+		bone->setParent(parent);
+		newObject->addTransformable(bone);
+
+		// North pole
+		bone = new Transformable(scale, northOffset, orientation);
+		bone->setParent(parent);
+		newObject->addTransformable(bone);
+
+
+		if (m_tree->addObject(newObject) == -1){
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
+	return ERROR_SUCCESS;
+}
+
+HRESULT GameState::spawnAsteroidsGrid(const size_t x, const size_t y, const size_t z) {
+
+	if (m_asteroid == 0) {
+		logMessage(L"Cannot spawn asteroids before the asteroid has been constructed and configured.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	XMFLOAT3 offset(0.0f, 0.0f, 0.0f);
+	XMFLOAT3 southOffset(0.0f, -1.0f, 0.0f);
+	XMFLOAT3 northOffset(0.0f, 1.0f, 0.0f);
+
+	XMFLOAT3 scale(1.0f, 1.0f, 1.0f);
+	XMFLOAT4 orientation(0.0f, 0.0f, 0.0f, 1.0f);
+
+	ObjectModel* newObject = 0;
+	Transformable* bone = 0;
+	Transformable* parent = 0;
+
+	for (size_t i = 0; i < x; ++i){
+		for (size_t j = 0; j < y; ++j){
+			for (size_t k = 0; k < z; ++k){
+
+				newObject = new ObjectModel(m_asteroid);
+
+				float offsetAmount = static_cast<float>(m_asteroidGridSpacing);
+				offset = XMFLOAT3(static_cast<float>(i * offsetAmount), static_cast<float>(j * offsetAmount), static_cast<float>(k * offsetAmount));
+
+				// Center
+				bone = new Transformable(scale, offset, orientation);
+				parent = bone;
+				newObject->addTransformable(bone);
+
+				// South pole
+				bone = new Transformable(scale, southOffset, orientation);
+				bone->setParent(parent);
+				newObject->addTransformable(bone);
+
+				// North pole
+				bone = new Transformable(scale, northOffset, orientation);
+				bone->setParent(parent);
+				newObject->addTransformable(bone);
+
+
+				if (m_tree->addObject(newObject) == -1){
+					return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+				}
+			}
+		}
+	}
+
+	return ERROR_SUCCESS;
+}
+
+HRESULT GameState::spawnShip(const size_t n) {
+
+	if (m_ship == 0) {
+		logMessage(L"Cannot spawn the ship before the ship has been constructed and configured.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	XMFLOAT3 offset(0.0f, 0.0f, 0.0f);
+	XMFLOAT3 southOffset(0.0f, -1.0f, 0.0f);
+	XMFLOAT3 northOffset(0.0f, 1.0f, 0.0f);
+
+	XMFLOAT3 scale(1.0f, 1.0f, 1.0f);
+	XMFLOAT4 orientation(0.0f, 0.0f, 0.0f, 1.0f);
+
+	ObjectModel* newObject = 0;
+	Transformable* bone = 0;
+	Transformable* parent = 0;
+
+	for (size_t i = 0; i < n; ++i){
+
+		newObject = new ObjectModel(m_ship);
+
+		offset = XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i) - 2.0f);
+
+		// Center
+		bone = new Transformable(scale, offset, orientation);
+		parent = bone;
+		newObject->addTransformable(bone);
+
+		// South pole
+		bone = new Transformable(scale, southOffset, orientation);
+		bone->setParent(parent);
+		newObject->addTransformable(bone);
+
+		// North pole
+		bone = new Transformable(scale, northOffset, orientation);
+		bone->setParent(parent);
+		newObject->addTransformable(bone);
+
+
+		if (m_tree->addObject(newObject) == -1){
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
+	return ERROR_SUCCESS;
+}
+
