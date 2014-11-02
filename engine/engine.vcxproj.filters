@@ -168,6 +168,9 @@
     <ClCompile Include="cpp\geometry\InvariantTexturedParticles.cpp">
       <Filter>source\geometry</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\geometry\UniformBurstSphere.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -297,6 +300,9 @@
       <Filter>header\geometry</Filter>
     </ClInclude>
     <ClInclude Include="header\geometry\InvariantTexturedParticles.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\UniformBurstSphere.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
   </ItemGroup>
