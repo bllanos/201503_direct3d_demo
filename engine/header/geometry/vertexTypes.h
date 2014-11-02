@@ -60,7 +60,7 @@ struct ParticleVertexType {
 										// w = speed (world-space units per millisecond)
 	DirectX::XMFLOAT4 life;	// Possibly multiple interpretations. Suggested interpetation is as follows:
 							// x = creation time offset from base time (milliseconds)
-							// y = lifespan (milliseconds) or "health"
+							// y = lifespan (milliseconds) or initial "health", transparency, etc.
 							// z = decay factor (e.g. for linear or exponential decrease in life)
 							// w = cutoff (amount below which life is clamped to zero)
 	DirectX::XMFLOAT4 index; // Multi-purpose: Color/albedo, or 1D to 4D texture coordinates
