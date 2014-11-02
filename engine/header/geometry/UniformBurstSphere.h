@@ -79,7 +79,9 @@ Description
 #define UNIFORMBURSTSPHERE_COLORCAST_WEIGHT_FIELD L"colorCastWeight"
 
 /* If true, particles will be assigned colour casts
-   as a function of their angular positions.
+   as a function of their angular positions,
+   rather than using the colour cast loaded
+   from configuration data.
 */
 #define UNIFORMBURSTSPHERE_DEBUG_FLAG_DEFAULT false
 #define UNIFORMBURSTSPHERE_DEBUG_FLAG_FIELD L"debugColorCasts"

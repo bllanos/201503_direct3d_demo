@@ -126,62 +126,62 @@ HRESULT GameState::configure(void) {
 		const std::wstring configUserScope(GAMESTATE_CONFIGUSER_SCOPE);
 		if (FAILED(configureConfigUser(logUserScope, &configUserScope))) {
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		} else {
+
+			// Data retrieval helper variables
+			const int* intValue = 0;
+			const bool* boolValue = 0;
+			const double* doubleValue = 0;
+			const DirectX::XMFLOAT4* float4Value = 0;
+
+			// Query for initialization data
+			// -----------------------------
+
+			if( retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_TREEDEPTH_FIELD, intValue) ) {
+				treeDepth = *intValue;
+			}
+
+			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_TREELENGTH_FIELD, doubleValue) ) {
+				treeLength = *doubleValue;
+			}
+
+			if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(GAMESTATE_SCOPE, GAMESTATE_TREELOCATION_FIELD, float4Value) ) {
+				treeLocation.x = float4Value->x;
+				treeLocation.y = float4Value->y;
+				treeLocation.z = float4Value->z;
+			}
+
+			if( retrieve<Config::DataType::BOOL, bool>(GAMESTATE_SCOPE, GAMESTATE_SPAWN_ASTEROIDS_GRID_FIELD, boolValue) ) {
+				bSpawnGrid = *boolValue;
+			}
+
+			if( retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_FIELD, intValue) ) {
+				nAsteroids = *intValue;
+			}
+
+			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_ASTEROID_GRID_SPACING_FIELD, doubleValue) ) {
+				asteroidGridSpacing = *doubleValue;
+			}
+
+			if( retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_X_FIELD, intValue) ) {
+				nAsteroidsX = *intValue;
+			}
+
+			if( retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_Y_FIELD, intValue) ) {
+				nAsteroidsY = *intValue;
+			}
+
+			if( retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_Z_FIELD, intValue) ) {
+				nAsteroidsZ = *intValue;
+			}
+
+			// Initialize geometry members
+			// ---------------------------
+			if( FAILED(configureGeometry()) ) {
+				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+				return result;
+			}
 		}
-
-		// Data retrieval helper variables
-		const int* intValue = 0;
-		const bool* boolValue = 0;
-		const double* doubleValue = 0;
-		const DirectX::XMFLOAT4* float4Value = 0;
-
-		// Query for initialization data
-		// -----------------------------
-
-		if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_TREEDEPTH_FIELD, intValue)) {
-			treeDepth = *intValue;
-		}
-
-		if (retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_TREELENGTH_FIELD, doubleValue)) {
-			treeLength = *doubleValue;
-		}
-
-		if (retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(GAMESTATE_SCOPE, GAMESTATE_TREELOCATION_FIELD, float4Value)) {
-			treeLocation.x = float4Value->x;
-			treeLocation.y = float4Value->y;
-			treeLocation.z = float4Value->z;
-		}
-
-		if (retrieve<Config::DataType::BOOL, bool>(GAMESTATE_SCOPE, GAMESTATE_SPAWN_ASTEROIDS_GRID_FIELD, boolValue)) {
-			bSpawnGrid = *boolValue;
-		}
-
-		if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_FIELD, intValue)) {
-			nAsteroids = *intValue;
-		}
-
-		if (retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_ASTEROID_GRID_SPACING_FIELD, doubleValue)) {
-			asteroidGridSpacing = *doubleValue;
-		}
-
-		if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_X_FIELD, intValue)) {
-			nAsteroidsX = *intValue;
-		}
-
-		if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_Y_FIELD, intValue)) {
-			nAsteroidsY = *intValue;
-		}
-
-		if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_Z_FIELD, intValue)) {
-			nAsteroidsZ = *intValue;
-		}
-
-		// Initialize geometry members
-		// ---------------------------
-		if (FAILED(configureGeometry())) {
-			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-			return result;
-		}
-
 	}
 	else {
 		logMessage(L"GameState initialization from configuration data: No Config instance to use.");

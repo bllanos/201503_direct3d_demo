@@ -55,7 +55,7 @@ struct ParticleVertexType {
 	DirectX::XMFLOAT3 billboard;	// Defines billboard dimensions and orientation
 									// x = billboard width (view-space units),
 									// y = billboard height (view-space units),
-									// z = per-millisecond clockwise turn around view-space 'look' axis (radians)
+									// z = per-millisecond counter-clockwise turn around view-space 'look' axis (radians)
 	DirectX::XMFLOAT4 linearVelocity;	// xyz = Normalized world-space linear direction vector,
 										// w = speed (world-space units per millisecond)
 	DirectX::XMFLOAT4 life;	// Possibly multiple interpretations. Suggested interpetation is as follows:
