@@ -39,7 +39,7 @@ InvariantTexturedParticles::InvariantTexturedParticles(const bool enableLogging,
 	m_renderAlbedoTexture(INVARIANTTEXTUREDPARTICLES_ALBEDOTEXTURE_RENDER_FLAG_DEFAULT) 
 {}
 
-HRESULT InvariantTexturedParticles::configure(const std::wstring& scope, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0) {
+HRESULT InvariantTexturedParticles::configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope) {
 	HRESULT result = ERROR_SUCCESS;
 
 	// Initialization with default values
@@ -174,7 +174,7 @@ HRESULT InvariantTexturedParticles::configure(const std::wstring& scope, const s
 HRESULT InvariantTexturedParticles::initialize(ID3D11Device* const device,
 	const INVARIANTPARTICLES_VERTEX_TYPE* const vertices, const size_t nVertices,
 	const Transformable* const transform,
-	const D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST) {
+	const D3D_PRIMITIVE_TOPOLOGY topology) {
 
 	// Initialize the base class
 	if( FAILED(InvariantParticles::initialize(device,
