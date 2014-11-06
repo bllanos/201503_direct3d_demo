@@ -56,8 +56,8 @@ struct ParticleVertexType {
 									// x = billboard width (view-space units),
 									// y = billboard height (view-space units),
 									// z = per-millisecond counter-clockwise turn around view-space 'look' axis (radians)
-	DirectX::XMFLOAT4 linearVelocity;	// xyz = Normalized world-space linear direction vector,
-										// w = speed (world-space units per millisecond)
+	DirectX::XMFLOAT4 linearVelocity;	// xyz = Normalized model-space linear direction vector,
+										// w = speed (model-space units per millisecond)
 	DirectX::XMFLOAT4 life;	// Possibly multiple interpretations. Suggested interpetation is as follows:
 							// x = creation time offset from base time (milliseconds)
 							// y = lifespan (milliseconds) or initial "health", transparency, etc.
