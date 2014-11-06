@@ -553,7 +553,7 @@ HRESULT InvariantParticlesRenderer::setNoLightShaderParameters(
 	context->VSSetConstantBuffers(0, 1, &m_cameraBuffer);
 
 	// The geometry shader will also use the camera data
-	context->GSGetConstantBuffers(0, 1, &m_cameraBuffer);
+	context->GSSetConstantBuffers(0, 1, &m_cameraBuffer);
 
 	// Lock the globals constant buffer so it can be written to.
 	result = context->Map(m_globalBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

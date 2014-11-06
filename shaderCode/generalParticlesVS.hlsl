@@ -78,8 +78,8 @@ VSOutput VSMAIN(in VSInput input) {
 	output.angle = input.billboard.z * age;
 
 	// If direction is away from viewer, reverse the direction of rotation
-	float dotV_Vel = dot(viewDirection, cameraPosition.xyz - output.positionVS);
-	if (dotV_Vel < 0.0f) {
+	float dotV_Vel = dot(viewDirection, output.positionVS);
+	if (dotV_Vel > 0.0f) {
 		output.angle = -output.angle;
 	}
 
