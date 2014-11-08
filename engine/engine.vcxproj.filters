@@ -61,6 +61,9 @@
     <Filter Include="header\ssse">
       <UniqueIdentifier>{afbe15ce-1e49-4fda-a198-92a74650a3dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\ssse">
+      <UniqueIdentifier>{36fd3c9b-270f-4a2d-9ed9-bc4c0336a806}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cpp\rendering\SimpleColorRenderer.cpp">
@@ -173,6 +176,9 @@
     </ClCompile>
     <ClCompile Include="cpp\geometry\UniformBurstSphere.cpp">
       <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\ssse\SSSE.cpp">
+      <Filter>source\ssse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -311,8 +317,8 @@
     <ClInclude Include="header\util\Texture2DFromBytes.h">
       <Filter>header\util</Filter>
     </ClInclude>
-    <ClInclude Include="header\vertexTypes.h">
-      <Filter>header</Filter>
+    <ClInclude Include="header\geometry\vertexTypes.h">
+      <Filter>header\geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

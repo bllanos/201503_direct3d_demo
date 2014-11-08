@@ -11,10 +11,12 @@ Bernard Llanos, ID: 100793648
 Created November 7, 2014
 
 Primary basis: InvariantParticlesRenderer.h
+Other references: InvariantParticles.h, InvariantTexturedParticles.h
 
 Description
   -An abstract Screen-Space Special Effect class
   -Creates one or more textures to use as render targets (at least one) and input data
+     -Assumes that the size of the window does not change!
   -Executes pipeline to process images
   -Assumes that the effect is to be applied
      to the first render target, and creates a shader resource
@@ -35,7 +37,13 @@ Description
 #include "ConfigUser.h"
 #include "FlatAtomicConfigIO.h"
 #include "Shader.h"
-#include "vertexTypes.h"
+
+// Screen-space quad
+#define SSSEVERTEXTYPE_COMPONENTS 2
+struct SSSEVertexType {
+	DirectX::XMFLOAT4 position; // Clip space position
+	DirectX::XMFLOAT4 index; // Texture coordinates
+};
 
 #define SSSE_VERTEX_TYPE SSSEVertexType
 #define SSSE_NVERTICES 4
@@ -85,10 +93,13 @@ Description
 #define SSSE_TEXTURE_CONFIGFILE_NAME_FIELD L"inputConfigFileName"
 #define SSSE_TEXTURE_CONFIGFILE_PATH_FIELD L"inputConfigFilePath"
 
+// Type of loader to use for configuration data
+#define SSSE_CONFIGIO_CLASS FlatAtomicConfigIO
+
 // Type of loader to use for configuration data when creating textures
 #define SSSE_CONFIGIO_CLASS_TEXTURE FlatAtomicConfigIO
 
-// Type of loader to use for configuration data when creating textures
+// Type of loader to use for configuration data when creating shaders
 #define SSSE_CONFIGIO_CLASS_SHADER FlatAtomicConfigIO
 
 class SSSE : public ConfigUser {
@@ -104,21 +115,23 @@ public:
 	// Constant buffer structures
 private:
 	struct GlobalBufferType {
-		Globals globals;
+		struct Globals globals;
 		DirectX::XMFLOAT2 screenSize; // Dimensions of full render target and textures (width, height) [pixels]
 		DirectX::XMFLOAT2 padding;
 	};
 
 protected:
 
-	/* Proxy for a ConfigUser constructor */
-	template<typename ConfigIOClass> SSSE(
-		ConfigIOClass* const optionalLoader,
-		const Config* locationSource,
-		const std::wstring filenameScope,
-		const std::wstring filenameField,
-		const std::wstring directoryScope = L"",
-		const std::wstring directoryField = L""
+	/* Configuration data is needed for
+	   shaders and textures.
+
+	   The 'filename' and 'path' parameters describe
+	   the location of the configuration file.
+	   (Documented in ConfigUser.h)
+	 */
+	 SSSE(
+		const std::wstring filename,
+		const std::wstring path = L""
 		);
 
 	/* Retrieves configuration data, using default values,

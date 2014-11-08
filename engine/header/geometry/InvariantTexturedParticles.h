@@ -21,7 +21,7 @@ Description
 #pragma once
 
 #include "InvariantParticles.h"
-#include "Texture.h"
+#include "TextureFromDDS.h"
 
 /* The following definitions are:
    -Key parameters used to retrieve configuration data
@@ -131,7 +131,7 @@ protected:
 	// Data members
 private:
 	// The model's surface colour/generalized albedo
-	Texture* m_albedoTexture;
+	TextureFromDDS* m_albedoTexture;
 
 	// Renderer selection data members
 protected:

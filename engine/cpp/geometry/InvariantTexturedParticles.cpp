@@ -286,7 +286,7 @@ HRESULT InvariantTexturedParticles::setTexturesOnContext(ID3D11DeviceContext* co
 			logMessage(L"This object's albedo texture object is null and therefore cannot be used for rendering. Code is likely broken.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);
 		}
-		if( FAILED(m_albedoTexture->bind(context, 0, 0, BindLocation::PS)) ) {
+		if( FAILED(m_albedoTexture->bind(context, 0, 0, ShaderStage::PS)) ) {
 			logMessage(L"Failed to bind the albedo texture object's data to the pixel shader.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}

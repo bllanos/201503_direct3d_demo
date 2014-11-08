@@ -71,7 +71,7 @@ public:
 	*/
 	virtual HRESULT bindAsRenderTarget(ID3D11DeviceContext* const context,
 		const UINT targetSlot, const UINT* const unbindSlots = 0,
-		const BindLocation* const unbindLocations = 0, const size_t nUnbindLocations = 0);
+		const ShaderStage* const unbindLocations = 0, const size_t nUnbindLocations = 0);
 
 	/* Removes this texture as a render target,
 	   from the position last passed to bindAsRenderTarget()
@@ -84,7 +84,7 @@ public:
 	*/
 	virtual HRESULT bind(ID3D11DeviceContext* const context,
 		const UINT textureSlot, const UINT samplerSlot,
-		const BindLocation bindLocation) override;
+		const ShaderStage bindLocation) override;
 
 	// Data members
 private:

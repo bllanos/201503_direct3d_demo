@@ -108,7 +108,7 @@ public:
 	*/
 	virtual HRESULT bind(ID3D11DeviceContext* const context,
 		const UINT textureSlot, const UINT samplerSlot,
-		const BindLocation bindLocation);
+		const ShaderStage bindLocation);
 
 	// Data members to be setup by derived classes
 protected:
