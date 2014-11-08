@@ -377,9 +377,46 @@ HRESULT GridQuadTextured::uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, const 
 }
 
 float GridQuadTextured::getRadius(){
-	return 1.0f;
+	/*
+	float theDiagonal = sqrt(2) / 2;
+
+	XMFLOAT3 scale;
+
+	float largestScale = 0;
+
+	for (size_t i = 0; i < m_bones->size(); i++){
+		scale = m_bones->at(i)->getScale();
+		if (largestScale < scale.x) largestScale = scale.x;
+		if (largestScale < scale.y) largestScale = scale.y;
+		if (largestScale < scale.z) largestScale = scale.z;
+	}
+
+	theDiagonal *= largestScale * 2;
+
+	return 0.5f*theDiagonal;
+	*/
+	return sqrt(2) / 2;
 }
 
 XMFLOAT3 GridQuadTextured::getPosition(){
+	/*
+	float theX = 0;
+	float theY = 0;
+	float theZ = 0;
+	XMFLOAT3 trans;
+
+	for (size_t i = 0; i < m_bones->size(); i++){
+		trans = m_bones->at(i)->getPosition();
+		theX += trans.x;
+		theY += trans.y;
+		theZ += trans.z;
+	}
+
+	theX /= m_bones->size();
+	theY /= m_bones->size();
+	theZ /= m_bones->size();
+
+	return XMFLOAT3(theX, theY, theZ);
+	*/
 	return XMFLOAT3(0, 0, 0);
 }

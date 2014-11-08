@@ -287,7 +287,7 @@ public:
 	virtual size_t getNumberOfIndices(void) const = 0;
 
 	// Data members
-private:
+protected:
 	/* Note that positions and normal vectors need to be treated
 	   by different world transformation matrices.
 	   (Therefore, there are two bone matrix buffers.)
@@ -310,7 +310,6 @@ private:
 	float m_blend;
 	
 	// Renderer selection data members
-protected:
 	// Null if not set
 	GeometryRendererManager::GeometryRendererType* m_rendererType;
 

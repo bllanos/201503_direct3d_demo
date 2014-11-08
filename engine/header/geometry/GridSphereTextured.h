@@ -154,7 +154,7 @@ protected:
 protected:
 	/*Vector of Transformables
 	*/
-	std::vector<Transformable*>* transformation;
+	//std::vector<Transformable*>* transformation;
 
 	/* Grid resolution,
 	   which can be obtained from configuration data.

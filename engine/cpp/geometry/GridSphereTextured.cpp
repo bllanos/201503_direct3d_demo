@@ -476,34 +476,28 @@ float GridSphereTextured::getRadius(){
 	float greatestScale = 0.0f;
 	XMFLOAT3 scale;
 
-	for (size_t i = 0; i < transformation->size(); i++){
-		scale = transformation->at(i)->getScale();
-		if (greatestScale<scale.x) greatestScale = scale.x;
-		if (greatestScale<scale.y) greatestScale = scale.y;
-		if (greatestScale<scale.z) greatestScale = scale.z;
+	for (size_t i = 0; i < m_bones->size(); i++){
+		if (!(m_bones->at(i)->hasParent())){
+			scale = m_bones->at(i)->getScale();
+			greatestScale = scale.x;
+			greatestScale < scale.y ? greatestScale = scale.y : greatestScale = greatestScale;
+			greatestScale < scale.z ? greatestScale = scale.z : greatestScale = greatestScale;
+			return radi * greatestScale;
+		}
 	}
-
-	return radi * (greatestScale * 2);*/
-	return 10.0f;
+	*/
+	return 1.0f;
 }
 
 XMFLOAT3 GridSphereTextured::getPosition(){
 	/*
-	float x = 0.0f;
-	float y = 0.0f;
-	float z = 0.0f;
 	XMFLOAT3 pos;
 
-	for (size_t i = 0; i < transformation->size(); i++){
-		pos = transformation->at(i)->getPosition();
-		x += pos.x;
-		y += pos.y;
-		z += pos.z;
+	for (size_t i = 0; i < m_bones->size(); i++){
+		if (!(m_bones->at(i)->hasParent())){
+			return m_bones->at(i)->getPosition();
+		}
 	}
-
-	pos = XMFLOAT3(x / transformation->size(), y / transformation->size(), z / transformation->size());
-
-	return pos;
 	*/
-	return XMFLOAT3(10, 10, 10);
+	return XMFLOAT3(0, 0, 0);
 }

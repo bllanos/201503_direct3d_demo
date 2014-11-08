@@ -28,8 +28,7 @@ GridQuad::GridQuad(const bool enableLogging, const std::wstring& msgPrefix,
 	Config* sharedConfig) :
 	SkinnedColorGeometry(enableLogging, msgPrefix, sharedConfig),
 	m_nColumns(0), m_nRows(0),
-	m_debugWinding(GRIDQUAD_DEBUG_FLAG_DEFAULT), m_colors(0),
-	transformation(0)
+	m_debugWinding(GRIDQUAD_DEBUG_FLAG_DEFAULT), m_colors(0)
 {
 	if( FAILED(configure()) ) {
 		logMessage(L"Configuration failed.");
@@ -128,10 +127,6 @@ GridQuad::~GridQuad(void) {
 		delete[] m_colors;
 		m_colors = 0;
 	}
-	if (transformation != 0){
-		delete transformation;
-		transformation = 0;
-	}
 }
 
 HRESULT GridQuad::initialize(ID3D11Device* const device,
@@ -152,8 +147,6 @@ HRESULT GridQuad::initialize(ID3D11Device* const device,
 	unsigned long* indices = new unsigned long[getNumberOfIndices()];
 
 	result = addIndexedVertices(vertices, nVertices, indices, nIndices);
-
-	transformation = bones;
 
 	if( FAILED(result) ) {
 		logMessage(L"Failed to load temporary index and vertex arrays with data.");
@@ -423,8 +416,8 @@ float GridQuad::getRadius(){
 	
 	float largestScale = 0;
 
-	for (size_t i = 0; i < transformation->size(); i++){
-		scale = transformation->at(i)->getScale();
+	for (size_t i = 0; i < m_bones->size(); i++){
+		scale = m_bones->at(i)->getScale();
 		if (largestScale < scale.x) largestScale = scale.x;
 		if (largestScale < scale.y) largestScale = scale.y;
 		if (largestScale < scale.z) largestScale = scale.z;
@@ -443,16 +436,16 @@ XMFLOAT3 GridQuad::getPosition(){
 	float theZ = 0;
 	XMFLOAT3 trans;
 
-	for (size_t i = 0; i < transformation->size(); i++){
-		trans = transformation->at(i)->getPosition();
+	for (size_t i = 0; i < m_bones->size(); i++){
+		trans = m_bones->at(i)->getPosition();
 		theX += trans.x;
 		theY += trans.y;
 		theZ += trans.z;
 	}
 
-	theX /= transformation->size();
-	theY /= transformation->size();
-	theZ /= transformation->size();
+	theX /= m_bones->size();
+	theY /= m_bones->size();
+	theZ /= m_bones->size();
 
 	return XMFLOAT3(theX, theY, theZ);
 

@@ -270,3 +270,10 @@ void Transformable::updateTransformProperties()
 	XMStoreFloat3(&m_left,
 		XMVector3Cross(XMLoadFloat3(&m_forward), XMLoadFloat3(&m_up)));
 }
+
+bool Transformable::hasParent(){
+	if (m_parent == 0){
+		return false;
+	}
+	return true;
+}
