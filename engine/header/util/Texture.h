@@ -96,10 +96,10 @@ protected:
 	 */
 	virtual HRESULT configure(const std::wstring& scope, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0);
 
-public:
-
 	/* Creates texture sampler */
 	virtual HRESULT initialize(ID3D11Device* device);
+
+public:
 
 	/* Bind the texture and sampler to the pipeline
 	   for use during rendering. The shader stage

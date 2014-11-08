@@ -50,6 +50,9 @@
     <ClCompile Include="test\cpp\TexturedSphereTestState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\ssse\SSSE.h" />
+    <ClInclude Include="header\util\Texture2DFromBytes.h" />
+    <ClInclude Include="header\vertexTypes.h" />
     <ClInclude Include="header\geometry\UniformBurstSphere.h" />
     <ClInclude Include="header\geometry\InvariantTexturedParticles.h" />
     <ClInclude Include="header\geometry\InvariantParticles.h" />
@@ -86,7 +89,6 @@
     <ClInclude Include="header\geometry\CubeModel.h" />
     <ClInclude Include="header\geometry\IGeometry.h" />
     <ClInclude Include="header\geometry\SimpleColorGeometry.h" />
-    <ClInclude Include="header\geometry\vertexTypes.h" />
     <ClInclude Include="header\input\IInteractive.h" />
     <ClInclude Include="header\physics\ITransformable.h" />
     <ClInclude Include="header\rendering\SimpleColorRenderer.h" />

@@ -58,6 +58,9 @@
     <Filter Include="source\physics">
       <UniqueIdentifier>{e8288cf9-dfa8-461a-97e7-557d48d3fd3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="header\ssse">
+      <UniqueIdentifier>{afbe15ce-1e49-4fda-a198-92a74650a3dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cpp\rendering\SimpleColorRenderer.cpp">
@@ -188,9 +191,6 @@
     <ClInclude Include="header\geometry\SimpleColorGeometry.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
-    <ClInclude Include="header\geometry\vertexTypes.h">
-      <Filter>header\geometry</Filter>
-    </ClInclude>
     <ClInclude Include="header\physics\ITransformable.h">
       <Filter>header\physics</Filter>
     </ClInclude>
@@ -304,6 +304,15 @@
     </ClInclude>
     <ClInclude Include="header\geometry\UniformBurstSphere.h">
       <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\ssse\SSSE.h">
+      <Filter>header\ssse</Filter>
+    </ClInclude>
+    <ClInclude Include="header\util\Texture2DFromBytes.h">
+      <Filter>header\util</Filter>
+    </ClInclude>
+    <ClInclude Include="header\vertexTypes.h">
+      <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

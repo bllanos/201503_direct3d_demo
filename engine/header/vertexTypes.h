@@ -65,3 +65,10 @@ struct ParticleVertexType {
 							// w = cutoff (amount below which life is clamped to zero)
 	DirectX::XMFLOAT4 index; // Multi-purpose: Color/albedo, or 1D to 4D texture coordinates
 };
+
+// Screen-Space Special Effects
+#define SSSEVERTEXTYPE_COMPONENTS 2
+struct SSSEVertexType {
+	DirectX::XMFLOAT4 position; // Clip space position
+	DirectX::XMFLOAT4 index; // Texture coordinates
+};

@@ -196,7 +196,7 @@ public:
 	virtual HRESULT getTime(DirectX::XMFLOAT2& time) const;
 
 protected:
-	/* Performs vertex buffer and index buffer-related pipeline
+	/* Performs vertex buffer-related pipeline
 	   configuration
 	*/
 	virtual HRESULT setVerticesOnContext(ID3D11DeviceContext* const context);
