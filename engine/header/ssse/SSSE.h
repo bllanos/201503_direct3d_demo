@@ -48,6 +48,10 @@ struct SSSEVertexType {
 #define SSSE_VERTEX_TYPE SSSEVertexType
 #define SSSE_NVERTICES 4
 
+// Default global parameters
+#define SSSE_GLOBALS_FOCUS_DEFAULT DirectX::XMFLOAT2(0.0f, 0.0f)
+#define SSSE_GLOBALS_TIME_DEFAULT DirectX::XMFLOAT2(0.0f, 0.0f)
+
 /* The following definitions are:
    -Key parameters used to retrieve configuration data
    -Default values used in the absence of configuration data
@@ -55,6 +59,8 @@ struct SSSEVertexType {
 */
 
 /* Shader constructor and configuration parameters */
+#define SSSE_VSSHADER_FIELD_PREFIX L"VS_"
+#define SSSE_PSSHADER_FIELD_PREFIX L"PS_"
 
 #define SSSE_SHADER_ENABLELOGGING_FLAG_DEFAULT true
 #define SSSE_SHADER_ENABLELOGGING_FLAG_FIELD L"enableLogging"
@@ -93,9 +99,6 @@ struct SSSEVertexType {
 #define SSSE_TEXTURE_CONFIGFILE_NAME_FIELD L"inputConfigFileName"
 #define SSSE_TEXTURE_CONFIGFILE_PATH_FIELD L"inputConfigFilePath"
 
-// Type of loader to use for configuration data
-#define SSSE_CONFIGIO_CLASS FlatAtomicConfigIO
-
 // Type of loader to use for configuration data when creating textures
 #define SSSE_CONFIGIO_CLASS_TEXTURE FlatAtomicConfigIO
 
@@ -107,7 +110,6 @@ class SSSE : public ConfigUser {
 	// Client-visible constant buffer data
 public:
 	struct Globals {
-		DirectX::XMFLOAT4 rect; // Area to process (top left u, top left v, width, height) [pixels]
 		DirectX::XMFLOAT2 focus; // Point of interest (e.g. cursor) (u, v) [pixels]
 		DirectX::XMFLOAT2 time; // (current time, update time interval) [milliseconds]
 	};
@@ -122,16 +124,16 @@ private:
 
 protected:
 
-	/* Configuration data is needed for
-	   shaders and textures.
-
-	   The 'filename' and 'path' parameters describe
-	   the location of the configuration file.
-	   (Documented in ConfigUser.h)
+	/* Proxy of a ConfigUser constructor
 	 */
-	 SSSE(
-		const std::wstring filename,
-		const std::wstring path = L""
+	template<typename ConfigIOClass> SSSE(
+		const bool enableLogging, const std::wstring& msgPrefix,
+		ConfigIOClass* const optionalLoader,
+		const Config* locationSource,
+		const std::wstring filenameScope,
+		const std::wstring filenameField,
+		const std::wstring directoryScope = L"",
+		const std::wstring directoryField = L""
 		);
 
 	/* Retrieves configuration data, using default values,
@@ -160,7 +162,19 @@ protected:
 	   and have stored them in 'm_textures'.
 	*/
 	virtual HRESULT configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope,
-		const std::wstring* textureFieldPrefixes);
+		const std::wstring* const textureFieldPrefixes);
+
+	/* Creates and configures this object's shaders.
+	   Assumes that this object has access to configuration data.
+	 */
+	virtual HRESULT configureShaders(const std::wstring& scope);
+
+	/* Configures this object's textures.
+	   Assumes that this object has access to configuration data,
+	   and that this object's textures have already been created.
+	 */
+	virtual HRESULT configureTextures(const std::wstring& scope,
+		const std::wstring* const textureFieldPrefixes);
 
 public:
 	virtual ~SSSE(void);
@@ -184,11 +198,8 @@ public:
 	 */
 	virtual HRESULT setRenderTarget(ID3D11DeviceContext* const context);
 
-	/* Applies the SSSE to the rectangular area of the current
-	   render target (assumed to be the first render target)
-	   specified by 'rect'.
-
-	   rect = (top left u, top left v, width, height) [pixels]
+	/* Applies the SSSE to the current
+	   render target.
 
 	   If setRenderTarget() has been called since
 	   the last call to this function, the render target last
@@ -197,7 +208,17 @@ public:
 	 */
 	virtual HRESULT apply(ID3D11DeviceContext* const context);
 
+	/* Retrieves global effect parameters,
+	   allowing the caller to modify them directly.
+
+	   If the object previously did not have
+	   any global parameters, new ones are allocated and initialized
+	   with default values.
+	 */
+	Globals* getGlobals(void);
+
 	/* Sets global effect parameters
+	   This object assumes that it owns the 'globals' argument.
 	 */
 	HRESULT setGlobals(Globals* globals);
 
@@ -215,14 +236,18 @@ protected:
 	/* Creates constant buffer(s) */
 	virtual HRESULT createConstantBuffers(ID3D11Device* const);
 
-	/* Prepares pipeline state for rendering */
+	/* Prepares pipeline state for rendering during the current
+	   rendering pass
+	 */
 	virtual HRESULT setShaderParameters(ID3D11DeviceContext* const);
 
-	/* Pipeline execution */
+	/* Pipeline execution during the current rendering pass */
 	void renderShader(ID3D11DeviceContext* const);
 
 	/* Texture initialization
-	   Initializes each element of 'm_textures'
+	   Initializes each element of 'm_textures'.
+	   Does not create the elements of 'm_textures', however,
+	   as this is expected to be done during configuration.
 	 */
 	virtual HRESULT initializeTextures(ID3D11Device* const device);
 
@@ -237,19 +262,31 @@ protected:
 	virtual HRESULT setTexturesOnContext(ID3D11DeviceContext* const context);
 
 	/* Initializes the screen-space quad vertex buffer.
-	   Four vertices are expected, with D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP topology
+	   SSSE_NVERTICES vertices are expected, with D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP topology,
+	   to be produced by a call to createVertexData() done within
+	   this function.
 	 */
-	virtual HRESULT initializeVertexBuffer(ID3D11Device* const device,
-		const SSSE_VERTEX_TYPE* const vertices);
+	virtual HRESULT initializeVertexBuffer(ID3D11Device* const device);
+
+	/* Derived classes must provide SSSE_NVERTICES vertices
+	   to initialize the vertex buffer.
+	 */
+	virtual HRESULT createVertexData(const SSSE_VERTEX_TYPE*& const vertices) = 0;
 
 	/* Performs vertex buffer pipeline
 	   configuration
 	*/
 	virtual HRESULT setVerticesOnContext(ID3D11DeviceContext* const context);
 
+	/* The render target last displaced by setRenderTarget()
+	   will be put back on the output merger stage.
+	   The pipeline's depth stencil texture will be preserved.
+	 */
+	virtual HRESULT restoreRenderTarget(ID3D11DeviceContext* const context);
+
 	// Data members
 private:
-	std::vector<Texture2DFromBytes*> m_textures;
+	std::vector<Texture2DFromBytes*>* m_textures;
 
 	/* A handle to the render target originally on the pipeline,
 	   used to re-bind it later.
@@ -259,8 +296,8 @@ private:
 	Shader* m_vertexShader;
 	Shader* m_pixelShader;
 	ID3D11InputLayout* m_layout;
-	ID3D11Buffer *m_vertexBuffer; // Screen-space quad
-	const size_t m_vertexCount; // SSSE_NVERTICES
+	ID3D11Buffer* m_vertexBuffer; // Screen-space quad
+	const size_t m_vertexCount; // Set to SSSE_NVERTICES
 	ID3D11Buffer* m_globalBuffer;
 
 	Globals* m_globals;
@@ -268,8 +305,42 @@ private:
 	/* True if configuration was completed successfully. */
 	bool m_configured;
 
+	// Window width [pixels]
+	UINT m_width;
+
+	// Window height [pixels]
+	UINT m_height;
+
 	// Currently not implemented - will cause linker errors if called
 private:
 	SSSE(const SSSE& other);
 	SSSE& operator=(const SSSE& other);
 };
+
+template<typename ConfigIOClass> SSSE::SSSE(
+	const bool enableLogging, const std::wstring& msgPrefix,
+	ConfigIOClass* const optionalLoader,
+	const Config* locationSource,
+	const std::wstring filenameScope,
+	const std::wstring filenameField,
+	const std::wstring directoryScope,
+	const std::wstring directoryField
+	) :
+	ConfigUser(
+	enableLogging,
+	msgPrefix,
+	optionalLoader,
+	locationSource,
+	filenameScope,
+	filenameField,
+	directoryScope,
+	directoryField
+	),
+	m_textures(0), m_renderTargetView(0),
+	m_vertexShader(0), m_pixelShader(0),
+	m_layout(0), m_vertexBuffer(0),
+	m_vertexCount(SSSE_NVERTICES),
+	m_globalBuffer(0), m_globals(0),
+	m_configured(false),
+	m_width(0), m_height(0)
+{}
