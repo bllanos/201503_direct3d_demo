@@ -15,12 +15,10 @@ Other references: InvariantParticles.h, InvariantTexturedParticles.h
 
 Description
   -An abstract Screen-Space Special Effect class
-  -Creates one or more textures to use as render targets (at least one) and input data
+  -Creates one render target and shader resource texture and zero or more shader
+     resource textures.
      -Assumes that the size of the window does not change!
-  -Executes pipeline to process images
-  -Assumes that the effect is to be applied
-     to the first render target, and creates a shader resource
-     view for the first render target during initialization.
+  -Executes the pipeline to apply an SSSE.
   -The screen-space quad vertex buffer used by this class
      is immutable (derived classes could override this behaviour
 	 if necessary).
@@ -154,28 +152,25 @@ protected:
 
 	   The 'textureFieldPrefixes' parameter sets the prefixes
 	   added to the fields used to load texture configuration data.
-	   This function will configure each texture in 'm_textures',
-	   so there should be the same number of prefixes as there are
-	   elements of 'm_textures'.
-
-	   Derived classes are expected to have constructed
-	   textures before this function is called,
-	   and have stored them in 'm_textures'.
+	   The configureTextures() sub-function will create and configure 'nTextures'
+	   textures in 'm_textures', so the number of prefixes
+	   should be equal to 'nTextures'.
 	*/
 	virtual HRESULT configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope,
-		const std::wstring* const textureFieldPrefixes);
+		const std::wstring* const textureFieldPrefixes,
+		const std::vector<Texture2DFromBytes*>::size_type nTextures);
 
 	/* Creates and configures this object's shaders.
 	   Assumes that this object has access to configuration data.
 	 */
 	virtual HRESULT configureShaders(const std::wstring& scope);
 
-	/* Configures this object's textures.
-	   Assumes that this object has access to configuration data,
-	   and that this object's textures have already been created.
+	/* Creates and configures this object's textures.
+	   Assumes that this object has access to configuration data.
 	 */
 	virtual HRESULT configureTextures(const std::wstring& scope,
-		const std::wstring* const textureFieldPrefixes);
+		const std::wstring* const textureFieldPrefixes,
+		const std::vector<Texture2DFromBytes*>::size_type nTextures);
 
 public:
 	virtual ~SSSE(void);
@@ -186,8 +181,10 @@ public:
 	   'width' and 'height' determine the dimensions
 	   of all elements of 'm_textures'.
 
-	   The first texture is assumed to be used as both a
-	   shader resource and a render target.
+	   The first texture is initialized to be used as both a
+	   shader resource and a render target. Subsequent
+	   textures are initialized as shader resources only.
+	   (These operations are performed by initializeTextures().)
 	*/
 	virtual HRESULT initialize(ID3D11Device* const device, UINT width, UINT height);
 
@@ -230,17 +227,19 @@ public:
 protected:
 
 	/* Creates the pipeline shaders
-	   Also responsible for calling createInputLayout()
+	   Must be called before calling createInputLayout()
 	 */
 	virtual HRESULT createShaders(ID3D11Device* const);
 
-	/* Creates the vertex input layout */
+	/* Creates the vertex input layout
+	   Assumes that createShaders() has been called first.
+	 */
 	virtual HRESULT createInputLayout(ID3D11Device* const);
 
 	/* Creates constant buffer(s) */
 	virtual HRESULT createConstantBuffers(ID3D11Device* const);
 
-	/* Prepares pipeline state for rendering during the current
+	/* Updates constant buffer(s) for rendering during the current
 	   rendering pass
 	 */
 	virtual HRESULT setShaderParameters(ID3D11DeviceContext* const);
@@ -252,6 +251,10 @@ protected:
 	   Initializes each element of 'm_textures'.
 	   Does not create the elements of 'm_textures', however,
 	   as this is expected to be done during configuration.
+
+	   The first texture is initialized to be used as both a
+	   shader resource and a render target. Subsequent
+	   textures are initialized as shader resources only.
 	 */
 	virtual HRESULT initializeTextures(ID3D11Device* const device);
 
@@ -262,14 +265,13 @@ protected:
 
 	   Assumes that the first element of 'm_textures' is not bound
 	   as a render target. (If it is, this function will unwittingly
-	   cause it to be unbound.)
+	   cause it to be unbound by the device context.)
 	 */
 	virtual HRESULT setTexturesOnContext(ID3D11DeviceContext* const context);
 
 	/* Initializes the screen-space quad vertex buffer.
 	   SSSE_NVERTICES vertices are expected, with D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP topology,
-	   to be produced by a call to createVertexData() done within
-	   this function.
+	   to be produced by a call to createVertexData() withinvthis function.
 	 */
 	virtual HRESULT initializeVertexBuffer(ID3D11Device* const device);
 
@@ -279,14 +281,14 @@ protected:
 	 */
 	virtual HRESULT createVertexData(SSSE_VERTEX_TYPE*& vertices) = 0;
 
-	/* Performs vertex buffer pipeline
-	   configuration
-	*/
+	/* Performs vertex buffer pipeline configuration
+	 */
 	virtual HRESULT setVerticesOnContext(ID3D11DeviceContext* const context);
 
 	/* The render target last displaced by setRenderTarget()
 	   will be put back on the output merger stage.
-	   The pipeline's depth stencil texture will be preserved.
+	   The pipeline's depth stencil texture will be preserved,
+	   as well as all render targets after the first.
 	 */
 	virtual HRESULT restoreRenderTarget(ID3D11DeviceContext* const context);
 

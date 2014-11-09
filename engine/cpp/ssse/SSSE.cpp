@@ -26,7 +26,8 @@ using std::vector;
 #define SSSE_VERTEX_SIZE sizeof(SSSE_VERTEX_TYPE)
 
 HRESULT SSSE::configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope,
-	const std::wstring* textureFieldPrefixes) {
+	const std::wstring* textureFieldPrefixes,
+	const vector<Texture2DFromBytes*>::size_type nTextures) {
 
 	HRESULT result = ERROR_SUCCESS;
 
@@ -44,7 +45,7 @@ HRESULT SSSE::configure(const std::wstring& scope, const std::wstring* configUse
 			if( FAILED(configureShaders(scope)) ) {
 				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 			} else {
-				if( FAILED(configureTextures(scope, textureFieldPrefixes)) ) {
+				if( FAILED(configureTextures(scope, textureFieldPrefixes, nTextures)) ) {
 					result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 				}
 			}
@@ -177,13 +178,17 @@ HRESULT SSSE::configureShaders(const wstring& scope) {
 }
 
 HRESULT SSSE::configureTextures(const std::wstring& scope,
-	const std::wstring* const textureFieldPrefixes) {
+	const std::wstring* const textureFieldPrefixes,
+	const vector<Texture2DFromBytes*>::size_type nTextures) {
 
 	if( textureFieldPrefixes == 0 ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
-	} else if( m_textures == 0 ) {
-		logMessage(L"Configuration of textures cannot proceed. The vector of textures is null.");
+	} else if( m_textures != 0 ) {
+		logMessage(L"The vector of textures is non-null, but is expected to be null.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	} else if( nTextures == 0 ) {
+		logMessage(L"There must be at least one texture to create.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
 
 	HRESULT result = ERROR_SUCCESS;
@@ -216,12 +221,6 @@ HRESULT SSSE::configureTextures(const std::wstring& scope,
 		SSSE_TEXTURE_SCOPE_CONFIGUSER_DEFAULT,
 	};
 
-	const vector<Texture2DFromBytes*>::size_type nTextures = m_textures->size();
-	if( nTextures == 0 ) {
-		logMessage(L"Configuration of textures cannot proceed. No textures have been created.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
-	}
-
 	const size_t nStringFields = 4; // Not 6 (intentionally - see below)
 	wstring suffixes[] = {
 		SSSE_TEXTURE_MSGPREFIX_FIELD,
@@ -232,8 +231,10 @@ HRESULT SSSE::configureTextures(const std::wstring& scope,
 		SSSE_TEXTURE_CONFIGFILE_PATH_FIELD
 	};
 
+	m_textures = new vector<Texture2DFromBytes*>();
+
 	size_t j = 0;
-	for( size_t i = 0; i < nTextures; ++i ) {
+	for( vector<Texture2DFromBytes*>::size_type i = 0; i < nTextures; ++i ) {
 		textureEnableLogging = SSSE_TEXTURE_ENABLELOGGING_FLAG_DEFAULT;
 
 		if( retrieve<Config::DataType::BOOL, bool>(scope, textureFieldPrefixes[i] + SSSE_TEXTURE_ENABLELOGGING_FLAG_FIELD, boolValue) ) {
@@ -267,13 +268,13 @@ HRESULT SSSE::configureTextures(const std::wstring& scope,
 		}
 
 		// Try to create the texture
-		(*m_textures)[i] = new Texture2DFromBytes(
+		m_textures->emplace_back(new Texture2DFromBytes(
 			textureEnableLogging,
 			textureMsgPrefix,
 			static_cast<SSSE_CONFIGIO_CLASS_TEXTURE*>(0),
 			textureInputConfigFileName,
 			textureInputConfigFilePath
-			);
+			));
 
 		// Try to configure the texture
 		if( FAILED((*m_textures)[i]->configure(
@@ -390,7 +391,7 @@ HRESULT SSSE::setRenderTarget(ID3D11DeviceContext* const context) {
 	context->OMGetRenderTargets(1, &m_renderTargetView, NULL);
 
 	// Bind the first texture as a render target
-	if( FAILED((*m_textures)[0]->bindAsRenderTarget(context, 0)) ) {
+	if( FAILED(((*m_textures)[0])->bindAsRenderTarget(context, 0)) ) {
 		logMessage(L"Failed to bind first texture as a render target.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
@@ -401,7 +402,8 @@ HRESULT SSSE::setRenderTarget(ID3D11DeviceContext* const context) {
 HRESULT SSSE::apply(ID3D11DeviceContext* const context) {
 
 	if( m_renderTargetView == 0 ) {
-		logMessage(L"Texture has not been bound as a render target to receive the current scene. Call setRenderTarget() first and render the appropriate scene.");
+		logMessage(L"The first Texture has not been bound as a render target to receive the current scene."
+			L" First call setRenderTarget() and render the appropriate scene.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
 	}
 
@@ -432,7 +434,6 @@ HRESULT SSSE::apply(ID3D11DeviceContext* const context) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
-	// Now render the prepared buffers with the shader.
 	renderShader(context);
 
 	return result;
@@ -694,10 +695,9 @@ HRESULT SSSE::restoreRenderTarget(ID3D11DeviceContext* const context) {
 	// Retrieve the current pipeline state
 	context->OMGetRenderTargets(numViews, &renderTargetViews, &depthStencilView);
 
+	// Restore the pipeline state
 	renderTargetViews->Release();
 	renderTargetViews[0] = *m_renderTargetView;
-
-	// Restore the pipeline state
 	context->OMSetRenderTargets(numViews, &renderTargetViews, depthStencilView);
 
 	// Release handles
