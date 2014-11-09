@@ -16,6 +16,10 @@ Description
   -A Texture class encapsulating texture creation from in-memory data
   -Note that textures are created CPU read-only,
      but with GPU read and write access.
+  -Note that the Direct3D device context will automatically
+     unbind resources from their existing bind locations
+	 before adding a conflicting bind location (e.g. to prevent
+	 a resource being bound for reading and writing simultaneously).
 */
 
 #pragma once
@@ -61,9 +65,10 @@ public:
 		bool renderTarget = false);
 
 	/* Bind the texture to the pipeline
-       as a render target. Consequently, the pipeline
-	   will only have one render target bound,
-	   and the OMSetRenderTargets()
+       as the first render target. Other render targets
+	   are preserved.
+
+	   Note that the OMSetRenderTargets()
 	   method of the device context will unbind this texture
 	   at all locations where it was currently bound.
 
@@ -72,24 +77,14 @@ public:
 	   method of the device context simultaneously sets the
 	   depth stencil texture). If null, the current
 	   depth stencil view is used instead.
+
+	   I am not sure if calling OMSetRenderTargets() with a null
+	   depth stencil state parameter unbinds the current depth
+	   stencil state, but have assumed this to be the case,
+	   just to be careful.
 	*/
 	virtual HRESULT bindAsRenderTarget(ID3D11DeviceContext* const context,
 		ID3D11DepthStencilView *depthStencilView = 0);
-
-	/* Unbinds the texture as a render target,
-	   then calls the base class version of this function.
-	 */
-	virtual HRESULT bind(ID3D11DeviceContext* const context,
-		const UINT textureSlot, const UINT samplerSlot,
-		const ShaderStage bindLocation) override;
-
-	// Helper functions
-protected:
-	/* Removes this texture as a render target,
-	   from the position last passed to bindAsRenderTarget().
-	   Preserves the pipeline's depth stencil texture.
-	 */
-	virtual HRESULT unbindAsRenderTarget(ID3D11DeviceContext* const context);
 
 	// Data members
 private:

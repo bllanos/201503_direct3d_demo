@@ -118,7 +118,8 @@ public:
 private:
 	struct GlobalBufferType {
 		struct Globals globals;
-		DirectX::XMFLOAT2 screenSize; // Dimensions of full render target and textures (width, height) [pixels]
+		// Dimensions of full render target and textures (width, height) [pixels]
+		DirectX::XMFLOAT2 screenSize;
 		DirectX::XMFLOAT2 padding;
 	};
 
@@ -198,13 +199,16 @@ public:
 	 */
 	virtual HRESULT setRenderTarget(ID3D11DeviceContext* const context);
 
-	/* Applies the SSSE to the current
-	   render target.
+	/* Applies the screen-space special effect.
 
 	   If setRenderTarget() has been called since
 	   the last call to this function, the render target last
 	   displaced by setRenderTarget() will be put back on the
-	   output merger stage.
+	   output merger stage and the SSSE will be applied to it.
+
+	   If setRenderTarget() has not been called
+	   since the last call to this function, this
+	   function will return a failure result and do nothing.
 	 */
 	virtual HRESULT apply(ID3D11DeviceContext* const context);
 
@@ -253,11 +257,12 @@ protected:
 
 	/* Performs texture-related pipeline configuration
 	   Textures are bound to the pixel shader stage
-	   at slots corresponding to one less than their indices
+	   at slots corresponding to their indices
 	   in 'm_textures'.
 
-	   The first element of 'm_textures' is not bound
-	   by this function. See setRenderTarget()
+	   Assumes that the first element of 'm_textures' is not bound
+	   as a render target. (If it is, this function will unwittingly
+	   cause it to be unbound.)
 	 */
 	virtual HRESULT setTexturesOnContext(ID3D11DeviceContext* const context);
 
@@ -269,9 +274,10 @@ protected:
 	virtual HRESULT initializeVertexBuffer(ID3D11Device* const device);
 
 	/* Derived classes must provide SSSE_NVERTICES vertices
-	   to initialize the vertex buffer.
+	   to initialize the vertex buffer,
+	   with D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP topology.
 	 */
-	virtual HRESULT createVertexData(const SSSE_VERTEX_TYPE*& const vertices) = 0;
+	virtual HRESULT createVertexData(SSSE_VERTEX_TYPE*& vertices) = 0;
 
 	/* Performs vertex buffer pipeline
 	   configuration

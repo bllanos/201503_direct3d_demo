@@ -158,7 +158,7 @@ HRESULT InvariantParticles::initializeVertexBuffer(ID3D11Device* const device,
 	D3D11_SUBRESOURCE_DATA vertexData;
 	HRESULT result = ERROR_SUCCESS;
 
-	// Set up the description of the static vertex buffer.
+	// Set up the description of the vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = vertexSize * m_vertexCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;

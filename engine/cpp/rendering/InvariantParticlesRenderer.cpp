@@ -655,7 +655,7 @@ void InvariantParticlesRenderer::renderShader(ID3D11DeviceContext* const context
 	// Set the vertex input layout.
 	context->IASetInputLayout(m_layout);
 
-	// Set the vertex and pixel shaders that will be used to render this triangle.
+	// Set the vertex and pixel shaders that will be used to render the system
 	if( FAILED(m_vertexShader->bind(context)) ) {
 		logMessage(L"Failed to bind vertex shader.");
 	}
@@ -667,5 +667,5 @@ void InvariantParticlesRenderer::renderShader(ID3D11DeviceContext* const context
 	}
 
 	// Render the geometry.
-	context->DrawIndexed(particleCount, 0, 0);
+	context->Draw(particleCount, 0);
 }

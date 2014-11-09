@@ -23,6 +23,8 @@ using namespace DirectX;
 using std::wstring;
 using std::vector;
 
+#define SSSE_VERTEX_SIZE sizeof(SSSE_VERTEX_TYPE)
+
 HRESULT SSSE::configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope,
 	const std::wstring* textureFieldPrefixes) {
 
@@ -216,7 +218,7 @@ HRESULT SSSE::configureTextures(const std::wstring& scope,
 
 	const vector<Texture2DFromBytes*>::size_type nTextures = m_textures->size();
 	if( nTextures == 0 ) {
-		logMessage(L"Configuration of textures cannot proceed. No textures have been created");
+		logMessage(L"Configuration of textures cannot proceed. No textures have been created.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
 	}
 
@@ -398,7 +400,19 @@ HRESULT SSSE::setRenderTarget(ID3D11DeviceContext* const context) {
 
 HRESULT SSSE::apply(ID3D11DeviceContext* const context) {
 
+	if( m_renderTargetView == 0 ) {
+		logMessage(L"Texture has not been bound as a render target to receive the current scene. Call setRenderTarget() first and render the appropriate scene.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
 	HRESULT result = ERROR_SUCCESS;
+
+	// Replace the previous render target
+	result = restoreRenderTarget(context);
+	if( FAILED(result) ) {
+		logMessage(L"Call to restoreRenderTarget() failed.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
 
 	result = setShaderParameters(context);
 	if( FAILED(result) ) {
@@ -420,13 +434,6 @@ HRESULT SSSE::apply(ID3D11DeviceContext* const context) {
 
 	// Now render the prepared buffers with the shader.
 	renderShader(context);
-
-	// Replace the previous render target
-	result = restoreRenderTarget(context);
-	if( FAILED(result) ) {
-		logMessage(L"Call to restoreRenderTarget() failed.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-	}
 
 	return result;
 }
@@ -523,31 +530,183 @@ HRESULT SSSE::createConstantBuffers(ID3D11Device* const device) {
 	return result;
 }
 
-HRESULT SSSE::setShaderParameters(ID3D11DeviceContext* const) {
+HRESULT SSSE::setShaderParameters(ID3D11DeviceContext* const context) {
+	HRESULT result = ERROR_SUCCESS;
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	GlobalBufferType* globalDataPtr = 0;
 
+	// Lock the globals constant buffer so it can be written to.
+	result = context->Map(m_globalBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if( FAILED(result) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	// Get a pointer to the data in the transparent constant buffer.
+	globalDataPtr = static_cast<GlobalBufferType*>(mappedResource.pData);
+
+	// Copy data into the constant buffer
+	Globals* currentGlobals = getGlobals();
+	globalDataPtr->globals.focus = currentGlobals->focus;
+	globalDataPtr->globals.time = currentGlobals->time;
+	globalDataPtr->screenSize = XMFLOAT2(
+		static_cast<float>(m_width),
+		static_cast<float>(m_height));
+	globalDataPtr->padding = XMFLOAT2(0.0f, 0.0f);
+
+	// Unlock the buffer.
+	context->Unmap(m_globalBuffer, 0);
+
+	// Now set the global constant buffer in all shaders
+	context->VSSetConstantBuffers(0, 1, &m_globalBuffer);
+	context->PSSetConstantBuffers(0, 1, &m_globalBuffer);
+
+	return result;
 }
 
-void SSSE::renderShader(ID3D11DeviceContext* const) {
+void SSSE::renderShader(ID3D11DeviceContext* const context) {
+	// Set the vertex input layout.
+	context->IASetInputLayout(m_layout);
 
+	// Set the vertex and pixel shaders on the pipeline
+	if( FAILED(m_vertexShader->bind(context)) ) {
+		logMessage(L"Failed to bind vertex shader.");
+	}
+	if( FAILED(m_pixelShader->bind(context)) ) {
+		logMessage(L"Failed to bind pixel shader.");
+	}
+
+	// Render the geometry.
+	context->Draw(m_vertexCount, 0);
 }
 
 HRESULT SSSE::initializeTextures(ID3D11Device* const device) {
 
+	if( m_textures == 0 ) {
+		logMessage(L"Initialization of textures cannot proceed. The vector of textures is null.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	const vector<Texture2DFromBytes*>::size_type nTextures = m_textures->size();
+	if( nTextures == 0 ) {
+		logMessage(L"Initialization of textures cannot proceed. No textures have been created.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	HRESULT result = ERROR_SUCCESS;
+
+	// The first texture is a render target by default
+	result = (*m_textures)[0]->initialize(device, m_width, m_height, 0, true);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to initialize the first element of 'm_textures'.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	// Remaining textures are not render targets by default
+	for( vector<Texture2DFromBytes*>::size_type i = 1; i < nTextures; ++i ) {
+		result = (*m_textures)[0]->initialize(device, m_width, m_height, 0, false);
+		if( FAILED(result) ) {
+			logMessage(L"Failed to initialize element " + std::to_wstring(i) + L" of 'm_textures'.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
+	return result;
 }
 
 HRESULT SSSE::setTexturesOnContext(ID3D11DeviceContext* const context) {
 
+	HRESULT result = ERROR_SUCCESS;
+	const vector<Texture2DFromBytes*>::size_type nTextures = m_textures->size();
+
+	for( vector<Texture2DFromBytes*>::size_type i = 0; i < nTextures; ++i ) {
+		result = (*m_textures)[0]->bind(context, i, i, ShaderStage::PS);
+		if( FAILED(result) ) {
+			logMessage(L"Failed to bind element " + std::to_wstring(i) + L" of 'm_textures' as a shader resource.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
+	return result;
 }
 
-HRESULT SSSE::initializeVertexBuffer(ID3D11Device* const device,
-	const SSSE_VERTEX_TYPE* const vertices) {
+HRESULT SSSE::initializeVertexBuffer(ID3D11Device* const device) {
 
+	HRESULT result = ERROR_SUCCESS;
+
+	// Retrieve vertex data
+	SSSE_VERTEX_TYPE* vertices;
+	result = createVertexData(vertices);
+	if( FAILED(result) ) {
+		logMessage(L"Call to createVertexData() returned a failure result.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	D3D11_BUFFER_DESC vertexBufferDesc;
+	D3D11_SUBRESOURCE_DATA vertexData;
+
+	// Set up the description of the static vertex buffer.
+	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	vertexBufferDesc.ByteWidth = SSSE_VERTEX_SIZE * m_vertexCount;
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = 0;
+	vertexBufferDesc.MiscFlags = 0;
+	vertexBufferDesc.StructureByteStride = 0;
+
+	// Give the subresource structure a pointer to the vertex data.
+	vertexData.pSysMem = vertices;
+	vertexData.SysMemPitch = 0;
+	vertexData.SysMemSlicePitch = 0;
+
+	// Now create the vertex buffer.
+	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create vertex buffer.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	return ERROR_SUCCESS;
 }
 
 HRESULT SSSE::setVerticesOnContext(ID3D11DeviceContext* const context) {
+	unsigned int stride = SSSE_VERTEX_SIZE;
+	unsigned int offset = 0;
 
+	// Set the vertex buffer to active in the input assembler so it can be rendered.
+	context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+
+	// Set the type of primitive that should be rendered from this vertex buffer
+	context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+	return ERROR_SUCCESS;
 }
 
 HRESULT SSSE::restoreRenderTarget(ID3D11DeviceContext* const context) {
 
+	if( m_renderTargetView == 0 ) {
+		logMessage(L"There is no previous render target to restore.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	UINT numViews = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
+	ID3D11DepthStencilView* depthStencilView;
+	ID3D11RenderTargetView* renderTargetViews;
+
+	// Retrieve the current pipeline state
+	context->OMGetRenderTargets(numViews, &renderTargetViews, &depthStencilView);
+
+	renderTargetViews->Release();
+	renderTargetViews[0] = *m_renderTargetView;
+
+	// Restore the pipeline state
+	context->OMSetRenderTargets(numViews, &renderTargetViews, depthStencilView);
+
+	// Release handles
+	for( UINT i = 0; i < numViews; ++i ) {
+		renderTargetViews[i].Release();
+	}
+	depthStencilView->Release();
+
+	m_renderTargetView = 0;
+
+	return ERROR_SUCCESS;
 }
