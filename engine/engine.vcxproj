@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cpp\camera\Camera.cpp" />
+    <ClCompile Include="cpp\camera\CameraTransformable.cpp" />
     <ClCompile Include="cpp\geometry\GridQuadTextured.cpp" />
     <ClCompile Include="cpp\geometry\GridSphereTextured.cpp" />
     <ClCompile Include="cpp\geometry\ShipModel.cpp" />
@@ -31,7 +33,6 @@
     <ClCompile Include="test\cpp\HierarchicalCubesTestState.cpp" />
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp" />
     <ClCompile Include="cpp\geometry\GridQuad.cpp" />
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="cpp\d3dclass.cpp" />
     <ClCompile Include="cpp\engineMain.cpp" />
     <ClCompile Include="cpp\GeometryRendererManager.cpp" />
@@ -47,6 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="header\camera\Camera.h" />
+    <ClInclude Include="header\camera\CameraTransformable.h" />
     <ClInclude Include="header\geometry\GridQuadTextured.h" />
     <ClInclude Include="header\geometry\GridSphereTextured.h" />
     <ClInclude Include="header\geometry\ShipModel.h" />
@@ -68,7 +71,6 @@
     <ClInclude Include="test\header\SkinnedColorTestState.h" />
     <ClInclude Include="header\geometry\GridQuad.h" />
     <ClInclude Include="header\geometry\SkinnedColorGeometry.h" />
-    <ClInclude Include="Camera.h" />
     <ClInclude Include="header\input\Keyboard.h" />
     <ClInclude Include="header\input\Mouse.h" />
     <ClInclude Include="test\header\Phase1TestState.h" />

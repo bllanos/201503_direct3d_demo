@@ -218,14 +218,6 @@ HRESULT Transformable::setParent(Transformable* const parent) {
 	return ERROR_SUCCESS;
 }
 
-HRESULT Transformable::multiplyByMatrix(XMFLOAT4X4 theMatrix)
-{
-	XMStoreFloat4x4(&m_worldTransformNoScale,
-		XMMatrixMultiply(XMLoadFloat4x4(&m_worldTransformNoScale), 
-						 XMLoadFloat4x4(&theMatrix)));
-	return ERROR_SUCCESS;
-}
-
 XMFLOAT3 Transformable::getScale() const
 {
 	return m_scale;

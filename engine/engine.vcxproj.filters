@@ -58,6 +58,12 @@
     <Filter Include="source\physics">
       <UniqueIdentifier>{e8288cf9-dfa8-461a-97e7-557d48d3fd3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="header\camera">
+      <UniqueIdentifier>{83a1038b-a387-45b6-a5cb-464f91bb2c05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\camera">
+      <UniqueIdentifier>{5593d4eb-95bd-4239-8339-3e57ee398210}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cpp\rendering\SimpleColorRenderer.cpp">
@@ -95,9 +101,6 @@
     </ClCompile>
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp">
       <Filter>test\source</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="cpp\geometry\SphereModel.cpp">
       <Filter>source\geometry</Filter>
@@ -159,6 +162,12 @@
     <ClCompile Include="cpp\geometry\ShipModel.cpp">
       <Filter>source\geometry</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\camera\Camera.cpp">
+      <Filter>source\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\camera\CameraTransformable.cpp">
+      <Filter>source\camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -217,9 +226,6 @@
     </ClInclude>
     <ClInclude Include="test\header\SkinnedColorTestState.h">
       <Filter>test\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="header\util\TextureFromDDS.h">
       <Filter>header\util</Filter>
@@ -280,6 +286,12 @@
     </ClInclude>
     <ClInclude Include="header\geometry\ShipModel.h">
       <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\camera\Camera.h">
+      <Filter>header\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="header\camera\CameraTransformable.h">
+      <Filter>header\camera</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

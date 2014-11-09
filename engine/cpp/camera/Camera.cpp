@@ -3,22 +3,21 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: Camera.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "Camera.h"
+#include "../camera/Camera.h"
 #include "engineGlobals.h"
 #include "defs.h"
 #include <exception>
 
 Camera::Camera(int screenWidth_in, int screenHeight_in) 
-	: LogUser(true, CAMERA_START_MSG_PREFIX), m_followTransform(0)
+	: LogUser(true, CAMERA_START_MSG_PREFIX), m_transform(0), m_followTransform(0)
 {
 	screenWidth = static_cast<float>(screenWidth_in);
 	screenHeight = static_cast<float>(screenHeight_in);
 	screenAspectRatio = ((float) screenWidth) / ((float) screenHeight);
 	fieldOfView = NOMINAL_FIELD_OF_VIEW;
-
-	m_transform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -10.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-
 	cameraMode = CameraMode::FREE_CAMERA;
+
+	m_transform = new CameraTransformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -10.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	UpdateMatrices();
 }
@@ -198,6 +197,11 @@ void Camera::ZoomOut()
 void Camera::SetFollowTransform(Transformable* followTransform)
 {
 	m_followTransform = followTransform;
+	m_transform->setParent(m_followTransform);
+
+	// this is to move the camera to the position of the follow matrix
+	// we'll then position the camera depending on the camera mode the player has selected
+	m_transform->SetFollowTransform(m_followTransform);
 }
 
 XMFLOAT3 Camera::GetPosition() const
@@ -208,15 +212,6 @@ XMFLOAT3 Camera::GetPosition() const
 
 int Camera::UpdateMatrices(void)
 {
-	if (cameraMode != CameraMode::FREE_CAMERA && m_followTransform != 0) { // if the player is not in free camera mode then use one of the other two cameras
-		
-		// make the camera follow the object
-		XMFLOAT4X4 followTransformNS;
-		m_followTransform->getWorldTransformNoScale(followTransformNS);
-
-		m_transform->multiplyByMatrix(followTransformNS);
-	}
-
 	m_transform->update(0, 0);
 	m_transform->getWorldTransformNoScale(m_viewMatrix);
 
@@ -275,77 +270,118 @@ HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 			cameraMode = CameraMode::FREE_CAMERA;
 		}
 		else if (cameraMode == CameraMode::FIRST_PERSON_CAMERA) { // first person camera
+			m_transform->restorePosition();
 			// adjust the position of the camera depending on camera mode
 			m_transform->Move(1.0f);
 		}
 		else if (cameraMode == CameraMode::THIRD_PERSON_CAMERA) { // third person camera
-			m_transform->Move(-2.0f);
+			m_transform->restorePosition();
+			m_transform->Move(-1.0f);
+		}
+		else {
+			m_transform->Move(1.0f); 
+			m_transform->savePosition();
+			//m_transform->setParent(0);
 		}
 	}
 
-	if (input.IsKeyDown(VK_SHIFT)){
+	if (cameraMode == CameraMode::FREE_CAMERA) {
+		if (input.IsKeyDown(VK_SHIFT)){
 
-		if (input.IsKeyDown(VK_LEFT)) //Move Camera Left
-			StrafeLeft();
+			if (input.IsKeyDown(VK_LEFT)) //Move Camera Left
+				StrafeLeft();
 
-		if (input.IsKeyDown(VK_RIGHT)) //Move Camera Right
-			StrafeRight();
+			if (input.IsKeyDown(VK_RIGHT)) //Move Camera Right
+				StrafeRight();
 
-		if (input.IsKeyDown(VK_UP)) //Camera Move Forward
-			MoveForward();
+			if (input.IsKeyDown(VK_UP)) //Camera Move Forward
+				MoveForward();
 
-		if (input.IsKeyDown(VK_DOWN)) //Camera Pull Back
-			MoveBackward();
+			if (input.IsKeyDown(VK_DOWN)) //Camera Pull Back
+				MoveBackward();
+		}
+		else if (input.IsKeyDown(VK_CONTROL)){
+
+			XMFLOAT2 mouseVel;
+			if (mouse.GetWindowVelocity(mouseVel)) {
+				m_transform->Spin(0.0f, 0.0f, mouseVel.x);
+				m_transform->Spin(0.0f, -mouseVel.y, 0.0f);
+			}
+
+			if (input.IsKeyDown(VK_LEFT)) //Pan Camera Left
+				PanLeft();
+
+			if (input.IsKeyDown(VK_RIGHT)) //Pan Camera Right
+				PanRight();
+
+			if (input.IsKeyDown(VK_UP)) //Tilt Camera Downward
+				TiltDown();
+
+			if (input.IsKeyDown(VK_DOWN)) //Tilt Camera Upward
+				TiltUp();
+
+		}
+		else if (input.IsKeyDown(Keyboard::ascii_C)){
+
+			if (input.IsKeyDown(VK_UP)) //Crane Up
+				CraneUp();
+
+			if (input.IsKeyDown(VK_DOWN)) //Crane Down
+				CraneDown();
+		}
+		else if (input.IsKeyDown(Keyboard::ascii_R)){
+
+			if (input.IsKeyDown(VK_LEFT)) //Roll Left
+				RollLeft();
+
+			if (input.IsKeyDown(VK_RIGHT)) //Roll Right
+				RollRight();
+		}
+		else if (input.IsKeyDown(Keyboard::ascii_Z)){
+
+			if (input.IsKeyDown(VK_UP)) //Zoom In
+				ZoomIn();
+
+			if (input.IsKeyDown(VK_DOWN)) //Zoom Out
+				ZoomOut();
+		}
 	}
-	else if (input.IsKeyDown(VK_CONTROL)){
-
+	else {
 		XMFLOAT2 mouseVel;
 		if (mouse.GetWindowVelocity(mouseVel)) {
-			m_transform->Spin(0.0f, 0.0f, mouseVel.x);
-			m_transform->Spin(0.0f, -mouseVel.y, 0.0f);
+			m_followTransform->Spin(0.0f, 0.0f, mouseVel.x * PLAYER_PAN_SPEED);
+			m_followTransform->Spin(0.0f, -mouseVel.y * PLAYER_PAN_SPEED, 0.0f);
 		}
-		
-		if (input.IsKeyDown(VK_LEFT)) //Pan Camera Left
-			PanLeft();
 
-		if (input.IsKeyDown(VK_RIGHT)) //Pan Camera Right
-			PanRight();
+		if (input.IsKeyDown(Keyboard::ascii_W)) {
+			m_followTransform->Move(PLAYER_MOVE_SPEED);
+		}
+		if (input.IsKeyDown(Keyboard::ascii_S)) {
+			m_followTransform->Move(-PLAYER_MOVE_SPEED);
+		}
 
-		if (input.IsKeyDown(VK_UP)) //Tilt Camera Downward
-			TiltDown();
+		if (input.IsKeyDown(Keyboard::ascii_A)) {
+			m_followTransform->Strafe(PLAYER_STRAFE_SPEED);
+		}
+		if (input.IsKeyDown(Keyboard::ascii_D)) {
+			m_followTransform->Strafe(-PLAYER_STRAFE_SPEED);
+		}
 
-		if (input.IsKeyDown(VK_DOWN)) //Tilt Camera Upward
-			TiltUp();
-		
+
+		if (input.IsKeyDown(Keyboard::ascii_Q)) {
+			m_followTransform->Spin(-PLAYER_ROLL_SPEED, 0.0f, 0.0f);
+		}
+		if (input.IsKeyDown(Keyboard::ascii_E)) {
+			m_followTransform->Spin(PLAYER_ROLL_SPEED, 0.0f, 0.0f);
+		}
+		// update the follow transform with the newest positions
+		m_followTransform->update(0,0);
 	}
-	else if (input.IsKeyDown(Keyboard::ascii_C)){
-
-		if (input.IsKeyDown(VK_UP)) //Crane Up
-			CraneUp();
-
-		if (input.IsKeyDown(VK_DOWN)) //Crane Down
-			CraneDown();
-	}
-	else if (input.IsKeyDown(Keyboard::ascii_R)){
-
-		if (input.IsKeyDown(VK_LEFT)) //Roll Left
-			RollLeft();
-
-		if (input.IsKeyDown(VK_RIGHT)) //Roll Right
-			RollRight();
-	}
-	else if (input.IsKeyDown(Keyboard::ascii_Z)){
-
-		if (input.IsKeyDown(VK_UP)) //Zoom In
-			ZoomIn();
-
-		if (input.IsKeyDown(VK_DOWN)) //Zoom Out
-			ZoomOut();
-	}
-
+	
 	// Any changes must be applied to the camera's rendering matrices
 	if( UpdateMatrices() ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
+
 	return ERROR_SUCCESS;
 }

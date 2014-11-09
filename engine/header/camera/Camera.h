@@ -17,6 +17,7 @@
 #include <DirectXMath.h>
 #include "IInteractive.h"
 #include "Transformable.h"
+#include "CameraTransformable.h"
 #include "LogUser.h"
 
 using namespace DirectX;
@@ -39,6 +40,16 @@ Pan-Tilt-Roll-Strafe-Dolly-Crane-Zooom
 	const float CAMERA_CRANE_SPEED = 0.4f; //up and down translation along the up vector direction
 	const float CAMERA_ZOOM_IN_FACTOR = 0.9f; //field of view mult. factor to zoom in
 	const float CAMERA_ZOOM_OUT_FACTOR = 1.1f; //field of view mult. factor to zoom out
+
+	const float PLAYER_MOVE_SPEED = 0.5f; // speed at which player moves
+	const float PLAYER_TILT_SPEED = 4.0f; //up and down rotation about the sideways vector direction
+	const float PLAYER_PAN_SPEED = 6.0f; //left and right rotation about the up vector
+	const float PLAYER_ROLL_SPEED = 4.0f; //left and right rotation about the camera direction vector
+	const float PLAYER_DOLLY_SPEED = 0.4f;; //used for forward and backward travel along the camera direction vector
+	const float PLAYER_STRAFE_SPEED = 0.4f; //sideways translation along the sideways vector direction
+	const float PLAYER_CRANE_SPEED = 0.4f; //up and down translation along the up vector direction
+	const float PLAYER_ZOOM_IN_FACTOR = 0.9f; //field of view mult. factor to zoom in
+	const float PLAYER_ZOOM_OUT_FACTOR = 1.1f; //field of view mult. factor to zoom out
 
 	const float	NOMINAL_FIELD_OF_VIEW = (float)XM_PI / 4.0f;
 
@@ -99,7 +110,7 @@ private:
 	XMFLOAT4X4 m_viewMatrix;
 	XMFLOAT4X4 m_projectionMatrix;
 
-	Transformable* m_transform;
+	CameraTransformable* m_transform;
 	
 	// follow this transformable (object tracking)
 	Transformable* m_followTransform;
