@@ -20,6 +20,7 @@ Description
 #include "fileUtil.h"
 #include "OneTextureSSSE.h"
 #include <string>
+#include <exception>
 
 using namespace DirectX;
 using std::wstring;
@@ -28,7 +29,11 @@ using std::vector;
 GameStateWithSSSE::GameStateWithSSSE(void) :
 GameState(),
 m_SSSEs(0), m_currentSSSEIndex(0), m_currentSSSE(0)
-{}
+{
+	if( FAILED(configure()) ) {
+		throw std::exception("GameState configuration failed.");
+	}
+}
 
 GameStateWithSSSE::~GameStateWithSSSE(void) {
 	if( m_SSSEs != 0 ) {
