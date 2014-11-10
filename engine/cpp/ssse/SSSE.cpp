@@ -391,6 +391,10 @@ HRESULT SSSE::setRenderTarget(ID3D11DeviceContext* const context) {
 	context->OMGetRenderTargets(1, &m_renderTargetView, NULL);
 
 	// Bind the first texture as a render target
+	if( FAILED(((*m_textures)[0])->unbind(context, 0, ShaderStage::PS)) ) {
+		logMessage(L"Failed to unbind first texture from the pixel shader.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
 	if( FAILED(((*m_textures)[0])->bindAsRenderTarget(context, 0)) ) {
 		logMessage(L"Failed to bind first texture as a render target.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -725,7 +729,7 @@ HRESULT SSSE::restoreRenderTarget(ID3D11DeviceContext* const context) {
 
 	// Cleanup
 	depthStencilView->Release();
-
+	m_renderTargetView->Release();
 	m_renderTargetView = 0;
 
 	return ERROR_SUCCESS;

@@ -20,6 +20,10 @@ Description
      unbind resources from their existing bind locations
 	 before adding a conflicting bind location (e.g. to prevent
 	 a resource being bound for reading and writing simultaneously).
+
+	 However, the Direct3D device debug layer
+	 will still output warnings in these cases.
+
   -The texture has a DXGI format of DXGI_FORMAT_R32G32B32A32_FLOAT
      and a single mip level.
 */
@@ -74,7 +78,9 @@ public:
 
 	   Note that the OMSetRenderTargets()
 	   method of the device context will unbind this texture
-	   at all locations where it was currently bound.
+	   at all locations where it was currently bound,
+	   although it will result in warnings being output
+	   by the debug layer.
 
 	   'depthStencilView' is the depth stencil to set along
 	   with the render target (as the OMSetRenderTargets()

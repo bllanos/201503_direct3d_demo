@@ -189,3 +189,27 @@ HRESULT Texture::bind(ID3D11DeviceContext* const context,
 
 	return ERROR_SUCCESS;
 }
+
+HRESULT Texture::unbind(ID3D11DeviceContext* const context,
+	const UINT textureSlot,
+	const ShaderStage bindLocation) {
+
+	ID3D11ShaderResourceView* nullView = 0;
+
+	switch( bindLocation ) {
+	case ShaderStage::VS:
+		context->VSSetShaderResources(textureSlot, 1, &nullView);
+		break;
+	case ShaderStage::GS:
+		context->GSSetShaderResources(textureSlot, 1, &nullView);
+		break;
+	case ShaderStage::PS:
+		context->PSSetShaderResources(textureSlot, 1, &nullView);
+		break;
+	default:
+		logMessage(L"Default case encountered for this ShaderStage enum constant. Code is broken.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);
+	}
+
+	return ERROR_SUCCESS;
+}

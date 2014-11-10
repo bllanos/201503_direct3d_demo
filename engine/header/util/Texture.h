@@ -110,6 +110,15 @@ public:
 		const UINT textureSlot, const UINT samplerSlot,
 		const ShaderStage bindLocation);
 
+	/* Unbinds the texture from the indicated location.
+	   Careful! This object does not keep track of whether
+	   or not it is actually bound to this location.
+	   As a result, something else may be unbound.
+	 */
+	virtual HRESULT unbind(ID3D11DeviceContext* const context,
+		const UINT textureSlot,
+		const ShaderStage bindLocation);
+
 	// Data members to be setup by derived classes
 protected:
 	ID3D11Resource* m_texture;
