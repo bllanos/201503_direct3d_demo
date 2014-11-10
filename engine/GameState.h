@@ -14,6 +14,7 @@
 #include "oct_tree.h"
 #include "GridSphereTextured.h"
 #include "ShipModel.h"
+#include "FlatAtomicConfigIO.h"
 
 // Logging message prefix
 #define GAMESTATE_START_MSG_PREFIX L"GameState"
@@ -64,6 +65,8 @@
 
 // Ship configuration
 #define GAMESTATE_GEOMETRY_SHIP_SCOPE L"shipmodel"
+
+#define GAMESTATE_CONFIGIO_CLASS FlatAtomicConfigIO
 
 class GameState : public State, public ConfigUser{
 private:

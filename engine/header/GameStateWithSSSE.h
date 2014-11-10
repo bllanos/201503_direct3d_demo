@@ -20,7 +20,7 @@ Description
 #pragma once
 
 #include "GameState.h"
-#include "OneTextureSSSE.h"
+#include "SSSE.h"
 #include <vector>
 
 // Logging message prefix
@@ -34,19 +34,28 @@ Description
 
 #define GAMESTATEWITHSSSE_SCOPE L"GameStateWithSSSE"
 
-// LogUser and ConfigUser configuration parameters
-// Refer to LogUser.h and ConfigUser.h
-#define GAMESTATEWITHSSSE_LOGUSER_SCOPE			L"GameStateWithSSSE_LogUser"
-#define GAMESTATEWITHSSSE_CONFIGUSER_SCOPE		L"GameStateWithSSSE_ConfigUser"
-
 // Configuration of each SSSE
+#define GAMESTATEWITHSSSE_NSSSE 1 // Total number of SSSEs
+#define GAMESTATEWITHSSSE_N_ONETEXTURESSSE 1 // Number of one-texture SSSEs
+
 #define GAMESTATEWITHSSSE_NIGHT_VISION_SSSE_SCOPE L"nightvision"
 
 class GameStateWithSSSE : public GameState {
 
 	// Data members
 private:
-	std::vector<OneTextureSSSE*>* m_oneTextureSSSEs;
+	/* One-texture SSSE objects are to be placed first in the vector
+	 */
+	std::vector<SSSE*>* m_SSSEs;
+
+	/* The index in 'm_SSSEs' of the SSSE currently being applied each frame
+	 */
+	std::vector<SSSE*>::size_type m_currentSSSEIndex;
+
+	/* The SSSE currently being applied each frame
+	   (auxiliary variable)
+	 */
+	SSSE* m_currentSSSE;
 
 public:
 	GameStateWithSSSE(void);

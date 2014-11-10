@@ -4,7 +4,6 @@
 
 #include "GameState.h"
 #include <string>
-#include "FlatAtomicConfigIO.h"
 #include "fileUtil.h"
 #include <exception>
 #include <vector>
@@ -12,8 +11,6 @@
 using namespace DirectX;
 using std::wstring;
 using std::vector;
-
-#define GAMESTATE_CONFIGIO_CLASS FlatAtomicConfigIO
 
 GameState::GameState(void) :
 ConfigUser(true, GAMESTATE_START_MSG_PREFIX,

@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cpp\GameStateWithSSSE.cpp" />
+    <ClCompile Include="cpp\ssse\OneTextureSSSE.cpp" />
     <ClCompile Include="cpp\util\Texture2DFromBytes.cpp" />
     <ClCompile Include="cpp\ssse\SSSE.cpp" />
     <ClCompile Include="cpp\geometry\UniformBurstSphere.cpp" />
@@ -52,6 +54,8 @@
     <ClCompile Include="test\cpp\TexturedSphereTestState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\GameStateWithSSSE.h" />
+    <ClInclude Include="header\ssse\OneTextureSSSE.h" />
     <ClInclude Include="header\geometry\vertexTypes.h" />
     <ClInclude Include="header\ssse\SSSE.h" />
     <ClInclude Include="header\util\Texture2DFromBytes.h" />

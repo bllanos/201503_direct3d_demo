@@ -51,7 +51,6 @@ public:
 	/* Proxy of the SSSE constructor
 	 */
 	template<typename ConfigIOClass> OneTextureSSSE(
-		const bool enableLogging, const std::wstring& msgPrefix,
 		ConfigIOClass* const optionalLoader,
 		const Config* locationSource,
 		const std::wstring filenameScope,
@@ -90,7 +89,6 @@ private:
 };
 
 template<typename ConfigIOClass> OneTextureSSSE::OneTextureSSSE(
-	const bool enableLogging, const std::wstring& msgPrefix,
 	ConfigIOClass* const optionalLoader,
 	const Config* locationSource,
 	const std::wstring filenameScope,
