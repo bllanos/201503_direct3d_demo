@@ -20,6 +20,8 @@ Description
      unbind resources from their existing bind locations
 	 before adding a conflicting bind location (e.g. to prevent
 	 a resource being bound for reading and writing simultaneously).
+  -The texture has a DXGI format of DXGI_FORMAT_R32G32B32A32_FLOAT
+     and a single mip level.
 */
 
 #pragma once
@@ -42,7 +44,9 @@ public:
 	virtual ~Texture2DFromBytes(void);
 
 public:
-	// The client is responsible for calling this inherited function
+	/* The client is responsible for calling this function.
+	   It is just a proxy for the protected base class function.
+	 */
 	virtual HRESULT configure(const std::wstring& scope, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0) override;
 
 	/* Creates texture and texture sampler
@@ -61,7 +65,7 @@ public:
 	   be created with the render target bind flag
 	   and will have an associated render target view.
 	*/
-	virtual HRESULT initialize(ID3D11Device* device, const UINT width, const UINT height, const void* data = 0,
+	virtual HRESULT initialize(ID3D11Device* device, const UINT width, const UINT height, const DirectX::XMFLOAT4* data = 0,
 		bool renderTarget = false);
 
 	/* Bind the texture to the pipeline
@@ -85,6 +89,17 @@ public:
 	*/
 	virtual HRESULT bindAsRenderTarget(ID3D11DeviceContext* const context,
 		ID3D11DepthStencilView *depthStencilView = 0);
+
+	/* Copies the entire texture resource contents of the 'other'
+	   parameter into the texture of 'this'. This member function
+	   does not alter the resource views and auxiliary/metadata
+	   associated with the texture.
+
+	   Returns a failure result and does nothing if the two
+	   textures have different dimensions, or if either
+	   of the two objects have not been fully initialized.
+	 */
+	virtual HRESULT getDataFrom(ID3D11DeviceContext* const context, Texture2DFromBytes& other);
 
 	// Data members
 private:

@@ -688,22 +688,17 @@ HRESULT SSSE::restoreRenderTarget(ID3D11DeviceContext* const context) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
 	}
 
-	UINT numViews = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
+	UINT numViews = 0;
 	ID3D11DepthStencilView* depthStencilView;
-	ID3D11RenderTargetView* renderTargetViews;
 
 	// Retrieve the current pipeline state
-	context->OMGetRenderTargets(numViews, &renderTargetViews, &depthStencilView);
+	context->OMGetRenderTargets(numViews, NULL, &depthStencilView);
 
 	// Restore the pipeline state
-	renderTargetViews->Release();
-	renderTargetViews[0] = *m_renderTargetView;
-	context->OMSetRenderTargets(numViews, &renderTargetViews, depthStencilView);
+	numViews = 1;
+	context->OMSetRenderTargets(numViews, &m_renderTargetView, depthStencilView);
 
-	// Release handles
-	for( UINT i = 0; i < numViews; ++i ) {
-		renderTargetViews[i].Release();
-	}
+	// Cleanup
 	depthStencilView->Release();
 
 	m_renderTargetView = 0;

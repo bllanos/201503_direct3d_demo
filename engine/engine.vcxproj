@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cpp\util\Texture2DFromBytes.cpp" />
     <ClCompile Include="cpp\ssse\SSSE.cpp" />
     <ClCompile Include="cpp\geometry\UniformBurstSphere.cpp" />
     <ClCompile Include="cpp\geometry\InvariantTexturedParticles.cpp" />
