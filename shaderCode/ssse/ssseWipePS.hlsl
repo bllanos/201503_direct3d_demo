@@ -18,6 +18,7 @@ Description
 
 cbuffer Globals : register(cb0) {
 	float2 focus;
+	/* (currentTime, updateTimeInterval) */
 	float2 time;
 	// Wipe colour
 	float4 globalIndex;

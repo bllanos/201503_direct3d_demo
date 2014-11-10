@@ -1,0 +1,95 @@
+# Configuration file for the ripple effect SSSE
+# (instance of the OneTextureSSSE class)
+
+# LogUser configuration
+# ---------------------
+BOOL -- OneTextureSSSE_LogUser::enableLogging = true
+WSTRING -- OneTextureSSSE_LogUser::msgPrefix = L"Ripple SSSE"
+BOOL -- OneTextureSSSE_LogUser::useGlobalLog = false
+BOOL -- OneTextureSSSE_LogUser::allocConsole = false
+BOOL -- OneTextureSSSE_LogUser::allocLogFile = true
+FILENAME -- OneTextureSSSE_LogUser::logFileName = "GameStateWithSSSE_SSSEsLog.txt"
+DIRECTORY -- OneTextureSSSE_LogUser::logFilePath = "..\logFiles"
+BOOL -- OneTextureSSSE_LogUser::overwriteFile = false
+BOOL -- OneTextureSSSE_LogUser::timestampEnable = true
+
+# ConfigUser configuration
+# ------------------------
+BOOL -- OneTextureSSSE_ConfigUser::enableConfigUseLogging = true
+
+# Render target background colour
+# -------------------------------
+COLOR -- OneTextureSSSE::backgroundColor = (0, 0, 75, 255)
+
+# Constant buffer parameters
+# --------------------------
+FLOAT4 -- OneTextureSSSE::globals_globalIndex = (0.0, 0.0, 0.0, 1.0)
+FLOAT4 -- OneTextureSSSE::globals_parameters = (0.1, 0.7, 1.3, 0.7)
+
+# Vertex Shader setup
+# -------------------
+BOOL -- OneTextureSSSE::VS_enableLogging = true
+WSTRING -- OneTextureSSSE::VS_msgPrefix = L"Ripple SSSE VS"
+WSTRING -- OneTextureSSSE::VS_scope = L"VS"
+WSTRING -- OneTextureSSSE::VS_scope_LogUser = L"shader_LogUser"
+WSTRING -- OneTextureSSSE::VS_scope_ConfigUser = L"shader_ConfigUser"
+FILENAME -- OneTextureSSSE::VS_inputConfigFileName = "commonSSSE_VS.txt"
+DIRECTORY -- OneTextureSSSE::VS_inputConfigFilePath = "..\configFiles\ssse"
+
+# Pixel Shader setup
+# -------------------
+BOOL -- OneTextureSSSE::PS_enableLogging = true
+WSTRING -- OneTextureSSSE::PS_msgPrefix = L"Ripple SSSE PS"
+WSTRING -- OneTextureSSSE::PS_scope = L"PS"
+WSTRING -- OneTextureSSSE::PS_scope_LogUser = L"shader_LogUser"
+WSTRING -- OneTextureSSSE::PS_scope_ConfigUser = L"shader_ConfigUser"
+FILENAME -- OneTextureSSSE::PS_inputConfigFileName = "ripple.txt"
+DIRECTORY -- OneTextureSSSE::PS_inputConfigFilePath = "..\configFiles\ssse"
+
+WSTRING -- PS::type = L"PixelShader"
+FILENAME -- PS::fileName = "ssseRipplePS.hlsl"
+DIRECTORY -- PS::filePath = "..\shaderCode\ssse"
+WSTRING -- PS::shaderModel = L"ps_4_0"
+WSTRING -- PS::entryPoint = L"PSMAIN"
+
+# Generic shader setup (effectively for the pixel shader)
+# -------------------------------------------------------
+BOOL -- shader_LogUser::enableLogging = true
+WSTRING -- shader_LogUser::msgPrefix = L"Ripple Pixel Shader"
+BOOL -- shader_LogUser::useGlobalLog = true
+BOOL -- shader_ConfigUser::enableConfigUseLogging = true
+
+# Frame texture configuration
+# ----------------------------------------------
+BOOL -- OneTextureSSSE::texture_enableLogging = true
+WSTRING -- OneTextureSSSE::texture_msgPrefix = L"Ripple SSSE Current Frame Texture"
+WSTRING -- OneTextureSSSE::texture_scope = L"texture"
+WSTRING -- OneTextureSSSE::texture_scope_LogUser = L"texture_LogUser"
+WSTRING -- OneTextureSSSE::texture_scope_ConfigUser = L"texture_ConfigUser"
+FILENAME -- OneTextureSSSE::texture_inputConfigFileName = "ripple.txt"
+DIRECTORY -- OneTextureSSSE::texture_inputConfigFilePath = "..\configFiles\ssse"
+
+# Frame texture object configuration
+# ----------------------------------------------
+# LogUser
+BOOL -- texture_LogUser::enableLogging = true
+WSTRING -- texture_LogUser::msgPrefix = L"Ripple SSSE Current Frame Texture"
+BOOL -- texture_LogUser::useGlobalLog = false
+BOOL -- texture_LogUser::allocConsole = false
+BOOL -- texture_LogUser::allocLogFile = true
+FILENAME -- texture_LogUser::logFileName = "GameStateWithSSSE_SSSEsLog.txt"
+DIRECTORY -- texture_LogUser::logFilePath = "..\logFiles"
+BOOL -- texture_LogUser::overwriteFile = false
+BOOL -- texture_LogUser::timestampEnable = true
+
+# ConfigUser
+BOOL -- texture_ConfigUser::enableConfigUseLogging = true
+
+# Sampler State
+INT -- texture::filter = 21
+INT -- texture::addressU = 1
+INT -- texture::addressV = 1
+INT -- texture::addressW = 1
+INT -- texture::maxAnisotropy = 1
+INT -- texture::comparisonFunc = 1
+COLOR -- texture::borderColor = (255, 255, 255, 255)

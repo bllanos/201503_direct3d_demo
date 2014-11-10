@@ -65,3 +65,8 @@ DIRECTORY -- wipe::inputConfigFilePath = "..\configFiles\ssse"
 # --------------------------------
 FILENAME -- tile::inputConfigFileName = "tile.txt"
 DIRECTORY -- tile::inputConfigFilePath = "..\configFiles\ssse"
+
+# Ripple Effect
+# --------------------------------
+FILENAME -- ripple::inputConfigFileName = "ripple.txt"
+DIRECTORY -- ripple::inputConfigFilePath = "..\configFiles\ssse"
