@@ -97,10 +97,17 @@ HRESULT GameStateWithSSSE::drawContents(ID3D11DeviceContext* const context, Geom
 }
 
 HRESULT GameStateWithSSSE::update(const DWORD currentTime, const DWORD updateTimeInterval) {
-	// Give the current SSSE the current time
-	SSSE::Globals* globals = m_currentSSSE->getGlobals();
 
-	globals->time = XMFLOAT2(static_cast<float>(currentTime), static_cast<float>(updateTimeInterval));
+	HRESULT result = ERROR_SUCCESS;
+
+	// Give all SSSEs the current time
+	for( vector<SSSE**>::size_type i = 0; i < GAMESTATEWITHSSSE_NSSSE; ++i ) {
+		result = ((*m_SSSEs)[i])->update(currentTime, updateTimeInterval);
+		if( FAILED(result) ) {
+			logMessage(L"Call to update() of SSSE at index " + std::to_wstring(i) + L" failed.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
 	
 	// Update the base class
 	return GameState::update(currentTime, updateTimeInterval);
@@ -108,9 +115,16 @@ HRESULT GameStateWithSSSE::update(const DWORD currentTime, const DWORD updateTim
 
 HRESULT GameStateWithSSSE::poll(Keyboard& input, Mouse& mouse) {
 
+	HRESULT result = ERROR_SUCCESS;
+
 	// Give the current SSSE the cursor position
-	SSSE::Globals* globals = m_currentSSSE->getGlobals();
-	mouse.GetWindowPosition(globals->focus);
+	for( vector<SSSE**>::size_type i = 0; i < GAMESTATEWITHSSSE_NSSSE; ++i ) {
+		result = ((*m_SSSEs)[i])->poll(input, mouse);
+		if( FAILED(result) ) {
+			logMessage(L"Call to poll() of SSSE at index " + std::to_wstring(i) + L" failed.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
 
 	// Cycle through SSSEs
 	if( input.IsKeyDown(VK_CONTROL) && input.Down(Keyboard::ascii_O) ) {

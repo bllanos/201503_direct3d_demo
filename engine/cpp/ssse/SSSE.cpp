@@ -444,6 +444,8 @@ SSSE::Globals* SSSE::getGlobals(void) {
 		m_globals = new Globals;
 		m_globals->focus = SSSE_GLOBALS_FOCUS_DEFAULT;
 		m_globals->time = SSSE_GLOBALS_TIME_DEFAULT;
+		m_globals->globalIndex = SSSE_GLOBALS_GLOBALINDEX_DEFAULT;
+		m_globals->parameters = SSSE_GLOBALS_PARAMETERS_DEFAULT;
 	}
 	return m_globals;
 }
@@ -456,6 +458,21 @@ HRESULT SSSE::setGlobals(Globals* globals) {
 		delete m_globals;
 	}
 	m_globals = globals;
+	return ERROR_SUCCESS;
+}
+
+HRESULT SSSE::update(const DWORD currentTime, const DWORD updateTimeInterval) {
+	Globals* globals = getGlobals();
+	globals->time = XMFLOAT2(static_cast<float>(currentTime), static_cast<float>(updateTimeInterval));
+	return ERROR_SUCCESS;
+}
+
+HRESULT SSSE::poll(Keyboard& input, Mouse& mouse) {
+	XMFLOAT2 cursor(0.0f, 0.0f);
+	if( mouse.GetWindowPosition(cursor) ) {
+		Globals* globals = getGlobals();
+		globals->focus = cursor;
+	}
 	return ERROR_SUCCESS;
 }
 
@@ -549,6 +566,8 @@ HRESULT SSSE::setShaderParameters(ID3D11DeviceContext* const context) {
 	Globals* currentGlobals = getGlobals();
 	globalDataPtr->globals.focus = currentGlobals->focus;
 	globalDataPtr->globals.time = currentGlobals->time;
+	globalDataPtr->globals.globalIndex = currentGlobals->globalIndex;
+	globalDataPtr->globals.parameters = currentGlobals->parameters;
 	globalDataPtr->screenSize = XMFLOAT2(
 		static_cast<float>(m_width),
 		static_cast<float>(m_height));

@@ -31,6 +31,7 @@ Description
 #include <DirectXMath.h>
 #include <vector>
 #include <string>
+#include "IInteractive.h"
 #include "Texture2DFromBytes.h"
 #include "ConfigUser.h"
 #include "FlatAtomicConfigIO.h"
@@ -49,6 +50,8 @@ struct SSSEVertexType {
 // Default global parameters
 #define SSSE_GLOBALS_FOCUS_DEFAULT DirectX::XMFLOAT2(0.0f, 0.0f)
 #define SSSE_GLOBALS_TIME_DEFAULT DirectX::XMFLOAT2(0.0f, 0.0f)
+#define SSSE_GLOBALS_GLOBALINDEX_DEFAULT DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f)
+#define SSSE_GLOBALS_PARAMETERS_DEFAULT DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f)
 
 /* The following definitions are:
    -Key parameters used to retrieve configuration data
@@ -103,13 +106,15 @@ struct SSSEVertexType {
 // Type of loader to use for configuration data when creating shaders
 #define SSSE_CONFIGIO_CLASS_SHADER FlatAtomicConfigIO
 
-class SSSE : public ConfigUser {
+class SSSE : public ConfigUser, public IInteractive {
 
 	// Client-visible constant buffer data
 public:
 	struct Globals {
 		DirectX::XMFLOAT2 focus; // Point of interest (e.g. cursor) (u, v) [pixels]
 		DirectX::XMFLOAT2 time; // (current time, update time interval) [milliseconds]
+		DirectX::XMFLOAT4 globalIndex; // Common colour or 1D to 4D texture coordinate
+		DirectX::XMFLOAT4 parameters; // Effect parameters
 	};
 
 	// Constant buffer structures
@@ -222,6 +227,16 @@ public:
 	   This object assumes that it owns the 'globals' argument.
 	 */
 	HRESULT setGlobals(Globals* globals);
+
+	/* Updates global effect parameters with the current time.
+	   Behaviour may be overridden by derived classes.
+	 */
+	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
+
+	/* Updates global effect parameters with the cursor position.
+	   Behaviour may be overridden by derived classes.
+	 */
+	virtual HRESULT poll(Keyboard& input, Mouse& mouse) override;
 
 	// Helper functions
 protected:
@@ -347,6 +362,7 @@ template<typename ConfigIOClass> SSSE::SSSE(
 	directoryScope,
 	directoryField
 	),
+	IInteractive(),
 	m_textures(0), m_renderTargetView(0),
 	m_vertexShader(0), m_pixelShader(0),
 	m_layout(0), m_vertexBuffer(0),
