@@ -60,3 +60,8 @@ DIRECTORY -- nightVision::inputConfigFilePath = "..\configFiles\ssse"
 # --------------------------------
 FILENAME -- wipe::inputConfigFileName = "wipe.txt"
 DIRECTORY -- wipe::inputConfigFilePath = "..\configFiles\ssse"
+
+# Screen Tiling
+# --------------------------------
+FILENAME -- tile::inputConfigFileName = "tile.txt"
+DIRECTORY -- tile::inputConfigFilePath = "..\configFiles\ssse"

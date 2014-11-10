@@ -35,11 +35,12 @@ Description
 #define GAMESTATEWITHSSSE_SCOPE L"GameStateWithSSSE"
 
 // Configuration of each SSSE
-#define GAMESTATEWITHSSSE_NSSSE 2 // Total number of SSSEs
-#define GAMESTATEWITHSSSE_N_ONETEXTURESSSE 2 // Number of one-texture SSSEs
+#define GAMESTATEWITHSSSE_NSSSE 3 // Total number of SSSEs
+#define GAMESTATEWITHSSSE_N_ONETEXTURESSSE 3 // Number of one-texture SSSEs
 
 #define GAMESTATEWITHSSSE_NIGHT_VISION_SSSE_SCOPE L"nightVision"
 #define GAMESTATEWITHSSSE_WIPE_SSSE_SCOPE L"wipe"
+#define GAMESTATEWITHSSSE_TILE_SSSE_SCOPE L"tile"
 
 class GameStateWithSSSE : public GameState {
 
