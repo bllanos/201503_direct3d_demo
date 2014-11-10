@@ -1,6 +1,6 @@
 /*
 OneTextureSSSE.h
-------
+----------------
 
 Created for: COMP3501A Assignment 6
 Fall 2014, Carleton University
@@ -14,7 +14,8 @@ Primary basis: SSSE.h
 
 Description
   -A basic screen-space special effect which only uses one texture
-   for input during rendering.
+   for input during rendering, and has no state beyond
+   that provided by the SSSE class.
 */
 
 #pragma once
@@ -27,9 +28,9 @@ Description
 #define ONETEXTURESSSE_START_MSG_PREFIX L"OneTextureSSSE"
 
 /* The following definitions are:
--Key parameters used to retrieve configuration data
--Default values used in the absence of configuration data
-or constructor/function arguments (where necessary)
+   -Key parameters used to retrieve configuration data
+   -Default values used in the absence of configuration data
+      or constructor/function arguments (where necessary)
 */
 
 #define ONETEXTURESSSE_SCOPE L"OneTextureSSSE"
@@ -77,7 +78,7 @@ protected:
 	   to initialize the vertex buffer,
 	   with D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP topology.
 	 */
-	virtual HRESULT createVertexData(SSSE_VERTEX_TYPE*& vertices) override;
+	virtual HRESULT createVertexData(SSSE_VERTEX_TYPE* const vertices) override;
 
 	// Data members
 private:
@@ -106,5 +107,8 @@ template<typename ConfigIOClass> OneTextureSSSE::OneTextureSSSE(
 	filenameField,
 	directoryScope,
 	directoryField
-	)
-{}
+	) {
+	if( FAILED(configure()) ) {
+		logMessage(L"Configuration failed.");
+	}
+}

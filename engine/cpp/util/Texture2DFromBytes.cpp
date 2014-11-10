@@ -18,6 +18,8 @@ Description
 
 #include "Texture2DFromBytes.h"
 
+using namespace DirectX;
+
 Texture2DFromBytes::~Texture2DFromBytes(void) {
 	if( m_renderTargetView ) {
 		m_renderTargetView->Release();

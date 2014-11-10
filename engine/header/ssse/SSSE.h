@@ -278,8 +278,11 @@ protected:
 	/* Derived classes must provide SSSE_NVERTICES vertices
 	   to initialize the vertex buffer,
 	   with D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP topology.
+
+	   The caller is responsible for allocating memory
+	   for the vertices.
 	 */
-	virtual HRESULT createVertexData(SSSE_VERTEX_TYPE*& vertices) = 0;
+	virtual HRESULT createVertexData(SSSE_VERTEX_TYPE* const vertices) = 0;
 
 	/* Performs vertex buffer pipeline configuration
 	 */

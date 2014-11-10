@@ -635,34 +635,40 @@ HRESULT SSSE::initializeVertexBuffer(ID3D11Device* const device) {
 	HRESULT result = ERROR_SUCCESS;
 
 	// Retrieve vertex data
-	SSSE_VERTEX_TYPE* vertices;
+	SSSE_VERTEX_TYPE* vertices = new SSSE_VERTEX_TYPE[SSSE_NVERTICES];
 	result = createVertexData(vertices);
 	if( FAILED(result) ) {
 		logMessage(L"Call to createVertexData() returned a failure result.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	else {
+
+		D3D11_BUFFER_DESC vertexBufferDesc;
+		D3D11_SUBRESOURCE_DATA vertexData;
+
+		// Set up the description of the static vertex buffer.
+		vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		vertexBufferDesc.ByteWidth = SSSE_VERTEX_SIZE * m_vertexCount;
+		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		vertexBufferDesc.CPUAccessFlags = 0;
+		vertexBufferDesc.MiscFlags = 0;
+		vertexBufferDesc.StructureByteStride = 0;
+
+		// Give the subresource structure a pointer to the vertex data.
+		vertexData.pSysMem = vertices;
+		vertexData.SysMemPitch = 0;
+		vertexData.SysMemSlicePitch = 0;
+
+		// Now create the vertex buffer.
+		result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+		if( FAILED(result) ) {
+			logMessage(L"Failed to create vertex buffer.");
+			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+		}
 	}
 
-	D3D11_BUFFER_DESC vertexBufferDesc;
-	D3D11_SUBRESOURCE_DATA vertexData;
-
-	// Set up the description of the static vertex buffer.
-	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	vertexBufferDesc.ByteWidth = SSSE_VERTEX_SIZE * m_vertexCount;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
-	vertexBufferDesc.StructureByteStride = 0;
-
-	// Give the subresource structure a pointer to the vertex data.
-	vertexData.pSysMem = vertices;
-	vertexData.SysMemPitch = 0;
-	vertexData.SysMemSlicePitch = 0;
-
-	// Now create the vertex buffer.
-	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
-	if( FAILED(result) ) {
-		logMessage(L"Failed to create vertex buffer.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	if( vertices != 0 ) {
+		delete[] vertices;
 	}
 
 	return ERROR_SUCCESS;
