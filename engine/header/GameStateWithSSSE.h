@@ -39,6 +39,7 @@ Description
 #define GAMESTATEWITHSSSE_N_ONETEXTURESSSE 1 // Number of one-texture SSSEs
 
 #define GAMESTATEWITHSSSE_NIGHT_VISION_SSSE_SCOPE L"nightVision"
+#define GAMESTATEWITHSSSE_WIPE_SSSE_SCOPE L"wipe"
 
 class GameStateWithSSSE : public GameState {
 

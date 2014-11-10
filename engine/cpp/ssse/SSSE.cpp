@@ -50,8 +50,19 @@ HRESULT SSSE::configure(const std::wstring& scope, const std::wstring* configUse
 			const DirectX::XMFLOAT4* float4Value = 0;
 
 			// Query for simple configuration data
+			// -----------------------------------
+
 			if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(scope, SSSE_BACKGROUNDCOLOR_FIELD, float4Value) ) {
 				m_backgroundColor = *float4Value;
+			}
+
+			Globals* globals = getGlobals();
+			if (retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(scope, SSSE_GLOBALS_GLOBALINDEX_FIELD, float4Value)) {
+				globals->globalIndex = *float4Value;
+			}
+
+			if (retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(scope, SSSE_GLOBALS_PARAMETERS_FIELD, float4Value)) {
+				globals->parameters = *float4Value;
 			}
 
 			// Call helper configuration functions

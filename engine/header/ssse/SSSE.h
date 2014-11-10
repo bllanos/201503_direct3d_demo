@@ -63,6 +63,10 @@ struct SSSEVertexType {
 #define SSSE_BACKGROUNDCOLOR_DEFAULT 	DirectX::XMFLOAT4(0.0f,0.0f,0.0f,0.0f)
 #define SSSE_BACKGROUNDCOLOR_FIELD		L"backgroundColor"
 
+// Constant buffer parameters
+#define SSSE_GLOBALS_GLOBALINDEX_FIELD		L"globals_globalIndex"
+#define SSSE_GLOBALS_PARAMETERS_FIELD		L"globals_parameters"
+
 /* Shader constructor and configuration parameters */
 #define SSSE_VSSHADER_FIELD_PREFIX L"VS_"
 #define SSSE_PSSHADER_FIELD_PREFIX L"PS_"

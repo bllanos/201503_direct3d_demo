@@ -21,6 +21,11 @@ BOOL -- OneTextureSSSE_ConfigUser::enableConfigUseLogging = true
 # -------------------------------
 COLOR -- OneTextureSSSE::backgroundColor = (255, 100, 0, 255)
 
+# Constant buffer parameters
+# --------------------------
+FLOAT4 -- OneTextureSSSE::globals_globalIndex = (1.0, 1.0, 1.0, 1.0)
+FLOAT4 -- OneTextureSSSE::globals_parameters = (1.0, 1.0, 1.0, 1.0)
+
 # Vertex Shader setup
 # -------------------
 BOOL -- OneTextureSSSE::VS_enableLogging = true
