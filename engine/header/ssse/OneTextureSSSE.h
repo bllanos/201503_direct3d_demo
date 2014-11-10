@@ -42,7 +42,7 @@ Description
 #define ONETEXTURESSSE_CONFIGUSER_SCOPE		L"OneTextureSSSE_ConfigUser"
 
 /* Texture constructor and configuration parameters */
-#define ONETEXTURESSSE_TEXTURE_FIELD_PREFIX L"texture"
+#define ONETEXTURESSSE_TEXTURE_FIELD_PREFIX L"texture_"
 
 class OneTextureSSSE : public SSSE {
 

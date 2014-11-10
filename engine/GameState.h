@@ -91,7 +91,7 @@ private:
 public:
 	GameState(void);
 
-	~GameState(void);
+	virtual ~GameState(void);
 
 	virtual HRESULT initialize(ID3D11Device* device, int screenWidth, int screenHeight) override;
 
