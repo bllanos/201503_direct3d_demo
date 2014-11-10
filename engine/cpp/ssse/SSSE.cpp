@@ -31,6 +31,11 @@ HRESULT SSSE::configure(const std::wstring& scope, const std::wstring* configUse
 
 	HRESULT result = ERROR_SUCCESS;
 
+	// Initialize with default values
+	// ------------------------------
+
+	m_backgroundColor = SSSE_BACKGROUNDCOLOR_DEFAULT;
+
 	if( hasConfigToUse() ) {
 
 		// Configure base members
@@ -40,6 +45,14 @@ HRESULT SSSE::configure(const std::wstring& scope, const std::wstring* configUse
 		if( FAILED(configureConfigUser(*logUserScopeToUse, configUserScopeToUse)) ) {
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		} else {
+
+			// Data retrieval helper variables
+			const DirectX::XMFLOAT4* float4Value = 0;
+
+			// Query for simple configuration data
+			if( retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(scope, SSSE_BACKGROUNDCOLOR_FIELD, float4Value) ) {
+				m_backgroundColor = *float4Value;
+			}
 
 			// Call helper configuration functions
 			if( FAILED(configureShaders(scope)) ) {
@@ -400,6 +413,12 @@ HRESULT SSSE::setRenderTarget(ID3D11DeviceContext* const context) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
+	// Clear the appropriate textures to the background color
+	if( FAILED(clearRenderTargets(context)) ) {
+		logMessage(L"Failed to clear render targets.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
 	return ERROR_SUCCESS;
 }
 
@@ -732,5 +751,14 @@ HRESULT SSSE::restoreRenderTarget(ID3D11DeviceContext* const context) {
 	m_renderTargetView->Release();
 	m_renderTargetView = 0;
 
+	return ERROR_SUCCESS;
+}
+
+HRESULT SSSE::clearRenderTargets(ID3D11DeviceContext* const context) {
+
+	if( FAILED(((*m_textures)[0])->clearRenderTarget(context, m_backgroundColor)) ) {
+		logMessage(L"Failed to clear the first element of 'm_textures' as a render target.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
 	return ERROR_SUCCESS;
 }

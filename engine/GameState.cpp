@@ -12,7 +12,7 @@ using namespace DirectX;
 using std::wstring;
 using std::vector;
 
-GameState::GameState(void) :
+GameState::GameState(const bool configureNow) :
 ConfigUser(true, GAMESTATE_START_MSG_PREFIX,
 static_cast<GAMESTATE_CONFIGIO_CLASS*>(0),
 static_cast<Config*>(0),
@@ -22,9 +22,11 @@ GAMESTATE_SCOPE,
 CONFIGUSER_INPUT_FILE_PATH_FIELD
 ),
 m_camera(0), m_tree(0), m_asteroid(0), m_ship(0), m_bSpawnGrid(false), m_nAsteroids(0), m_asteroidGridSpacing(1.0f), m_nAsteroidsX(0), m_nAsteroidsY(0), m_nAsteroidsZ(0) {
-	//if (FAILED(configure())) {
-	//	throw std::exception("GameState configuration failed.");
-	//}
+	if (configureNow) {
+		if( FAILED(configure()) ) {
+			throw std::exception("GameState configuration failed.");
+		}
+	}
 }
 
 GameState::~GameState(void) {

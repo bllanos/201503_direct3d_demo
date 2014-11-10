@@ -27,11 +27,11 @@ using std::wstring;
 using std::vector;
 
 GameStateWithSSSE::GameStateWithSSSE(void) :
-GameState(),
+GameState(false),
 m_SSSEs(0), m_currentSSSEIndex(0), m_currentSSSE(0)
 {
 	if( FAILED(configure()) ) {
-		throw std::exception("GameState configuration failed.");
+		throw std::exception("GameStateWithSSSE configuration failed.");
 	}
 }
 

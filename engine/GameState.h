@@ -89,7 +89,10 @@ private:
 	size_t m_nAsteroidsX, m_nAsteroidsY, m_nAsteroidsZ;
 
 public:
-	GameState(void);
+	/* 'configureNow' allows derived classes to postpone configuration
+	   until they have been constructed.
+	 */
+	GameState(const bool configureNow = true);
 
 	virtual ~GameState(void);
 

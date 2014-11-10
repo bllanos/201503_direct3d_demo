@@ -107,6 +107,13 @@ public:
 	 */
 	virtual HRESULT getDataFrom(ID3D11DeviceContext* const context, Texture2DFromBytes& other);
 
+	/* Clears this object's texture data to the given colour.
+	   Returns false and does nothing if this object does not
+	   have a render target view.
+	 */
+	virtual HRESULT clearRenderTarget(ID3D11DeviceContext* const context,
+		const DirectX::XMFLOAT4& color);
+
 	// Data members
 private:
 	// Texture width

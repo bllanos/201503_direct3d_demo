@@ -129,7 +129,7 @@ HRESULT Texture2DFromBytes::bindAsRenderTarget(ID3D11DeviceContext* const contex
 	ID3D11DepthStencilView *newDepthStencilView) {
 
 	if( m_renderTargetView == 0 ) {
-		logMessage(L"This object does not have a render target view and therefore bind a render target.");
+		logMessage(L"This object does not have a render target view and therefore cannot bind a render target.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
 	}
 
@@ -170,5 +170,26 @@ HRESULT Texture2DFromBytes::getDataFrom(ID3D11DeviceContext* const context, Text
 	}
 
 	context->CopyResource(m_texture, other.m_texture);
+	return ERROR_SUCCESS;
+}
+
+HRESULT Texture2DFromBytes::clearRenderTarget(ID3D11DeviceContext* const context,
+	const DirectX::XMFLOAT4& color) {
+
+	if( m_renderTargetView == 0 ) {
+		logMessage(L"This object does not have a render target view and therefore clear a render target.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	const float colorArray[4] = {
+		color.x,
+		color.y,
+		color.z,
+		color.w
+	};
+
+	// Clear the back buffer.
+	context->ClearRenderTargetView(m_renderTargetView, colorArray);
+
 	return ERROR_SUCCESS;
 }

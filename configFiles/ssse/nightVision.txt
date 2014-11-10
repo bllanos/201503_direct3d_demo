@@ -17,6 +17,10 @@ BOOL -- OneTextureSSSE_LogUser::timestampEnable = true
 # ------------------------
 BOOL -- OneTextureSSSE_ConfigUser::enableConfigUseLogging = true
 
+# Render target background colour
+# -------------------------------
+COLOR -- OneTextureSSSE::backgroundColor = (255, 100, 0, 255)
+
 # Vertex Shader setup
 # -------------------
 BOOL -- OneTextureSSSE::VS_enableLogging = true
@@ -54,9 +58,9 @@ BOOL -- shader_ConfigUser::enableConfigUseLogging = true
 # ----------------------------------------------
 BOOL -- OneTextureSSSE::texture_enableLogging = true
 WSTRING -- OneTextureSSSE::texture_msgPrefix = L"Night Vision SSSE Current Frame Texture"
-WSTRING -- OneTextureSSSE::textureScope = L"texture"
-WSTRING -- OneTextureSSSE::textureScope_LogUser = L"texture_LogUser"
-WSTRING -- OneTextureSSSE::textureScope_ConfigUser = L"texture_ConfigUser"
+WSTRING -- OneTextureSSSE::texture_scope = L"texture"
+WSTRING -- OneTextureSSSE::texture_scope_LogUser = L"texture_LogUser"
+WSTRING -- OneTextureSSSE::texture_scope_ConfigUser = L"texture_ConfigUser"
 FILENAME -- OneTextureSSSE::texture_inputConfigFileName = "nightVision.txt"
 DIRECTORY -- OneTextureSSSE::texture_inputConfigFilePath = "..\configFiles\ssse"
 

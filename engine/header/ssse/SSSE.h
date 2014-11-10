@@ -59,6 +59,10 @@ struct SSSEVertexType {
     or constructor/function arguments (where necessary)
 */
 
+// Colour to which render targets will be cleared
+#define SSSE_BACKGROUNDCOLOR_DEFAULT 	DirectX::XMFLOAT4(0.0f,0.0f,0.0f,0.0f)
+#define SSSE_BACKGROUNDCOLOR_FIELD		L"backgroundColor"
+
 /* Shader constructor and configuration parameters */
 #define SSSE_VSSHADER_FIELD_PREFIX L"VS_"
 #define SSSE_PSSHADER_FIELD_PREFIX L"PS_"
@@ -310,6 +314,17 @@ protected:
 	 */
 	virtual HRESULT restoreRenderTarget(ID3D11DeviceContext* const context);
 
+	/* Intended to prepare all relevant render targets for scene data.
+	   Called by setRenderTarget().
+
+	   This class's version of the function clears the first element
+	   of 'm_textures' to this object's background colour member.
+	   It assumes that the texture has been created with a render target view.
+
+	   Derived classes may wish to override this behaviour.
+	 */
+	virtual HRESULT clearRenderTargets(ID3D11DeviceContext* const context);
+
 	// Data members
 private:
 	std::vector<Texture2DFromBytes*>* m_textures;
@@ -336,6 +351,9 @@ private:
 
 	// Window height [pixels]
 	UINT m_height;
+
+	// Used to clear the render-to-texture render target
+	DirectX::XMFLOAT4 m_backgroundColor;
 
 	// Currently not implemented - will cause linker errors if called
 private:
