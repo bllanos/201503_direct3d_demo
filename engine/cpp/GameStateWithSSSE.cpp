@@ -127,10 +127,16 @@ HRESULT GameStateWithSSSE::poll(Keyboard& input, Mouse& mouse) {
 	}
 
 	// Cycle through SSSEs
-	if( input.IsKeyDown(VK_CONTROL) && input.Down(Keyboard::ascii_O) ) {
+	// if (input.IsKeyDown(VK_CONTROL) && input.Down(Keyboard::ascii_O)) { // Ineffective!?
+	static bool keyLatch = true;
+	if (input.IsKeyDown(VK_CONTROL) && keyLatch && input.IsKeyDown(Keyboard::ascii_O)) {
+		keyLatch = false;
 		++m_currentSSSEIndex;
 		m_currentSSSEIndex %= m_SSSEs->size();
 		m_currentSSSE = (*m_SSSEs)[m_currentSSSEIndex];
+	}
+	else {
+		keyLatch = true;
 	}
 
 	// Allow the base class to poll
@@ -226,7 +232,8 @@ HRESULT GameStateWithSSSE::configureOneTextureSSSEs(void) {
 	// -----------------------------------------
 
 	wstring scopes[GAMESTATEWITHSSSE_N_ONETEXTURESSSE] = {
-		GAMESTATEWITHSSSE_NIGHT_VISION_SSSE_SCOPE
+		GAMESTATEWITHSSSE_NIGHT_VISION_SSSE_SCOPE,
+		GAMESTATEWITHSSSE_WIPE_SSSE_SCOPE
 	};
 
 	for( vector<SSSE**>::size_type i = 0; i < GAMESTATEWITHSSSE_N_ONETEXTURESSSE; ++i ) {

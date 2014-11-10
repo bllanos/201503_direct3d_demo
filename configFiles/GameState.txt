@@ -55,3 +55,8 @@ DIRECTORY -- shipmodel::inputConfigFilePath = "..\configFiles\geometry"
 # --------------------------------
 FILENAME -- nightVision::inputConfigFileName = "nightVision.txt"
 DIRECTORY -- nightVision::inputConfigFilePath = "..\configFiles\ssse"
+
+# Horizontal wipe
+# --------------------------------
+FILENAME -- wipe::inputConfigFileName = "wipe.txt"
+DIRECTORY -- wipe::inputConfigFilePath = "..\configFiles\ssse"
