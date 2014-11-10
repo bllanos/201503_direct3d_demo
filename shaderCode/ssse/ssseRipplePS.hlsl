@@ -63,7 +63,7 @@ float4 PSMAIN(in Vertex input) : SV_TARGET
 	float outerR = r * parameters.z;
 
 	// Calculate distance to the focus point
-	float2 fromFocusToMe = originalLocation - focus;
+	float2 fromFocusToMe = location - focus;
 	float myRadius = length(fromFocusToMe);
 
 	// Determine texture coordinate compression amount
@@ -72,10 +72,11 @@ float4 PSMAIN(in Vertex input) : SV_TARGET
 		float compressionFactor;
 		// Linear interpolation
 		if (myRadius > r) {
-			compressionFactor = (1.0f - ((myRadius - r) / (outerR - r))) * parameters.w;
+			compressionFactor = (((myRadius - r) / (outerR - r))) * parameters.w;
 		} else {
 			compressionFactor = (((r - myRadius) / (r - innerR))) * parameters.w;
 		}
+		compressionFactor = 1.0f - compressionFactor;
 
 		fromFocusToMe *= compressionFactor;
 
@@ -84,6 +85,9 @@ float4 PSMAIN(in Vertex input) : SV_TARGET
 	}
 
 	// Sample at the appropriate location
+	// First convert to [0,1] coordinates
+	location.x /= screenSize.x;
+	location.y /= screenSize.y;
 	float4 color = txFrame.Sample(smpFrame, location);
 
 	return color;
