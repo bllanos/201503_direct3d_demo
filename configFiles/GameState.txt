@@ -45,3 +45,13 @@ DIRECTORY -- asteroid::inputConfigFilePath = "..\configFiles\geometry"
 # --------------------------------
 FILENAME -- shipmodel::inputConfigFileName = "shipmodel.txt"
 DIRECTORY -- shipmodel::inputConfigFilePath = "..\configFiles\geometry"
+
+
+# ///////////////////////////////////
+# Screen-Space Special Effects
+# ///////////////////////////////////
+
+# Night vision
+# --------------------------------
+FILENAME -- nightvision::inputConfigFileName = "nightVision.txt"
+DIRECTORY -- nightvision::inputConfigFilePath = "..\configFiles\ssse"
