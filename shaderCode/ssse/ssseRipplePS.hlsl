@@ -71,14 +71,15 @@ float4 PSMAIN(in Vertex input) : SV_TARGET
 		// Compression applies only within the ring
 		float compressionFactor;
 		// Linear interpolation
+		// The result is one at the edges of the ring and zero at the ring's "middle radius", 'r'
 		if (myRadius > r) {
-			compressionFactor = (((myRadius - r) / (outerR - r))) * parameters.w;
+			compressionFactor = (((myRadius - r) / (outerR - r)));
 		} else {
-			compressionFactor = (((r - myRadius) / (r - innerR))) * parameters.w;
+			compressionFactor = (((r - myRadius) / (r - innerR)));
 		}
-		compressionFactor = 1.0f - compressionFactor;
+		compressionFactor = (1.0f - compressionFactor) * parameters.w;
 
-		fromFocusToMe *= compressionFactor;
+		fromFocusToMe *= (1.0f - compressionFactor);
 
 		// Determine new sampling location
 		location = focus + fromFocusToMe;
