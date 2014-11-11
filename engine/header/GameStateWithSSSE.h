@@ -35,13 +35,18 @@ Description
 #define GAMESTATEWITHSSSE_SCOPE L"GameStateWithSSSE"
 
 // Configuration of each SSSE
-#define GAMESTATEWITHSSSE_NSSSE 4 // Total number of SSSEs
+#define GAMESTATEWITHSSSE_NSSSE 5 // Total number of SSSEs
 #define GAMESTATEWITHSSSE_N_ONETEXTURESSSE 4 // Number of one-texture SSSEs
+#define GAMESTATEWITHSSSE_N_TWOFRAMESSSE 1 // Number of two-frame SSSEs
 
+// One-texture SSSEs
 #define GAMESTATEWITHSSSE_NIGHT_VISION_SSSE_SCOPE L"nightVision"
 #define GAMESTATEWITHSSSE_WIPE_SSSE_SCOPE L"wipe"
 #define GAMESTATEWITHSSSE_TILE_SSSE_SCOPE L"tile"
 #define GAMESTATEWITHSSSE_RIPPLE_SSSE_SCOPE L"ripple"
+
+// Two-frame SSSEs
+#define GAMESTATEWITHSSSE_SMEAR_SSSE_SCOPE L"smear"
 
 class GameStateWithSSSE : public GameState {
 
@@ -84,9 +89,14 @@ protected:
 	/* Constructs and configures one-texture SSSE objects */
 	virtual HRESULT configureOneTextureSSSEs(void);
 
-	// Geometry initialization helpers
+	/* Constructs and configures two-frame SSSE objects */
+	virtual HRESULT configureTwoFrameSSSEs(void);
+
+	// SSSE initialization helpers
 protected:
 	virtual HRESULT initializeOneTextureSSSEs(ID3D11Device* device, int screenWidth, int screenHeight);
+
+	virtual HRESULT initializeTwoFrameSSSEs(ID3D11Device* device, int screenWidth, int screenHeight);
 
 	// Currently not implemented - will cause linker errors if called
 private:
