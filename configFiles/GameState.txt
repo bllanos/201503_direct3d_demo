@@ -70,3 +70,8 @@ DIRECTORY -- tile::inputConfigFilePath = "..\configFiles\ssse"
 # --------------------------------
 FILENAME -- ripple::inputConfigFileName = "ripple.txt"
 DIRECTORY -- ripple::inputConfigFilePath = "..\configFiles\ssse"
+
+# Smear Effect
+# --------------------------------
+FILENAME -- smear::inputConfigFileName = "smear.txt"
+DIRECTORY -- smear::inputConfigFilePath = "..\configFiles\ssse"
