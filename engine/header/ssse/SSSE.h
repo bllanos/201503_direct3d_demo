@@ -331,7 +331,6 @@ protected:
 
 	// Data members
 private:
-	std::vector<Texture2DFromBytes*>* m_textures;
 
 	/* A handle to the render target originally on the pipeline,
 	   used to re-bind it later.
@@ -350,13 +349,16 @@ private:
 	/* True if configuration was completed successfully. */
 	bool m_configured;
 
+protected:
+
 	// Window width [pixels]
 	UINT m_width;
 
 	// Window height [pixels]
 	UINT m_height;
 
-protected:
+	std::vector<Texture2DFromBytes*>* m_textures;
+
 	// Used to clear the render-to-texture render target
 	DirectX::XMFLOAT4 m_backgroundColor;
 

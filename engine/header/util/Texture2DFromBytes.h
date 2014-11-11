@@ -63,7 +63,8 @@ public:
 
 	   'width' and 'height' define the pixel dimensions
 	   of the texture, whereas 'data' holds
-	   its initial contents.
+	   its initial contents. The client
+	   is responsible for deallocating 'data'.
 
 	   If 'renderTarget' is true, the texture will
 	   be created with the render target bind flag

@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="cpp\GameStateWithSSSE.cpp" />
     <ClCompile Include="cpp\ssse\OneTextureSSSE.cpp" />
+    <ClCompile Include="cpp\ssse\TwoFrameSSSE.cpp" />
     <ClCompile Include="cpp\util\Texture2DFromBytes.cpp" />
     <ClCompile Include="cpp\ssse\SSSE.cpp" />
     <ClCompile Include="cpp\geometry\UniformBurstSphere.cpp" />

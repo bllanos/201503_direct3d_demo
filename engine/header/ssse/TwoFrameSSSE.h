@@ -80,10 +80,8 @@ protected:
 
 	/* Texture initialization
 	   Augments the base class version of this function as follows:
-	     -Clears the current frame texture to the background colour
-		 -Copies the current frame texture into the past frame texture,
-		    so that the past frame texture will be in a known state
-			during the first rendering pass.
+	     -Initializes the second texture (the past frame texture)
+		    with the background colour.
 	*/
 	virtual HRESULT initializeTextures(ID3D11Device* const device) override;
 
