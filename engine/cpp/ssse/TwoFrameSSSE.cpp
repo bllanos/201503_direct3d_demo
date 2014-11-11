@@ -25,6 +25,11 @@ using std::vector;
 HRESULT TwoFrameSSSE::configure(const wstring& scope, const wstring* configUserScope, const wstring* logUserScope) {
 	HRESULT result = ERROR_SUCCESS;
 
+	// Initialize with default values
+	// ------------------------------
+
+	m_refreshPeriod = TWOFRAMESSSE_PERIOD_DEFAULT;
+
 	if (hasConfigToUse()) {
 
 		// Configure base members
@@ -46,6 +51,21 @@ HRESULT TwoFrameSSSE::configure(const wstring& scope, const wstring* configUserS
 			textureFieldPrefixes, TWOFRAMESSSE_NTEXTURES))) {
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
+		else {
+
+			// Data retrieval helper variables
+			const double* doubleValue = 0;
+
+			// Query for configuration data
+			if (retrieve<Config::DataType::DOUBLE, double>(scope, TWOFRAMESSSE_PERIOD_FIELD, doubleValue)) {
+				if (*doubleValue < static_cast<double>(TWOFRAMESSSE_PERIOD_MIN)) {
+					logMessage(L"The past frame refresh period cannot be negative. Using the default value of "
+						+ std::to_wstring(TWOFRAMESSSE_PERIOD_DEFAULT));
+				} else {
+					m_refreshPeriod = static_cast<float>(*doubleValue);
+				}
+			}
+		}
 
 	}
 	else {
@@ -66,13 +86,21 @@ HRESULT TwoFrameSSSE::apply(ID3D11DeviceContext* const context) {
 	}
 
 	// Update the past frame
-	result = ((*m_textures)[1])->getDataFrom(context, *((*m_textures)[0]));
-	if (FAILED(result)) {
-		logMessage(L"Failed to copy current frame texture to past frame texture.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	if (m_refreshTimer > m_refreshPeriod) {
+		m_refreshTimer = 0.0f;
+		result = ((*m_textures)[1])->getDataFrom(context, *((*m_textures)[0]));
+		if (FAILED(result)) {
+			logMessage(L"Failed to copy current frame texture to past frame texture.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
 	}
 
 	return result;
+}
+
+HRESULT TwoFrameSSSE::update(const DWORD currentTime, const DWORD updateTimeInterval) {
+	m_refreshTimer += static_cast<float>(updateTimeInterval);
+	return SSSE::update(currentTime, updateTimeInterval);
 }
 
 HRESULT TwoFrameSSSE::initializeTextures(ID3D11Device* const device) {

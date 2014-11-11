@@ -673,7 +673,7 @@ HRESULT SSSE::setTexturesOnContext(ID3D11DeviceContext* const context) {
 	const vector<Texture2DFromBytes*>::size_type nTextures = m_textures->size();
 
 	for( vector<Texture2DFromBytes*>::size_type i = 0; i < nTextures; ++i ) {
-		result = (*m_textures)[0]->bind(context, i, i, ShaderStage::PS);
+		result = (*m_textures)[i]->bind(context, i, i, ShaderStage::PS);
 		if( FAILED(result) ) {
 			logMessage(L"Failed to bind element " + std::to_wstring(i) + L" of 'm_textures' as a shader resource.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);

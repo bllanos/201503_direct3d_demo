@@ -21,10 +21,14 @@ BOOL -- TwoFrameSSSE_ConfigUser::enableConfigUseLogging = true
 # -------------------------------
 COLOR -- TwoFrameSSSE::backgroundColor = (0, 0, 0, 255)
 
+# Past frame refresh rate [milliseconds]
+# --------------------------------------
+DOUBLE -- TwoFrameSSSE::pastFrameUpdateInterval = 200.0
+
 # Constant buffer parameters
 # --------------------------
 FLOAT4 -- TwoFrameSSSE::globals_globalIndex = (0.0, 0.0, 0.0, 1.0)
-FLOAT4 -- TwoFrameSSSE::globals_parameters = (0.1, 0.9, 1000.0, 0.5)
+FLOAT4 -- TwoFrameSSSE::globals_parameters = (0.7, 0.3, 1000.0, 0.5)
 
 # Vertex Shader setup
 # -------------------

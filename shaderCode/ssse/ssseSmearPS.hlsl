@@ -59,6 +59,7 @@ float4 PSMAIN(in Vertex input) : SV_TARGET
 	// Calculate weightings
 	float timeFactor = saturate(pow(parameters.w, time.y / parameters.z));
 	float pastWeight = parameters.y * timeFactor;
+	// pastWeight = parameters.y;
 
 	// Calculate output colour
 	float4 color = (parameters.x * currentFrameColor) + (pastWeight * pastFrameColor);

@@ -34,6 +34,10 @@ Description
 
 #define TWOFRAMESSSE_SCOPE L"TwoFrameSSSE"
 
+#define TWOFRAMESSSE_PERIOD_MIN 0.0f
+#define TWOFRAMESSSE_PERIOD_DEFAULT 	0.0f // Continual (zero seconds)
+#define TWOFRAMESSSE_PERIOD_FIELD		L"pastFrameUpdateInterval"
+
 /* LogUser and ConfigUser configuration parameters
    Refer to LogUser.h and ConfigUser.h
  */
@@ -75,6 +79,10 @@ public:
 	 */
 	virtual HRESULT apply(ID3D11DeviceContext* const context) override;
 
+	/* Updates the past frame refresh timer
+	 */
+	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval) override;
+
 	// Helper functions
 protected:
 
@@ -93,6 +101,12 @@ protected:
 
 	// Data members
 private:
+
+	// Past frame copying will be done infrequently
+	float m_refreshTimer;
+
+	// Interval at which 'm_counter' will reset [milliseconds]
+	float m_refreshPeriod;
 
 	// Currently not implemented - will cause linker errors if called
 private:
@@ -117,7 +131,9 @@ template<typename ConfigIOClass> TwoFrameSSSE::TwoFrameSSSE(
 	filenameField,
 	directoryScope,
 	directoryField
-	) {
+	),
+	m_refreshTimer(0.0f), m_refreshPeriod(TWOFRAMESSSE_PERIOD_DEFAULT)
+{
 	if (FAILED(configure())) {
 		logMessage(L"Configuration failed.");
 	}
