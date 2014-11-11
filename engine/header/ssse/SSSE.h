@@ -356,6 +356,7 @@ private:
 	// Window height [pixels]
 	UINT m_height;
 
+protected:
 	// Used to clear the render-to-texture render target
 	DirectX::XMFLOAT4 m_backgroundColor;
 
