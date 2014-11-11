@@ -657,7 +657,7 @@ HRESULT SSSE::initializeTextures(ID3D11Device* const device) {
 
 	// Remaining textures are not render targets by default
 	for( vector<Texture2DFromBytes*>::size_type i = 1; i < nTextures; ++i ) {
-		result = (*m_textures)[0]->initialize(device, m_width, m_height, 0, false);
+		result = (*m_textures)[i]->initialize(device, m_width, m_height, 0, false);
 		if( FAILED(result) ) {
 			logMessage(L"Failed to initialize element " + std::to_wstring(i) + L" of 'm_textures'.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);

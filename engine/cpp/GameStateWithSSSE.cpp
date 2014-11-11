@@ -370,7 +370,7 @@ HRESULT GameStateWithSSSE::initializeTwoFrameSSSEs(ID3D11Device* device, int scr
 
 	HRESULT result = ERROR_SUCCESS;
 
-	vector<SSSE**>::size_type start = GAMESTATEWITHSSSE_N_ONETEXTURESSSE + 1;
+	vector<SSSE**>::size_type start = GAMESTATEWITHSSSE_N_ONETEXTURESSSE;
 	vector<SSSE**>::size_type end = GAMESTATEWITHSSSE_N_ONETEXTURESSSE + GAMESTATEWITHSSSE_N_TWOFRAMESSSE;
 	for (vector<SSSE**>::size_type i = start; i < end; ++i) {
 		result = ((*m_SSSEs)[i])->initialize(device, screenWidth, screenHeight);
