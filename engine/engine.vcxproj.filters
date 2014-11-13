@@ -156,6 +156,9 @@
     <ClCompile Include="cpp\physics\Transformable.cpp">
       <Filter>source\physics</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\geometry\ShipModel.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -274,6 +277,9 @@
     </ClInclude>
     <ClInclude Include="header\physics\Transformable.h">
       <Filter>header\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\ShipModel.h">
+      <Filter>header\geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
