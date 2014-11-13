@@ -38,7 +38,7 @@ protected:
 
 public:
 	virtual ~State(void) {}
-	virtual HRESULT initialize(ID3D11Device* device, int screenWidth, int screenHeight) = 0; // Pure virtual function
+	virtual HRESULT initialize(ID3D11Device* device, ID3D11Texture2D* backBuffer, int screenWidth, int screenHeight) = 0; // Pure virtual function
 	virtual HRESULT next(State*& nextState) = 0; // Pure virtual function
 
 	virtual HRESULT drawContents(ID3D11DeviceContext* const context, GeometryRendererManager& manager) = 0;

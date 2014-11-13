@@ -53,7 +53,7 @@ Phase1TestState::~Phase1TestState(void) {
 	}
 }
 
-HRESULT Phase1TestState::initialize(ID3D11Device* device, int screenWidth, int screenHeight) {
+HRESULT Phase1TestState::initialize(ID3D11Device* device, ID3D11Texture2D* backBuffer, int screenWidth, int screenHeight) {
 
 	// Initialize the camera
 	m_camera = new Camera(screenWidth, screenHeight);

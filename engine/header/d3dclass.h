@@ -86,6 +86,8 @@ public:
 
 	int GetVideoCardInfo(char*, int&);
 
+	ID3D11Texture2D* GetBackBuffer(void);
+
 
 private:
 	bool m_vsync_enabled;
@@ -105,6 +107,8 @@ private:
 
 	ID3D11BlendState* m_alphaEnableBlendingState;
 	ID3D11BlendState* m_alphaDisableBlendingState;
+
+	ID3D11Texture2D* m_backBufferPtr;
 
 	// Currently not implemented - will cause linker errors if called
 private:

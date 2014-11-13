@@ -52,7 +52,7 @@ GameState::~GameState(void) {
 }
 
 
-HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenHeight) {
+HRESULT GameState::initialize(ID3D11Device* device, ID3D11Texture2D* backBuffer, int screenWidth, int screenHeight) {
 
 	HRESULT result = ERROR_SUCCESS;
 

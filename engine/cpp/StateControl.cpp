@@ -178,7 +178,9 @@ HRESULT StateControl::Initialize(void)
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
-	if( FAILED(m_CurrentState->initialize(m_D3D->GetDevice(),
+	if( FAILED(m_CurrentState->initialize(
+		m_D3D->GetDevice(),
+		m_D3D->GetBackBuffer(),
 		m_mainWindow->getWidth(),
 		m_mainWindow->getHeight())) )
 	{

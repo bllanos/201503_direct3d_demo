@@ -50,11 +50,11 @@ GameStateWithSSSE::~GameStateWithSSSE(void) {
 	}
 }
 
-HRESULT GameStateWithSSSE::initialize(ID3D11Device* device, int screenWidth, int screenHeight) {
+HRESULT GameStateWithSSSE::initialize(ID3D11Device* device, ID3D11Texture2D* backBuffer, int screenWidth, int screenHeight) {
 	HRESULT result = ERROR_SUCCESS;
 
 	// Initialize base members
-	result = GameState::initialize(device, screenWidth, screenHeight);
+	result = GameState::initialize(device, backBuffer, screenWidth, screenHeight);
 	if( FAILED(result) ) {
 		return result;
 	}

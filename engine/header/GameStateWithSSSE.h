@@ -70,7 +70,8 @@ public:
 
 	~GameStateWithSSSE(void);
 
-	virtual HRESULT initialize(ID3D11Device* device, int screenWidth, int screenHeight) override;
+	/* The 'backBuffer' parameter is used to initialize two-frame SSSEs. */
+	virtual HRESULT initialize(ID3D11Device* device, ID3D11Texture2D* backBuffer, int screenWidth, int screenHeight) override;
 
 	virtual HRESULT drawContents(ID3D11DeviceContext* const context, GeometryRendererManager& manager) override;
 
