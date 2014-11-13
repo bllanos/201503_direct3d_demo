@@ -42,6 +42,8 @@
 
 #define GAMESTATE_NUMBER_OF_ASTEROIDS_FIELD L"nAsteroids"
 #define GAMESTATE_NUMBER_OF_ASTEROIDS_DEFAULT 0 // 10
+#define GAMESTATE_RADIUS_OF_ASTEROIDS_FIELD L"radiAsteroids"
+#define GAMESTATE_RADIUS_OF_ASTEROIDS_DEFAULT 1 // 1
 
 #define GAMESTATE_ASTEROID_GRID_SPACING_FIELD L"asteroidGridSpacing"
 #define GAMESTATE_ASTEROID_GRID_SPACING_DEFAULT 1 // 10
@@ -83,6 +85,7 @@ private:
 
 	// Initial number of asteroids
 	size_t m_nAsteroids;
+	float asteroid_Radius;
 
 	// if spawning a grid of asteroids
 	double m_asteroidGridSpacing;

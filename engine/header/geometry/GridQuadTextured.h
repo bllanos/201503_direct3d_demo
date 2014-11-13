@@ -112,6 +112,9 @@ public:
 	// Similar to uvToPosition(), but calculates four bone weights for the location
 	virtual HRESULT uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, const float u, const float v) const;
 
+	virtual float getRadius() override;
+	virtual XMFLOAT3 getPosition() override;
+
 protected:
 
 	/* Overrides the behaviour of SkinnedTexturedGeometry::configure()
@@ -124,6 +127,9 @@ protected:
 
 	// Data members
 protected:
+	/*Vector of Transformables
+	*/
+	//std::vector<Transformable*>* transformation;
 
 	/* Grid resolution,
 	   which can be obtained from configuration data.

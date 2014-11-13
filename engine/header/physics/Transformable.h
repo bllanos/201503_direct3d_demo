@@ -98,6 +98,7 @@ public:
 	bool StrafeIfParent(float amount); // move left and right
 	bool CraneIfParent(float amount); // move up and down
 	bool SpinIfParent(float roll, float pitch, float yaw); // spin the object (tilt, pan)
+	bool hasParent();
 
 	DirectX::XMFLOAT3 getScale() const;
 	DirectX::XMFLOAT3 getPosition() const;
