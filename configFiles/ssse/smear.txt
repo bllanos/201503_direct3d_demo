@@ -23,12 +23,16 @@ COLOR -- TwoFrameSSSE::backgroundColor = (0, 0, 0, 255)
 
 # Past frame refresh rate [milliseconds]
 # --------------------------------------
-INT -- TwoFrameSSSE::pastFrameUpdateInterval = 500
+INT -- TwoFrameSSSE::pastFrameUpdateInterval = 0
+
+# Source of past frame data
+# -------------------------
+BOOL -- TwoFrameSSSE::pastFrameContainsSSSE = true
 
 # Constant buffer parameters
 # --------------------------
 FLOAT4 -- TwoFrameSSSE::globals_globalIndex = (0.0, 0.0, 0.0, 1.0)
-FLOAT4 -- TwoFrameSSSE::globals_parameters = (0.7, 0.3, 1000.0, 0.5)
+FLOAT4 -- TwoFrameSSSE::globals_parameters = (0.05, 0.95, 1000.0, 0.9)
 
 # Vertex Shader setup
 # -------------------

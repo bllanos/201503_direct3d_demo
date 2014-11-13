@@ -97,7 +97,7 @@ protected:
 protected:
 	virtual HRESULT initializeOneTextureSSSEs(ID3D11Device* device, int screenWidth, int screenHeight);
 
-	virtual HRESULT initializeTwoFrameSSSEs(ID3D11Device* device, int screenWidth, int screenHeight);
+	virtual HRESULT initializeTwoFrameSSSEs(ID3D11Device* device, ID3D11Texture2D* const backBuffer, int screenWidth, int screenHeight);
 
 	// Currently not implemented - will cause linker errors if called
 private:
