@@ -347,11 +347,22 @@ HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 		}
 	}
 	else {
+		float dist;
+		XMFLOAT2 mouseDir;
+		if (mouse.GetDistanceFromCenter(dist, mouseDir)) {
+			if (dist > CAMERA_DEAD_ZONE) {
+				m_followTransform->Spin(0.0f, 0.0f, mouseDir.x * PLAYER_PAN_SPEED);
+				m_followTransform->Spin(0.0f, mouseDir.y * -PLAYER_PAN_SPEED, 0.0f);
+			}
+		}
+
+		/*
 		XMFLOAT2 mouseVel;
 		if (mouse.GetWindowVelocity(mouseVel)) {
 			m_followTransform->Spin(0.0f, 0.0f, mouseVel.x * PLAYER_PAN_SPEED);
 			m_followTransform->Spin(0.0f, -mouseVel.y * PLAYER_PAN_SPEED, 0.0f);
 		}
+		*/
 
 		if (input.IsKeyDown(Keyboard::ascii_W)) {
 			m_followTransform->Move(PLAYER_MOVE_SPEED);
