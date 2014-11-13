@@ -29,6 +29,7 @@ HRESULT TwoFrameSSSE::configure(const wstring& scope, const wstring* configUserS
 	// ------------------------------
 
 	m_refreshPeriod = TWOFRAMESSSE_PERIOD_DEFAULT;
+	m_refreshPastWithSSSE = TWOFRAMESSSE_PASTFRAME_CONTAINS_SSSE_DEFAULT;
 
 	if (hasConfigToUse()) {
 
@@ -54,16 +55,21 @@ HRESULT TwoFrameSSSE::configure(const wstring& scope, const wstring* configUserS
 		else {
 
 			// Data retrieval helper variables
-			const double* doubleValue = 0;
+			const int* intValue = 0;
+			const bool* boolValue = false;
 
 			// Query for configuration data
-			if (retrieve<Config::DataType::DOUBLE, double>(scope, TWOFRAMESSSE_PERIOD_FIELD, doubleValue)) {
-				if (*doubleValue < static_cast<double>(TWOFRAMESSSE_PERIOD_MIN)) {
-					logMessage(L"The past frame refresh period cannot be negative. Using the default value of "
+			if (retrieve<Config::DataType::INT, int>(scope, TWOFRAMESSSE_PERIOD_FIELD, intValue)) {
+				if (*intValue < TWOFRAMESSSE_PERIOD_MIN) {
+					logMessage(L"The past frame refresh period is too low. Using the default value of "
 						+ std::to_wstring(TWOFRAMESSSE_PERIOD_DEFAULT));
 				} else {
-					m_refreshPeriod = static_cast<float>(*doubleValue);
+					m_refreshPeriod = static_cast<DWORD>(*intValue);
 				}
+			}
+
+			if (retrieve<Config::DataType::BOOL, bool>(scope, TWOFRAMESSSE_PASTFRAME_CONTAINS_SSSE_FIELD, boolValue)) {
+				m_refreshPastWithSSSE = *boolValue;
 			}
 		}
 
@@ -86,11 +92,16 @@ HRESULT TwoFrameSSSE::apply(ID3D11DeviceContext* const context) {
 	}
 
 	// Update the past frame
-	if (m_refreshTimer > m_refreshPeriod) {
-		m_refreshTimer = 0.0f;
-		result = ((*m_textures)[1])->getDataFrom(context, *((*m_textures)[0]));
+	DWORD currentTime = static_cast<DWORD>(getGlobals()->time.x);
+	if ((currentTime - m_refreshTimer) >= m_refreshPeriod) {
+		m_refreshTimer = currentTime;
+		if (m_refreshPastWithSSSE && (m_backBuffer != 0)) {
+			result = ((*m_textures)[1])->getDataFrom(context, m_backBuffer);
+		} else {
+			result = ((*m_textures)[1])->getDataFrom(context, *((*m_textures)[0]));
+		}
 		if (FAILED(result)) {
-			logMessage(L"Failed to copy current frame texture to past frame texture.");
+			logMessage(L"Failed to copy current frame to the past frame texture.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}
@@ -98,9 +109,15 @@ HRESULT TwoFrameSSSE::apply(ID3D11DeviceContext* const context) {
 	return result;
 }
 
-HRESULT TwoFrameSSSE::update(const DWORD currentTime, const DWORD updateTimeInterval) {
-	m_refreshTimer += static_cast<float>(updateTimeInterval);
-	return SSSE::update(currentTime, updateTimeInterval);
+HRESULT TwoFrameSSSE::initialize(ID3D11Device* const device, ID3D11Texture2D* const backBuffer, UINT width, UINT height) {
+	HRESULT result = ERROR_SUCCESS;
+	result = SSSE::initialize(device, width, height);
+	if (FAILED(result)) {
+		return result;
+	}
+
+	m_backBuffer = backBuffer;
+	return result;
 }
 
 HRESULT TwoFrameSSSE::initializeTextures(ID3D11Device* const device) {

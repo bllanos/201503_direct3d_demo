@@ -23,7 +23,7 @@ COLOR -- TwoFrameSSSE::backgroundColor = (0, 0, 0, 255)
 
 # Past frame refresh rate [milliseconds]
 # --------------------------------------
-DOUBLE -- TwoFrameSSSE::pastFrameUpdateInterval = 200.0
+INT -- TwoFrameSSSE::pastFrameUpdateInterval = 500
 
 # Constant buffer parameters
 # --------------------------

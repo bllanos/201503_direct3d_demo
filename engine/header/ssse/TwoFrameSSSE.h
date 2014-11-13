@@ -15,6 +15,8 @@ Primary basis: SSSE.h
 Description
   -A screen-space special effect which has access to both
    the current frame and the previous frame for input.
+     -The previous frame can either include the SSSE,
+	  or exclude the SSSE, as determined by configuration data.
 */
 
 #pragma once
@@ -34,9 +36,14 @@ Description
 
 #define TWOFRAMESSSE_SCOPE L"TwoFrameSSSE"
 
-#define TWOFRAMESSSE_PERIOD_MIN 0.0f
-#define TWOFRAMESSSE_PERIOD_DEFAULT 	0.0f // Continual (zero seconds)
+// Determines the frequency at which the past frame texture will be updated
+#define TWOFRAMESSSE_PERIOD_MIN 0
+#define TWOFRAMESSSE_PERIOD_DEFAULT 	0 // Continual (zero milliseconds)
 #define TWOFRAMESSSE_PERIOD_FIELD		L"pastFrameUpdateInterval"
+
+// Setting for 'm_refreshPastWithSSSE'
+#define TWOFRAMESSSE_PASTFRAME_CONTAINS_SSSE_DEFAULT 	true
+#define TWOFRAMESSSE_PASTFRAME_CONTAINS_SSSE_FIELD		L"pastFrameContainsSSSE"
 
 /* LogUser and ConfigUser configuration parameters
    Refer to LogUser.h and ConfigUser.h
@@ -79,9 +86,18 @@ public:
 	 */
 	virtual HRESULT apply(ID3D11DeviceContext* const context) override;
 
-	/* Updates the past frame refresh timer
+	/* Call this version of the initialize() function as opposed
+	   to the base class's version to allow the object
+	   to use the back buffer ('backBuffer' parameter) as the source
+	   of data for updating the past frame texture.
+
+	   Internally, it calls the base class's initialize() function.
+
+	   If the base class's initialization function is called instead,
+	   the current frame, without the SSSE applied, will be copied
+	   into the past frame texture during updates.
 	 */
-	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval) override;
+	virtual HRESULT initialize(ID3D11Device* const device, ID3D11Texture2D* const backBuffer, UINT width, UINT height);
 
 	// Helper functions
 protected:
@@ -102,11 +118,28 @@ protected:
 	// Data members
 private:
 
-	// Past frame copying will be done infrequently
-	float m_refreshTimer;
+	/* Past frame copying will be done at a configurable time.
+	   This variable stores the time of the last copy.
+	 */
+	DWORD m_refreshTimer;
 
-	// Interval at which 'm_counter' will reset [milliseconds]
-	float m_refreshPeriod;
+	// Interval at which 'm_refreshTimer' will reset [milliseconds]
+	DWORD m_refreshPeriod;
+
+	/* If true, the past frame texture will be updated
+	   with the current frame with the SSSE applied.
+
+	   If false, the past frame texture will be updated
+	   with the current frame as it was before the SSSE
+	   was applied.
+	 */
+	bool m_refreshPastWithSSSE;
+
+	/* Back buffer which can be copied into the past frame
+	   If not set, the object will behave as though
+	   'm_refreshPastWithSSSE' is false.
+	 */
+	ID3D11Texture2D* m_backBuffer;
 
 	// Currently not implemented - will cause linker errors if called
 private:
@@ -132,7 +165,8 @@ template<typename ConfigIOClass> TwoFrameSSSE::TwoFrameSSSE(
 	directoryScope,
 	directoryField
 	),
-	m_refreshTimer(0.0f), m_refreshPeriod(TWOFRAMESSSE_PERIOD_DEFAULT)
+	m_refreshTimer(0), m_refreshPeriod(TWOFRAMESSSE_PERIOD_DEFAULT),
+	m_backBuffer(0)
 {
 	if (FAILED(configure())) {
 		logMessage(L"Configuration failed.");

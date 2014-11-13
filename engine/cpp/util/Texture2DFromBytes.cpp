@@ -173,6 +173,31 @@ HRESULT Texture2DFromBytes::getDataFrom(ID3D11DeviceContext* const context, Text
 	return ERROR_SUCCESS;
 }
 
+HRESULT Texture2DFromBytes::getDataFrom(ID3D11DeviceContext* const context, ID3D11Texture2D* const other) {
+	if (other == 0) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	}
+
+	// Error checking
+	D3D11_TEXTURE2D_DESC desc;
+	other->GetDesc(&desc);
+
+	if (m_width != desc.Width) {
+		logMessage(L"The other texture must have the same width as this texture.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	} else if (m_height != desc.Height) {
+		logMessage(L"The other texture must have the same height as this texture.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	} else if (m_texture == 0) {
+		logMessage(L"This object's texture data member has not been initialized.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	context->CopyResource(m_texture, other);
+	return ERROR_SUCCESS;
+}
+
+
 HRESULT Texture2DFromBytes::clearRenderTarget(ID3D11DeviceContext* const context,
 	const DirectX::XMFLOAT4& color) {
 

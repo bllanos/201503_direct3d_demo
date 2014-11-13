@@ -108,6 +108,17 @@ public:
 	 */
 	virtual HRESULT getDataFrom(ID3D11DeviceContext* const context, Texture2DFromBytes& other);
 
+	/* Copies the entire texture resource contents of the 'other'
+	   parameter into the texture of 'this'. This member function
+	   does not alter the resource views and auxiliary/metadata
+	   associated with the texture.
+
+	   Returns a failure result and does nothing if the two
+	   textures have different dimensions, or if either
+	   this object has not been fully initialized.
+	*/
+	virtual HRESULT getDataFrom(ID3D11DeviceContext* const context, ID3D11Texture2D* const other);
+
 	/* Clears this object's texture data to the given colour.
 	   Returns false and does nothing if this object does not
 	   have a render target view.
