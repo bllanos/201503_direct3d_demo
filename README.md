@@ -185,3 +185,8 @@ Roll Camera:
 Zoom Camera:
 - In:  Z + UP ARROW
 - Out: Z + DOWN ARROW
+
+## Debugging Controls
+
+CTRL + O: When in the game state with SSSEs, switch between the shockwave SSSE
+          and the motion blur SSSE.
