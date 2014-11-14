@@ -34,7 +34,7 @@ HRESULT Texture2DFromBytes::configure(const std::wstring& scope, const std::wstr
 HRESULT Texture2DFromBytes::initialize(
 	ID3D11Device* device, const DXGI_FORMAT format,
 	const UINT width, const UINT height,
-	const DirectX::XMFLOAT4* data,
+	const void* const data,
 	bool renderTarget) {
 
 	if( width == 0 ) {

@@ -70,7 +70,7 @@ public:
 	   be created with the render target bind flag
 	   and will have an associated render target view.
 	*/
-	virtual HRESULT initialize(ID3D11Device* device, const DXGI_FORMAT format, const UINT width, const UINT height, const DirectX::XMFLOAT4* data = 0,
+	virtual HRESULT initialize(ID3D11Device* device, const DXGI_FORMAT format, const UINT width, const UINT height, const void* const data = 0,
 		bool renderTarget = false);
 
 	/* Bind the texture to the pipeline
