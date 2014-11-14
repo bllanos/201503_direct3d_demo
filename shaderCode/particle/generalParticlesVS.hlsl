@@ -41,7 +41,7 @@ struct VSInput {
 
 struct VSOutput {
 	float3 positionVS : POSITION_VIEW; // View space
-	float2 billboard : BILLBOARD_WH; // Billboard dimensions
+	float2 billboard : BILLBOARD_WH; // Billboard dimensions (width, height)
 	float angle : ANGLE; // Calculated based on direction, view direction, and rotation speed
 	float3 life : LIFE; // (current age, current health, decay factor)
 	float4 index : INDEX; // Same as input vertex
@@ -53,8 +53,8 @@ VSOutput VSMAIN(in VSInput input) {
 	// Change the position vector to be 4 units for proper matrix calculations
 	float4 inPosition = { input.position, 1.0f };
 
-	float age = max(time.x - input.life.x, 0);
-	float health = input.life.y - (input.life.z * age);
+	float age = time.x - input.life.x; // If negative, particle has not yet been born.
+	float health = input.life.y - ((input.life.z * abs(age)) % input.life.y);
 	if (health < input.life.w) {
 		health = 0.0f;
 	}
@@ -68,8 +68,9 @@ VSOutput VSMAIN(in VSInput input) {
 	// View space position
 	output.positionVS = mul(inPosition, viewMatrix).xyz;
 
-	// View space direction
-	float3 viewDirection = mul(float4(input.linearVelocity.xyz, 1.0f), viewMatrix).xyz;
+	// View space direction - Assuming uniform scaling
+	// Note use of zero w-component
+	float3 viewDirection = mul(float4(input.linearVelocity.xyz, 0.0f), viewMatrix).xyz;
 
 	// Billboard
 	output.billboard = input.billboard.xy;
