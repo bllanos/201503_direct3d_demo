@@ -191,6 +191,9 @@ public:
 	/* Creates pipeline resources needed for rendering (e.g. shaders)
 	   Returns a failure code if resource creation fails.
 
+	   The 'backBuffer' parameter is used to set the format
+	   of the textures (to match the swap chain buffers).
+
 	   'width' and 'height' determine the dimensions
 	   of all elements of 'm_textures'.
 
@@ -199,7 +202,7 @@ public:
 	   textures are initialized as shader resources only.
 	   (These operations are performed by initializeTextures().)
 	*/
-	virtual HRESULT initialize(ID3D11Device* const device, UINT width, UINT height);
+	virtual HRESULT initialize(ID3D11Device* const device, ID3D11Texture2D* const backBuffer, UINT width, UINT height);
 
 	/* Sets the first render target of the pipeline
 	   to the texture referred to by the first element of 'm_textures'.
@@ -279,7 +282,7 @@ protected:
 	   shader resource and a render target. Subsequent
 	   textures are initialized as shader resources only.
 	 */
-	virtual HRESULT initializeTextures(ID3D11Device* const device);
+	virtual HRESULT initializeTextures(ID3D11Device* const device, ID3D11Texture2D* const backBuffer);
 
 	/* Performs texture-related pipeline configuration
 	   Textures are bound to the pixel shader stage

@@ -45,6 +45,9 @@ D3DClass::D3DClass()
 	m_alphaDisableBlendingState = 0;
 
 	m_backBufferPtr = 0;
+
+	// Set regular 32-bit surface for the back buffer.
+	m_format = DXGI_FORMAT_R8G8B8A8_UNORM;
 }
 
 D3DClass::~D3DClass()
@@ -203,8 +206,7 @@ int D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwn
     swapChainDesc.BufferDesc.Width = screenWidth;
     swapChainDesc.BufferDesc.Height = screenHeight;
 
-	// Set regular 32-bit surface for the back buffer.
-    swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferDesc.Format = m_format;
 
 	/*
 	The next part of the description of the swap chain is the refresh rate. 

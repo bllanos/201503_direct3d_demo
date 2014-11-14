@@ -31,7 +31,9 @@ HRESULT Texture2DFromBytes::configure(const std::wstring& scope, const std::wstr
 	return Texture::configure(scope, configUserScope, logUserScope);
 }
 
-HRESULT Texture2DFromBytes::initialize(ID3D11Device* device, const UINT width, const UINT height,
+HRESULT Texture2DFromBytes::initialize(
+	ID3D11Device* device, const DXGI_FORMAT format,
+	const UINT width, const UINT height,
 	const DirectX::XMFLOAT4* data,
 	bool renderTarget) {
 
@@ -43,7 +45,8 @@ HRESULT Texture2DFromBytes::initialize(ID3D11Device* device, const UINT width, c
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
 
-	// Set texture dimensions
+	// Set texture properties
+	m_format = format;
 	m_width = width;
 	m_height = height;
 
@@ -56,7 +59,7 @@ HRESULT Texture2DFromBytes::initialize(ID3D11Device* device, const UINT width, c
 	desc.Height = m_height;
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
-	desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	desc.Format = m_format;
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Usage = D3D11_USAGE_DEFAULT;
@@ -161,6 +164,9 @@ HRESULT Texture2DFromBytes::getDataFrom(ID3D11DeviceContext* const context, Text
 	} else if( m_height != other.m_height ) {
 		logMessage(L"The other texture must have the same height as this texture.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	} else if( m_format != other.m_format ) {
+		logMessage(L"The other texture must have the same format as this texture.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	} else if( m_texture == 0 ) {
 		logMessage(L"This object's texture data member has not been initialized.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
@@ -188,7 +194,10 @@ HRESULT Texture2DFromBytes::getDataFrom(ID3D11DeviceContext* const context, ID3D
 	} else if (m_height != desc.Height) {
 		logMessage(L"The other texture must have the same height as this texture.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
-	} else if (m_texture == 0) {
+	} else if( m_format != desc.Format ) {
+		logMessage(L"The other texture must have the same format as this texture.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	} else if( m_texture == 0 ) {
 		logMessage(L"This object's texture data member has not been initialized.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
 	}

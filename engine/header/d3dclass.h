@@ -88,7 +88,6 @@ public:
 
 	ID3D11Texture2D* GetBackBuffer(void);
 
-
 private:
 	bool m_vsync_enabled;
 	int m_videoCardMemory;
@@ -109,6 +108,9 @@ private:
 	ID3D11BlendState* m_alphaDisableBlendingState;
 
 	ID3D11Texture2D* m_backBufferPtr;
+
+	// Swap chain texture format
+	DXGI_FORMAT m_format;
 
 	// Currently not implemented - will cause linker errors if called
 private:

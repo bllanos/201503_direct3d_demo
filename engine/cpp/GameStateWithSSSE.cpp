@@ -60,7 +60,7 @@ HRESULT GameStateWithSSSE::initialize(ID3D11Device* device, ID3D11Texture2D* bac
 	}
 
 	// One-texture SSSEs initialization
-	if( FAILED(initializeOneTextureSSSEs(device, screenWidth, screenHeight)) ) {
+	if( FAILED(initializeOneTextureSSSEs(device, backBuffer, screenWidth, screenHeight)) ) {
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		return result;
 	}
@@ -343,7 +343,7 @@ HRESULT GameStateWithSSSE::configureTwoFrameSSSEs(void) {
 	return result;
 }
 
-HRESULT GameStateWithSSSE::initializeOneTextureSSSEs(ID3D11Device* device, int screenWidth, int screenHeight) {
+HRESULT GameStateWithSSSE::initializeOneTextureSSSEs(ID3D11Device* device, ID3D11Texture2D* const backBuffer, int screenWidth, int screenHeight) {
 	if( m_SSSEs == 0 ) {
 		logMessage(L"Initialization cannot proceed before the SSSEs have been constructed and configured.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
@@ -352,7 +352,7 @@ HRESULT GameStateWithSSSE::initializeOneTextureSSSEs(ID3D11Device* device, int s
 	HRESULT result = ERROR_SUCCESS;
 
 	for( vector<SSSE**>::size_type i = 0; i < GAMESTATEWITHSSSE_N_ONETEXTURESSSE; ++i ) {
-		result = ((*m_SSSEs)[i])->initialize(device, screenWidth, screenHeight);
+		result = ((*m_SSSEs)[i])->initialize(device, backBuffer, screenWidth, screenHeight);
 		if( FAILED(result) ) {
 			logMessage(L"Initialization of one-texture SSSE failed at index " + std::to_wstring(i) + L".");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -373,7 +373,7 @@ HRESULT GameStateWithSSSE::initializeTwoFrameSSSEs(ID3D11Device* device, ID3D11T
 	vector<SSSE**>::size_type start = GAMESTATEWITHSSSE_N_ONETEXTURESSSE;
 	vector<SSSE**>::size_type end = GAMESTATEWITHSSSE_N_ONETEXTURESSSE + GAMESTATEWITHSSSE_N_TWOFRAMESSSE;
 	for (vector<SSSE**>::size_type i = start; i < end; ++i) {
-		result = static_cast<TwoFrameSSSE*>((*m_SSSEs)[i])->initialize(device, backBuffer, screenWidth, screenHeight);
+		result = ((*m_SSSEs)[i])->initialize(device, backBuffer, screenWidth, screenHeight);
 		if (FAILED(result)) {
 			logMessage(L"Initialization of two-frame SSSE failed at index " + std::to_wstring(i) + L".");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);

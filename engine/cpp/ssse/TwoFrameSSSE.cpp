@@ -111,7 +111,7 @@ HRESULT TwoFrameSSSE::apply(ID3D11DeviceContext* const context) {
 
 HRESULT TwoFrameSSSE::initialize(ID3D11Device* const device, ID3D11Texture2D* const backBuffer, UINT width, UINT height) {
 	HRESULT result = ERROR_SUCCESS;
-	result = SSSE::initialize(device, width, height);
+	result = SSSE::initialize(device, backBuffer, width, height);
 	if (FAILED(result)) {
 		return result;
 	}
@@ -120,7 +120,7 @@ HRESULT TwoFrameSSSE::initialize(ID3D11Device* const device, ID3D11Texture2D* co
 	return result;
 }
 
-HRESULT TwoFrameSSSE::initializeTextures(ID3D11Device* const device) {
+HRESULT TwoFrameSSSE::initializeTextures(ID3D11Device* const device, ID3D11Texture2D* const backBuffer) {
 
 	if (m_textures == 0) {
 		logMessage(L"Initialization of textures cannot proceed. The vector of textures is null.");
@@ -135,8 +135,11 @@ HRESULT TwoFrameSSSE::initializeTextures(ID3D11Device* const device) {
 
 	HRESULT result = ERROR_SUCCESS;
 
+	D3D11_TEXTURE2D_DESC desc;
+	backBuffer->GetDesc(&desc);
+
 	// The first texture is a render target by default
-	result = (*m_textures)[0]->initialize(device, m_width, m_height, 0, true);
+	result = (*m_textures)[0]->initialize(device, desc.Format, m_width, m_height, 0, true);
 	if (FAILED(result)) {
 		logMessage(L"Failed to initialize the first element of 'm_textures'.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -152,7 +155,7 @@ HRESULT TwoFrameSSSE::initializeTextures(ID3D11Device* const device) {
 	for (size_t i = 0; i < n; ++i) {
 		data[i] = m_backgroundColor;
 	}
-	result = (*m_textures)[1]->initialize(device, m_width, m_height, data, false);
+	result = (*m_textures)[1]->initialize(device, desc.Format, m_width, m_height, data, false);
 	delete[] data;
 	data = 0;
 	if (FAILED(result)) {
@@ -162,7 +165,7 @@ HRESULT TwoFrameSSSE::initializeTextures(ID3D11Device* const device) {
 
 	// Remaining textures are not render targets by default
 	for (vector<Texture2DFromBytes*>::size_type i = 2; i < nTextures; ++i) {
-		result = (*m_textures)[i]->initialize(device, m_width, m_height, 0, false);
+		result = (*m_textures)[i]->initialize(device, desc.Format, m_width, m_height, 0, false);
 		if (FAILED(result)) {
 			logMessage(L"Failed to initialize element " + std::to_wstring(i) + L" of 'm_textures'.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);

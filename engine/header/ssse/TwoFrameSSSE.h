@@ -86,18 +86,13 @@ public:
 	 */
 	virtual HRESULT apply(ID3D11DeviceContext* const context) override;
 
-	/* Call this version of the initialize() function as opposed
-	   to the base class's version to allow the object
-	   to use the back buffer ('backBuffer' parameter) as the source
-	   of data for updating the past frame texture.
+	/* Uses the back buffer ('backBuffer' parameter) as the source
+	   of data for updating the past frame texture, if
+	   'm_refreshPastWithSSSE' has been configured to 'true'.
 
-	   Internally, it calls the base class's initialize() function.
-
-	   If the base class's initialization function is called instead,
-	   the current frame, without the SSSE applied, will be copied
-	   into the past frame texture during updates.
+	   Also calls the base class's initialize() function.
 	 */
-	virtual HRESULT initialize(ID3D11Device* const device, ID3D11Texture2D* const backBuffer, UINT width, UINT height);
+	virtual HRESULT initialize(ID3D11Device* const device, ID3D11Texture2D* const backBuffer, UINT width, UINT height) override;
 
 	// Helper functions
 protected:
@@ -106,8 +101,8 @@ protected:
 	   Augments the base class version of this function as follows:
 	     -Initializes the second texture (the past frame texture)
 		    with the background colour.
-	*/
-	virtual HRESULT initializeTextures(ID3D11Device* const device) override;
+	 */
+	virtual HRESULT initializeTextures(ID3D11Device* const device, ID3D11Texture2D* const backBuffer) override;
 
 	/* Provides SSSE_NVERTICES vertices
 	   to initialize the vertex buffer,

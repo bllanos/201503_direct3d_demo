@@ -70,7 +70,7 @@ public:
 	   be created with the render target bind flag
 	   and will have an associated render target view.
 	*/
-	virtual HRESULT initialize(ID3D11Device* device, const UINT width, const UINT height, const DirectX::XMFLOAT4* data = 0,
+	virtual HRESULT initialize(ID3D11Device* device, const DXGI_FORMAT format, const UINT width, const UINT height, const DirectX::XMFLOAT4* data = 0,
 		bool renderTarget = false);
 
 	/* Bind the texture to the pipeline
@@ -103,19 +103,13 @@ public:
 	   associated with the texture.
 
 	   Returns a failure result and does nothing if the two
-	   textures have different dimensions, or if either
+	   textures have different dimensions or formats, or if either
 	   of the two objects have not been fully initialized.
 	 */
 	virtual HRESULT getDataFrom(ID3D11DeviceContext* const context, Texture2DFromBytes& other);
 
-	/* Copies the entire texture resource contents of the 'other'
-	   parameter into the texture of 'this'. This member function
-	   does not alter the resource views and auxiliary/metadata
-	   associated with the texture.
-
-	   Returns a failure result and does nothing if the two
-	   textures have different dimensions, or if either
-	   this object has not been fully initialized.
+	/* Similar to getDataFrom(ID3D11DeviceContext* const, Texture2DFromBytes&),
+	   but operates on a non-wrapped Direct3D texture resource.
 	*/
 	virtual HRESULT getDataFrom(ID3D11DeviceContext* const context, ID3D11Texture2D* const other);
 
@@ -128,6 +122,10 @@ public:
 
 	// Data members
 private:
+
+	// Texture data format
+	DXGI_FORMAT m_format;
+
 	// Texture width
 	UINT m_width;
 
@@ -155,6 +153,7 @@ template<typename ConfigIOClass> Texture2DFromBytes::Texture2DFromBytes(
 	filename,
 	path
 	),
+	m_format(DXGI_FORMAT_UNKNOWN),
 	m_width(0), m_height(0),
 	m_renderTargetView(0)
 {}
