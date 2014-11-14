@@ -19,17 +19,18 @@ BOOL -- GameState_ConfigUser::enableConfigUseLogging = true
 # Octree configuration
 # --------------------
 INT -- GameState::treeDepth = 4
-DOUBLE -- GameState::treeLength = 20.0
-FLOAT4 -- GameState::treeLocation = (-10.0, 10.0, -10.0, 0.0)
+DOUBLE -- GameState::treeLength = 2000.0
+FLOAT4 -- GameState::treeLocation = (-1000.0, 1000.0, -1000.0, 0.0)
 
 # Asteroids external configuration
 # --------------------------------
-BOOL -- GameState::bSpawnGrid = false
+BOOL -- GameState::bSpawnGrid = true
 INT -- GameState::nAsteroids = 3
-DOUBLE -- GameState::asteroidGridSpacing = 8.0
-INT -- GameState::nAsteroidsX = 4
-INT -- GameState::nAsteroidsY = 4
-INT -- GameState::nAsteroidsZ = 4
+DOUBLE -- GameState::radiAsteroids = 1.0
+DOUBLE -- GameState::asteroidGridSpacing = 5.0
+INT -- GameState::nAsteroidsX = 3
+INT -- GameState::nAsteroidsY = 3
+INT -- GameState::nAsteroidsZ = 3
 
 # Allows the game state to provide a sharable config instance
 # -----------------------------------------------------------

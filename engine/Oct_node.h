@@ -29,7 +29,11 @@ class Octnode{
 		~Octnode();
 		
 		int fits(ObjectModel * newGameObject);
+
+		int refit(ObjectModel * gameObject);
 		
+		HRESULT checkObjectUpdates(vector<ObjectModel*>* outRefit);
+
 	protected:
 		Octnode* children[8];
 		vector<ObjectModel *>* nodeObjectList;

@@ -59,7 +59,6 @@ HRESULT GameState::initialize(ID3D11Device* device, int screenWidth, int screenH
 
 	// Initialize the camera
 	m_camera = new Camera(screenWidth, screenHeight);
-
 	// Initialize geometry
 	if (FAILED(initializeGeometry(device))) {
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -158,6 +157,9 @@ HRESULT GameState::configure(void) {
 		if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_FIELD, intValue)) {
 			nAsteroids = *intValue;
 		}
+		if (retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_RADIUS_OF_ASTEROIDS_FIELD, doubleValue)){
+			asteroid_Radius = static_cast<float>(*doubleValue);
+		}
 
 		if (retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_ASTEROID_GRID_SPACING_FIELD, doubleValue)) {
 			asteroidGridSpacing = *doubleValue;
@@ -181,7 +183,6 @@ HRESULT GameState::configure(void) {
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 			return result;
 		}
-
 	}
 	else {
 		logMessage(L"GameState initialization from configuration data: No Config instance to use.");
@@ -454,10 +455,10 @@ HRESULT GameState::spawnAsteroids(const size_t n) {
 	}
 
 	XMFLOAT3 offset(0.0f, 0.0f, 0.0f);
-	XMFLOAT3 southOffset(0.0f, -1.0f, 0.0f);
-	XMFLOAT3 northOffset(0.0f, 1.0f, 0.0f);
+	XMFLOAT3 southOffset(0.0f, -(asteroid_Radius), 0.0f);
+	XMFLOAT3 northOffset(0.0f, asteroid_Radius, 0.0f);
 
-	XMFLOAT3 scale(1.0f, 1.0f, 1.0f);
+	XMFLOAT3 scale(asteroid_Radius, asteroid_Radius, asteroid_Radius);
 	XMFLOAT4 orientation(0.0f, 0.0f, 0.0f, 1.0f);
 
 	ObjectModel* newObject = 0;
@@ -468,7 +469,7 @@ HRESULT GameState::spawnAsteroids(const size_t n) {
 
 		newObject = new ObjectModel(m_asteroid);
 
-		offset = XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i));
+		offset = XMFLOAT3(static_cast<float>(i*2), static_cast<float>(i*2), static_cast<float>(i*2));
 
 		// Center
 		bone = new Transformable(scale, offset, orientation);
@@ -484,7 +485,6 @@ HRESULT GameState::spawnAsteroids(const size_t n) {
 		bone = new Transformable(scale, northOffset, orientation);
 		bone->setParent(parent);
 		newObject->addTransformable(bone);
-
 
 		if (m_tree->addObject(newObject) == -1){
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -502,10 +502,10 @@ HRESULT GameState::spawnAsteroidsGrid(const size_t x, const size_t y, const size
 	}
 
 	XMFLOAT3 offset(0.0f, 0.0f, 0.0f);
-	XMFLOAT3 southOffset(0.0f, -1.0f, 0.0f);
-	XMFLOAT3 northOffset(0.0f, 1.0f, 0.0f);
+	XMFLOAT3 southOffset(0.0f, -(asteroid_Radius), 0.0f);
+	XMFLOAT3 northOffset(0.0f, asteroid_Radius, 0.0f);
 
-	XMFLOAT3 scale(1.0f, 1.0f, 1.0f);
+	XMFLOAT3 scale(asteroid_Radius, asteroid_Radius, asteroid_Radius);
 	XMFLOAT4 orientation(0.0f, 0.0f, 0.0f, 1.0f);
 
 	ObjectModel* newObject = 0;

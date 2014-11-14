@@ -35,12 +35,10 @@ Transformable::Transformable(DirectX::XMFLOAT3& scale, DirectX::XMFLOAT3& positi
 {
 	XMStoreFloat4x4(&m_worldTransform, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_worldTransformNoScale, XMMatrixIdentity());
-
 	// Normalize the orientation so any input values are properly accepted
 	XMVECTOR oriVec = XMLoadFloat4(&orientation);
 	oriVec = XMQuaternionNormalize(oriVec);
 	XMStoreFloat4(&m_orientation, oriVec);
-
 	m_forward = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_up = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_left = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -276,4 +274,11 @@ void Transformable::updateTransformProperties()
 		XMVector4Transform(XMLoadFloat3(&m_up), oriTransform));
 	XMStoreFloat3(&m_left,
 		XMVector3Cross(XMLoadFloat3(&m_forward), XMLoadFloat3(&m_up)));
+}
+
+bool Transformable::hasParent(){
+	if (m_parent == 0){
+		return false;
+	}
+	return true;
 }
