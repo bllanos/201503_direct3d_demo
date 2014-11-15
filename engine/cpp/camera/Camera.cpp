@@ -7,6 +7,7 @@
 #include "engineGlobals.h"
 #include "defs.h"
 #include <exception>
+#include <string>
 
 Camera::Camera(int screenWidth_in, int screenHeight_in) 
 	: LogUser(true, CAMERA_START_MSG_PREFIX), m_transform(0), m_followTransform(0)
@@ -270,18 +271,140 @@ HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 			cameraMode = CameraMode::FREE_CAMERA;
 		}
 		else if (cameraMode == CameraMode::FIRST_PERSON_CAMERA) { // first person camera
-			m_transform->restorePosition();
-			// adjust the position of the camera depending on camera mode
-			m_transform->Move(1.0f);
+			m_transform->setFirstPersonCam();
+
+			/*
+			std::wstring stream;
+			XMFLOAT3 pos = m_transform->getPosition();
+			stream += L"\nfirst_camPos: (";
+			stream += std::to_wstring(pos.x);
+			stream += L",";
+			stream += std::to_wstring(pos.y);
+			stream += L",";
+			stream += std::to_wstring(pos.z);
+			stream += L")\n";
+			pos = m_followTransform->getPosition();
+			stream += L"first_folPos: (";
+			stream += std::to_wstring(pos.x);
+			stream += L",";
+			stream += std::to_wstring(pos.y);
+			stream += L",";
+			stream += std::to_wstring(pos.z);
+			stream += L")\n";
+
+			XMFLOAT4 ori = m_transform->getOrientation();
+			stream += L"first_camOri: (";
+			stream += std::to_wstring(ori.x);
+			stream += L",";
+			stream += std::to_wstring(ori.y);
+			stream += L",";
+			stream += std::to_wstring(ori.z);
+			stream += L",";
+			stream += std::to_wstring(ori.w);
+			stream += L")\n";
+			ori = m_followTransform->getOrientation();
+			stream += L"first_folOri: (";
+			stream += std::to_wstring(ori.x);
+			stream += L",";
+			stream += std::to_wstring(ori.y);
+			stream += L",";
+			stream += std::to_wstring(ori.z);
+			stream += L",";
+			stream += std::to_wstring(ori.w);
+			stream += L")\n";
+
+			logMessage(stream);
+			*/
 		}
 		else if (cameraMode == CameraMode::THIRD_PERSON_CAMERA) { // third person camera
-			m_transform->restorePosition();
-			m_transform->Move(-1.0f);
+			m_transform->setThirdPersonCam();
+
+			/*
+			std::wstring stream;
+			XMFLOAT3 pos = m_transform->getPosition();
+			stream += L"\nthird_camPos: (";
+			stream += std::to_wstring(pos.x);
+			stream += L",";
+			stream += std::to_wstring(pos.y);
+			stream += L",";
+			stream += std::to_wstring(pos.z);
+			stream += L")\n";
+			pos = m_followTransform->getPosition();
+			stream += L"third_folPos: (";
+			stream += std::to_wstring(pos.x);
+			stream += L",";
+			stream += std::to_wstring(pos.y);
+			stream += L",";
+			stream += std::to_wstring(pos.z);
+			stream += L")\n";
+
+			XMFLOAT4 ori = m_transform->getOrientation();
+			stream += L"third_camOri: (";
+			stream += std::to_wstring(ori.x);
+			stream += L",";
+			stream += std::to_wstring(ori.y);
+			stream += L",";
+			stream += std::to_wstring(ori.z);
+			stream += L",";
+			stream += std::to_wstring(ori.w);
+			stream += L")\n";
+			ori = m_followTransform->getOrientation();
+			stream += L"third_folOri: (";
+			stream += std::to_wstring(ori.x);
+			stream += L",";
+			stream += std::to_wstring(ori.y);
+			stream += L",";
+			stream += std::to_wstring(ori.z);
+			stream += L",";
+			stream += std::to_wstring(ori.w);
+			stream += L")\n";
+
+			logMessage(stream);
+			*/
 		}
 		else {
-			m_transform->Move(1.0f); 
-			m_transform->savePosition();
-			//m_transform->setParent(0);
+			/*
+			std::wstring stream;
+			XMFLOAT3 pos = m_transform->getPosition();
+			stream += L"\nfree_camPos: (";
+			stream += std::to_wstring(pos.x);
+			stream += L",";
+			stream += std::to_wstring(pos.y);
+			stream += L",";
+			stream += std::to_wstring(pos.z);
+			stream += L")\n";
+			pos = m_followTransform->getPosition();
+			stream += L"free_folPos: (";
+			stream += std::to_wstring(pos.x);
+			stream += L",";
+			stream += std::to_wstring(pos.y);
+			stream += L",";
+			stream += std::to_wstring(pos.z);
+			stream += L")\n";
+
+			XMFLOAT4 ori = m_transform->getOrientation();
+			stream += L"third_camOri: (";
+			stream += std::to_wstring(ori.x);
+			stream += L",";
+			stream += std::to_wstring(ori.y);
+			stream += L",";
+			stream += std::to_wstring(ori.z);
+			stream += L",";
+			stream += std::to_wstring(ori.w);
+			stream += L")\n";
+			ori = m_followTransform->getOrientation();
+			stream += L"third_folOri: (";
+			stream += std::to_wstring(ori.x);
+			stream += L",";
+			stream += std::to_wstring(ori.y);
+			stream += L",";
+			stream += std::to_wstring(ori.z);
+			stream += L",";
+			stream += std::to_wstring(ori.w);
+			stream += L")\n";
+
+			logMessage(stream);
+			*/
 		}
 	}
 
@@ -356,14 +479,6 @@ HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 			}
 		}
 
-		/*
-		XMFLOAT2 mouseVel;
-		if (mouse.GetWindowVelocity(mouseVel)) {
-			m_followTransform->Spin(0.0f, 0.0f, mouseVel.x * PLAYER_PAN_SPEED);
-			m_followTransform->Spin(0.0f, -mouseVel.y * PLAYER_PAN_SPEED, 0.0f);
-		}
-		*/
-
 		if (input.IsKeyDown(Keyboard::ascii_W)) {
 			m_followTransform->Move(PLAYER_MOVE_SPEED);
 		}
@@ -385,6 +500,14 @@ HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 		if (input.IsKeyDown(Keyboard::ascii_E)) {
 			m_followTransform->Spin(PLAYER_ROLL_SPEED, 0.0f, 0.0f);
 		}
+
+		if (input.IsKeyDown(VK_SHIFT)) {
+			m_followTransform->Crane(PLAYER_CRANE_SPEED);
+		}
+		if (input.IsKeyDown(VK_CONTROL)) {
+			m_followTransform->Crane(-PLAYER_CRANE_SPEED);
+		}
+		
 		// update the follow transform with the newest positions
 		m_followTransform->update(0,0);
 	}

@@ -41,9 +41,9 @@ Pan-Tilt-Roll-Strafe-Dolly-Crane-Zooom
 	const float CAMERA_ZOOM_IN_FACTOR = 0.9f; //field of view mult. factor to zoom in
 	const float CAMERA_ZOOM_OUT_FACTOR = 1.1f; //field of view mult. factor to zoom out
 
-	const float CAMERA_DEAD_ZONE = 35.0f;
+	const float CAMERA_DEAD_ZONE = 30.0f;
 
-	const float PLAYER_MOVE_SPEED = 0.1f; // speed at which player moves
+	const float PLAYER_MOVE_SPEED = 0.2f; // speed at which player moves
 	const float PLAYER_TILT_SPEED = 4.0f; //up and down rotation about the sideways vector direction
 	const float PLAYER_PAN_SPEED = 0.04f; //left and right rotation about the up vector
 	const float PLAYER_ROLL_SPEED = 4.0f; //left and right rotation about the camera direction vector

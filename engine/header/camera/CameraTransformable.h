@@ -6,6 +6,11 @@
 #include "engineGlobals.h"
 #include "../input/IInteractive.h"
 
+// relative to the tracking object
+const float CAMERA_FIRST_PERSON_DIST = -1.05f;
+const float CAMERA_THIRD_PERSON_DIST = -10.0f;
+const float CAMERA_THIRD_PERSON_HEIGHT = 1.5f;
+
 class CameraTransformable :
 	public Transformable
 {
@@ -13,21 +18,15 @@ public:
 	CameraTransformable(DirectX::XMFLOAT3& scale, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation);
 	virtual ~CameraTransformable(void);
 
-	// override this function in the child and use it for matrix transformations
-	virtual HRESULT transformations(DirectX::XMFLOAT4X4& transform, const DWORD currentTime, const DWORD updateTimeInterval);
-
 	// follow the given transform if the user wishes to (a key toggle)
 	void SetFollowTransform(Transformable*);
 
-	void restorePosition();
-	void savePosition();
+	void setFirstPersonCam();
+	void setThirdPersonCam();
 
 	// Currently not implemented - will cause linker errors if called
 private:
 	Transformable* followTransform;
-
-	XMFLOAT3 oldPosition;
-	XMFLOAT4 oldOri;
 
 	CameraTransformable(const CameraTransformable& other);
 	CameraTransformable& operator=(const CameraTransformable& other);

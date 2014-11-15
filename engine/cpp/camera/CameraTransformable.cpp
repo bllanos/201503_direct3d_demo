@@ -4,40 +4,24 @@ using namespace DirectX;
 
 CameraTransformable::CameraTransformable(DirectX::XMFLOAT3& scale, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation)
 	: Transformable(scale, position, orientation), followTransform(0)
-{
-	savePosition();
-}
+{}
 
 CameraTransformable::~CameraTransformable()
 {}
-
-HRESULT CameraTransformable::transformations(DirectX::XMFLOAT4X4& transform, const DWORD currentTime, const DWORD updateTimeInterval)
-{
-	/*
-	if (followTransform != 0) {
-		XMFLOAT4X4 followMatrix;
-		followTransform->getWorldTransform(followMatrix);
-
-		// set the transform equal to the follow matrix, then adjust the camera distance after that
-		transform = XMFLOAT4X4(followMatrix);
-	}
-	*/
-	return ERROR_SUCCESS;
-}
 
 void CameraTransformable::SetFollowTransform(Transformable* otherFollowTransform)
 {
 	followTransform = otherFollowTransform;
 }
 
-void CameraTransformable::restorePosition()
+void CameraTransformable::setFirstPersonCam()
 {
-	m_position = oldPosition;
-	m_orientation = oldOri;
+	m_position = XMFLOAT3(0.0f, 0.0f, CAMERA_FIRST_PERSON_DIST);
+	m_orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-void CameraTransformable::savePosition()
+void CameraTransformable::setThirdPersonCam()
 {
-	oldPosition = m_position;
-	oldOri = m_orientation;
+	m_position = XMFLOAT3(0.0f, CAMERA_THIRD_PERSON_HEIGHT, CAMERA_THIRD_PERSON_DIST);
+	m_orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 }
