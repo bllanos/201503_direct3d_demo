@@ -7,6 +7,7 @@ BOOL -- GeometryRendererManager::SkinnedRendererNoLight = true
 BOOL -- GeometryRendererManager::SkinnedRendererLight = true
 BOOL -- GeometryRendererManager::SkinnedTexturedRendererNoLight = true
 BOOL -- GeometryRendererManager::SkinnedTexturedRendererLight = true
+BOOL -- GeometryRendererManager::InvariantParticlesRendererNoLight = true
 
 # Where to find configuration data for the SimpleColorRenderer
 # ------------------------------------------------------------

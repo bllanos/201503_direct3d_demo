@@ -80,24 +80,27 @@ float3 rotate(in float3 vec, in float3 axis, in float theta) {
 [maxvertexcount(QUAD_VERTEX_COUNT)]
 void GSMAIN(point VSOutput input[1], inout TriangleStream<PSInput> QuadStream)
 {
+	// Shorthand
+	VSOutput input0 = input[0];
+
 	// Particle must have been born and not be dead
-	if (input.life.x > 0.0f && input.life.y > 0.0) {
+	if (input0.life.x > 0.0f && input0.life.y > 0.0) {
 		PSInput output;
-		float4 basePositionVS = { input.positionVS, 1.0f };
+		float4 basePositionVS = { input0.positionVS, 1.0f };
 		float4 cornerPositionVS; // View-space corner position
 
 		/* Calculate accurate up and sideways vectors,
 		   to make billboard normal to the view vector
 		 */
-		float3 normalizedPosition = normalize(input.positionVS);
+		float3 normalizedPosition = normalize(input0.positionVS);
 		float3 side = cross(g_up, normalizedPosition);
 		float3 up = cross(normalizedPosition, side);
 
 		// Apply billboard rotation and scaling
-		side = rotate(side, normalizedPosition, input.angle);
-		side *= billboard.x;
-		up = rotate(up, normalizedPosition, input.angle);
-		up *= billboard.y;
+		side = rotate(side, normalizedPosition, input0.angle);
+		side *= input0.billboard.x;
+		up = rotate(up, normalizedPosition, input0.angle);
+		up *= input0.billboard.y;
 
 		float4 upOffset = float4(up, 0.0f);
 		float4 sideOffset = float4(side, 0.0f);
@@ -105,29 +108,29 @@ void GSMAIN(point VSOutput input[1], inout TriangleStream<PSInput> QuadStream)
 		// Top left
 		cornerPositionVS = basePositionVS + upOffset - sideOffset;
 		output.positionCS = mul(cornerPositionVS, projectionMatrix);
-		output.life = input.life;
-		output.index = g_texcoords[0] * input.index; // Colour cast
+		output.life = input0.life;
+		output.index = g_texcoords[0] * input0.index; // Colour cast
 		QuadStream.Append(output);
 
 		// Top Right
 		cornerPositionVS = basePositionVS + upOffset + sideOffset;
 		output.positionCS = mul(cornerPositionVS, projectionMatrix);
-		output.life = input.life;
-		output.index = g_texcoords[1] * input.index; // Colour cast
+		output.life = input0.life;
+		output.index = g_texcoords[1] * input0.index; // Colour cast
 		QuadStream.Append(output);
 
 		// Bottom left
 		cornerPositionVS = basePositionVS - upOffset - sideOffset;
 		output.positionCS = mul(cornerPositionVS, projectionMatrix);
-		output.life = input.life;
-		output.index = g_texcoords[2] * input.index; // Colour cast
+		output.life = input0.life;
+		output.index = g_texcoords[2] * input0.index; // Colour cast
 		QuadStream.Append(output);
 
 		// Bottom Right
 		cornerPositionVS = basePositionVS - upOffset + sideOffset;
 		output.positionCS = mul(cornerPositionVS, projectionMatrix);
-		output.life = input.life;
-		output.index = g_texcoords[3] * input.index; // Colour cast
+		output.life = input0.life;
+		output.index = g_texcoords[3] * input0.index; // Colour cast
 		QuadStream.Append(output);
 
 		QuadStream.RestartStrip();

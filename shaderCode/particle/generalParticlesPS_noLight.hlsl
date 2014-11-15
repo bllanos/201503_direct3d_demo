@@ -56,7 +56,7 @@ struct PSInput {
 float4 PSMAIN(in PSInput input) : SV_TARGET
 {
 	float4 color = input.index;
-	color.w *= life.y;
+	color.w *= input.life.y;
 	color.w *= blendAmount;
 	return color;
 }

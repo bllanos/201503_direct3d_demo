@@ -60,7 +60,7 @@ VSOutput VSMAIN(in VSInput input) {
 	}
 
 	// Linear motion
-	inPosition += (input.linearVelocity.xyz) * (input.linearVelocity.w) * age;
+	inPosition.xyz += (input.linearVelocity.xyz) * (input.linearVelocity.w) * age;
 
 	// World position
 	inPosition = mul(inPosition, worldMatrix);
