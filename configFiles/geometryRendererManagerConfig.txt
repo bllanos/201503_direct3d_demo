@@ -26,3 +26,6 @@ DIRECTORY -- GeometryRendererManager::SkinnedTexturedRendererNoLight_inputConfig
 
 FILENAME -- GeometryRendererManager::SkinnedTexturedRendererLight_inputConfigFileName = "SkinnedTexturedRendererLight.txt"
 DIRECTORY -- GeometryRendererManager::SkinnedTexturedRendererLight_inputConfigFilePath = "..\configFiles\renderers"
+
+FILENAME -- GeometryRendererManager::InvariantParticlesRendererNoLight_inputConfigFileName = "InvariantParticlesRendererNoLight.txt"
+DIRECTORY -- GeometryRendererManager::InvariantParticlesRendererNoLight_inputConfigFilePath = "..\configFiles\renderers\particle"
