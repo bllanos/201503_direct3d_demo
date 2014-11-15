@@ -52,7 +52,7 @@ HierarchicalCubesTestState::~HierarchicalCubesTestState(void) {
 	}
 }
 
-HRESULT HierarchicalCubesTestState::initialize(ID3D11Device* device, int screenWidth, int screenHeight) {
+HRESULT HierarchicalCubesTestState::initialize(ID3D11Device* device, ID3D11Texture2D* backBuffer, int screenWidth, int screenHeight) {
 
 	// Initialize the camera
 	m_camera = new Camera(screenWidth, screenHeight);

@@ -404,6 +404,12 @@ size_t SkinnedColorGeometry::getIndexCount(void) const {
 }
 
 HRESULT SkinnedColorGeometry::setMaterial(Material* material) {
+	if (material == 0) {
+		return	MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	}
+	if ((m_material != 0) && (m_material != material)) {
+		delete m_material;
+	}
 	m_material = material;
 	return ERROR_SUCCESS;
 }

@@ -69,6 +69,9 @@ when the program is executed, its working directory is the `win32_base` folder.
 (All configuration data must be written with this in mind.)
 
 ## Code References
+
+(Beyond COMP3501A course demos and assignment solutions)
+
 The main project code, the Visual Studio 'engine' project,
 was adapted from the following sources:
 - Bernard Llanos, Alec McGrail, Benjamin Smith,
@@ -90,6 +93,9 @@ The following works were consulted for ideas during development:
   Boca Raton: CRC Press Taylor & Francis Group, 2011.
 
 ### References for Specific Features
+
+(Beyond COMP3501A course demos and assignment solutions)
+
 - Phong lighting
   - COMP3501A illumination demo
   - Zink, Jason, Matt Pettineo and Jack Hoxley.
@@ -104,6 +110,10 @@ The following works were consulted for ideas during development:
     to use Visual Studio 2012 and the Windows SDK 8.0 without any dependencies
 	on legacy DirectX SDK content" (_Direct3D Tutorial Win32 Sample_),
 	available at https://code.msdn.microsoft.com/Direct3D-Tutorial-Win32-829979ef
+- Particle systems
+  - Zink, Jason, Matt Pettineo and Jack Hoxley.
+    _Practical Rendering and Computation with Direct 3D 11._
+    Boca Raton: CRC Press Taylor & Francis Group, 2011. (Chapter 12)
 
 ## Sources of Assets
 
@@ -182,7 +192,6 @@ Zoom Camera:
 - In:  Z + UP ARROW
 - Out: Z + DOWN ARROW
 
-
 ## Player Controls (First Person / Third Person Camera)
 Spin Player with Mouse:
 - Pan/Tilt: There is a deadzone in the center of the screen where the mouse will not affect
@@ -201,3 +210,7 @@ Z Movement:
 - Forward:  W
 - Backward: S
 
+## Debugging Controls
+
+CTRL + O: When in the game state with SSSEs, switch between the shockwave SSSE
+          and the motion blur SSSE.

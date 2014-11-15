@@ -63,6 +63,12 @@
     </Filter>
     <Filter Include="source\camera">
       <UniqueIdentifier>{5593d4eb-95bd-4239-8339-3e57ee398210}</UniqueIdentifier>
+	</Filter>
+    <Filter Include="header\ssse">
+      <UniqueIdentifier>{afbe15ce-1e49-4fda-a198-92a74650a3dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\ssse">
+      <UniqueIdentifier>{36fd3c9b-270f-4a2d-9ed9-bc4c0336a806}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -156,8 +162,14 @@
     <ClCompile Include="cpp\util\Shader.cpp">
       <Filter>source\util</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\geometry\InvariantParticles.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
     <ClCompile Include="cpp\physics\Transformable.cpp">
       <Filter>source\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\rendering\InvariantParticlesRenderer.cpp">
+      <Filter>source\rendering</Filter>
     </ClCompile>
     <ClCompile Include="cpp\geometry\ShipModel.cpp">
       <Filter>source\geometry</Filter>
@@ -167,6 +179,27 @@
     </ClCompile>
     <ClCompile Include="cpp\camera\CameraTransformable.cpp">
       <Filter>source\camera</Filter>
+	</ClCompile>
+    <ClCompile Include="cpp\geometry\InvariantTexturedParticles.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\geometry\UniformBurstSphere.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\ssse\SSSE.cpp">
+      <Filter>source\ssse</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\util\Texture2DFromBytes.cpp">
+      <Filter>source\util</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\ssse\OneTextureSSSE.cpp">
+      <Filter>source\ssse</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\GameStateWithSSSE.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\ssse\TwoFrameSSSE.cpp">
+      <Filter>source\ssse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -183,9 +216,6 @@
       <Filter>header\rendering</Filter>
     </ClInclude>
     <ClInclude Include="header\geometry\SimpleColorGeometry.h">
-      <Filter>header\geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="header\geometry\vertexTypes.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
     <ClInclude Include="header\physics\ITransformable.h">
@@ -281,6 +311,12 @@
     <ClInclude Include="header\util\Shader.h">
       <Filter>header\util</Filter>
     </ClInclude>
+    <ClInclude Include="header\geometry\InvariantParticles.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\rendering\InvariantParticlesRenderer.h">
+      <Filter>header\rendering</Filter>
+    </ClInclude>
     <ClInclude Include="header\physics\Transformable.h">
       <Filter>header\physics</Filter>
     </ClInclude>
@@ -292,6 +328,30 @@
     </ClInclude>
     <ClInclude Include="header\camera\CameraTransformable.h">
       <Filter>header\camera</Filter>
+	</ClInclude>
+    <ClInclude Include="header\geometry\InvariantTexturedParticles.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\UniformBurstSphere.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\ssse\SSSE.h">
+      <Filter>header\ssse</Filter>
+    </ClInclude>
+    <ClInclude Include="header\util\Texture2DFromBytes.h">
+      <Filter>header\util</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\vertexTypes.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\ssse\OneTextureSSSE.h">
+      <Filter>header\ssse</Filter>
+    </ClInclude>
+    <ClInclude Include="header\GameStateWithSSSE.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="header\ssse\TwoFrameSSSE.h">
+      <Filter>header\ssse</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

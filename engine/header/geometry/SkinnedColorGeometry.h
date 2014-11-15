@@ -278,11 +278,11 @@ public:
 		size_t& indexOffset) = 0;
 
 	/* Used for determining vertex array size needed when initializing compound geometry.
-	   This functions is not to be called during rendering, for instance.
+	   This function is not to be called during rendering, for instance.
 	 */
 	virtual size_t getNumberOfVertices(void) const = 0;
 	/* Used for determining index array size needed when initializing compound geometry.
-	   This functions is not to be called during rendering, for instance.
+	   This function is not to be called during rendering, for instance.
 	 */
 	virtual size_t getNumberOfIndices(void) const = 0;
 

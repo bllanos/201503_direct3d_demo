@@ -92,8 +92,7 @@ Description
 #define SKINNEDRENDERER_LIGHT_SPECULAR_WEIGHT_FIELD L"lightSpecularWeight"
 
 // Type of loader to use for configuration data when creating shaders
-#include "FlatAtomicConfigIO.h"
-#define SKINNEDRENDERER_CONFIGIO_CLASS FlatAtomicConfigIO
+#define SKINNEDRENDERER_CONFIGIO_CLASS_SHADER FlatAtomicConfigIO
 
 class SkinnedRenderer : public IGeometryRenderer, public ConfigUser {
 private:
@@ -166,8 +165,7 @@ protected:
 	virtual HRESULT configure(const std::wstring& scope = SKINNEDRENDERER_SCOPE, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0);
 
 	/* Creates the pipeline shaders
-	   Also responsible for calling configureRendering()
-	   and createInputLayout()
+	   Also responsible for calling createInputLayout()
 	 */
 	virtual HRESULT createShaders(ID3D11Device* const);
 
@@ -219,7 +217,7 @@ private:
 	/* To be initialized from configuration data
 	   Currently, the light gets sent to the pipeline each
 	   rendering pass, even though there is no
-	   mechanism for changing the light data between frames.
+	   mechanism for changing this data member between frames.
 	 */
 	Light* m_light;
 

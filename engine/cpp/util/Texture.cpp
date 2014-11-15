@@ -162,7 +162,7 @@ HRESULT Texture::initialize(ID3D11Device* device) {
 
 HRESULT Texture::bind(ID3D11DeviceContext* const context,
 	const UINT textureSlot, const UINT samplerSlot,
-	const BindLocation bindLocation) {
+	const ShaderStage bindLocation) {
 
 	if( m_textureView == 0 || m_samplerState == 0 || m_texture == 0 ) {
 		logMessage(L"Cannot bind resources to the pipeline as they have not been initialized.");
@@ -170,20 +170,44 @@ HRESULT Texture::bind(ID3D11DeviceContext* const context,
 	}
 
 	switch( bindLocation ) {
-	case BindLocation::VS:
+	case ShaderStage::VS:
 		context->VSSetSamplers(samplerSlot, 1, &m_samplerState);
 		context->VSSetShaderResources(textureSlot, 1, &m_textureView);
 		break;
-	case BindLocation::GS:
+	case ShaderStage::GS:
 		context->GSSetSamplers(samplerSlot, 1, &m_samplerState);
 		context->GSSetShaderResources(textureSlot, 1, &m_textureView);
 		break;
-	case BindLocation::PS:
+	case ShaderStage::PS:
 		context->PSSetSamplers(samplerSlot, 1, &m_samplerState);
 		context->PSSetShaderResources(textureSlot, 1, &m_textureView);
 		break;
 	default:
-		logMessage(L"Default case encountered for this BindLocation enum constant. Code is broken.");
+		logMessage(L"Default case encountered for this ShaderStage enum constant. Code is broken.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);
+	}
+
+	return ERROR_SUCCESS;
+}
+
+HRESULT Texture::unbind(ID3D11DeviceContext* const context,
+	const UINT textureSlot,
+	const ShaderStage bindLocation) {
+
+	ID3D11ShaderResourceView* nullView = 0;
+
+	switch( bindLocation ) {
+	case ShaderStage::VS:
+		context->VSSetShaderResources(textureSlot, 1, &nullView);
+		break;
+	case ShaderStage::GS:
+		context->GSSetShaderResources(textureSlot, 1, &nullView);
+		break;
+	case ShaderStage::PS:
+		context->PSSetShaderResources(textureSlot, 1, &nullView);
+		break;
+	default:
+		logMessage(L"Default case encountered for this ShaderStage enum constant. Code is broken.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);
 	}
 

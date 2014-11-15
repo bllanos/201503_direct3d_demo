@@ -25,7 +25,7 @@ Description
    resources, and shaders
    can be bound.
  */
-enum class BindLocation : unsigned int {
+enum class ShaderStage : unsigned int {
 	VS, // Vertex shader
 	// HS, // Hull shader - Direct3D 11
 	// DS, // Domain shader - Direct3D 11
@@ -34,6 +34,6 @@ enum class BindLocation : unsigned int {
 	// CS // Compute shader - Direct3D 11
 };
 /* When adding new data types to this enumeration, also do the following:
-   - Update the 's_shaderTypeNames' and 's_shaderBindLocations' static members
+   - Update the 's_shaderTypeNames' and 's_shaderShaderStages' static members
      of the Shader class.
  */

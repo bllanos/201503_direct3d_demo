@@ -59,9 +59,10 @@ float4 PSMAIN(in PSInput input) : SV_TARGET
 	// Calculate vectors
 	float3 normal = normalize(input.normalWS);
 	float3 L = normalize(lightPosition.xyz - input.positionWS);
-	float nDotL = saturate(dot(normal, L));
+	float nDotL = dot(normal, L); // Saturating now produces an incorrect reflection vector
 	float3 V = normalize((cameraPosition - input.positionWS).xyz);
 	float3 R = -L + 2.0f*nDotL*normal;
+	nDotL = saturate(nDotL);
 
 	// Diffuse component
 	float4 diffuse = nDotL * diffuseAlbedo;

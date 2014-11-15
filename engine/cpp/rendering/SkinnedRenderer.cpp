@@ -18,11 +18,8 @@ Description
   -Implementation of the SkinnedRenderer class
 */
 
-#pragma once
-
 #include "SkinnedRenderer.h"
 #include "SkinnedColorGeometry.h"
-#include "fileUtil.h"
 
 using namespace DirectX;
 using std::wstring;
@@ -298,7 +295,7 @@ HRESULT SkinnedRenderer::configure(const std::wstring& scope, const std::wstring
 				*(shaders[i]) = new Shader(
 					shaderEnableLogging,
 					shaderMsgPrefix,
-					static_cast<SKINNEDRENDERER_CONFIGIO_CLASS*>(0),
+					static_cast<SKINNEDRENDERER_CONFIGIO_CLASS_SHADER*>(0),
 					shaderInputConfigFileName,
 					shaderInputConfigFilePath
 					);

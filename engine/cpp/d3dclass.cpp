@@ -43,6 +43,11 @@ D3DClass::D3DClass()
 
 	m_alphaEnableBlendingState = 0;
 	m_alphaDisableBlendingState = 0;
+
+	m_backBufferPtr = 0;
+
+	// Set regular 32-bit surface for the back buffer.
+	m_format = DXGI_FORMAT_R8G8B8A8_UNORM;
 }
 
 D3DClass::~D3DClass()
@@ -65,7 +70,6 @@ int D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwn
 	int error;
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;  
 	D3D_FEATURE_LEVEL featureLevel;
-	ID3D11Texture2D* backBufferPtr;
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
@@ -202,8 +206,7 @@ int D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwn
     swapChainDesc.BufferDesc.Width = screenWidth;
     swapChainDesc.BufferDesc.Height = screenHeight;
 
-	// Set regular 32-bit surface for the back buffer.
-    swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferDesc.Format = m_format;
 
 	/*
 	The next part of the description of the swap chain is the refresh rate. 
@@ -311,24 +314,18 @@ int D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwn
 	We'll use the CreateRenderTargetView function to attach the back buffer to our swap chain. 
 	*/
 	// Get the pointer to the back buffer.
-	result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferPtr);
+	result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_backBufferPtr);
 	if(FAILED(result))
 	{
 		return C_LIB_ERR;
 	}
 
 	// Create the render target view with the back buffer pointer.
-	result = m_device->CreateRenderTargetView(backBufferPtr, NULL, &m_renderTargetView);
+	result = m_device->CreateRenderTargetView(m_backBufferPtr, NULL, &m_renderTargetView);
 	if(FAILED(result))
 	{
 		return C_BAD_CNSTRCT;
 	}
-
-
-
-	// Release pointer to the back buffer as we no longer need it.
-	backBufferPtr->Release();
-	backBufferPtr = 0;
 
 	/*
 	We will also need to set up a depth buffer description. 
@@ -610,6 +607,11 @@ int D3DClass::Shutdown()
 		m_renderTargetView = 0;
 	}
 
+	if (m_backBufferPtr) {
+		m_backBufferPtr->Release();
+		m_backBufferPtr = 0;
+	}
+
 	if(m_deviceContext)
 	{
 		m_deviceContext->Release();
@@ -763,4 +765,8 @@ void D3DClass::TurnOffAlphaBlending()
 	m_deviceContext->OMSetBlendState(m_alphaDisableBlendingState, blendFactor, 0xffffffff);
 
 	return;
+}
+
+ID3D11Texture2D*D3DClass::GetBackBuffer(void) {
+	return m_backBufferPtr;
 }

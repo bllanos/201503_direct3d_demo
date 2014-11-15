@@ -14,6 +14,7 @@
 #include "oct_tree.h"
 #include "GridSphereTextured.h"
 #include "ShipModel.h"
+#include "FlatAtomicConfigIO.h"
 
 // Logging message prefix
 #define GAMESTATE_START_MSG_PREFIX L"GameState"
@@ -67,6 +68,8 @@
 // Ship configuration
 #define GAMESTATE_GEOMETRY_SHIP_SCOPE L"shipmodel"
 
+#define GAMESTATE_CONFIGIO_CLASS FlatAtomicConfigIO
+
 class GameState : public State, public ConfigUser{
 private:
 	Camera* m_camera;
@@ -89,11 +92,15 @@ private:
 	size_t m_nAsteroidsX, m_nAsteroidsY, m_nAsteroidsZ;
 
 public:
-	GameState(void);
+	/* 'configureNow' allows derived classes to postpone configuration
+	   until they have been constructed.
+	 */
+	GameState(const bool configureNow = true);
 
-	~GameState(void);
+	virtual ~GameState(void);
 
-	virtual HRESULT initialize(ID3D11Device* device, int screenWidth, int screenHeight) override;
+	// The 'backBuffer' parameter is unused.
+	virtual HRESULT initialize(ID3D11Device* device, ID3D11Texture2D* backBuffer, int screenWidth, int screenHeight) override;
 
 	virtual HRESULT next(State*& nextState) override;
 

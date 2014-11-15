@@ -45,7 +45,7 @@ public:
 
 	virtual ~AlbedoTextureTestState(void);
 
-	virtual HRESULT initialize(ID3D11Device* device, int screenWidth, int screenHeight) override;
+	virtual HRESULT initialize(ID3D11Device* device, ID3D11Texture2D* backBuffer, int screenWidth, int screenHeight) override;
 
 	virtual HRESULT next(State*& nextState) override;
 

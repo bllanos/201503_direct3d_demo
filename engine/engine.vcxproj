@@ -13,11 +13,20 @@
   <ItemGroup>
     <ClCompile Include="cpp\camera\Camera.cpp" />
     <ClCompile Include="cpp\camera\CameraTransformable.cpp" />
+    <ClCompile Include="cpp\GameStateWithSSSE.cpp" />
+    <ClCompile Include="cpp\ssse\OneTextureSSSE.cpp" />
+    <ClCompile Include="cpp\ssse\TwoFrameSSSE.cpp" />
+    <ClCompile Include="cpp\util\Texture2DFromBytes.cpp" />
+    <ClCompile Include="cpp\ssse\SSSE.cpp" />
+    <ClCompile Include="cpp\geometry\UniformBurstSphere.cpp" />
+    <ClCompile Include="cpp\geometry\InvariantTexturedParticles.cpp" />
     <ClCompile Include="cpp\geometry\GridQuadTextured.cpp" />
     <ClCompile Include="cpp\geometry\GridSphereTextured.cpp" />
+    <ClCompile Include="cpp\geometry\InvariantParticles.cpp" />
     <ClCompile Include="cpp\geometry\ShipModel.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedTexturedGeometry.cpp" />
     <ClCompile Include="cpp\physics\Transformable.cpp" />
+    <ClCompile Include="cpp\rendering\InvariantParticlesRenderer.cpp" />
     <ClCompile Include="cpp\rendering\SkinnedRenderer.cpp" />
     <ClCompile Include="cpp\util\Shader.cpp" />
     <ClCompile Include="cpp\util\Texture.cpp" />
@@ -47,6 +56,15 @@
     <ClCompile Include="test\cpp\TexturedSphereTestState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\GameStateWithSSSE.h" />
+    <ClInclude Include="header\ssse\OneTextureSSSE.h" />
+    <ClInclude Include="header\geometry\vertexTypes.h" />
+    <ClInclude Include="header\ssse\SSSE.h" />
+    <ClInclude Include="header\ssse\TwoFrameSSSE.h" />
+    <ClInclude Include="header\util\Texture2DFromBytes.h" />
+    <ClInclude Include="header\geometry\UniformBurstSphere.h" />
+    <ClInclude Include="header\geometry\InvariantTexturedParticles.h" />
+    <ClInclude Include="header\geometry\InvariantParticles.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="header\camera\Camera.h" />
     <ClInclude Include="header\camera\CameraTransformable.h" />
@@ -55,6 +73,7 @@
     <ClInclude Include="header\geometry\ShipModel.h" />
     <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h" />
     <ClInclude Include="header\geometry\SphereModel.h" />
+    <ClInclude Include="header\rendering\InvariantParticlesRenderer.h" />
     <ClInclude Include="header\physics\Transformable.h" />
     <ClInclude Include="header\rendering\SkinnedRenderer.h" />
     <ClInclude Include="header\util\pipelineDefs.h" />
@@ -80,7 +99,6 @@
     <ClInclude Include="header\geometry\CubeModel.h" />
     <ClInclude Include="header\geometry\IGeometry.h" />
     <ClInclude Include="header\geometry\SimpleColorGeometry.h" />
-    <ClInclude Include="header\geometry\vertexTypes.h" />
     <ClInclude Include="header\input\IInteractive.h" />
     <ClInclude Include="header\physics\ITransformable.h" />
     <ClInclude Include="header\rendering\SimpleColorRenderer.h" />
@@ -123,10 +141,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)\..\win32_base\header\util;$(ProjectDir)\..\win32_base\header\interface;$(ProjectDir)\..\win32_base\header;$(ProjectDir)\header\input;$(ProjectDir)\header\physics;$(ProjectDir)\header\rendering;$(ProjectDir)\header;$(ProjectDir)\test\header;$(ProjectDir)\header\geometry;$(ProjectDir)\header\util;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)\..\win32_base\header\util;$(ProjectDir)\..\win32_base\header\interface;$(ProjectDir)\..\win32_base\header;$(ProjectDir)\header\input;$(ProjectDir)\header\physics;$(ProjectDir)\header\rendering;$(ProjectDir)\header;$(ProjectDir)\test\header;$(ProjectDir)\header\geometry;$(ProjectDir)\header\util;$(ProjectDir)\header\ssse;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)\..\win32_base\header\util;$(ProjectDir)\..\win32_base\header\interface;$(ProjectDir)\..\win32_base\header;$(ProjectDir)\header\input;$(ProjectDir)\header\physics;$(ProjectDir)\header\rendering;$(ProjectDir)\header;$(ProjectDir)\test\header;$(ProjectDir)\header\geometry;$(ProjectDir)\header\util;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)\..\win32_base\header\util;$(ProjectDir)\..\win32_base\header\interface;$(ProjectDir)\..\win32_base\header;$(ProjectDir)\header\input;$(ProjectDir)\header\physics;$(ProjectDir)\header\rendering;$(ProjectDir)\header;$(ProjectDir)\test\header;$(ProjectDir)\header\geometry;$(ProjectDir)\header\util;$(ProjectDir)\header\ssse;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

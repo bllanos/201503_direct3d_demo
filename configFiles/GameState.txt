@@ -9,7 +9,7 @@ BOOL -- GameState_LogUser::allocConsole = false
 BOOL -- GameState_LogUser::allocLogFile = true
 FILENAME -- GameState_LogUser::logFileName = "GameStateLog.txt"
 DIRECTORY -- GameState_LogUser::logFilePath = "..\logFiles"
-BOOL -- GameState_LogUser::overwriteFile = true
+BOOL -- GameState_LogUser::overwriteFile = false
 BOOL -- GameState_LogUser::timestampEnable = true
 
 # GameState ConfigUser configuration
@@ -46,3 +46,33 @@ DIRECTORY -- asteroid::inputConfigFilePath = "..\configFiles\geometry"
 # --------------------------------
 FILENAME -- shipmodel::inputConfigFileName = "shipmodel.txt"
 DIRECTORY -- shipmodel::inputConfigFilePath = "..\configFiles\geometry"
+
+
+# ///////////////////////////////////
+# Screen-Space Special Effects
+# ///////////////////////////////////
+
+# Night vision
+# --------------------------------
+FILENAME -- nightVision::inputConfigFileName = "nightVision.txt"
+DIRECTORY -- nightVision::inputConfigFilePath = "..\configFiles\ssse"
+
+# Horizontal wipe
+# --------------------------------
+FILENAME -- wipe::inputConfigFileName = "wipe.txt"
+DIRECTORY -- wipe::inputConfigFilePath = "..\configFiles\ssse"
+
+# Screen Tiling
+# --------------------------------
+FILENAME -- tile::inputConfigFileName = "tile.txt"
+DIRECTORY -- tile::inputConfigFilePath = "..\configFiles\ssse"
+
+# Ripple Effect
+# --------------------------------
+FILENAME -- ripple::inputConfigFileName = "ripple.txt"
+DIRECTORY -- ripple::inputConfigFilePath = "..\configFiles\ssse"
+
+# Smear Effect
+# --------------------------------
+FILENAME -- smear::inputConfigFileName = "smear.txt"
+DIRECTORY -- smear::inputConfigFilePath = "..\configFiles\ssse"
