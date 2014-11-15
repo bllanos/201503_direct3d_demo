@@ -108,7 +108,9 @@ private:
 	};
 
 public:
-	// Point light source
+	/* Point light source
+	   (also serves as a constant buffer structure)
+	 */
 	struct Light {
 		DirectX::XMFLOAT4 lightColor;
 		float lightAmbientWeight;

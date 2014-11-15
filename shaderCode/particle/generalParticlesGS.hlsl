@@ -40,7 +40,7 @@ cbuffer Globals : register(cb1) {
 struct VSOutput {
 	float3 positionVS : POSITION_VIEW; // View space
 	float2 billboard : BILLBOARD_WH; // Billboard dimensions
-	float angle : ANGLE; // Calculated based on direction, view direction, and rotation speed
+	float angle : ANGLE; // Billboard rotation, calculated based on direction, view direction, and rotation speed
 	float3 life : LIFE; // (current age, current health, decay factor)
 	float4 index : INDEX; // Same as input vertex
 };
@@ -48,7 +48,7 @@ struct VSOutput {
 struct PSInput {
 	float4 positionCS : SV_POSITION;
 	float3 life : LIFE; // (current age, current health, decay factor)
-	float4 index : INDEX;
+	float4 index : INDEX; // Input index multiplied by a static texture coordinate offset
 };
 
 #define QUAD_VERTEX_COUNT 4
@@ -86,11 +86,14 @@ void GSMAIN(point VSOutput input[1], inout TriangleStream<PSInput> QuadStream)
 		float4 basePositionVS = { input.positionVS, 1.0f };
 		float4 cornerPositionVS; // View-space corner position
 
-		// Calculate accurate up and sideways vectors
+		/* Calculate accurate up and sideways vectors,
+		   to make billboard normal to the view vector
+		 */
 		float3 normalizedPosition = normalize(input.positionVS);
 		float3 side = cross(g_up, normalizedPosition);
 		float3 up = cross(normalizedPosition, side);
 
+		// Apply billboard rotation and scaling
 		side = rotate(side, normalizedPosition, input.angle);
 		side *= billboard.x;
 		up = rotate(up, normalizedPosition, input.angle);
@@ -104,7 +107,27 @@ void GSMAIN(point VSOutput input[1], inout TriangleStream<PSInput> QuadStream)
 		output.positionCS = mul(cornerPositionVS, projectionMatrix);
 		output.life = input.life;
 		output.index = g_texcoords[0] * input.index; // Colour cast
+		QuadStream.Append(output);
 
+		// Top Right
+		cornerPositionVS = basePositionVS + upOffset + sideOffset;
+		output.positionCS = mul(cornerPositionVS, projectionMatrix);
+		output.life = input.life;
+		output.index = g_texcoords[1] * input.index; // Colour cast
+		QuadStream.Append(output);
+
+		// Bottom left
+		cornerPositionVS = basePositionVS - upOffset - sideOffset;
+		output.positionCS = mul(cornerPositionVS, projectionMatrix);
+		output.life = input.life;
+		output.index = g_texcoords[2] * input.index; // Colour cast
+		QuadStream.Append(output);
+
+		// Bottom Right
+		cornerPositionVS = basePositionVS - upOffset + sideOffset;
+		output.positionCS = mul(cornerPositionVS, projectionMatrix);
+		output.life = input.life;
+		output.index = g_texcoords[3] * input.index; // Colour cast
 		QuadStream.Append(output);
 
 		QuadStream.RestartStrip();
