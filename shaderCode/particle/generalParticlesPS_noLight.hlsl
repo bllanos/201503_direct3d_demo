@@ -18,7 +18,8 @@ Description
   -Particle RGB colour is set to the 'index' component
      of the input fragment.
   -Particle alpha is equal to the 'index' component's
-     'w' value multiplied by the particle's current health.
+     'w' value multiplied by the particle's current health
+	 and by the global blending factor.
 */
 
 
@@ -28,7 +29,7 @@ cbuffer Globals : register(cb1) {
 	float blendAmount;
 };
 
-/* Constant buffers used when lighting is enabled */
+/* Constant buffers bound only when lighting is enabled */
 /*
 cbuffer CameraProperties : register(cb0) {
 matrix viewMatrix;
@@ -45,3 +46,17 @@ cbuffer Light : register(cb3) {
 	float lightAmbientWeight;
 };
 */
+
+struct PSInput {
+	float4 positionSS : SV_POSITION; // Screen-space position
+	float3 life : LIFE; // (current age, current health, decay factor)
+	float4 index : INDEX; // Input index multiplied by a static texture coordinate offset
+};
+
+float4 PSMAIN(in PSInput input) : SV_TARGET
+{
+	float4 color = input.index;
+	color.w *= life.y;
+	color.w *= blendAmount;
+	return color;
+}
