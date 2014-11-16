@@ -16,12 +16,16 @@ void CameraTransformable::SetFollowTransform(Transformable* otherFollowTransform
 
 void CameraTransformable::setFirstPersonCam()
 {
-	m_position = XMFLOAT3(0.0f, 0.0f, CAMERA_FIRST_PERSON_DIST);
+	Move(-m_position.z);
+	Move(CAMERA_FIRST_PERSON_DIST);
 	m_orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void CameraTransformable::setThirdPersonCam()
 {
-	m_position = XMFLOAT3(0.0f, CAMERA_THIRD_PERSON_HEIGHT, CAMERA_THIRD_PERSON_DIST);
+	Move(-m_position.z);
+	Move(CAMERA_THIRD_PERSON_DIST);
+	Crane(CAMERA_THIRD_PERSON_HEIGHT);
+	
 	m_orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 }

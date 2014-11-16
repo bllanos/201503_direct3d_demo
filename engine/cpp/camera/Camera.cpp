@@ -213,6 +213,8 @@ XMFLOAT3 Camera::GetPosition() const
 
 int Camera::UpdateMatrices(void)
 {
+	// update the follow transform with the newest positions
+	if (m_followTransform != 0) m_followTransform->update(0, 0);
 	m_transform->update(0, 0);
 	m_transform->getWorldTransformNoScale(m_viewMatrix);
 
@@ -476,14 +478,19 @@ HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 			if (dist > CAMERA_DEAD_ZONE) {
 				m_followTransform->Spin(0.0f, 0.0f, mouseDir.x * PLAYER_PAN_SPEED);
 				m_followTransform->Spin(0.0f, mouseDir.y * -PLAYER_PAN_SPEED, 0.0f);
+
+				//m_transform->Spin(0.0f, 0.0f, mouseDir.x * PLAYER_PAN_SPEED);
+				//m_transform->Spin(0.0f, mouseDir.y * -PLAYER_PAN_SPEED, 0.0f);
 			}
 		}
 
 		if (input.IsKeyDown(Keyboard::ascii_W)) {
 			m_followTransform->Move(PLAYER_MOVE_SPEED);
+			//m_transform->Move(PLAYER_MOVE_SPEED);
 		}
 		if (input.IsKeyDown(Keyboard::ascii_S)) {
 			m_followTransform->Move(-PLAYER_MOVE_SPEED);
+			//m_transform->Move(-PLAYER_MOVE_SPEED);
 		}
 
 		if (input.IsKeyDown(Keyboard::ascii_A)) {
@@ -507,9 +514,6 @@ HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 		if (input.IsKeyDown(VK_CONTROL)) {
 			m_followTransform->Crane(-PLAYER_CRANE_SPEED);
 		}
-		
-		// update the follow transform with the newest positions
-		m_followTransform->update(0,0);
 	}
 	
 	// Any changes must be applied to the camera's rendering matrices

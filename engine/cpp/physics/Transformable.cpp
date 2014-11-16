@@ -222,7 +222,13 @@ XMFLOAT3 Transformable::getScale() const
 }
 
 XMFLOAT3 Transformable::getPosition(void) const {
-	return m_position;
+	XMFLOAT3 newPos = m_position;
+	if (m_parent != 0) {
+		newPos = XMFLOAT3(newPos.x + m_parent->getPosition().x,
+						  newPos.y + m_parent->getPosition().y, 
+					      newPos.z + m_parent->getPosition().z);
+	}
+	return newPos;
 }
 
 XMFLOAT4 Transformable::getOrientation(void) const {
