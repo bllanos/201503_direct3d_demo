@@ -39,7 +39,7 @@ m_SSSEs(0), m_currentSSSEIndex(0), m_currentSSSE(0)
 GameStateWithSSSE::~GameStateWithSSSE(void) {
 	if( m_SSSEs != 0 ) {
 		const vector<SSSE*>::size_type nSSSEs = m_SSSEs->size();
-		for( vector<SSSE**>::size_type i = 0; i < nSSSEs; ++i ) {
+		for( vector<SSSE*>::size_type i = 0; i < nSSSEs; ++i ) {
 			if( (*m_SSSEs)[i] != 0 ) {
 				delete (*m_SSSEs)[i];
 				(*m_SSSEs)[i] = 0;

@@ -116,8 +116,14 @@ public:
 	/* The effective constructor.
 	 */
 	virtual HRESULT initialize(ID3D11Device* const device,
-		const Transformable* const transform);
+		const Transformable* const transform = 0);
 
+	// Collision detection
+public:
+	virtual XMFLOAT3 getPosition() override;
+	virtual float getRadius() override;
+
+	// Geometry setup
 public:
 
 	virtual size_t getNumberOfVerticesToAdd(void) const override;

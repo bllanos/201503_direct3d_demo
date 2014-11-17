@@ -142,6 +142,8 @@ HRESULT InvariantParticles::initialize(ID3D11Device* const device,
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
+	m_transform = transform;
+
 	return ERROR_SUCCESS;
 }
 

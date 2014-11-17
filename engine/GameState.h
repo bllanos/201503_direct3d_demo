@@ -71,9 +71,12 @@
 #define GAMESTATE_CONFIGIO_CLASS FlatAtomicConfigIO
 
 class GameState : public State, public ConfigUser{
-private:
+
+	// Data members
+protected:
 	Camera* m_camera;
 
+private:
 	Octtree* m_tree;
 
 	GridSphereTextured* m_asteroid;

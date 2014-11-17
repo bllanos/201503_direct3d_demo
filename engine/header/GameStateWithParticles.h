@@ -34,6 +34,7 @@ Description
 #define GAMESTATEWITHPARTICLES_SCOPE L"GameStateWithParticles"
 
 /* Explosion particle system configuration */
+#define GAMESTATEWITHPARTICLES_EXPLOSION_LIFE_MIN 10
 #define GAMESTATEWITHPARTICLES_EXPLOSION_LIFE_DEFAULT 10000 // Milliseconds
 #define GAMESTATEWITHPARTICLES_EXPLOSION_LIFE_FIELD L"explosionLife"
 
@@ -41,11 +42,13 @@ Description
 #define GAMESTATEWITHPARTICLES_DEMO_FIELD L"demoMode"
 #define GAMESTATEWITHPARTICLES_DEMO_DEFAULT false
 
+#define GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_MIN 0
 #define GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_DEFAULT 10
 #define GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_FIELD L"nExplosions"
 
 // Radius of the spherical area in which to spawn fireworks
-#define GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_MIN 0.0f
+#define GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_DEFAULT 10.0f
 #define GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_FIELD L"zoneRadius"
 
 // LogUser and ConfigUser configuration parameters
@@ -66,8 +69,12 @@ private:
 	 */
 	template <typename T> class ActiveParticles {
 	private:
+		// Shared - not deleted upon destruction
 		T* m_particles;
+
+		// Shared - not deleted upon destruction
 		Transformable* m_transform;
+
 		DWORD m_startTime;
 		DWORD m_lifespan;
 
@@ -85,6 +92,11 @@ private:
 		HRESULT drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const Camera* const camera);
 
 		Transformable* getTransform(void);
+
+		// Currently not implemented - will cause linker errors if called
+	private:
+		ActiveParticles(const ActiveParticles& other);
+		ActiveParticles& operator=(const ActiveParticles& other);
 	};
 
 	// Data members
@@ -120,8 +132,6 @@ public:
 	virtual HRESULT drawContents(ID3D11DeviceContext* const context, GeometryRendererManager& manager) override;
 
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval) override;
-
-	virtual HRESULT poll(Keyboard& input, Mouse& mouse) override;
 
 	// Control functions
 public:
@@ -163,10 +173,49 @@ protected:
 	   Spawns additional particle systems if necessary to
 	   preserve the number of active particle systems
 	 */
-	virtual HRESULT updateDemo(Transformable* const transform);
+	virtual HRESULT updateDemo(void);
 
 	// Currently not implemented - will cause linker errors if called
 private:
 	GameStateWithParticles(const GameStateWithParticles& other);
 	GameStateWithParticles& operator=(const GameStateWithParticles& other);
 };
+
+template <typename T> GameStateWithParticles::ActiveParticles<T>::ActiveParticles(T* particles, Transformable* transform, DWORD lifespan, DWORD currentTime) :
+m_particles(particles), m_transform(transform),
+m_startTime(currentTime), m_lifespan(lifespan),
+m_time(static_cast<float>(currentTime), 0.0f)
+{}
+
+template <typename T> GameStateWithParticles::ActiveParticles<T>::~ActiveParticles(void)
+{}
+
+template <typename T> HRESULT GameStateWithParticles::ActiveParticles<T>::update(const DWORD currentTime, const DWORD updateTimeInterval, bool& isExpired) {
+	m_time.x = static_cast<float>(currentTime);
+	m_time.y = static_cast<float>(updateTimeInterval);
+	isExpired = (currentTime - m_startTime) > m_lifespan;
+	return ERROR_SUCCESS;
+}
+template <typename T> HRESULT GameStateWithParticles::ActiveParticles<T>::drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const Camera* const camera) {
+	// Update time
+	if( FAILED(m_particles->setTime(m_time)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+
+	}
+
+	// Set the appropriate transformation
+	if( FAILED(m_particles->setTransformable(m_transform)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	
+	// Render
+	if( FAILED(m_particles->drawUsingAppropriateRenderer(context, manager, camera)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	return ERROR_SUCCESS;
+}
+
+template <typename T> Transformable* GameStateWithParticles::ActiveParticles<T>::getTransform(void) {
+	return m_transform;
+}
