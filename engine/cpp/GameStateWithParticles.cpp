@@ -121,6 +121,15 @@ HRESULT GameStateWithParticles::drawContents(ID3D11DeviceContext* const context,
 HRESULT GameStateWithParticles::update(const DWORD currentTime, const DWORD updateTimeInterval) {
 	HRESULT result = ERROR_SUCCESS;
 
+	// Update the demo, if in demo mode
+	if( m_demo_enabled ) {
+		result = updateDemo();
+		if( FAILED(result) ) {
+			logMessage(L"Failed to update demo simulation.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
 	// Update all explosions
 	bool isExpired = false;
 	vector<ActiveParticles<UniformBurstSphere>*>::size_type nExplosions = m_explosions->size();
@@ -145,15 +154,6 @@ HRESULT GameStateWithParticles::update(const DWORD currentTime, const DWORD upda
 					}
 				}
 			}
-		}
-	}
-
-	// Update the demo, if in demo mode
-	if( m_demo_enabled ) {
-		result = updateDemo();
-		if( FAILED(result) ) {
-			logMessage(L"Failed to update demo simulation.");
-			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}
 
