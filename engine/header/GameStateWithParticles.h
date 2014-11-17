@@ -62,6 +62,9 @@ Description
 class GameStateWithParticles : public GameState {
 
 private:
+
+#define ACTIVEPARTICLES_INFINITELIFE static_cast<DWORD>(0)
+
 	/* Datatype used to store and render particle systems,
 	   as well as track when they expire.
 
@@ -82,11 +85,18 @@ private:
 		DirectX::XMFLOAT2 m_time;
 
 	public:
+		/* If 'lifespan' is zero, the particle system will have
+		   an infinite lifespan.
+		 */
 		ActiveParticles(T* particles, Transformable* transform, DWORD lifespan, DWORD currentTime);
 		~ActiveParticles(void);
 
 		/* 'isExpired' is an output parameter that indicates when
 		    the particle system has exceeded its lifespan.
+
+			Note that the lifespan is determined by the constructor
+			parameter 'lifespan', rather than retrieved from the particle
+			system itself.
 		 */
 		HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval, bool& isExpired);
 		HRESULT drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const Camera* const camera);
@@ -193,9 +203,11 @@ template <typename T> GameStateWithParticles::ActiveParticles<T>::~ActiveParticl
 template <typename T> HRESULT GameStateWithParticles::ActiveParticles<T>::update(const DWORD currentTime, const DWORD updateTimeInterval, bool& isExpired) {
 	m_time.x = static_cast<float>(currentTime);
 	m_time.y = static_cast<float>(updateTimeInterval);
-	isExpired = (currentTime - m_startTime) > m_lifespan;
+	isExpired = (ACTIVEPARTICLES_INFINITELIFE != m_lifespan) &&
+		((currentTime - m_startTime) > m_lifespan);
 	return ERROR_SUCCESS;
 }
+
 template <typename T> HRESULT GameStateWithParticles::ActiveParticles<T>::drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const Camera* const camera) {
 	// Update time
 	if( FAILED(m_particles->setTime(m_time)) ) {

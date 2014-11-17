@@ -117,7 +117,7 @@ HRESULT GameStateWithParticles::update(const DWORD currentTime, const DWORD upda
 
 	// Update all explosions
 	bool isExpired = false;
-	const vector<ActiveParticles<UniformBurstSphere>*>::size_type nExplosions = m_explosions->size();
+	vector<ActiveParticles<UniformBurstSphere>*>::size_type nExplosions = m_explosions->size();
 	for( vector<ActiveParticles<UniformBurstSphere>*>::size_type i = nExplosions - 1; i >= 0; --i ) {
 		result = (*m_explosions)[i]->update(currentTime, updateTimeInterval, isExpired);
 		if( FAILED(result) ) {
@@ -128,6 +128,14 @@ HRESULT GameStateWithParticles::update(const DWORD currentTime, const DWORD upda
 			if( FAILED(result) ) {
 				logMessage(L"Failed to remove expired explosion particle system at index = " + std::to_wstring(i) + L".");
 				return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+			} else {
+				nExplosions = m_explosions->size();
+				if( i >= nExplosions ) {
+					/* This may result in multiple update() calls to the same
+					   explosion, but it is assumed that this does not matter.
+					 */
+					i = nExplosions - 1;
+				}
 			}
 		}
 	}
@@ -140,6 +148,9 @@ HRESULT GameStateWithParticles::update(const DWORD currentTime, const DWORD upda
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}
+
+	// Update internal timer
+	m_currentTime = currentTime;
 
 	// Update the base class
 	return GameState::update(currentTime, updateTimeInterval);

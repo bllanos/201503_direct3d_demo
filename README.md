@@ -123,6 +123,9 @@ The following works were consulted for ideas during development:
   - Retrieved October 31, 2014
   - Usage terms: Permissive (http://www.nasa.gov/audience/formedia/features/MP_Photo_Guidelines.html#.VEQBixaDbfc)
 
+- "Clouds and Sun" (`textures\IMG_3317.JPG`)
+  - Image Source: Bernard Llanos
+
 ### Textures used by test code only
 
 - "King Fire in California, False-Color Infrared" (`textures\test\kingfire_oli_2014262_swir_lrg.jpg`)
