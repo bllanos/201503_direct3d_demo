@@ -42,12 +42,12 @@ DOUBLE -- UniformBurstSphere::transparencyMultiplier = 1.0
 
 # UniformBurstSphere lighting configuration
 # ---------------------------------------
-BOOL -- UniformBurstSphere::renderWithLighting = true
+BOOL -- UniformBurstSphere::renderWithLighting = false
 
 # UniformBurstSphere albedo texture controls
 # ----------------------------------------------
 BOOL -- UniformBurstSphere::createAlbedoTexture = true
-BOOL -- UniformBurstSphere::renderAlbedoTexture = false
+BOOL -- UniformBurstSphere::renderAlbedoTexture = true
 
 # UniformBurstSphere albedo texture configuration
 # ----------------------------------------------
