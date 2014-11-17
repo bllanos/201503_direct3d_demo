@@ -183,6 +183,8 @@ public:
 
 	virtual HRESULT setTime(const DirectX::XMFLOAT2& time);
 
+	virtual void setColorCast(const DirectX::XMFLOAT3& colorCast);
+
 	// Functions to support rendering
 public:
 
@@ -196,6 +198,8 @@ public:
 	const Material* getMaterial(void) const;
 
 	virtual HRESULT getTime(DirectX::XMFLOAT2& time) const;
+
+	virtual DirectX::XMFLOAT3 getColorCast(void) const;
 
 protected:
 	/* Performs vertex buffer-related pipeline
@@ -248,6 +252,8 @@ private:
 	 */
 	float m_blend;
 
+	DirectX::XMFLOAT3 m_colorCast;
+
 protected:
 	const Transformable* m_transform; // Shared - not deleted by the destructor
 
@@ -296,7 +302,8 @@ template<typename ConfigIOClass> InvariantParticles::InvariantParticles(
 	m_blend(INVARIANTPARTICLES_BLEND_DEFAULT),
 	m_rendererType(0),
 	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT),
-	m_time(XMFLOAT2(0.0f, 0.0f)) {}
+	m_time(XMFLOAT2(0.0f, 0.0f)),
+	m_colorCast(XMFLOAT3(0.0f, 0.0f, 0.0f)) {}
 
 template<typename ConfigIOClass> InvariantParticles::InvariantParticles(
 	const bool enableLogging, const std::wstring& msgPrefix,
@@ -318,4 +325,5 @@ template<typename ConfigIOClass> InvariantParticles::InvariantParticles(
 	m_blend(INVARIANTPARTICLES_BLEND_DEFAULT),
 	m_rendererType(0),
 	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT),
-	m_time(XMFLOAT2(0.0f, 0.0f)) {}
+	m_time(XMFLOAT2(0.0f, 0.0f)),
+	m_colorCast(XMFLOAT3(0.0f, 0.0f, 0.0f)) {}

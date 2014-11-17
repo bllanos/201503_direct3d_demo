@@ -84,11 +84,13 @@ private:
 		// Used to set the time of the particle system before rendering
 		DirectX::XMFLOAT2 m_time;
 
+		DirectX::XMFLOAT3 m_colorCast;
+
 	public:
 		/* If 'lifespan' is zero, the particle system will have
 		   an infinite lifespan.
 		 */
-		ActiveParticles(T* particles, Transformable* transform, DWORD lifespan, DWORD currentTime);
+		ActiveParticles(T* particles, Transformable* transform, DWORD lifespan, DWORD currentTime, const DirectX::XMFLOAT3& colorCast);
 		~ActiveParticles(void);
 
 		/* 'isExpired' is an output parameter that indicates when
@@ -193,10 +195,11 @@ private:
 	GameStateWithParticles& operator=(const GameStateWithParticles& other);
 };
 
-template <typename T> GameStateWithParticles::ActiveParticles<T>::ActiveParticles(T* particles, Transformable* transform, DWORD lifespan, DWORD currentTime) :
+template <typename T> GameStateWithParticles::ActiveParticles<T>::ActiveParticles(T* particles, Transformable* transform, DWORD lifespan, DWORD currentTime, const DirectX::XMFLOAT3& colorCast) :
 m_particles(particles), m_transform(transform),
 m_startTime(currentTime), m_lifespan(lifespan),
-m_time(static_cast<float>(currentTime), 0.0f)
+m_time(static_cast<float>(currentTime), 0.0f),
+m_colorCast(colorCast)
 {}
 
 template <typename T> GameStateWithParticles::ActiveParticles<T>::~ActiveParticles(void)
@@ -229,6 +232,9 @@ template <typename T> HRESULT GameStateWithParticles::ActiveParticles<T>::drawUs
 	if( FAILED(m_particles->setTransformable(m_transform)) ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
+
+	// Set colour cast
+	m_particles->setColorCast(m_colorCast);
 	
 	// Render
 	if( FAILED(m_particles->drawUsingAppropriateRenderer(context, manager, camera)) ) {

@@ -172,7 +172,8 @@ HRESULT GameStateWithParticles::spawnExplosion(Transformable* const transform) {
 
 	ActiveParticles<UniformBurstSphere>* newExplosion = 0;
 	newExplosion = new ActiveParticles<UniformBurstSphere>(
-		m_explosionModel, transform, m_explosionLifespan, m_currentTime);
+		m_explosionModel, transform, m_explosionLifespan, m_currentTime,
+		XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 	m_explosions->emplace_back(newExplosion);
 
@@ -382,7 +383,8 @@ HRESULT GameStateWithParticles::updateDemo(void) {
 				m_explosionModel,
 				transform,
 				static_cast<DWORD>(static_cast<float>(m_explosionLifespan) * w),
-				m_currentTime)
+				m_currentTime,
+				XMFLOAT3(u, v, w))
 				);
 		}
 	}

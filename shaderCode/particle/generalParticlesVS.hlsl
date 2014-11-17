@@ -29,6 +29,7 @@ cbuffer Globals : register(cb1) {
 	matrix worldMatrix;
 	float2 time;
 	float blendAmount;
+	float3 colorCast;
 };
 
 struct VSInput {

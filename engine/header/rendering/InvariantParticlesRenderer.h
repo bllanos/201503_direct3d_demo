@@ -104,7 +104,8 @@ private:
 		DirectX::XMFLOAT4X4 world;
 		DirectX::XMFLOAT2 time;
 		float blendAmount;
-		float padding;
+		DirectX::XMFLOAT3 colourCast;
+		DirectX::XMFLOAT2 padding;
 	};
 
 public:

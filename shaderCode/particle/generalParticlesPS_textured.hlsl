@@ -22,6 +22,7 @@ cbuffer Globals : register(cb0) {
 	matrix worldMatrix;
 	float2 time;
 	float blendAmount;
+	float3 colorCast;
 };
 
 /* Constant buffers bound only when lighting is enabled */
@@ -54,6 +55,7 @@ struct PSInput {
 float4 PSMAIN(in PSInput input) : SV_TARGET
 {
 	float4 color = txAlbedo.Sample(smpAlbedo, input.index);
+	color.xyz *= colorCast;
 	color.w *= input.life.y;
 	color.w *= blendAmount;
 	return color;

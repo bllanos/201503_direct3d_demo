@@ -589,6 +589,9 @@ HRESULT InvariantParticlesRenderer::setNoLightShaderParameters(
 	}
 	globalDataPtr->time = time;
 
+	// Colour cast
+	globalDataPtr->colourCast = geometry.getColorCast();
+
 	// Unlock the buffer.
 	context->Unmap(m_globalBuffer, 0);
 

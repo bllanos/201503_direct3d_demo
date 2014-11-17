@@ -35,7 +35,8 @@ InvariantParticles::InvariantParticles(const bool enableLogging, const std::wstr
 	m_blend(INVARIANTPARTICLES_BLEND_DEFAULT),
 	m_rendererType(0),
 	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT),
-	m_time(XMFLOAT2(0.0f, 0.0f))
+	m_time(XMFLOAT2(0.0f, 0.0f)),
+	m_colorCast(XMFLOAT3(0.0f, 0.0f, 0.0f))
 {}
 
 InvariantParticles::InvariantParticles(const bool enableLogging, const std::wstring& msgPrefix,
@@ -48,7 +49,8 @@ InvariantParticles::InvariantParticles(const bool enableLogging, const std::wstr
 	m_blend(INVARIANTPARTICLES_BLEND_DEFAULT),
 	m_rendererType(0),
 	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT),
-	m_time(XMFLOAT2(0.0f, 0.0f))
+	m_time(XMFLOAT2(0.0f, 0.0f)),
+	m_colorCast(XMFLOAT3(0.0f, 0.0f, 0.0f))
 {}
 
 HRESULT InvariantParticles::configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope) {
@@ -301,6 +303,10 @@ HRESULT InvariantParticles::getWorldTransform(DirectX::XMFLOAT4X4& worldTransfor
 	return ERROR_SUCCESS;
 }
 
+void InvariantParticles::setColorCast(const DirectX::XMFLOAT3& colorCast) {
+	m_colorCast = colorCast;
+}
+
 size_t InvariantParticles::getVertexCount(void) const {
 	return m_vertexCount;
 }
@@ -318,6 +324,9 @@ HRESULT InvariantParticles::getTime(DirectX::XMFLOAT2& time) const {
 	return ERROR_SUCCESS;
 }
 
+DirectX::XMFLOAT3 InvariantParticles::getColorCast(void) const {
+	return m_colorCast;
+}
 
 HRESULT InvariantParticles::setVerticesOnContext(ID3D11DeviceContext* const context) {
 	unsigned int stride = INVARIANTPARTICLES_VERTEX_SIZE;
