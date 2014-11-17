@@ -60,10 +60,16 @@ GameStateWithParticles::~GameStateWithParticles(void) {
 	}
 
 	if( m_explosions != 0 ) {
+		ActiveParticles<UniformBurstSphere>* activeParticles = 0;
 		const vector<ActiveParticles<UniformBurstSphere>*>::size_type nExplosions = m_explosions->size();
 		for( vector<ActiveParticles<UniformBurstSphere>*>::size_type i = 0; i < nExplosions; ++i ) {
-			if( (*m_explosions)[i] != 0 ) {
-				delete (*m_explosions)[i];
+			activeParticles = (*m_explosions)[i];
+			if( activeParticles != 0 ) {
+				if( m_demo_enabled ) {
+					delete activeParticles->getTransform();
+				}
+				delete activeParticles;
+				activeParticles = 0;
 				(*m_explosions)[i] = 0;
 			}
 		}
@@ -118,23 +124,25 @@ HRESULT GameStateWithParticles::update(const DWORD currentTime, const DWORD upda
 	// Update all explosions
 	bool isExpired = false;
 	vector<ActiveParticles<UniformBurstSphere>*>::size_type nExplosions = m_explosions->size();
-	for( vector<ActiveParticles<UniformBurstSphere>*>::size_type i = nExplosions - 1; i >= 0; --i ) {
-		result = (*m_explosions)[i]->update(currentTime, updateTimeInterval, isExpired);
-		if( FAILED(result) ) {
-			logMessage(L"Failed to update explosion particle system at index = " + std::to_wstring(i) + L".");
-			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-		} else if(isExpired) {
-			result = removeExplosion((*m_explosions)[i]->getTransform());
+	if( nExplosions > 0 ) {
+		for( vector<ActiveParticles<UniformBurstSphere>*>::size_type i = nExplosions - 1; (i >= 0) && (i < nExplosions); --i ) {
+			result = (*m_explosions)[i]->update(currentTime, updateTimeInterval, isExpired);
 			if( FAILED(result) ) {
-				logMessage(L"Failed to remove expired explosion particle system at index = " + std::to_wstring(i) + L".");
+				logMessage(L"Failed to update explosion particle system at index = " + std::to_wstring(i) + L".");
 				return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-			} else {
-				nExplosions = m_explosions->size();
-				if( i >= nExplosions ) {
-					/* This may result in multiple update() calls to the same
-					   explosion, but it is assumed that this does not matter.
-					 */
-					i = nExplosions - 1;
+			} else if( isExpired ) {
+				result = removeExplosion((*m_explosions)[i]->getTransform());
+				if( FAILED(result) ) {
+					logMessage(L"Failed to remove expired explosion particle system at index = " + std::to_wstring(i) + L".");
+					return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+				} else {
+					nExplosions = m_explosions->size();
+					if( i >= nExplosions ) {
+						/* This may result in multiple update() calls to the same
+						   explosion, but it is assumed that this does not matter.
+						   */
+						i = nExplosions - 1;
+					}
 				}
 			}
 		}

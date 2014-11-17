@@ -668,4 +668,9 @@ void InvariantParticlesRenderer::renderShader(ID3D11DeviceContext* const context
 
 	// Render the geometry.
 	context->Draw(particleCount, 0);
+
+	/* Unbind the geometry shader
+	   to prevent interference with other renderers
+	 */
+	context->GSSetShader(NULL, NULL, 0);
 }
