@@ -61,6 +61,8 @@ VSOutput VSMAIN(in VSInput input) {
 
 	// Linear motion
 	inPosition.xyz += (input.linearVelocity.xyz) * (input.linearVelocity.w) * age;
+	// Ballistic motion
+	inPosition.y -= 0.0000005f * pow(age, 2);
 
 	// World position
 	inPosition = mul(inPosition, worldMatrix);
