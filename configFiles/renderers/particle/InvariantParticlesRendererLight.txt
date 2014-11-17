@@ -1,0 +1,76 @@
+# Configuration file for the InvariantParticlesRenderer class
+# Version to be used for lit, untextured particles
+
+# LogUser configuration
+# ---------------------
+BOOL -- InvariantParticlesRenderer_LogUser::enableLogging = true
+WSTRING -- InvariantParticlesRenderer_LogUser::msgPrefix = L"InvariantParticlesRendererLight"
+BOOL -- InvariantParticlesRenderer_LogUser::useGlobalLog = true
+
+# ConfigUser configuration
+# ------------------------
+BOOL -- InvariantParticlesRenderer_ConfigUser::enableConfigUseLogging = true
+
+# Enable lighting
+# ----------------
+BOOL -- InvariantParticlesRenderer::enableLighting = true
+
+# Vertex Shader setup
+# -------------------
+BOOL -- InvariantParticlesRenderer::VS_enableLogging = true
+WSTRING -- InvariantParticlesRenderer::VS_msgPrefix = L"InvariantParticlesRendererLight VS"
+WSTRING -- InvariantParticlesRenderer::VS_scope = L"VS"
+WSTRING -- InvariantParticlesRenderer::VS_scope_LogUser = L"shader_LogUser"
+WSTRING -- InvariantParticlesRenderer::VS_scope_ConfigUser = L"shader_ConfigUser"
+FILENAME -- InvariantParticlesRenderer::VS_inputConfigFileName = "InvariantParticlesRendererLight.txt"
+DIRECTORY -- InvariantParticlesRenderer::VS_inputConfigFilePath = "..\configFiles\renderers\particle"
+
+WSTRING -- VS::type = L"VertexShader"
+FILENAME -- VS::fileName = "generalParticlesVS.hlsl"
+DIRECTORY -- VS::filePath = "..\shaderCode\particle"
+WSTRING -- VS::shaderModel = L"vs_4_0"
+WSTRING -- VS::entryPoint = L"VSMAIN"
+
+# Geometry Shader setup
+# -------------------
+BOOL -- InvariantParticlesRenderer::GS_enableLogging = true
+WSTRING -- InvariantParticlesRenderer::GS_msgPrefix = L"InvariantParticlesRendererLight GS"
+WSTRING -- InvariantParticlesRenderer::GS_scope = L"GS"
+WSTRING -- InvariantParticlesRenderer::GS_scope_LogUser = L"shader_LogUser"
+WSTRING -- InvariantParticlesRenderer::GS_scope_ConfigUser = L"shader_ConfigUser"
+FILENAME -- InvariantParticlesRenderer::GS_inputConfigFileName = "InvariantParticlesRendererLight.txt"
+DIRECTORY -- InvariantParticlesRenderer::GS_inputConfigFilePath = "..\configFiles\renderers\particle"
+
+WSTRING -- GS::type = L"GeometryShader"
+FILENAME -- GS::fileName = "generalParticlesGS.hlsl"
+DIRECTORY -- GS::filePath = "..\shaderCode\particle"
+WSTRING -- GS::shaderModel = L"gs_4_0"
+WSTRING -- GS::entryPoint = L"GSMAIN"
+
+# Pixel Shader setup
+# -------------------
+BOOL -- InvariantParticlesRenderer::PS_enableLogging = true
+WSTRING -- InvariantParticlesRenderer::PS_msgPrefix = L"InvariantParticlesRendererLight PS"
+WSTRING -- InvariantParticlesRenderer::PS_scope = L"PS"
+WSTRING -- InvariantParticlesRenderer::PS_scope_LogUser = L"shader_LogUser"
+WSTRING -- InvariantParticlesRenderer::PS_scope_ConfigUser = L"shader_ConfigUser"
+FILENAME -- InvariantParticlesRenderer::PS_inputConfigFileName = "InvariantParticlesRendererLight.txt"
+DIRECTORY -- InvariantParticlesRenderer::PS_inputConfigFilePath = "..\configFiles\renderers\particle"
+
+WSTRING -- PS::type = L"PixelShader"
+FILENAME -- PS::fileName = "generalParticlesPS_ambientLight.hlsl"
+DIRECTORY -- PS::filePath = "..\shaderCode\particle"
+WSTRING -- PS::shaderModel = L"ps_4_0"
+WSTRING -- PS::entryPoint = L"PSMAIN"
+
+# Common shader setup
+# ---------------------
+BOOL -- shader_LogUser::enableLogging = true
+# WSTRING -- shader_LogUser::msgPrefix = L"InvariantParticlesRendererLight Shader"
+BOOL -- shader_LogUser::useGlobalLog = true
+BOOL -- shader_ConfigUser::enableConfigUseLogging = true
+
+# Light parameters
+# ----------------
+COLOR -- InvariantParticlesRenderer::lightColor = (50, 100, 200, 255)
+DOUBLE -- InvariantParticlesRenderer::lightAmbientWeight = 1.2

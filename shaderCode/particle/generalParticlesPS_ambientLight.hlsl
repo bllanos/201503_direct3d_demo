@@ -1,25 +1,24 @@
 /*
-generalParticlesPS_noLight.hlsl
--------------------------------
+generalParticlesPS_ambientLight.hlsl
+------------------------------------
 
-Created for: COMP3501A Project
+Created for: COMP3501A Assignment 7
 Fall 2014, Carleton University
 
-Authors:
-Brandon Keyes, ID: 100897196
+Author:
 Bernard Llanos, ID: 100793648
-Mark Wilkes, ID: 100884169
 
-Created November 15, 2014
+Created November 17, 2014
 
-Primary basis: skinnedColorPS_noLight.hlsl
+Primary basis: generalParticlesPS_noLight.hlsl
 
 Description
   -Particle RGB colour is set to the 'index' component
      of the input fragment.
   -Particle alpha is equal to the 'index' component's
      'w' value multiplied by the particle's current health
-	 and by the global blending factor.
+      and by the global blending factor.
+  -Ambient lighting calculation
 */
 
 
@@ -30,7 +29,8 @@ cbuffer Globals : register(cb0) {
 };
 
 /* Constant buffers bound only when lighting is enabled */
-/*
+
+// Currently unused
 cbuffer CameraProperties : register(cb1) {
 matrix viewMatrix;
 matrix projectionMatrix;
@@ -38,14 +38,13 @@ float4 cameraPosition;
 };
 
 cbuffer Material : register(cb2) {
-	float4 ambientAlbedo;
+float4 ambientAlbedo;
 };
 
 cbuffer Light : register(cb3) {
-	float4 lightColor;
-	float lightAmbientWeight;
+float4 lightColor;
+float lightAmbientWeight;
 };
-*/
 
 struct PSInput {
 	float4 positionSS : SV_POSITION; // Screen-space position
@@ -55,7 +54,10 @@ struct PSInput {
 
 float4 PSMAIN(in PSInput input) : SV_TARGET
 {
-	float4 color = input.index;
+	float4 color = ambientAlbedo * lightAmbientWeight;
+	color *= (input.index * lightColor);
+	color = saturate(color);
+
 	color.w *= input.life.y;
 	color.w *= blendAmount;
 	return color;

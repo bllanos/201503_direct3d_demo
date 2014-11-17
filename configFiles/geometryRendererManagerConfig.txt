@@ -8,6 +8,7 @@ BOOL -- GeometryRendererManager::SkinnedRendererLight = true
 BOOL -- GeometryRendererManager::SkinnedTexturedRendererNoLight = true
 BOOL -- GeometryRendererManager::SkinnedTexturedRendererLight = true
 BOOL -- GeometryRendererManager::InvariantParticlesRendererNoLight = true
+BOOL -- GeometryRendererManager::InvariantParticlesRendererLight = true
 
 # Where to find configuration data for the SimpleColorRenderer
 # ------------------------------------------------------------
@@ -30,3 +31,6 @@ DIRECTORY -- GeometryRendererManager::SkinnedTexturedRendererLight_inputConfigFi
 
 FILENAME -- GeometryRendererManager::InvariantParticlesRendererNoLight_inputConfigFileName = "InvariantParticlesRendererNoLight.txt"
 DIRECTORY -- GeometryRendererManager::InvariantParticlesRendererNoLight_inputConfigFilePath = "..\configFiles\renderers\particle"
+
+FILENAME -- GeometryRendererManager::InvariantParticlesRendererLight_inputConfigFileName = "InvariantParticlesRendererLight.txt"
+DIRECTORY -- GeometryRendererManager::InvariantParticlesRendererLight_inputConfigFilePath = "..\configFiles\renderers\particle"
