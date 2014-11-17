@@ -23,7 +23,7 @@ Description
 */
 
 
-cbuffer Globals : register(cb1) {
+cbuffer Globals : register(cb0) {
 	matrix worldMatrix;
 	float2 time;
 	float blendAmount;
@@ -31,7 +31,7 @@ cbuffer Globals : register(cb1) {
 
 /* Constant buffers bound only when lighting is enabled */
 /*
-cbuffer CameraProperties : register(cb0) {
+cbuffer CameraProperties : register(cb1) {
 matrix viewMatrix;
 matrix projectionMatrix;
 float4 cameraPosition;

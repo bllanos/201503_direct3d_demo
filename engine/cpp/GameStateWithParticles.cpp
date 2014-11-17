@@ -126,7 +126,7 @@ HRESULT GameStateWithParticles::update(const DWORD currentTime, const DWORD upda
 	vector<ActiveParticles<UniformBurstSphere>*>::size_type nExplosions = m_explosions->size();
 	if( nExplosions > 0 ) {
 		for( vector<ActiveParticles<UniformBurstSphere>*>::size_type i = nExplosions - 1; (i >= 0) && (i < nExplosions); --i ) {
-			result = (*m_explosions)[i]->update(currentTime, updateTimeInterval, isExpired);
+			result = (*m_explosions)[i]->update(currentTime, updateTimeInterval, isExpired, m_demo_enabled);
 			if( FAILED(result) ) {
 				logMessage(L"Failed to update explosion particle system at index = " + std::to_wstring(i) + L".");
 				return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -180,10 +180,9 @@ HRESULT GameStateWithParticles::spawnExplosion(Transformable* const transform) {
 }
 
 HRESULT GameStateWithParticles::removeExplosion(Transformable* const transform) {
-	vector<ActiveParticles<UniformBurstSphere>*>::iterator end = m_explosions->end();
 	vector<ActiveParticles<UniformBurstSphere>*>::iterator it = m_explosions->begin();
 
-	while( it != end ) {
+	while( it != m_explosions->end() ) {
 		if( (*it)->getTransform() == transform ) {
 			delete *it;
 			it = m_explosions->erase(it);
@@ -355,8 +354,8 @@ HRESULT GameStateWithParticles::initializeParticles(ID3D11Device* device) {
 HRESULT GameStateWithParticles::updateDemo(void) {
 	if( m_explosions->size() < m_demo_nExplosions ) {
 		float u, v, w; // Random sampling variables
-		std::default_random_engine generator;
-		std::uniform_real_distribution<float> distribution(0.0, 1.0);
+		static std::default_random_engine generator;
+		static std::uniform_real_distribution<float> distribution(0.0, 1.0);
 		float theta, phi, radius; // Spherical polar coordinates
 
 		Transformable* transform;
@@ -367,7 +366,7 @@ HRESULT GameStateWithParticles::updateDemo(void) {
 			w = distribution(generator);
 			theta = DirectX::XM_2PI * u;
 			phi = XMScalarACos(2.0f*v - 1.0f);
-			radius = cbrtf(w * m_demo_zoneRadius);
+			radius = cbrtf(w) * m_demo_zoneRadius;
 
 			transform = new Transformable(
 				XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
@@ -382,7 +381,7 @@ HRESULT GameStateWithParticles::updateDemo(void) {
 			m_explosions->emplace_back(new ActiveParticles<UniformBurstSphere>(
 				m_explosionModel,
 				transform,
-				m_explosionLifespan,
+				static_cast<DWORD>(static_cast<float>(m_explosionLifespan) * w),
 				m_currentTime)
 				);
 		}

@@ -54,8 +54,8 @@ DIRECTORY -- shipmodel::inputConfigFilePath = "..\configFiles\geometry"
 INT -- GameStateWithParticles::explosionLife = 10000
 
 BOOL -- GameStateWithParticles::demoMode = true
-INT -- GameStateWithParticles::nExplosions = 8
-DOUBLE -- GameStateWithParticles::zoneRadius = 10.0
+INT -- GameStateWithParticles::nExplosions = 16
+DOUBLE -- GameStateWithParticles::zoneRadius = 50.0
 
 # Explosion particle system internal configuration
 # -------------------------------------------------

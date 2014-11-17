@@ -595,7 +595,7 @@ HRESULT InvariantParticlesRenderer::setNoLightShaderParameters(
 	// Now set the global constant buffer in all shaders
 	context->VSSetConstantBuffers(1, 1, &m_globalBuffer);
 	context->GSSetConstantBuffers(1, 1, &m_globalBuffer);
-	context->PSSetConstantBuffers(1, 1, &m_globalBuffer);
+	context->PSSetConstantBuffers(0, 1, &m_globalBuffer);
 
 	return result;
 }
@@ -646,7 +646,7 @@ HRESULT InvariantParticlesRenderer::setLightShaderParameters(
 	context->PSSetConstantBuffers(3, 1, &m_lightBuffer);
 
 	// The lighting shader also needs camera properties
-	context->PSSetConstantBuffers(0, 1, &m_cameraBuffer);
+	context->PSSetConstantBuffers(1, 1, &m_cameraBuffer);
 
 	return result;
 }

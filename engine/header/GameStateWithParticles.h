@@ -97,8 +97,10 @@ private:
 			Note that the lifespan is determined by the constructor
 			parameter 'lifespan', rather than retrieved from the particle
 			system itself.
+
+			If 'isDemo' is true, the object will update its Transformable.
 		 */
-		HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval, bool& isExpired);
+		HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval, bool& isExpired, const bool isDemo = false);
 		HRESULT drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const Camera* const camera);
 
 		Transformable* getTransform(void);
@@ -200,11 +202,19 @@ m_time(static_cast<float>(currentTime), 0.0f)
 template <typename T> GameStateWithParticles::ActiveParticles<T>::~ActiveParticles(void)
 {}
 
-template <typename T> HRESULT GameStateWithParticles::ActiveParticles<T>::update(const DWORD currentTime, const DWORD updateTimeInterval, bool& isExpired) {
-	m_time.x = static_cast<float>(currentTime);
+template <typename T> HRESULT GameStateWithParticles::ActiveParticles<T>::update(const DWORD currentTime, const DWORD updateTimeInterval, bool& isExpired, const bool isDemo) {
+	m_time.x = static_cast<float>(currentTime - m_startTime);
 	m_time.y = static_cast<float>(updateTimeInterval);
 	isExpired = (ACTIVEPARTICLES_INFINITELIFE != m_lifespan) &&
 		((currentTime - m_startTime) > m_lifespan);
+
+	// Assume ownership of the transformation
+	if( isDemo ) {
+		if( FAILED(m_transform->update(currentTime, updateTimeInterval)) ) {
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+	
 	return ERROR_SUCCESS;
 }
 

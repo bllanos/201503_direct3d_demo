@@ -28,12 +28,12 @@ DOUBLE -- UniformBurstSphere::billboardSpin = 0.001
 DOUBLE -- UniformBurstSphere::linearSpeed = 0.0003
 DOUBLE -- UniformBurstSphere::creationTimeOffset = 0.0
 DOUBLE -- UniformBurstSphere::lifeAmount = 1.0
-DOUBLE -- UniformBurstSphere::decay = 0.0002
-DOUBLE -- UniformBurstSphere::deathCutoff = 0.2
+DOUBLE -- UniformBurstSphere::decay = 0.0001
+DOUBLE -- UniformBurstSphere::deathCutoff = 0.0
 
 FLOAT4 -- UniformBurstSphere::colorCast = (0.9, 1.0, 0.5, 1.0)
 DOUBLE -- UniformBurstSphere::colorCastWeight = 0.5
-BOOL -- UniformBurstSphere::debugColorCasts = true
+BOOL -- UniformBurstSphere::debugColorCasts = false
 
 # UniformBurstSphere material configuration
 # ---------------------------------------
