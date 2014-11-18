@@ -219,10 +219,10 @@ HRESULT UniformBurstSphere::uvToPosition(DirectX::XMFLOAT3& position, const floa
 	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
-	// v = phi / XM_PI
+	// phi = cos-1(2v - 1)
 	// u = theta / XM_2PI
 	float sinPhi, cosPhi, sinTheta, cosTheta;
-	XMScalarSinCos(&sinPhi, &cosPhi, XM_PI * v);
+	XMScalarSinCos(&sinPhi, &cosPhi, XMScalarACos(2.0f*v - 1.0f));
 	XMScalarSinCos(&sinTheta, &cosTheta, XM_2PI * u);
 	position.x = cosTheta * sinPhi;
 	position.y = cosPhi;

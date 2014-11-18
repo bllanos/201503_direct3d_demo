@@ -34,12 +34,16 @@ Description
 
 #define RANDOMBURSTCONE_SCOPE L"RandomBurstCone"
 
+#define RANDOMBURSTCONE_MAX_PHI_MIN 0
+#define RANDOMBURSTCONE_MAX_PHI_MAX DirectX::XM_PI
 #define RANDOMBURSTCONE_MAX_PHI_DEFAULT DirectX::XM_PI
 #define RANDOMBURSTCONE_MAX_PHI_FIELD L"maximumPhiRange"
 
+#define RANDOMBURSTCONE_RADIUS_MIN_MIN 0.0f
 #define RANDOMBURSTCONE_RADIUS_MIN_DEFAULT 0.0f
 #define RANDOMBURSTCONE_RADIUS_MIN_FIELD L"minimumRadius"
 
+#define RANDOMBURSTCONE_RADIUS_MAX_MIN 0.0f
 #define RANDOMBURSTCONE_RADIUS_MAX_DEFAULT 0.0f
 #define RANDOMBURSTCONE_RADIUS_MAX_FIELD L"maximumRadius"
 
@@ -139,8 +143,9 @@ template<typename ConfigIOClass> RandomBurstCone::RandomBurstCone(
 	setMsgPrefix(RANDOMBURSTCONE_START_MSG_PREFIX);
 	enableLogging();
 
-	if (FAILED(configure(RANDOMBURSTCONE_SCOPE, RANDOMBURSTCONE_CONFIGUSER_SCOPE,
-		RANDOMBURSTCONE_LOGUSER_SCOPE))) {
+	const std::wstring configUserScope = RANDOMBURSTCONE_CONFIGUSER_SCOPE;
+	const std::wstring logUserScope = RANDOMBURSTCONE_LOGUSER_SCOPE;
+	if (FAILED(configure(RANDOMBURSTCONE_SCOPE, &configUserScope, &logUserScope))) {
 		logMessage(L"Configuration failed.");
 	}
 }

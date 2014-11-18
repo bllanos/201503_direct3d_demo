@@ -29,7 +29,6 @@ Description
 #include <iterator>
 #include "fileUtil.h"
 #include <exception>
-#include <algorithm> // for remove_if
 #include <random>
 #include <cmath> // for cbrt()
 
