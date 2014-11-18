@@ -206,7 +206,7 @@ HRESULT RandomBurstCone::uvwToLinearVelocity(DirectX::XMFLOAT4& linearVelocity, 
 	linearVelocity.x = position.x;
 	linearVelocity.y = position.y;
 	linearVelocity.z = position.z;
-	linearVelocity.w = m_linearSpeed;
+	linearVelocity.w = m_linearSpeed * v;
 	return ERROR_SUCCESS;
 }
 

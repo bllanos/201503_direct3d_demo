@@ -52,6 +52,7 @@ DIRECTORY -- shipmodel::inputConfigFilePath = "..\configFiles\geometry"
 # ///////////////////////////////////
 
 INT -- GameStateWithParticles::explosionLife = 10000
+INT -- GameStateWithParticles::jetLife = 5000
 
 BOOL -- GameStateWithParticles::demoMode = true
 INT -- GameStateWithParticles::nExplosions = 16
@@ -61,6 +62,11 @@ DOUBLE -- GameStateWithParticles::zoneRadius = 50.0
 # -------------------------------------------------
 FILENAME -- explosion::inputConfigFileName = "explosion.txt"
 DIRECTORY -- explosion::inputConfigFilePath = "..\configFiles\geometry"
+
+# Jet particle system internal configuration
+# -------------------------------------------------
+FILENAME -- jet::inputConfigFileName = "jet.txt"
+DIRECTORY -- jet::inputConfigFilePath = "..\configFiles\geometry"
 
 # ///////////////////////////////////
 # Screen-Space Special Effects

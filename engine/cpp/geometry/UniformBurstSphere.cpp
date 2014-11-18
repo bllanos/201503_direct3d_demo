@@ -24,7 +24,7 @@ using namespace DirectX;
 using std::wstring;
 
 UniformBurstSphere::UniformBurstSphere(const bool enableLogging, const wstring& msgPrefix,
-	Config* sharedConfig) :
+	Config* sharedConfig, const bool configureNow) :
 	InvariantTexturedParticles(enableLogging, msgPrefix, sharedConfig),
 	m_nColumns(0), m_nRows(0), m_createPoles(UNIFORMBURSTSPHERE_POLES_FLAG_DEFAULT),
 	m_billboardWidth(0.0f), m_billboardHeight(0.0f), m_billboardSpin(0.0f),
