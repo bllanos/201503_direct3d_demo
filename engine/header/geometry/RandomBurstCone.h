@@ -134,7 +134,8 @@ template<typename ConfigIOClass> RandomBurstCone::RandomBurstCone(
 	filenameScope,
 	filenameField,
 	directoryScope,
-	directoryField
+	directoryField,
+	false
 	),
 	m_maxPhi(RANDOMBURSTCONE_MAX_PHI_DEFAULT), m_minR(RANDOMBURSTCONE_RADIUS_MIN_DEFAULT),
 	m_maxR(RANDOMBURSTCONE_RADIUS_MAX_DEFAULT)

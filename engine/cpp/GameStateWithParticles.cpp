@@ -521,6 +521,8 @@ HRESULT GameStateWithParticles::updateDemo(void) {
 			XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
 			);
 
+		w = distribution(generator);
+
 		m_jets->emplace_back(new ActiveParticles<RandomBurstCone>(
 			m_jetModel,
 			transform,

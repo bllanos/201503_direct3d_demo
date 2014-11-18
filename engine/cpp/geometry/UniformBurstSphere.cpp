@@ -39,8 +39,10 @@ UniformBurstSphere::UniformBurstSphere(const bool enableLogging, const wstring& 
 		),
 	m_debugColorCasts(UNIFORMBURSTSPHERE_DEBUG_FLAG_DEFAULT)
 {
-	if( FAILED(configure()) ) {
-		logMessage(L"Configuration failed.");
+	if( configureNow ) {
+		if( FAILED(configure()) ) {
+			logMessage(L"Configuration failed.");
+		}
 	}
 }
 

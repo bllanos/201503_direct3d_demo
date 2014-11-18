@@ -27,7 +27,7 @@ using std::wstring;
 
 RandomBurstCone::RandomBurstCone(const bool enableLogging, const std::wstring& msgPrefix,
 	Config* sharedConfig) :
-	UniformBurstSphere(enableLogging, msgPrefix, sharedConfig),
+	UniformBurstSphere(enableLogging, msgPrefix, sharedConfig, false),
 	m_maxPhi(RANDOMBURSTCONE_MAX_PHI_DEFAULT), m_minR(RANDOMBURSTCONE_RADIUS_MIN_DEFAULT),
 	m_maxR(RANDOMBURSTCONE_RADIUS_MAX_DEFAULT)
 {
@@ -170,7 +170,7 @@ HRESULT RandomBurstCone::addVertices(
 }
 
 HRESULT RandomBurstCone::uvwToPosition(DirectX::XMFLOAT3& position, const float u, const float v, const float w) const {
-	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f || w < 0.0f || w > 0.0f ) {
+	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f || w < 0.0f || w > 1.0f ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
 	// phi = cos-1(2v - 1) / XM_PI * m_maxPhi
@@ -186,7 +186,7 @@ HRESULT RandomBurstCone::uvwToPosition(DirectX::XMFLOAT3& position, const float 
 }
 
 HRESULT RandomBurstCone::uvwToBillboard(DirectX::XMFLOAT3& billboard, const float u, const float v, const float w) const {
-	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f || w < 0.0f || w > 0.0f ) {
+	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f || w < 0.0f || w > 1.0f ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
 	billboard.x = m_billboardWidth;
@@ -196,7 +196,7 @@ HRESULT RandomBurstCone::uvwToBillboard(DirectX::XMFLOAT3& billboard, const floa
 }
 
 HRESULT RandomBurstCone::uvwToLinearVelocity(DirectX::XMFLOAT4& linearVelocity, const float u, const float v, const float w) const {
-	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f || w < 0.0f || w > 0.0f ) {
+	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f || w < 0.0f || w > 1.0f ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
 	XMFLOAT3 position;
@@ -211,7 +211,7 @@ HRESULT RandomBurstCone::uvwToLinearVelocity(DirectX::XMFLOAT4& linearVelocity, 
 }
 
 HRESULT RandomBurstCone::uvwToLife(DirectX::XMFLOAT4& life, const float u, const float v, const float w) const {
-	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f || w < 0.0f || w > 0.0f ) {
+	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f || w < 0.0f || w > 1.0f ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
 	life.x = m_creationTimeOffset * w;
@@ -222,7 +222,7 @@ HRESULT RandomBurstCone::uvwToLife(DirectX::XMFLOAT4& life, const float u, const
 }
 
 HRESULT RandomBurstCone::uvwToIndex(DirectX::XMFLOAT4& index, const float u, const float v, const float w) const {
-	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f || w < 0.0f || w > 0.0f ) {
+	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f || w < 0.0f || w > 1.0f ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
 	if( m_debugColorCasts ) {
@@ -254,7 +254,7 @@ HRESULT RandomBurstCone::configure(const std::wstring& scope, const std::wstring
 		if( logUserScope == 0 ) {
 			logUserScope = &logUserScopeDefault;
 		}
-		if( FAILED(InvariantTexturedParticles::configure(scope, configUserScope, logUserScope)) ) {
+		if( FAILED(UniformBurstSphere::configure(scope, configUserScope, logUserScope)) ) {
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		} else {
 

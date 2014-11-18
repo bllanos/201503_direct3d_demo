@@ -105,11 +105,12 @@ public:
 		const std::wstring filenameScope,
 		const std::wstring filenameField,
 		const std::wstring directoryScope = L"",
-		const std::wstring directoryField = L""
+		const std::wstring directoryField = L"",
+		const bool configureNow = true
 		);
 
 	UniformBurstSphere(const bool enableLogging, const std::wstring& msgPrefix,
-		Config* sharedConfig);
+		Config* sharedConfig, const bool configureNow = true);
 
 	virtual ~UniformBurstSphere(void);
 
@@ -203,7 +204,8 @@ template<typename ConfigIOClass> UniformBurstSphere::UniformBurstSphere(
 	const std::wstring filenameScope,
 	const std::wstring filenameField,
 	const std::wstring directoryScope,
-	const std::wstring directoryField
+	const std::wstring directoryField,
+	const bool configureNow
 	) :
 	InvariantTexturedParticles(
 	true, UNIFORMBURSTSPHERE_START_MSG_PREFIX,
@@ -227,7 +229,9 @@ template<typename ConfigIOClass> UniformBurstSphere::UniformBurstSphere(
 			),
 	m_debugColorCasts(UNIFORMBURSTSPHERE_DEBUG_FLAG_DEFAULT)
 {
-	if( FAILED(configure()) ) {
-		logMessage(L"Configuration failed.");
+	if( configureNow ) {
+		if( FAILED(configure()) ) {
+			logMessage(L"Configuration failed.");
+		}
 	}
 }
