@@ -56,6 +56,8 @@ VSOutput VSMAIN(in VSInput input) {
 
 	float age = time.x - input.life.x; // If negative, particle has not yet been born.
 	float health = input.life.y - ((input.life.z * abs(age)) % input.life.y);
+	// Recompute age based on health (wrap around)
+	age = (input.life.y - health) / input.life.z;
 	if (health < input.life.w) {
 		health = 0.0f;
 	}
@@ -63,7 +65,7 @@ VSOutput VSMAIN(in VSInput input) {
 	// Linear motion
 	inPosition.xyz += (input.linearVelocity.xyz) * (input.linearVelocity.w) * age;
 	// Ballistic motion
-	inPosition.y -= 0.0000005f * pow(age, 2);
+	inPosition.y -= 0.0000002f * pow(age, 2);
 
 	// World position
 	inPosition = mul(inPosition, worldMatrix);

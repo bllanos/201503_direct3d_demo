@@ -518,7 +518,7 @@ HRESULT GameStateWithParticles::updateDemo(void) {
 		transform = new Transformable(
 			XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
 			XMFLOAT3( 0.0f, -5.0f, -5.0f), // Position
-			XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
+			XMFLOAT4(-1.0f, -1.0f, -1.0f, 0.0f) // Orientation
 			);
 
 		w = distribution(generator);

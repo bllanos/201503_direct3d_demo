@@ -19,17 +19,17 @@ BOOL -- UniformBurstSphere_ConfigUser::enableConfigUseLogging = true
 
 # UniformBurstSphere geometry configuration
 # -----------------------------------------------
-INT -- UniformBurstSphere::nColumns = 20
-INT -- UniformBurstSphere::nRows = 20
+INT -- UniformBurstSphere::nColumns = 10
+INT -- UniformBurstSphere::nRows = 10
 BOOL -- UniformBurstSphere::createPoleParticles = true
 DOUBLE -- UniformBurstSphere::billboardWidth = 0.5
 DOUBLE -- UniformBurstSphere::billboardHeight = 0.6
 DOUBLE -- UniformBurstSphere::billboardSpin = 0.001
-DOUBLE -- UniformBurstSphere::linearSpeed = 0.0005
+DOUBLE -- UniformBurstSphere::linearSpeed = 0.0002
 DOUBLE -- UniformBurstSphere::creationTimeOffset = 0.0
 DOUBLE -- UniformBurstSphere::lifeAmount = 1.0
-DOUBLE -- UniformBurstSphere::decay = 0.0001
-DOUBLE -- UniformBurstSphere::deathCutoff = 0.0
+DOUBLE -- UniformBurstSphere::decay = 0.00005
+DOUBLE -- UniformBurstSphere::deathCutoff = 0.2
 
 FLOAT4 -- UniformBurstSphere::colorCast = (0.9, 1.0, 0.5, 1.0)
 DOUBLE -- UniformBurstSphere::colorCastWeight = 0.5

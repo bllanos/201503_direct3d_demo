@@ -39,7 +39,8 @@ InvariantParticlesRenderer::InvariantParticlesRenderer(
 	m_vertexShader(0), m_geometryShader(0), m_pixelShader(0),
 	m_layout(0),
 	m_cameraBuffer(0), m_materialBuffer(0), m_globalBuffer(0), m_lightBuffer(0),
-	m_lighting(false), m_light(0), m_configured(false)
+	m_lighting(false), m_light(0), m_configured(false),
+	m_additiveBlendState(0), m_dsState(0)
 	{
 	wstring logUserScopeDefault(INVARIANTPARTICLESRENDERER_LOGUSER_SCOPE);
 	wstring configUserScopeDefault(INVARIANTPARTICLESRENDERER_CONFIGUSER_SCOPE);
@@ -93,6 +94,16 @@ InvariantParticlesRenderer::~InvariantParticlesRenderer(void) {
 		delete m_light;
 		m_light = 0;
 	}
+
+	if( m_additiveBlendState ) {
+		m_additiveBlendState->Release();
+		m_additiveBlendState = 0;
+	}
+
+	if( m_dsState ) {
+		m_dsState->Release();
+		m_dsState = 0;
+	}
 }
 
 HRESULT InvariantParticlesRenderer::initialize(ID3D11Device* const device) {
@@ -115,6 +126,11 @@ HRESULT InvariantParticlesRenderer::initialize(ID3D11Device* const device) {
 			logMessage(L"Call to createLightConstantBuffers() failed.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
+	}
+
+	if( FAILED(createBlendAndDSStates(device)) ) {
+		logMessage(L"Call to createBlendAndDSStates() failed.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
 	return ERROR_SUCCESS;
@@ -492,6 +508,51 @@ HRESULT InvariantParticlesRenderer::createLightConstantBuffers(ID3D11Device* con
 	return result;
 }
 
+HRESULT InvariantParticlesRenderer::createBlendAndDSStates(ID3D11Device* const device) {
+	HRESULT result = ERROR_SUCCESS;
+
+	D3D11_DEPTH_STENCIL_DESC dsDesc;
+	dsDesc.DepthEnable = true;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS; // use ..._LESS for normal behaviour
+
+	dsDesc.StencilEnable = false;
+
+	result = device->CreateDepthStencilState(&dsDesc, &m_dsState);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create depth stencil state.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+
+	// Make blend description
+	D3D11_BLEND_DESC blend_desc;
+	SecureZeroMemory(&blend_desc, sizeof(D3D11_BLEND_DESC));
+
+	blend_desc.IndependentBlendEnable = false;
+	blend_desc.AlphaToCoverageEnable = true;
+
+	for( int i = 0; i < 8; i++ ) // should be unnecessary, just care about 0
+	{
+		blend_desc.RenderTarget[i].BlendEnable = true;
+		blend_desc.RenderTarget[i].BlendOp = D3D11_BLEND_OP_ADD;
+		blend_desc.RenderTarget[i].BlendOpAlpha = D3D11_BLEND_OP_MAX;
+
+		blend_desc.RenderTarget[i].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		blend_desc.RenderTarget[i].DestBlend = D3D11_BLEND_ONE; //D3D11_BLEND_INV_SRC_ALPHA;
+
+		blend_desc.RenderTarget[i].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+		blend_desc.RenderTarget[i].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+
+		blend_desc.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	}
+	result = device->CreateBlendState(&blend_desc, &m_additiveBlendState);
+	if( FAILED(result) ) {
+		logMessage(L"Failed to create blend state.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_LIBRARY_CALL);
+	}
+	return result;
+}
+
 HRESULT InvariantParticlesRenderer::setShaderParameters(
 	ID3D11DeviceContext* const context,
 	const DirectX::XMFLOAT4X4 viewMatrix,
@@ -669,8 +730,30 @@ void InvariantParticlesRenderer::renderShader(ID3D11DeviceContext* const context
 		logMessage(L"Failed to bind pixel shader.");
 	}
 
+	// Configure blending
+	ID3D11BlendState *blendState;
+	ID3D11DepthStencilState *dsState;
+	FLOAT BlendFactor[4];
+	UINT SampleMask;
+	UINT StencilRef;
+
+	// Save the previous state
+	context->OMGetBlendState(&blendState, BlendFactor, &SampleMask);
+	context->OMGetDepthStencilState(&dsState, &StencilRef);
+
+	// Apply custom states
+	context->OMSetBlendState(m_additiveBlendState, BlendFactor, SampleMask);
+	context->OMSetDepthStencilState(m_dsState, StencilRef);
+
 	// Render the geometry.
 	context->Draw(particleCount, 0);
+
+	// Restore previous states
+	context->OMSetBlendState(blendState, BlendFactor, SampleMask);
+	context->OMSetDepthStencilState(dsState, StencilRef);
+
+	blendState->Release();
+	dsState->Release();
 
 	/* Unbind the geometry shader
 	   to prevent interference with other renderers
