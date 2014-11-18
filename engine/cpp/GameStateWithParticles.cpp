@@ -40,7 +40,9 @@ using std::vector;
 GameStateWithParticles::GameStateWithParticles(const bool configureNow) :
 GameState(false),
 m_explosionModel(0), m_explosions(0),
+m_jetModel(0), m_jets(0),
 m_explosionLifespan(GAMESTATEWITHPARTICLES_EXPLOSION_LIFE_DEFAULT),
+m_jetLifespan(GAMESTATEWITHPARTICLES_JET_LIFE_DEFAULT),
 m_currentTime(0), m_demo_enabled(GAMESTATEWITHPARTICLES_DEMO_DEFAULT),
 m_demo_nExplosions(GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_DEFAULT),
 m_demo_zoneRadius(GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_DEFAULT)
@@ -53,27 +55,52 @@ m_demo_zoneRadius(GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_DEFAULT)
 }
 
 GameStateWithParticles::~GameStateWithParticles(void) {
+	ActiveParticles<UniformBurstSphere>* activeExplosion = 0;
+	ActiveParticles<RandomBurstCone>* activeJet = 0;
+
+
 	if( m_explosionModel != 0 ) {
 		delete m_explosionModel;
 		m_explosionModel = 0;
 	}
 
 	if( m_explosions != 0 ) {
-		ActiveParticles<UniformBurstSphere>* activeParticles = 0;
 		const vector<ActiveParticles<UniformBurstSphere>*>::size_type nExplosions = m_explosions->size();
 		for( vector<ActiveParticles<UniformBurstSphere>*>::size_type i = 0; i < nExplosions; ++i ) {
-			activeParticles = (*m_explosions)[i];
-			if( activeParticles != 0 ) {
+			activeExplosion = (*m_explosions)[i];
+			if( activeExplosion != 0 ) {
 				if( m_demo_enabled ) {
-					delete activeParticles->getTransform();
+					delete activeExplosion->getTransform();
 				}
-				delete activeParticles;
-				activeParticles = 0;
+				delete activeExplosion;
+				activeExplosion = 0;
 				(*m_explosions)[i] = 0;
 			}
 		}
 		delete m_explosions;
 		m_explosions = 0;
+	}
+
+	if( m_jetModel != 0 ) {
+		delete m_jetModel;
+		m_jetModel = 0;
+	}
+
+	if( m_jets != 0 ) {
+		const vector<ActiveParticles<RandomBurstCone>*>::size_type nJets = m_jets->size();
+		for( vector<ActiveParticles<RandomBurstCone>*>::size_type i = 0; i < nJets; ++i ) {
+			activeJet = (*m_jets)[i];
+			if( activeJet != 0 ) {
+				if( m_demo_enabled ) {
+					delete activeJet->getTransform();
+				}
+				delete activeJet;
+				activeJet = 0;
+				(*m_jets)[i] = 0;
+			}
+		}
+		delete m_jets;
+		m_jets = 0;
 	}
 }
 
@@ -110,6 +137,16 @@ HRESULT GameStateWithParticles::drawContents(ID3D11DeviceContext* const context,
 		result = (*m_explosions)[i]->drawUsingAppropriateRenderer(context, manager, m_camera);
 		if( FAILED(result) ) {
 			logMessage(L"Failed to render explosion particle system at index = " + std::to_wstring(i) + L".");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
+	// Draw all jets
+	const vector<ActiveParticles<RandomBurstCone>*>::size_type nJets = m_jets->size();
+	for( vector<ActiveParticles<RandomBurstCone>*>::size_type i = 0; i < nJets; ++i ) {
+		result = (*m_jets)[i]->drawUsingAppropriateRenderer(context, manager, m_camera);
+		if( FAILED(result) ) {
+			logMessage(L"Failed to render jet particle system at index = " + std::to_wstring(i) + L".");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}
@@ -156,6 +193,32 @@ HRESULT GameStateWithParticles::update(const DWORD currentTime, const DWORD upda
 		}
 	}
 
+	// Update all jets
+	vector<ActiveParticles<RandomBurstCone>*>::size_type nJets = m_jets->size();
+	if( nJets > 0 ) {
+		for( vector<ActiveParticles<RandomBurstCone>*>::size_type i = nJets - 1; (i >= 0) && (i < nJets); --i ) {
+			result = (*m_jets)[i]->update(currentTime, updateTimeInterval, isExpired, m_demo_enabled);
+			if( FAILED(result) ) {
+				logMessage(L"Failed to update jet particle system at index = " + std::to_wstring(i) + L".");
+				return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+			} else if( isExpired ) {
+				result = removeJet((*m_jets)[i]->getTransform());
+				if( FAILED(result) ) {
+					logMessage(L"Failed to remove expired jet particle system at index = " + std::to_wstring(i) + L".");
+					return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+				} else {
+					nJets = m_jets->size();
+					if( i >= nJets ) {
+						/* This may result in multiple update() calls to the same
+						jet, but it is assumed that this does not matter.
+						*/
+						i = nJets - 1;
+					}
+				}
+			}
+		}
+	}
+
 	// Update internal timer
 	m_currentTime = currentTime;
 
@@ -179,6 +242,22 @@ HRESULT GameStateWithParticles::spawnExplosion(Transformable* const transform) {
 	return ERROR_SUCCESS;
 }
 
+HRESULT GameStateWithParticles::spawnJet(Transformable* const transform) {
+	if( m_jetModel == 0 ) {
+		logMessage(L"Cannot spawn jets before the jet particle system has been constructed and configured.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	ActiveParticles<RandomBurstCone>* newJet = 0;
+	newJet = new ActiveParticles<RandomBurstCone>(
+		m_jetModel, transform, m_jetLifespan, m_currentTime,
+		XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+	m_jets->emplace_back(newJet);
+
+	return ERROR_SUCCESS;
+}
+
 HRESULT GameStateWithParticles::removeExplosion(Transformable* const transform) {
 	vector<ActiveParticles<UniformBurstSphere>*>::iterator it = m_explosions->begin();
 
@@ -198,12 +277,32 @@ HRESULT GameStateWithParticles::removeExplosion(Transformable* const transform) 
 	return ERROR_SUCCESS;
 }
 
+HRESULT GameStateWithParticles::removeJet(Transformable* const transform) {
+	vector<ActiveParticles<RandomBurstCone>*>::iterator it = m_jets->begin();
+
+	while( it != m_jets->end() ) {
+		if( (*it)->getTransform() == transform ) {
+			delete *it;
+			it = m_jets->erase(it);
+		} else {
+			++it;
+		}
+	}
+
+	// If in demo mode, assume ownership of transformable
+	if( m_demo_enabled ) {
+		delete transform;
+	}
+	return ERROR_SUCCESS;
+}
+
 HRESULT GameStateWithParticles::configure(void) {
 	HRESULT result = ERROR_SUCCESS;
 
 	// Initialization with default values
 	// ----------------------------------
 	m_explosionLifespan = GAMESTATEWITHPARTICLES_EXPLOSION_LIFE_DEFAULT;
+	m_jetLifespan = GAMESTATEWITHPARTICLES_JET_LIFE_DEFAULT;
 	m_demo_enabled = GAMESTATEWITHPARTICLES_DEMO_DEFAULT;
 	m_demo_nExplosions = GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_DEFAULT;
 	m_demo_zoneRadius = GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_DEFAULT;
@@ -228,6 +327,15 @@ HRESULT GameStateWithParticles::configure(void) {
 						+ std::to_wstring(GAMESTATEWITHPARTICLES_EXPLOSION_LIFE_DEFAULT) + L".");
 				} else {
 					m_explosionLifespan = static_cast<DWORD>(*intValue);
+				}
+			}
+
+			if( retrieve<Config::DataType::INT, int>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_JET_LIFE_FIELD, intValue) ) {
+				if( *intValue < GAMESTATEWITHPARTICLES_JET_LIFE_MIN ) {
+					logMessage(L"The jet lifespan value retrieved from configuration data is too low. Using the default value of "
+						+ std::to_wstring(GAMESTATEWITHPARTICLES_JET_LIFE_DEFAULT) + L".");
+				} else {
+					m_jetLifespan = static_cast<DWORD>(*intValue);
 				}
 			}
 
@@ -338,6 +446,15 @@ HRESULT GameStateWithParticles::configureParticles(void) {
 		CONFIGUSER_INPUT_FILE_PATH_FIELD
 		);
 
+	m_jetModel = new RandomBurstCone(
+		&configIO, // Used to load configuration file
+		&config, // Queried for location of configuration file
+		GAMESTATEWITHPARTICLES_GEOMETRY_JET_SCOPE,
+		CONFIGUSER_INPUT_FILE_NAME_FIELD,
+		GAMESTATEWITHPARTICLES_GEOMETRY_JET_SCOPE,
+		CONFIGUSER_INPUT_FILE_PATH_FIELD
+		);
+
 	return result;
 }
 
@@ -348,17 +465,25 @@ HRESULT GameStateWithParticles::initializeParticles(ID3D11Device* device) {
 	}
 
 	m_explosions = new vector<ActiveParticles<UniformBurstSphere>*>();
+
+	if( FAILED(m_jetModel->initialize(device, 0)) ) {
+		logMessage(L"Failed to initialize the jet particle system.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	m_jets = new vector<ActiveParticles<RandomBurstCone>*>();
 	return ERROR_SUCCESS;
 }
 
 HRESULT GameStateWithParticles::updateDemo(void) {
-	if( m_explosions->size() < m_demo_nExplosions ) {
-		float u, v, w; // Random sampling variables
-		static std::default_random_engine generator;
-		static std::uniform_real_distribution<float> distribution(0.0, 1.0);
-		float theta, phi, radius; // Spherical polar coordinates
+	float u, v, w; // Random sampling variables
+	static std::default_random_engine generator;
+	static std::uniform_real_distribution<float> distribution(0.0, 1.0);
+	float theta, phi, radius; // Spherical polar coordinates
 
-		Transformable* transform;
+	Transformable* transform;
+
+	if( m_explosions->size() < m_demo_nExplosions ) {
 
 		while( m_explosions->size() < m_demo_nExplosions ) {
 			u = distribution(generator);
@@ -386,6 +511,23 @@ HRESULT GameStateWithParticles::updateDemo(void) {
 				XMFLOAT3(u, v, w))
 				);
 		}
+	}
+
+	if( m_jets->size() < GAMESTATEWITHPARTICLES_DEMO_NJETS ) {
+
+		transform = new Transformable(
+			XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
+			XMFLOAT3( 0.0f, -5.0f, -5.0f), // Position
+			XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
+			);
+
+		m_jets->emplace_back(new ActiveParticles<RandomBurstCone>(
+			m_jetModel,
+			transform,
+			static_cast<DWORD>(static_cast<float>(m_jetLifespan) * w),
+			m_currentTime,
+			XMFLOAT3(1.0f, 0.8f, 0.5f))
+			);
 	}
 	return ERROR_SUCCESS;
 }

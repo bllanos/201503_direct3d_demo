@@ -14,7 +14,7 @@ Primary basis: UniformBurstSphere.h
 
 Description
   -Modifies the UniformBurstSphere class to use random distributions
-     of all parameters.
+     of key parameters.
   -Allows for particles to be generated in a conical formation (restricted range of 'phi').
   -Initial particle position is set within a range of distances from the origin.
 */

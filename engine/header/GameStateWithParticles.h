@@ -20,6 +20,7 @@ Description
 
 #include "GameState.h"
 #include "UniformBurstSphere.h"
+#include "RandomBurstCone.h"
 #include <vector>
 
 // Logging message prefix
@@ -38,6 +39,11 @@ Description
 #define GAMESTATEWITHPARTICLES_EXPLOSION_LIFE_DEFAULT 10000 // Milliseconds
 #define GAMESTATEWITHPARTICLES_EXPLOSION_LIFE_FIELD L"explosionLife"
 
+/* Jet particle system configuration */
+#define GAMESTATEWITHPARTICLES_JET_LIFE_MIN 0
+#define GAMESTATEWITHPARTICLES_JET_LIFE_DEFAULT 10000 // Milliseconds
+#define GAMESTATEWITHPARTICLES_JET_LIFE_FIELD L"jetLife"
+
 /* If true, a continual fireworks show will be produced. */
 #define GAMESTATEWITHPARTICLES_DEMO_FIELD L"demoMode"
 #define GAMESTATEWITHPARTICLES_DEMO_DEFAULT false
@@ -45,6 +51,8 @@ Description
 #define GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_MIN 0
 #define GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_DEFAULT 10
 #define GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_FIELD L"nExplosions"
+
+#define GAMESTATEWITHPARTICLES_DEMO_NJETS 1
 
 // Radius of the spherical area in which to spawn fireworks
 #define GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_MIN 0.0f
@@ -58,6 +66,9 @@ Description
 
 // Explosion configuration
 #define GAMESTATEWITHPARTICLES_GEOMETRY_EXPLOSION_SCOPE L"explosion"
+
+// Cone/Jet configuration
+#define GAMESTATEWITHPARTICLES_GEOMETRY_JET_SCOPE L"jet"
 
 class GameStateWithParticles : public GameState {
 
@@ -122,8 +133,17 @@ private:
 	// Keeps track of the positions at which to render explosions
 	std::vector<ActiveParticles<UniformBurstSphere>*>* m_explosions;
 
+	// The model for all jets
+	RandomBurstCone* m_jetModel;
+
+	// Keeps track of the positions at which to render jets
+	std::vector<ActiveParticles<RandomBurstCone>*>* m_jets;
+
 	/* Set globally for all explosions based on configuration data */
 	DWORD m_explosionLifespan;
+
+	/* Set globally for all jets based on configuration data */
+	DWORD m_jetLifespan;
 
 	DWORD m_currentTime;
 
@@ -131,6 +151,7 @@ private:
 	bool m_demo_enabled;
 	size_t m_demo_nExplosions; // Desired number of explosions
 	float m_demo_zoneRadius;
+	// There will be one jet if 'm_demo_enabled' is true
 
 public:
 	/* 'configureNow' allows derived classes to postpone configuration
@@ -152,6 +173,9 @@ public:
 	/* Adds an explosion with the given transformation */
 	virtual HRESULT spawnExplosion(Transformable* const transform);
 
+	/* Adds a jet with the given transformation */
+	virtual HRESULT spawnJet(Transformable* const transform);
+
 	/* Removes all explosions with the transformation at the given
 	   memory location.
 	   If 'm_demo_enabled' is true, 'transform' is deleted.
@@ -164,6 +188,19 @@ public:
 	   elements to lower indices.
 	 */
 	virtual HRESULT removeExplosion(Transformable* const transform);
+
+	/* Removes all jets with the transformation at the given
+	   memory location.
+	   If 'm_demo_enabled' is true, 'transform' is deleted.
+	   Otherwise, 'transform' is assumed to be owned by another class.
+
+	   If calling this function from within this class while iterating
+	   over 'm_jets', be sure to iterate backwards,
+	   as this function may result in the deletion of an element
+	   in 'm_jets', followed by the shifting of remaining
+	   elements to lower indices.
+	*/
+	virtual HRESULT removeJet(Transformable* const transform);
 
 protected:
 
