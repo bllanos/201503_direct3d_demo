@@ -31,8 +31,8 @@ Description
 //#include "HierarchicalCubesTestState.h"
 //#define STATECONTROL_FIRST_STATE HierarchicalCubesTestState
 
-#include "GameStateWithSSSE.h"
-#define STATECONTROL_FIRST_STATE GameStateWithSSSE
+#include "GameState.h"
+#define STATECONTROL_FIRST_STATE GameState
 
 //#include "ShipModelTestState.h"
 //#define STATECONTROL_FIRST_STATE ShipModelTestState
