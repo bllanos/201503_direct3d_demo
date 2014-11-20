@@ -22,6 +22,9 @@ Description
 
 using namespace DirectX;
 
+// Action period in milliseconds
+#define CUBE_PERIOD (10.0f * MILLISECS_PER_SEC_FLOAT)
+
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Transformable
 ////////////////////////////////////////////////////////////////////////////////
@@ -89,6 +92,8 @@ HRESULT Transformable::transformations(XMFLOAT4X4& transform, const DWORD curren
 	// Then compute Translations
 
 	// To scale the object, simply alter m_scale
+
+	
 
 	return ERROR_SUCCESS;
 }
@@ -217,7 +222,13 @@ XMFLOAT3 Transformable::getScale() const
 }
 
 XMFLOAT3 Transformable::getPosition(void) const {
-	return m_position;
+	XMFLOAT3 newPos = m_position;
+	if (m_parent != 0) {
+		newPos = XMFLOAT3(newPos.x + m_parent->getPosition().x,
+						  newPos.y + m_parent->getPosition().y, 
+					      newPos.z + m_parent->getPosition().z);
+	}
+	return newPos;
 }
 
 XMFLOAT4 Transformable::getOrientation(void) const {

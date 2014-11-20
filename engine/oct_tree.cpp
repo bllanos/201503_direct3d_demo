@@ -167,3 +167,30 @@ HRESULT Octtree::refitting(){
 
 	return result;
 }
+
+/*
+	A note of this function, you will return the list of all the collisions including the object firing the laser
+	so you have to handle the list of all the return
+*/
+int Octtree::checkCollisionsRay(vector<ObjectModel *>* outCollsion, XMFLOAT3 posRay, XMFLOAT3 dirRay){
+	int result = -1;
+	
+	for (size_t i = 0; i < completeObjectList->size(); i++){
+		XMFLOAT3 p = XMFLOAT3	(posRay.x - completeObjectList->at(i)->getBoundingOrigin().x,
+								posRay.y - completeObjectList->at(i)->getBoundingOrigin().y,
+								posRay.z - completeObjectList->at(i)->getBoundingOrigin().z);
+		float b = -((p.x * dirRay.x) + (p.y * dirRay.y) + (p.z * dirRay.z));
+		float det = b*b - ((p.x * p.x)+(p.y * p.y)+(p.z * p.z)) + pow(completeObjectList->at(i)->getBoundingRadius(),2);
+
+		if (det < 0) continue;
+		det = sqrt(det);
+		float t1 = b - det;
+		float t2 = b + det;
+
+		if (t2 < 0) continue;
+		outCollsion->push_back(completeObjectList->at(i));
+		result = 0;
+	}
+	
+	return result;
+}

@@ -25,7 +25,7 @@ Description
 #include <vector>
 #include "State.h"
 #include "ConfigUser.h"
-#include "Camera.h"
+#include "../camera/Camera.h"
 #include "GridQuad.h"
 #include "Transformable.h"
 

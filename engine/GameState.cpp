@@ -571,11 +571,14 @@ HRESULT GameState::spawnShip(const size_t n) {
 		newObject = new ObjectModel(m_ship);
 
 		offset = XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i) - 2.0f);
-
+		
 		// Center
 		bone = new Transformable(scale, offset, orientation);
 		parent = bone;
 		newObject->addTransformable(bone);
+
+		// complete the camera setup
+		m_camera->SetFollowTransform(parent);
 
 		// South pole
 		bone = new Transformable(scale, southOffset, orientation);

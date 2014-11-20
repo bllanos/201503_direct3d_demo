@@ -22,7 +22,7 @@ Description
 
 #include "State.h"
 #include "LogUser.h"
-#include "Camera.h"
+#include "../camera/Camera.h"
 #include "CubeModel.h"
 #include "engineGlobals.h"
 #include "CubeTransformableTwo.h"

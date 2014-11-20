@@ -328,13 +328,16 @@ HRESULT StateControl::Frame(void)
 	*/
 	
 
-	m_Mouse->Update();
-	m_Keyboard->Update();
+	
 	result = m_CurrentState->poll(*m_Keyboard, *m_Mouse);
 	if( FAILED(result) ) {
 		logMessage(L"Call to State Poll() function failed.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
+	// must run keyboard update function after polling
+	m_Mouse->Update();
+	m_Keyboard->Update();
+
 	result = m_CurrentState->update(totalElapsedTime, elapsedTimeLastFrame);
 	if( FAILED(result) ) {
 		logMessage(L"Call to State Update() function failed.");

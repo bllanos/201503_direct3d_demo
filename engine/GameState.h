@@ -10,7 +10,7 @@
 #include "Transformable.h"
 #include "State.h"
 #include "ConfigUser.h"
-#include "Camera.h"
+#include "../camera/Camera.h"
 #include "oct_tree.h"
 #include "GridSphereTextured.h"
 #include "ShipModel.h"

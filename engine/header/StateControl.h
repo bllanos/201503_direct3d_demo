@@ -37,8 +37,6 @@ Description
 //#include "ShipModelTestState.h"
 //#define STATECONTROL_FIRST_STATE ShipModelTestState
 
-
-
 #include "BasicWindow.h"
 #include "State.h"
 #include "Keyboard.h"
