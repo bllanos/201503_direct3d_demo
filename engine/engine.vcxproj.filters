@@ -281,5 +281,8 @@
     <ClInclude Include="header\geometry\ShipModel.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
+    <ClInclude Include="header\geometry\mineShip.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

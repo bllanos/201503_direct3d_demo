@@ -455,10 +455,11 @@ HRESULT GameState::spawnAsteroids(const size_t n) {
 	}
 
 	XMFLOAT3 offset(0.0f, 0.0f, 0.0f);
-	XMFLOAT3 southOffset(0.0f, -(asteroid_Radius), 0.0f);
-	XMFLOAT3 northOffset(0.0f, asteroid_Radius, 0.0f);
+	XMFLOAT3 southOffset(0.0f, -(asteroid_Radius*8), 0.0f);
+	XMFLOAT3 northOffset(0.0f, asteroid_Radius*8, 0.0f);
 
-	XMFLOAT3 scale(asteroid_Radius, asteroid_Radius, asteroid_Radius);
+	XMFLOAT3 scale(asteroid_Radius*3, asteroid_Radius*8, asteroid_Radius*3);
+	XMFLOAT3 scalesides(asteroid_Radius, asteroid_Radius*3, asteroid_Radius);
 	XMFLOAT4 orientation(0.0f, 0.0f, 0.0f, 1.0f);
 
 	ObjectModel* newObject = 0;
@@ -477,12 +478,12 @@ HRESULT GameState::spawnAsteroids(const size_t n) {
 		newObject->addTransformable(bone);
 
 		// South pole
-		bone = new Transformable(scale, southOffset, orientation);
+		bone = new Transformable(scalesides, southOffset, orientation);
 		bone->setParent(parent);
 		newObject->addTransformable(bone);
 
 		// North pole
-		bone = new Transformable(scale, northOffset, orientation);
+		bone = new Transformable(scalesides, northOffset, orientation);
 		bone->setParent(parent);
 		newObject->addTransformable(bone);
 

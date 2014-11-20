@@ -49,6 +49,7 @@
     <ClInclude Include="GameState.h" />
     <ClInclude Include="header\geometry\GridQuadTextured.h" />
     <ClInclude Include="header\geometry\GridSphereTextured.h" />
+    <ClInclude Include="header\geometry\mineShip.h" />
     <ClInclude Include="header\geometry\ShipModel.h" />
     <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h" />
     <ClInclude Include="header\geometry\SphereModel.h" />

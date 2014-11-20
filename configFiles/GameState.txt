@@ -24,8 +24,8 @@ FLOAT4 -- GameState::treeLocation = (-1000.0, 1000.0, -1000.0, 0.0)
 
 # Asteroids external configuration
 # --------------------------------
-BOOL -- GameState::bSpawnGrid = true
-INT -- GameState::nAsteroids = 3
+BOOL -- GameState::bSpawnGrid = false
+INT -- GameState::nAsteroids = 1
 DOUBLE -- GameState::radiAsteroids = 1.0
 DOUBLE -- GameState::asteroidGridSpacing = 5.0
 INT -- GameState::nAsteroidsX = 3

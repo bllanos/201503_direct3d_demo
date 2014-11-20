@@ -483,10 +483,9 @@ HRESULT ShipModel::uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, const float u
 }
 
 float ShipModel::getRadius(){
-	//XMFLOAT3 scale = m_transformable->getScale();
-	return 1.0f;//((scale.x > scale.y) ? scale.x : scale.y) > scale.z ? ((scale.x > scale.y) ? scale.x : scale.y):scale.z;
+	return 1.0f;
 }
 
 XMFLOAT3 ShipModel::getPosition(){
-	return XMFLOAT3(0, 0, 0);//return m_transformable->getPosition();
+	return XMFLOAT3(0, 0, 0);
 }
