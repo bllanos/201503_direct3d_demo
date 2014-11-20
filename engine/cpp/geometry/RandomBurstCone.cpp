@@ -173,15 +173,18 @@ HRESULT RandomBurstCone::uvwToPosition(DirectX::XMFLOAT3& position, const float 
 	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f || w < 0.0f || w > 1.0f ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
-	// phi = cos-1(2v - 1) / XM_PI * m_maxPhi
+	// v = phi / XM_PI
 	// u = theta / XM_2PI
 	float radius = cbrtf(w) * (m_maxR - m_minR) + m_minR;
 	float sinPhi, cosPhi, sinTheta, cosTheta;
-	XMScalarSinCos(&sinPhi, &cosPhi, XMScalarACos(v) * XM_PI * m_maxPhi);
+	XMScalarSinCos(&sinPhi, &cosPhi, XM_PI * v * m_maxPhi);
 	XMScalarSinCos(&sinTheta, &cosTheta, XM_2PI * u);
 	position.x = radius * cosTheta * sinPhi;
 	position.y = radius *cosPhi;
 	position.z = radius * sinTheta * sinPhi;
+
+	// Rotate to forward direction
+	XMStoreFloat3(&position, XMVector3Transform(XMLoadFloat3(&position), XMMatrixRotationX(XM_PIDIV2)));
 	return ERROR_SUCCESS;
 }
 
@@ -200,14 +203,14 @@ HRESULT RandomBurstCone::uvwToLinearVelocity(DirectX::XMFLOAT4& linearVelocity, 
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
 	XMFLOAT3 position;
-	if( FAILED(uvToPosition(position, u, v)) ) {
+	if( FAILED(uvwToPosition(position, u, v, w)) ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	XMStoreFloat3(&position, XMVector3Normalize(XMLoadFloat3(&position)));
 	linearVelocity.x = position.x;
 	linearVelocity.y = position.y;
 	linearVelocity.z = position.z;
-	linearVelocity.w = m_linearSpeed / v;
+	linearVelocity.w = m_linearSpeed * sqrtf(v);
 	return ERROR_SUCCESS;
 }
 
@@ -217,7 +220,7 @@ HRESULT RandomBurstCone::uvwToLife(DirectX::XMFLOAT4& life, const float u, const
 	}
 	life.x = m_creationTimeOffset * w;
 	life.y = m_lifeAmount;
-	life.z = m_decay * v;
+	life.z = m_decay;
 	life.w = m_deathCutoff;
 	return ERROR_SUCCESS;
 }

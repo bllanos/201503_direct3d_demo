@@ -25,11 +25,11 @@ BOOL -- RandomBurstCone::createPoleParticles = false
 DOUBLE -- RandomBurstCone::billboardWidth = 0.5
 DOUBLE -- RandomBurstCone::billboardHeight = 0.6
 DOUBLE -- RandomBurstCone::billboardSpin = 0.005
-DOUBLE -- RandomBurstCone::linearSpeed = 0.002
-DOUBLE -- RandomBurstCone::creationTimeOffset = 1000.0
+DOUBLE -- RandomBurstCone::linearSpeed = 0.1
+DOUBLE -- RandomBurstCone::creationTimeOffset = 0.0
 DOUBLE -- RandomBurstCone::lifeAmount = 1.0
-DOUBLE -- RandomBurstCone::decay = 0.0002
-DOUBLE -- RandomBurstCone::deathCutoff = 0.0
+DOUBLE -- RandomBurstCone::decay = 0.0004
+DOUBLE -- RandomBurstCone::deathCutoff = 0.1
 
 FLOAT4 -- RandomBurstCone::colorCast = (0.9, 1.0, 0.5, 1.0)
 DOUBLE -- RandomBurstCone::colorCastWeight = 0.5
@@ -51,7 +51,7 @@ BOOL -- RandomBurstCone::renderAlbedoTexture = true
 
 # RandomBurstCone non-inherited parameters
 # -----------------------------------------
-DOUBLE -- RandomBurstCone::maximumPhiRange = 0.2
+DOUBLE -- RandomBurstCone::maximumPhiRange = 0.1
 DOUBLE -- RandomBurstCone::minimumRadius = 0.0
 DOUBLE -- RandomBurstCone::maximumRadius = 5.0
 

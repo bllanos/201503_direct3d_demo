@@ -517,11 +517,11 @@ HRESULT GameStateWithParticles::updateDemo(void) {
 
 		transform = new Transformable(
 			XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
-			XMFLOAT3( -70.0f, 70.0f, 200.0f), // Position
+			XMFLOAT3( -5.0f, 5.0f, 10.0f), // Position
 			XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
 			);
 
-		transform->Spin(0.0f, 100.0f, 0.0f);
+		// transform->Spin(0.0f, 100.0f, 0.0f);
 
 		m_jets->emplace_back(new ActiveParticles<RandomBurstCone>(
 			m_jetModel,
