@@ -29,7 +29,7 @@ SimpleColorGeometry(true, CUBEMODEL_START_MSG_PREFIX, 0),
 m_xlen(lengthX), m_ylen(lengthY), m_zlen(lengthZ),
 m_blend(1.0f), m_pColors(pColors)
 {
-	m_transform = new CubeTransformable(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	m_transform = new Transformable(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	if (m_xlen <= 0.0f || m_ylen <= 0.0f || m_zlen <= 0.0f) {
 		// This is a Microsoft-specific constructor
 		throw std::exception("Attempt to construct a CubeModel object with one or more negative or zero dimensions.");
