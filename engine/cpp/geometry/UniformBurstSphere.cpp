@@ -173,7 +173,8 @@ HRESULT UniformBurstSphere::addVertices(
 	for( i = 0; i < m_nRows; ++i ) {
 
 		// Account for pole locations
-		v = static_cast<float>(i + 1) / static_cast<float>(m_nRows + 1);
+		// v = static_cast<float>(i + 1) / static_cast<float>(m_nRows + 2);
+		v = static_cast<float>(i) / static_cast<float>(m_nRows);
 
 		for( j = 0; j < m_nColumns; ++j ) {
 
