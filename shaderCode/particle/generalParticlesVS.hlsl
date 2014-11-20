@@ -54,8 +54,8 @@ VSOutput VSMAIN(in VSInput input) {
 	// Change the position vector to be 4 units for proper matrix calculations
 	float4 inPosition = { input.position, 1.0f };
 
-	float age = time.x - input.life.x; // If negative, particle has not yet been born.
-	float health = input.life.y - ((input.life.z * abs(age)) % input.life.y);
+	float age = max(0.0f, time.x - input.life.x); // If negative, particle has not yet been born.
+	float health = input.life.y - ((input.life.z * age) % input.life.y);
 	// Recompute age based on health (wrap around)
 	age = (input.life.y - health) / input.life.z;
 	if (health < input.life.w) {

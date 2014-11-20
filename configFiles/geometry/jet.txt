@@ -19,14 +19,14 @@ BOOL -- RandomBurstCone_ConfigUser::enableConfigUseLogging = true
 
 # RandomBurstCone geometry configuration
 # -----------------------------------------------
-INT -- RandomBurstCone::nColumns = 40
-INT -- RandomBurstCone::nRows = 40
+INT -- RandomBurstCone::nColumns = 80
+INT -- RandomBurstCone::nRows = 20
 BOOL -- RandomBurstCone::createPoleParticles = false
 DOUBLE -- RandomBurstCone::billboardWidth = 0.5
 DOUBLE -- RandomBurstCone::billboardHeight = 0.6
 DOUBLE -- RandomBurstCone::billboardSpin = 0.005
-DOUBLE -- RandomBurstCone::linearSpeed = 0.00055
-DOUBLE -- RandomBurstCone::creationTimeOffset = 200.0
+DOUBLE -- RandomBurstCone::linearSpeed = 0.002
+DOUBLE -- RandomBurstCone::creationTimeOffset = 1000.0
 DOUBLE -- RandomBurstCone::lifeAmount = 1.0
 DOUBLE -- RandomBurstCone::decay = 0.0002
 DOUBLE -- RandomBurstCone::deathCutoff = 0.0
@@ -51,9 +51,9 @@ BOOL -- RandomBurstCone::renderAlbedoTexture = true
 
 # RandomBurstCone non-inherited parameters
 # -----------------------------------------
-DOUBLE -- RandomBurstCone::maximumPhiRange = 1.5
+DOUBLE -- RandomBurstCone::maximumPhiRange = 0.2
 DOUBLE -- RandomBurstCone::minimumRadius = 0.0
-DOUBLE -- RandomBurstCone::maximumRadius = 2.0
+DOUBLE -- RandomBurstCone::maximumRadius = 5.0
 
 # RandomBurstCone albedo texture configuration
 # ----------------------------------------------
