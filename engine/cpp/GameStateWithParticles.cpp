@@ -508,7 +508,7 @@ HRESULT GameStateWithParticles::updateDemo(void) {
 				transform,
 				static_cast<DWORD>(static_cast<float>(m_explosionLifespan) * w),
 				m_currentTime,
-				XMFLOAT3(u, v, w))
+				XMFLOAT3(1.0f, 1.0f, 1.0f))
 				);
 		}
 	}
@@ -518,17 +518,15 @@ HRESULT GameStateWithParticles::updateDemo(void) {
 		transform = new Transformable(
 			XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
 			XMFLOAT3( 0.0f, -5.0f, -5.0f), // Position
-			XMFLOAT4(-1.0f, -1.0f, -1.0f, 0.0f) // Orientation
+			XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
 			);
-
-		w = distribution(generator);
 
 		m_jets->emplace_back(new ActiveParticles<RandomBurstCone>(
 			m_jetModel,
 			transform,
-			static_cast<DWORD>(static_cast<float>(m_jetLifespan) * w),
+			m_jetLifespan,
 			m_currentTime,
-			XMFLOAT3(1.0f, 0.8f, 0.5f))
+			XMFLOAT3(1.0f, 1.0f, 1.0f))
 			);
 	}
 	return ERROR_SUCCESS;

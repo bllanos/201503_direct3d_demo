@@ -55,7 +55,7 @@ struct PSInput {
 float4 PSMAIN(in PSInput input) : SV_TARGET
 {
 	float4 color = txAlbedo.Sample(smpAlbedo, input.index);
-	color.xyz *= colorCast;
+	// color.xyz *= colorCast;
 	color.w *= input.life.y;
 	color.w *= blendAmount;
 	return color;
