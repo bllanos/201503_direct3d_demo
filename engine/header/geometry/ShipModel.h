@@ -52,7 +52,7 @@ class ShipModel : public LogUser {
 public:
 
 	ShipModel();
-	~ShipModel(void);
+	virtual ~ShipModel(void);
 
 	HRESULT spawn(Octtree*);
 	HRESULT initialize(ID3D11Device* d3dDevice);

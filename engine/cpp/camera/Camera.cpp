@@ -502,10 +502,10 @@ HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 
 
 		if (input.IsKeyDown(Keyboard::ascii_Q)) {
-			m_followTransform->Spin(-PLAYER_ROLL_SPEED, 0.0f, 0.0f);
+			m_followTransform->Spin(PLAYER_ROLL_SPEED, 0.0f, 0.0f);
 		}
 		if (input.IsKeyDown(Keyboard::ascii_E)) {
-			m_followTransform->Spin(PLAYER_ROLL_SPEED, 0.0f, 0.0f);
+			m_followTransform->Spin(-PLAYER_ROLL_SPEED, 0.0f, 0.0f);
 		}
 
 		if (input.IsKeyDown(VK_SHIFT)) {

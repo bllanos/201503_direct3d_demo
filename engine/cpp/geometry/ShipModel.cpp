@@ -31,19 +31,60 @@ ShipModel::ShipModel()
 	rootTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	body = new CubeModel(rootTransform,
 						 1.0f, 0.75f, 4.0f);
+
+	Transformable* wingTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	//wingTransform->setParent(rootTransform);
+	leftWing = new CubeModel(wingTransform,
+						     1.0f, 0.75f, 3.0f);
+
+	wingTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	wingTransform->setParent(rootTransform);
+	rightWing = new CubeModel(wingTransform,
+							  1.0f, 0.75f, 3.0f);
 }
 
-ShipModel::~ShipModel(void) {}
+ShipModel::~ShipModel(void) 
+{
+	if (body != 0) {
+		delete body;
+		body = 0;
+	}
+
+	if (leftWing != 0) {
+		delete leftWing;
+		leftWing = 0;
+	}
+
+	if (rightWing != 0) {
+		delete rightWing;
+		rightWing = 0;
+	}
+}
 
 HRESULT ShipModel::initialize(ID3D11Device* d3dDevice)
 {
-	return body->initialize(d3dDevice);
+	body->initialize(d3dDevice);
+	leftWing->initialize(d3dDevice);
+	rightWing->initialize(d3dDevice);
+	return ERROR_SUCCESS;
 }
 
 HRESULT ShipModel::spawn(Octtree* octtree)
 {
 	ObjectModel* newObject = new ObjectModel(body);
-	newObject->addTransformable(body->getTransformable());
+	newObject->addTransformable(rootTransform);
+	if (octtree->addObject(newObject) == -1){
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	newObject = new ObjectModel(leftWing);
+	newObject->addTransformable(leftWing->getTransformable());
+	if (octtree->addObject(newObject) == -1){
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	
+	newObject = new ObjectModel(rightWing);
+	newObject->addTransformable(rightWing->getTransformable());
 	if (octtree->addObject(newObject) == -1){
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
