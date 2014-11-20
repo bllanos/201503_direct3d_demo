@@ -73,7 +73,13 @@ public:
 		   that belong to geometry classes.
 		 */
 		SkinnedTexturedRendererNoLight,
-		SkinnedTexturedRendererLight
+		SkinnedTexturedRendererLight,
+
+		InvariantParticlesRendererNoLight,
+		InvariantParticlesRendererLight,
+
+		InvariantTexturedParticlesRendererNoLight,
+		InvariantTexturedParticlesRendererLight
 	};
 	/* When adding new data types to this enumeration, also do the following:
 	   -Update the 's_geometryRendererTypeNames' and

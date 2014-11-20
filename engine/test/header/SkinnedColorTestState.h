@@ -25,7 +25,7 @@ Description
 #include <vector>
 #include "State.h"
 #include "ConfigUser.h"
-#include "Camera.h"
+#include "../camera/Camera.h"
 #include "GridQuad.h"
 #include "Transformable.h"
 
@@ -46,7 +46,7 @@ public:
 
 	virtual ~SkinnedColorTestState(void);
 
-	virtual HRESULT initialize(ID3D11Device* device, int screenWidth, int screenHeight) override;
+	virtual HRESULT initialize(ID3D11Device* device, ID3D11Texture2D* backBuffer, int screenWidth, int screenHeight) override;
 
 	virtual HRESULT next(State*& nextState) override;
 

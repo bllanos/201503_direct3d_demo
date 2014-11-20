@@ -96,10 +96,10 @@ protected:
 	 */
 	virtual HRESULT configure(const std::wstring& scope, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0);
 
-public:
-
 	/* Creates texture sampler */
 	virtual HRESULT initialize(ID3D11Device* device);
+
+public:
 
 	/* Bind the texture and sampler to the pipeline
 	   for use during rendering. The shader stage
@@ -108,7 +108,16 @@ public:
 	*/
 	virtual HRESULT bind(ID3D11DeviceContext* const context,
 		const UINT textureSlot, const UINT samplerSlot,
-		const BindLocation bindLocation);
+		const ShaderStage bindLocation);
+
+	/* Unbinds the texture from the indicated location.
+	   Careful! This object does not keep track of whether
+	   or not it is actually bound to this location.
+	   As a result, something else may be unbound.
+	 */
+	virtual HRESULT unbind(ID3D11DeviceContext* const context,
+		const UINT textureSlot,
+		const ShaderStage bindLocation);
 
 	// Data members to be setup by derived classes
 protected:

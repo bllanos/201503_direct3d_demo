@@ -178,6 +178,9 @@ public:
 	*/
 	bool GetWorldDirection(const Camera& camera, XMFLOAT3& worldDirection) const;
 
+	/* Returns the distance the mouse is from the center of the screen. */
+	bool GetDistanceFromCenter(float& distance, XMFLOAT2& direction);
+
 private:
 	// Not implemented - will cause linker errors if called
 	Mouse(const Mouse& other);

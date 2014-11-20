@@ -33,18 +33,18 @@ const std::wstring Shader::s_shaderTypeNames[] = {
 	L"PixelShader"
 };
 
-const BindLocation Shader::s_shaderBindLocations[] = {
-	BindLocation::VS,
-	BindLocation::GS,
-	BindLocation::PS
+const ShaderStage Shader::s_shaderShaderStages[] = {
+	ShaderStage::VS,
+	ShaderStage::GS,
+	ShaderStage::PS
 };
 
-const size_t Shader::s_nShaderTypes = sizeof(s_shaderBindLocations) / sizeof(BindLocation);
+const size_t Shader::s_nShaderTypes = sizeof(s_shaderShaderStages) / sizeof(ShaderStage);
 
-HRESULT Shader::wstringToBindLocation(BindLocation& out, const std::wstring& in) {
+HRESULT Shader::wstringToShaderStage(ShaderStage& out, const std::wstring& in) {
 	for (size_t i = 0; i < s_nShaderTypes; ++i) {
 		if (in == s_shaderTypeNames[i]) {
-			out = s_shaderBindLocations[i];
+			out = s_shaderShaderStages[i];
 			return ERROR_SUCCESS;
 		}
 	}
@@ -55,19 +55,19 @@ Shader::~Shader(void) {
 	if (m_bindLocation != 0) {
 		if (m_shader != 0) {
 			switch (*m_bindLocation) {
-			case BindLocation::GS:
+			case ShaderStage::GS:
 			{
 				m_geometryShader->Release();
 				m_geometryShader = 0;
 				break;
 			}
-			case BindLocation::PS:
+			case ShaderStage::PS:
 			{
 				m_pixelShader->Release();
 				m_pixelShader = 0;
 				break;
 			}
-			case BindLocation::VS:
+			case ShaderStage::VS:
 			{
 				m_vertexShader->Release();
 				m_vertexShader = 0;
@@ -123,12 +123,12 @@ HRESULT Shader::configure(const wstring& scope, const wstring* configUserScope, 
 
 			// Query for configuration data
 			if (retrieve<Config::DataType::WSTRING, wstring>(scope, SHADER_TYPE_FIELD, stringValue)) {
-				BindLocation bindLocation;
-				if (FAILED(wstringToBindLocation(bindLocation, *stringValue))) {
+				ShaderStage bindLocation;
+				if (FAILED(wstringToShaderStage(bindLocation, *stringValue))) {
 					logMessage(L"Failure to identify shader type from: \"" + *stringValue + L"\"");
 					return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_DATA);
 				} else {
-					m_bindLocation = new BindLocation(bindLocation);
+					m_bindLocation = new ShaderStage(bindLocation);
 				}
 			} else {
 				logMessage(L"Shader type not found in configuration data.");
@@ -228,7 +228,7 @@ HRESULT Shader::initialize(ID3D11Device* device,
 
 	// Create the shader from the buffer.
 	switch (*m_bindLocation) {
-	case BindLocation::GS:
+	case ShaderStage::GS:
 	{
 		if (pSODeclaration != 0) {
 			logMessage(L"Creating geometry shader with stream output.");
@@ -250,14 +250,14 @@ HRESULT Shader::initialize(ID3D11Device* device,
 		m_shaderBuffer = 0;
 		break;
 	}
-	case BindLocation::PS:
+	case ShaderStage::PS:
 	{
 		result = device->CreatePixelShader(m_shaderBuffer->GetBufferPointer(), m_shaderBuffer->GetBufferSize(), NULL, &m_pixelShader);
 		m_shaderBuffer->Release();
 		m_shaderBuffer = 0;
 		break;
 	}
-	case BindLocation::VS:
+	case ShaderStage::VS:
 	{
 		result = device->CreateVertexShader(m_shaderBuffer->GetBufferPointer(), m_shaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
 		break;
@@ -295,17 +295,17 @@ HRESULT Shader::bind(ID3D11DeviceContext* const context) {
 
 	if (m_bindLocation != 0) {
 		switch (*m_bindLocation) {
-		case BindLocation::GS:
+		case ShaderStage::GS:
 		{
 			context->GSSetShader(m_geometryShader, NULL, 0);
 			break;
 		}
-		case BindLocation::PS:
+		case ShaderStage::PS:
 		{
 			context->PSSetShader(m_pixelShader, NULL, 0);
 			break;
 		}
-		case BindLocation::VS:
+		case ShaderStage::VS:
 		{
 			context->VSSetShader(m_vertexShader, NULL, 0);
 			break;
@@ -369,7 +369,7 @@ HRESULT Shader::createInputLayout(ID3D11Device* const device,
 	}
 
 	// Check for type of shader
-	if (*m_bindLocation != BindLocation::VS) {
+	if (*m_bindLocation != ShaderStage::VS) {
 		logMessage(L"Cannot create an input layout for a non-vertex shader.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
 	}

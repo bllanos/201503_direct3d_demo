@@ -1,0 +1,114 @@
+# Configuration file for the smear effect SSSE
+# (instance of the TwoFrameSSSE class)
+
+# LogUser configuration
+# ---------------------
+BOOL -- TwoFrameSSSE_LogUser::enableLogging = true
+WSTRING -- TwoFrameSSSE_LogUser::msgPrefix = L"Smear SSSE"
+BOOL -- TwoFrameSSSE_LogUser::useGlobalLog = false
+BOOL -- TwoFrameSSSE_LogUser::allocConsole = false
+BOOL -- TwoFrameSSSE_LogUser::allocLogFile = true
+FILENAME -- TwoFrameSSSE_LogUser::logFileName = "GameStateWithSSSE_SSSEsLog.txt"
+DIRECTORY -- TwoFrameSSSE_LogUser::logFilePath = "..\logFiles"
+BOOL -- TwoFrameSSSE_LogUser::overwriteFile = false
+BOOL -- TwoFrameSSSE_LogUser::timestampEnable = true
+
+# ConfigUser configuration
+# ------------------------
+BOOL -- TwoFrameSSSE_ConfigUser::enableConfigUseLogging = true
+
+# Render target background colour
+# -------------------------------
+COLOR -- TwoFrameSSSE::backgroundColor = (0, 0, 0, 255)
+
+# Past frame refresh rate [milliseconds]
+# --------------------------------------
+INT -- TwoFrameSSSE::pastFrameUpdateInterval = 0
+
+# Source of past frame data
+# -------------------------
+BOOL -- TwoFrameSSSE::pastFrameContainsSSSE = true
+
+# Constant buffer parameters
+# --------------------------
+FLOAT4 -- TwoFrameSSSE::globals_globalIndex = (0.0, 0.0, 0.0, 1.0)
+FLOAT4 -- TwoFrameSSSE::globals_parameters = (0.25, 0.8, 1000.0, 0.9)
+
+# Vertex Shader setup
+# -------------------
+BOOL -- TwoFrameSSSE::VS_enableLogging = true
+WSTRING -- TwoFrameSSSE::VS_msgPrefix = L"Smear SSSE VS"
+WSTRING -- TwoFrameSSSE::VS_scope = L"VS"
+WSTRING -- TwoFrameSSSE::VS_scope_LogUser = L"shader_LogUser"
+WSTRING -- TwoFrameSSSE::VS_scope_ConfigUser = L"shader_ConfigUser"
+FILENAME -- TwoFrameSSSE::VS_inputConfigFileName = "commonSSSE_VS.txt"
+DIRECTORY -- TwoFrameSSSE::VS_inputConfigFilePath = "..\configFiles\ssse"
+
+# Pixel Shader setup
+# -------------------
+BOOL -- TwoFrameSSSE::PS_enableLogging = true
+WSTRING -- TwoFrameSSSE::PS_msgPrefix = L"Smear SSSE PS"
+WSTRING -- TwoFrameSSSE::PS_scope = L"PS"
+WSTRING -- TwoFrameSSSE::PS_scope_LogUser = L"shader_LogUser"
+WSTRING -- TwoFrameSSSE::PS_scope_ConfigUser = L"shader_ConfigUser"
+FILENAME -- TwoFrameSSSE::PS_inputConfigFileName = "smear.txt"
+DIRECTORY -- TwoFrameSSSE::PS_inputConfigFilePath = "..\configFiles\ssse"
+
+WSTRING -- PS::type = L"PixelShader"
+FILENAME -- PS::fileName = "ssseSmearPS.hlsl"
+DIRECTORY -- PS::filePath = "..\shaderCode\ssse"
+WSTRING -- PS::shaderModel = L"ps_4_0"
+WSTRING -- PS::entryPoint = L"PSMAIN"
+
+# Generic shader setup (effectively for the pixel shader)
+# -------------------------------------------------------
+BOOL -- shader_LogUser::enableLogging = true
+WSTRING -- shader_LogUser::msgPrefix = L"Smear Pixel Shader"
+BOOL -- shader_LogUser::useGlobalLog = true
+BOOL -- shader_ConfigUser::enableConfigUseLogging = true
+
+# Current frame texture object configuration (external)
+# -----------------------------------------------------
+BOOL -- TwoFrameSSSE::currentFrame_enableLogging = true
+WSTRING -- TwoFrameSSSE::currentFrame_msgPrefix = L"Smear SSSE Current Frame Texture"
+WSTRING -- TwoFrameSSSE::currentFrame_scope = L"frame"
+WSTRING -- TwoFrameSSSE::currentFrame_scope_LogUser = L"frame_LogUser"
+WSTRING -- TwoFrameSSSE::currentFrame_scope_ConfigUser = L"frame_ConfigUser"
+FILENAME -- TwoFrameSSSE::currentFrame_inputConfigFileName = "smear.txt"
+DIRECTORY -- TwoFrameSSSE::currentFrame_inputConfigFilePath = "..\configFiles\ssse"
+
+
+# Past frame texture object configuration (external)
+# -----------------------------------------------------
+BOOL -- TwoFrameSSSE::pastFrame_enableLogging = true
+WSTRING -- TwoFrameSSSE::pastFrame_msgPrefix = L"Smear SSSE Current Frame Texture"
+WSTRING -- TwoFrameSSSE::pastFrame_scope = L"frame"
+WSTRING -- TwoFrameSSSE::pastFrame_scope_LogUser = L"frame_LogUser"
+WSTRING -- TwoFrameSSSE::pastFrame_scope_ConfigUser = L"frame_ConfigUser"
+FILENAME -- TwoFrameSSSE::pastFrame_inputConfigFileName = "smear.txt"
+DIRECTORY -- TwoFrameSSSE::pastFrame_inputConfigFilePath = "..\configFiles\ssse"
+
+# Common texture object configuration (internal)
+# ----------------------------------------------
+# LogUser
+BOOL -- frame_LogUser::enableLogging = true
+WSTRING -- frame_LogUser::msgPrefix = L"Smear SSSE Frame Texture"
+BOOL -- frame_LogUser::useGlobalLog = false
+BOOL -- frame_LogUser::allocConsole = false
+BOOL -- frame_LogUser::allocLogFile = true
+FILENAME -- frame_LogUser::logFileName = "GameStateWithSSSE_SSSEsLog.txt"
+DIRECTORY -- frame_LogUser::logFilePath = "..\logFiles"
+BOOL -- frame_LogUser::overwriteFile = false
+BOOL -- frame_LogUser::timestampEnable = true
+
+# ConfigUser
+BOOL -- frame_ConfigUser::enableConfigUseLogging = true
+
+# Sampler State
+INT -- frame::filter = 21
+INT -- frame::addressU = 1
+INT -- frame::addressV = 1
+INT -- frame::addressW = 1
+INT -- frame::maxAnisotropy = 1
+INT -- frame::comparisonFunc = 1
+COLOR -- frame::borderColor = (255, 255, 255, 255)

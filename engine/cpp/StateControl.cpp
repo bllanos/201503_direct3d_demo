@@ -22,9 +22,13 @@ Description
 #include "StateControl.h"
 #include "engineGlobals.h"
 #include "FlatAtomicConfigIO.h"
+#include "globals.h"
 #include <sstream>   // for wostringstream
 #include <string>
+
 using std::wostringstream;
+
+#define STATECONTROL_MSGBOX_TITLE L"StateControl Error"
 
 StateControl::StateControl(void) :
 LogUser(true, STATECONTROL_START_MSG_PREFIX),
@@ -117,7 +121,7 @@ HRESULT StateControl::Initialize(void)
 		SCREEN_DEPTH,
 		SCREEN_NEAR))
 	{
-		MessageBox(m_mainWindow->getHWND(), L"Could not initialize Direct3D.", L"Error", MB_OK);
+		MessageBox(m_mainWindow->getHWND(), L"Could not initialize Direct3D.", STATECONTROL_MSGBOX_TITLE, MB_OK);
 		BasicWindow::shutdownAll();
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
@@ -140,14 +144,43 @@ HRESULT StateControl::Initialize(void)
 		);
 
 	if( FAILED(m_GeometryRendererManager->initialize(m_D3D->GetDevice())) ) {
-		MessageBox(m_mainWindow->getHWND(), L"Could not initialize GeometryRendererManager.", L"Error", MB_OK);
+		MessageBox(m_mainWindow->getHWND(), L"Could not initialize GeometryRendererManager.", STATECONTROL_MSGBOX_TITLE, MB_OK);
 		BasicWindow::shutdownAll();
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
 	// Set up the first State
-	m_CurrentState = new STATECONTROL_FIRST_STATE();
-	if( FAILED(m_CurrentState->initialize(m_D3D->GetDevice(),
+	try {
+		m_CurrentState = new STATECONTROL_FIRST_STATE();
+	} catch( std::exception e ) {
+		// Message box documentation: http://msdn.microsoft.com/en-us/library/windows/desktop/ms645505%28v=vs.85%29.aspx
+		std::string msg = "Failed to create the first state to be run, with exception message: ";
+		msg += e.what();
+		std::wstring wMsg;
+		if( FAILED(toWString(wMsg, msg)) ) {
+			wMsg = L"Failed to create the first state to be run, and failed to convert exception message to a wide-character string.";
+		}
+		MessageBox(m_mainWindow->getHWND(), wMsg.c_str(),
+			STATECONTROL_MSGBOX_TITLE, MB_OK);
+		logMessage(wMsg);
+		if( m_CurrentState != 0 ) {
+			delete m_CurrentState;
+		}
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	} catch( ... ) {
+		std::wstring wMsg = L"Failed to create the first state to be run.";
+		MessageBox(m_mainWindow->getHWND(), wMsg.c_str(),
+			STATECONTROL_MSGBOX_TITLE, MB_OK);
+		logMessage(wMsg);
+		if( m_CurrentState != 0 ) {
+			delete m_CurrentState;
+		}
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	if( FAILED(m_CurrentState->initialize(
+		m_D3D->GetDevice(),
+		m_D3D->GetBackBuffer(),
 		m_mainWindow->getWidth(),
 		m_mainWindow->getHeight())) )
 	{
@@ -295,13 +328,16 @@ HRESULT StateControl::Frame(void)
 	*/
 	
 
-	m_Mouse->Update();
-	m_Keyboard->Update();
+	
 	result = m_CurrentState->poll(*m_Keyboard, *m_Mouse);
 	if( FAILED(result) ) {
 		logMessage(L"Call to State Poll() function failed.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
+	// must run keyboard update function after polling
+	m_Mouse->Update();
+	m_Keyboard->Update();
+
 	result = m_CurrentState->update(totalElapsedTime, elapsedTimeLastFrame);
 	if( FAILED(result) ) {
 		logMessage(L"Call to State Update() function failed.");

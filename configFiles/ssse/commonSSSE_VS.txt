@@ -1,0 +1,14 @@
+# Configuration file for the full-screen quad vertex shaders
+
+WSTRING -- VS::type = L"VertexShader"
+FILENAME -- VS::fileName = "ssseBasicQuadVS.hlsl"
+DIRECTORY -- VS::filePath = "..\shaderCode\ssse"
+WSTRING -- VS::shaderModel = L"vs_4_0"
+WSTRING -- VS::entryPoint = L"VSMAIN"
+
+# Common shader setup
+# ---------------------
+BOOL -- shader_LogUser::enableLogging = true
+WSTRING -- shader_LogUser::msgPrefix = L"SSSE Vertex Shader"
+BOOL -- shader_LogUser::useGlobalLog = true
+BOOL -- shader_ConfigUser::enableConfigUseLogging = true

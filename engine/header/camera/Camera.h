@@ -7,6 +7,9 @@
 #define _CAMERA_H_
 
 
+// Logging message prefix
+#define CAMERA_START_MSG_PREFIX L"Camera "
+
 //////////////
 // INCLUDES //
 //////////////
@@ -14,6 +17,8 @@
 #include <DirectXMath.h>
 #include "IInteractive.h"
 #include "Transformable.h"
+#include "CameraTransformable.h"
+#include "LogUser.h"
 
 using namespace DirectX;
 
@@ -36,12 +41,26 @@ Pan-Tilt-Roll-Strafe-Dolly-Crane-Zooom
 	const float CAMERA_ZOOM_IN_FACTOR = 0.9f; //field of view mult. factor to zoom in
 	const float CAMERA_ZOOM_OUT_FACTOR = 1.1f; //field of view mult. factor to zoom out
 
+	const float CAMERA_DEAD_ZONE = 30.0f;
+
+	const float PLAYER_MOVE_SPEED = 0.2f; // speed at which player moves
+	const float PLAYER_TILT_SPEED = 4.0f; //up and down rotation about the sideways vector direction
+	const float PLAYER_PAN_SPEED = 0.04f; //left and right rotation about the up vector
+	const float PLAYER_ROLL_SPEED = 4.0f; //left and right rotation about the camera direction vector
+	const float PLAYER_DOLLY_SPEED = 0.4f;; //used for forward and backward travel along the camera direction vector
+	const float PLAYER_STRAFE_SPEED = 0.35f; //sideways translation along the sideways vector direction
+	const float PLAYER_CRANE_SPEED = 0.4f; //up and down translation along the up vector direction
+	const float PLAYER_ZOOM_IN_FACTOR = 0.9f; //field of view mult. factor to zoom in
+	const float PLAYER_ZOOM_OUT_FACTOR = 1.1f; //field of view mult. factor to zoom out
+
 	const float	NOMINAL_FIELD_OF_VIEW = (float)XM_PI / 4.0f;
 
 	const float MAX_CAMERA_FIELD_OF_VIEW = NOMINAL_FIELD_OF_VIEW * 3;
 	const float MIN_CAMERA_FIELD_OF_VIEW = NOMINAL_FIELD_OF_VIEW / 3;
 
-class Camera : public IInteractive
+	enum CameraMode { FIRST_PERSON_CAMERA = 0, THIRD_PERSON_CAMERA, FREE_CAMERA };
+
+class Camera : public IInteractive, public LogUser
 {
 public:
 	Camera(int screenWidth, int screenHeight); //constructor
@@ -62,6 +81,9 @@ public:
 	void RollRight(); //rotate right around cameara direction vector
 	void ZoomIn(); //increase the effective focal length for camera lens (smaller field of view angle)
 	void ZoomOut(); //decrease the effective focal length of the camera lens (greater field of view angle)
+
+	// follow the given transform if the user wishes to (a key toggle)
+	void SetFollowTransform(Transformable* followTransform);
 
 	XMFLOAT3 GetPosition() const;
 
@@ -90,7 +112,13 @@ private:
 	XMFLOAT4X4 m_viewMatrix;
 	XMFLOAT4X4 m_projectionMatrix;
 
-	Transformable* m_transform;
+	CameraTransformable* m_transform;
+	
+	// follow this transformable (object tracking)
+	Transformable* m_followTransform;
+
+	// the user may toggle whether or not they wish to follow the transform (for now)
+	CameraMode cameraMode;
 };
 
 #endif

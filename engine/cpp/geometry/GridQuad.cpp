@@ -410,7 +410,7 @@ HRESULT GridQuad::uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, const float u,
 }
 
 float GridQuad::getRadius(){
-	float theDiagonal = sqrt(2)/2;
+	float theDiagonal = static_cast<float>(sqrt(2)/2);
 
 	XMFLOAT3 scale;
 	

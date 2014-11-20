@@ -49,17 +49,17 @@ class Shader : public ConfigUser {
 
 	// Static function members
 protected:
-	/* Outputs the BindLocation constant that corresponds to
+	/* Outputs the ShaderStage constant that corresponds to
 	   the shader type named in the input string (case-sensitive).
-	   Returns a failure code if there is no corresponding BindLocation constant.
+	   Returns a failure code if there is no corresponding ShaderStage constant.
 	*/
-	static HRESULT wstringToBindLocation(BindLocation& out, const std::wstring& in);
+	static HRESULT wstringToShaderStage(ShaderStage& out, const std::wstring& in);
 
 	// Static data members
 private:
 	static const std::wstring s_shaderTypeNames[];
 
-	static const BindLocation s_shaderBindLocations[];
+	static const ShaderStage s_shaderShaderStages[];
 
 	static const size_t s_nShaderTypes;
 
@@ -159,7 +159,7 @@ private:
 
 	/* Shader type and bind location
 	 */
-	BindLocation* m_bindLocation;
+	ShaderStage* m_bindLocation;
 
 	/* Configuration data stored until the shader
 	   is initialized successfully

@@ -13,7 +13,7 @@ Implementation of the Mouse class
 #include "engineGlobals.h"
 #include <string>
 #include <sstream>   // for wostringstream
-#include "Camera.h"
+#include "../camera/Camera.h"
 
 using std::wostringstream;
 
@@ -460,6 +460,29 @@ bool Mouse::GetWorldDirection(const Camera& camera, XMFLOAT3& worldDirection) co
 
 	// Normalize the ray direction vector
 	XMStoreFloat3(&worldDirection, XMVector3Normalize(XMLoadFloat3(&ray)));
+	return true;
+}
+
+bool Mouse::GetDistanceFromCenter(float& distance, XMFLOAT2& direction)
+{
+	if (!m_Tracking)
+	{
+		return false;
+	}
+
+	XMFLOAT2 center = XMFLOAT2(m_ScreenDimensions.x / 2, m_ScreenDimensions.y / 2);
+	XMFLOAT2 mouseToCenter = XMFLOAT2(m_Position.x - center.x, m_Position.y - center.y);
+	
+	// get distance from mouse to center of screen
+	distance = sqrt(pow(mouseToCenter.x, 2) + pow(mouseToCenter.y, 2));
+
+    //XMVECTOR vec = XMLoadFloat2(&mouseToCenter);
+	//vec = XMVector2Normalize(vec);
+	//XMStoreFloat2(&mouseToCenter, vec);
+
+	// get normalized vector direction of center of screen to mouse
+	direction = mouseToCenter;
+
 	return true;
 }
 

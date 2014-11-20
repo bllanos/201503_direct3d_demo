@@ -395,7 +395,7 @@ float GridQuadTextured::getRadius(){
 
 	return 0.5f*theDiagonal;
 	*/
-	return sqrt(2) / 2;
+	return static_cast<float>(sqrt(2) / 2);
 }
 
 XMFLOAT3 GridQuadTextured::getPosition(){
