@@ -168,6 +168,10 @@ HRESULT Octtree::refitting(){
 	return result;
 }
 
+/*
+	A note of this function, you will return the list of all the collisions including the object firing the laser
+	so you have to handle the list of all the return
+*/
 int Octtree::checkCollisionsRay(vector<ObjectModel *>* outCollsion, XMFLOAT3 posRay, XMFLOAT3 dirRay){
 	int result = -1;
 	
