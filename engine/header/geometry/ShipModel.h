@@ -28,6 +28,7 @@ Description
 #include "LogUser.h"
 #include "../../oct_tree.h"
 #include "../../ObjectModel.h"
+#include "IGeometry.h"
 #include <string>
 
 // Default log message prefix used before more information is available
@@ -47,7 +48,8 @@ Refer to LogUser.h and ConfigUser.h
 #define SHIPMODEL_LOGUSER_SCOPE		L"ShipModel_LogUser"
 #define SHIPMODEL_CONFIGUSER_SCOPE		L"ShipModel_ConfigUser"
 
-class ShipModel : public LogUser {
+class ShipModel : public IGeometry, public LogUser
+{
 	// Initialization and destruction
 public:
 
@@ -58,6 +60,16 @@ public:
 	HRESULT initialize(ID3D11Device* d3dDevice);
 	// body is root transform
 	Transformable* rootTransform;
+
+	virtual HRESULT drawUsingAppropriateRenderer(
+		ID3D11DeviceContext* const context,
+		GeometryRendererManager& manager,
+		const Camera* const camera
+		) override;
+
+	virtual HRESULT setTransformables(const std::vector<Transformable*>* const transforms) override;
+	virtual XMFLOAT3 getPosition() override;
+	virtual float getRadius() override;
 	
 private:
 	CubeModel* body;

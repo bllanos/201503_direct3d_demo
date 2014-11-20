@@ -297,11 +297,10 @@ HRESULT CubeModel::setTransformables(const std::vector<Transformable*>* const tr
 }
 
 float CubeModel::getRadius(){
-	XMFLOAT3 scale = m_transform->getScale();
 
-	float theX = m_xlen * scale.x;
-	float theY = m_ylen * scale.y;
-	float theZ = m_zlen * scale.z;
+	float theX = m_xlen;
+	float theY = m_ylen;
+	float theZ = m_zlen;
 
 	float theDiagonal = sqrt(pow(theX, 2) + pow(theY, 2) + pow(theZ, 2));
 

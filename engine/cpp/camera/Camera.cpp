@@ -207,6 +207,9 @@ void Camera::SetFollowTransform(Transformable* followTransform)
 
 XMFLOAT3 Camera::GetPosition() const
 {
+	if (m_followTransform != 0) {
+		return m_followTransform->getPosition();
+	}
 	return m_transform->getPosition();
 }
 
