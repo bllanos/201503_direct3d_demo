@@ -146,4 +146,38 @@ protected:
 	/* Adds 'n' ships to the octree */
 	virtual HRESULT spawnShip(const size_t n);
 
+	// Particle system API (implemented in a derived class)
+protected:
+
+	/* Adds an explosion with the given transformation */
+	virtual HRESULT spawnExplosion(Transformable* const transform) = 0;
+
+	/* Adds a jet with the given transformation */
+	virtual HRESULT spawnJet(Transformable* const transform) = 0;
+
+	/* Removes all explosions with the transformation at the given
+	memory location.
+	If 'm_demo_enabled' is true, 'transform' is deleted.
+	Otherwise, 'transform' is assumed to be owned by another class.
+
+	If calling this function from within this class while iterating
+	over 'm_explosions', be sure to iterate backwards,
+	as this function may result in the deletion of an element
+	in 'm_explosions', followed by the shifting of remaining
+	elements to lower indices.
+	*/
+	virtual HRESULT removeExplosion(Transformable* const transform) = 0;
+
+	/* Removes all jets with the transformation at the given
+	memory location.
+	If 'm_demo_enabled' is true, 'transform' is deleted.
+	Otherwise, 'transform' is assumed to be owned by another class.
+
+	If calling this function from within this class while iterating
+	over 'm_jets', be sure to iterate backwards,
+	as this function may result in the deletion of an element
+	in 'm_jets', followed by the shifting of remaining
+	elements to lower indices.
+	*/
+	virtual HRESULT removeJet(Transformable* const transform) = 0;
 };

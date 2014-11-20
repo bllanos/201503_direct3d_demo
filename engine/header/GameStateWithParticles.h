@@ -171,10 +171,10 @@ public:
 	// Control functions
 public:
 	/* Adds an explosion with the given transformation */
-	virtual HRESULT spawnExplosion(Transformable* const transform);
+	virtual HRESULT spawnExplosion(Transformable* const transform) override;
 
 	/* Adds a jet with the given transformation */
-	virtual HRESULT spawnJet(Transformable* const transform);
+	virtual HRESULT spawnJet(Transformable* const transform) override;
 
 	/* Removes all explosions with the transformation at the given
 	   memory location.
@@ -187,7 +187,7 @@ public:
 	   in 'm_explosions', followed by the shifting of remaining
 	   elements to lower indices.
 	 */
-	virtual HRESULT removeExplosion(Transformable* const transform);
+	virtual HRESULT removeExplosion(Transformable* const transform) override;
 
 	/* Removes all jets with the transformation at the given
 	   memory location.
@@ -200,7 +200,7 @@ public:
 	   in 'm_jets', followed by the shifting of remaining
 	   elements to lower indices.
 	*/
-	virtual HRESULT removeJet(Transformable* const transform);
+	virtual HRESULT removeJet(Transformable* const transform) override;
 
 protected:
 
