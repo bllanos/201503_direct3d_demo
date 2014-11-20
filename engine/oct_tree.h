@@ -58,5 +58,6 @@ class Octtree{
 		int checkCollisionsWithin(Octnode* node, vector<ObjectModel **>* outCollisions);
 		int checkUpTree(Octnode* currNode, Octnode* checkNode, vector<ObjectModel**>* outcollisions);
 		int traverseTreeDown(Octnode* node, vector<ObjectModel**>* outcollisions);
-		
+		int checkCollisionsRay(vector<ObjectModel *>* outColliding, XMFLOAT3 posRay, XMFLOAT3 dirRay);
+
 };
