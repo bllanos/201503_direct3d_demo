@@ -111,7 +111,7 @@ Knot::~Knot(void) {
 	}
 }
 
-HRESULT Knot::getControlPoints(DirectX::XMFLOAT4*& const controlPoints) {
+HRESULT Knot::getControlPoints(DirectX::XMFLOAT4*& controlPoints) {
 
 	if( controlPoints == 0 ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
@@ -168,9 +168,10 @@ HRESULT Knot::getControlPoints(DirectX::XMFLOAT4*& const controlPoints) {
 		throw std::exception("Unknown PointSet enumeration constant found in Knot::getControlPoints().");
 		break;
 	}
+	return ERROR_SUCCESS;
 }
 
-HRESULT Knot::updateControlPoints(Transformable& const transform) {
+HRESULT Knot::updateControlPoints(Transformable& transform) {
 	HRESULT result = ERROR_SUCCESS;
 	switch( m_side ) {
 	case PointSet::START:
@@ -214,7 +215,7 @@ HRESULT Knot::updateControlPoints(Transformable& const transform) {
 	return result;
 }
 
-HRESULT Knot::updateP2(Transformable& const transform) {
+HRESULT Knot::updateP2(Transformable& transform) {
 	HRESULT result = ERROR_SUCCESS;
 	XMFLOAT3 derivative(0.0f, 0.0f, 0.0f);
 	if( !(*m_useForward) ) {
@@ -246,15 +247,17 @@ HRESULT Knot::updateP2(Transformable& const transform) {
 	return result;
 }
 
-HRESULT Knot::updateP3(Transformable& const transform) {
+HRESULT Knot::updateP3(Transformable& transform) {
 	*m_p3 = transform.getPosition();
+	return ERROR_SUCCESS;
 }
 
-HRESULT Knot::updateP0(Transformable& const transform) {
+HRESULT Knot::updateP0(Transformable& transform) {
 	*m_p0 = transform.getPosition();
+	return ERROR_SUCCESS;
 }
 
-HRESULT Knot::updateP1(Transformable& const transform) {
+HRESULT Knot::updateP1(Transformable& transform) {
 	HRESULT result = ERROR_SUCCESS;
 	XMFLOAT3 derivative(0.0f, 0.0f, 0.0f);
 	if( !(*m_useForward) ) {

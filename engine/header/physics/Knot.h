@@ -102,13 +102,13 @@ public:
 
 	/* The following helper functions are not called by this class. */
 protected:
-	HRESULT updateControlPoints(Transformable& const transform);
+	HRESULT updateControlPoints(Transformable& transform);
 
 private:
-	HRESULT updateP2(Transformable& const transform);
-	HRESULT updateP3(Transformable& const transform);
-	HRESULT updateP0(Transformable& const transform);
-	HRESULT updateP1(Transformable& const transform);
+	HRESULT updateP2(Transformable& transform);
+	HRESULT updateP3(Transformable& transform);
+	HRESULT updateP0(Transformable& transform);
+	HRESULT updateP1(Transformable& transform);
 
 	// Data members
 private:
