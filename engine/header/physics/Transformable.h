@@ -9,12 +9,13 @@ PLEASE READ *HOW TO USE* BELOW
 Created for: COMP3501A Game
 Fall 2014, Carleton University
 
-Author:
+Authors:
+Brandon Keyes, ID: 100897196
 Bernard Llanos, ID: 100793648
 
 Created October 2, 2014
 
-Adapted from A2Transformable.h (COMP3501A Assignment 2 code)
+Adapted from A2Transformable.h (COMP3501A Assignment 2 code, Bernard Llanos)
 and from the COMP3501A quaternion camera demo posted on cuLearn.
 
 Description
@@ -80,6 +81,19 @@ public:
 	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const override;
 
 	virtual HRESULT getWorldTransformNoScale(DirectX::XMFLOAT4X4& worldTransformNoScale) const;
+
+	/* Computes the world-space direction vector (normalized)
+	   corresponding to this object's linear velocity.
+
+	   If 'speed' is not null, it will be assigned
+	   this object's linear speed.
+	*/
+	virtual HRESULT getWorldDirectionAndSpeed(DirectX::XMFLOAT3& worldDirection, float* const speed = 0) const;
+
+	/* Computes the world-space (direction * speed) vector (non-normalized, therefore)
+	   corresponding to this object's linear velocity.
+	 */
+	virtual HRESULT getWorldVelocity(DirectX::XMFLOAT3& worldVelocity) const;
 
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
 

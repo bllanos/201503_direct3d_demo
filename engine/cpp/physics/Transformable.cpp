@@ -6,24 +6,26 @@
 Created for: COMP3501A Game
 Fall 2014, Carleton University
 
-Author:
+Authors:
+Brandon Keyes, ID: 100897196
 Bernard Llanos, ID: 100793648
 
 Created October 2, 2014
 
-Adapted from A2Transformable.h (COMP3501A Assignment 2 code)
+Adapted from A2Transformable.h (COMP3501A Assignment 2 code, Bernard Llanos)
 and from the COMP3501A quaternion camera demo posted on cuLearn.
+
+Reference on transforming non-position vectors:
+http://en.wikipedia.org/wiki/Normal_%28geometry%29#Transforming_normals
 
 Description
 -Implementation of the Transformable class
 */
 
 #include "Transformable.h"
+#include "defs.h"
 
 using namespace DirectX;
-
-// Action period in milliseconds
-#define CUBE_PERIOD (10.0f * MILLISECS_PER_SEC_FLOAT)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Transformable
@@ -58,6 +60,41 @@ HRESULT Transformable::getWorldTransform(XMFLOAT4X4& worldTransform) const {
 
 HRESULT Transformable::getWorldTransformNoScale(XMFLOAT4X4& worldTransformNoScale) const {
 	worldTransformNoScale = m_worldTransformNoScale;
+	return ERROR_SUCCESS;
+}
+
+HRESULT Transformable::getWorldDirectionAndSpeed(DirectX::XMFLOAT3& worldDirection, float* const speed) const {
+	DirectX::XMFLOAT4X4 storedTempMatrix;
+	if( FAILED(getWorldTransform(storedTempMatrix)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	DirectX::XMMATRIX tempMatrix = XMLoadFloat4x4(&storedTempMatrix);
+	tempMatrix = XMMatrixInverse(0, tempMatrix);
+	tempMatrix = XMMatrixTranspose(tempMatrix);
+
+	DirectX::XMFLOAT4 worldDirection4D = XMFLOAT4(m_velDirection.x, m_velDirection.y, m_velDirection.z, 0.0f);
+	DirectX::XMVECTOR worldDirection4DVector = XMVector4Transform(XMLoadFloat4(&worldDirection4D), tempMatrix);
+	
+	// Is this strictly necessary?
+	worldDirection4DVector = XMVector3Normalize(worldDirection4DVector);
+
+	// Output results
+	XMStoreFloat3(&worldDirection, worldDirection4DVector);
+
+	if( speed != 0 ) {
+		*speed = m_speed;
+	}
+	return ERROR_SUCCESS;
+}
+
+HRESULT Transformable::getWorldVelocity(DirectX::XMFLOAT3& worldVelocity) const {
+	DirectX::XMFLOAT3 unitVector;
+	float speed;
+	if( FAILED(getWorldDirectionAndSpeed(unitVector, &speed)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	XMStoreFloat3(&worldVelocity,
+		XMVectorScale(XMLoadFloat3(&unitVector), speed));
 	return ERROR_SUCCESS;
 }
 
