@@ -13,6 +13,11 @@ Mark Wilkes, ID: 100884169
 Created November 21, 2014
 
 Primary basis: None
+References:
+  -It seems that the distance between the tangent
+   control points and the position control points
+   is a third of the 'speed' at the position control point
+   (http://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B.C3.A9zier_curves)
 
 Description
   -Abstract class defining a C_1 continuous knot
@@ -93,7 +98,7 @@ public:
 	   'controlPoints' will be incremented to reflect the number
 	   of control points output.
 	 */
-	virtual HRESULT getControlPoints(DirectX::XMFLOAT4*& controlPoints);
+	HRESULT getControlPoints(DirectX::XMFLOAT4*& controlPoints);
 
 	/* The following helper functions are not called by this class. */
 protected:

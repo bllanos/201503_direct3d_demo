@@ -23,36 +23,22 @@ Description
 #include <Windows.h>
 #include <DirectXMath.h>
 #include "Knot.h"
-#include "Transformable.h"
 
 class StaticKnot : public Knot {
 
 public:
-	/* It is possible to create a single or double-sided knot.
-	   The contents of 'controlPoints' should be as follows, if 'side' is:
-	     -START: p0 and p1; The initial position and tangent control points of the second segment
-	     -BOTH: p2, p3, p0 and p1
-	     -END: p2 and p3; The final position and tangent control points of the first segment
-	 */
-	StaticKnot(const DirectX::XMFLOAT3* const controlPoints, const PointSet side);
+	/* Proxy of base class constructor */
+	StaticKnot(const PointSet side, const DirectX::XMFLOAT3* const controlPoints);
 
-	/* It is possible to create a single or double-sided knot.
-	   The number of control points corresponding to 'side'
-	   are derived from the 'transform' parameter.
-	 */
-	StaticKnot(const Transformable* transform, const PointSet side);
+	/* Proxy of base class constructor */
+	StaticKnot(const PointSet side, Transformable& transform,
+		const bool useForward = true, const float* const speed = 0);
 
+public:
 	virtual ~StaticKnot(void);
 
-	/* Nothing to update
-	 */
+	/* Does nothing - Control points are static. */
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval) override;
-
-	virtual HRESULT getControlPoints(DirectX::XMFLOAT4* const controlPoints, const PointSet side) override;
-
-	// Data members
-protected:
-	DirectX::XMFLOAT3* m_controlPoints;
 
 	// Currently not implemented - will cause linker errors if called
 private:
