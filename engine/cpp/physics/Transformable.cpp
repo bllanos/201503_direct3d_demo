@@ -65,15 +65,19 @@ HRESULT Transformable::getWorldTransformNoScale(XMFLOAT4X4& worldTransformNoScal
 
 HRESULT Transformable::getWorldDirectionAndSpeed(DirectX::XMFLOAT3& worldDirection, float* const speed) const {
 	DirectX::XMFLOAT3 unitWorldDirection;
-	if( FAILED(getNormalizedDirectionInWorld(unitWorldDirection, m_velDirection)) ) {
+	if( FAILED(getDirectionInWorld(unitWorldDirection, m_velDirection, false)) ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
+	DirectX::XMFLOAT3 speedVector;
+	XMStoreFloat3(&speedVector, XMVector3Length(XMLoadFloat3(&unitWorldDirection)));
+	XMStoreFloat3(&unitWorldDirection, XMVector3Normalize(XMLoadFloat3(&unitWorldDirection)));
+
 
 	// Output results
 	worldDirection = unitWorldDirection;
 
 	if( speed != 0 ) {
-		*speed = m_speed;
+		*speed = m_speed * speedVector.x;
 	}
 	return ERROR_SUCCESS;
 }
@@ -94,7 +98,7 @@ HRESULT Transformable::getWorldForward(DirectX::XMFLOAT3& worldForward) {
 	updateTransformProperties();
 
 	DirectX::XMFLOAT3 unitWorldDirection;
-	if( FAILED(getNormalizedDirectionInWorld(unitWorldDirection, m_forward)) ) {
+	if( FAILED(getDirectionInWorld(unitWorldDirection, m_forward, true)) ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
@@ -332,7 +336,8 @@ bool Transformable::hasParent(){
 	return true;
 }
 
-HRESULT Transformable::getNormalizedDirectionInWorld(DirectX::XMFLOAT3& unitWorldDirection, const DirectX::XMFLOAT3& localDirection) const {
+HRESULT Transformable::getDirectionInWorld(DirectX::XMFLOAT3& unitWorldDirection,
+	const DirectX::XMFLOAT3& localDirection, const bool normalize) const {
 	DirectX::XMFLOAT4X4 storedTempMatrix;
 	if( FAILED(getWorldTransform(storedTempMatrix)) ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -344,8 +349,9 @@ HRESULT Transformable::getNormalizedDirectionInWorld(DirectX::XMFLOAT3& unitWorl
 	DirectX::XMFLOAT4 worldDirection4D = XMFLOAT4(localDirection.x, localDirection.y, localDirection.z, 0.0f);
 	DirectX::XMVECTOR worldDirection4DVector = XMVector4Transform(XMLoadFloat4(&worldDirection4D), tempMatrix);
 
-	// Is this strictly necessary?
-	worldDirection4DVector = XMVector3Normalize(worldDirection4DVector);
+	if( normalize ) {
+		worldDirection4DVector = XMVector3Normalize(worldDirection4DVector);
+	}
 
 	// Output results
 	XMStoreFloat3(&unitWorldDirection, worldDirection4DVector);

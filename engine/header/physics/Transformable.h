@@ -70,7 +70,7 @@ public:
 	DirectX::XMFLOAT4 m_L; // angular momentum (use as velocity)
 	DirectX::XMFLOAT3 m_velDirection; // linear velocity direction (expected to be a unit vector)
 	
-	float m_speed; // Linear speed (units per second)
+	float m_speed; // Local linear speed (units per second)
 	float m_radius;
 
 public:
@@ -86,7 +86,7 @@ public:
 	   corresponding to this object's linear velocity.
 
 	   If 'speed' is not null, it will be assigned
-	   this object's linear speed.
+	   this object's linear speed in world space.
 	*/
 	virtual HRESULT getWorldDirectionAndSpeed(DirectX::XMFLOAT3& worldDirection, float* const speed = 0) const;
 
@@ -134,9 +134,10 @@ protected:
 	void updateTransformProperties();
 
 	/* Transforms the local space direction vector into world space,
-	   normalizing it in the process.
+	   normalizing it in the process if 'normalize' is true.
 	 */
-	HRESULT getNormalizedDirectionInWorld(DirectX::XMFLOAT3& unitWorldDirection, const DirectX::XMFLOAT3& localDirection) const;
+	HRESULT getDirectionInWorld(DirectX::XMFLOAT3& unitWorldDirection,
+		const DirectX::XMFLOAT3& localDirection, const bool normalize) const;
 
 	// Currently not implemented - will cause linker errors if called
 private:
