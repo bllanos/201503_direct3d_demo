@@ -204,6 +204,38 @@ HRESULT Knot::makeDouble(void) {
 	return ERROR_SUCCESS;
 }
 
+HRESULT Knot::makeHalf(const PointSet side) {
+	if( m_side != PointSet::BOTH ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+	if( side == PointSet::BOTH ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	}
+
+	m_side = side;
+	switch( m_side ) {
+	case PointSet::START:
+		delete m_p2;
+		m_p2 = 0;
+		delete m_p3;
+		m_p3 = 0;
+		break;
+
+	case PointSet::END:
+		delete m_p0;
+		m_p0 = 0;
+		delete m_p1;
+		m_p1 = 0;
+		break;
+
+	default:
+		throw std::exception("Unknown PointSet enumeration constant found in Knot::makeHalf().");
+		break;
+	}
+
+	return ERROR_SUCCESS;
+}
+
 HRESULT Knot::updateControlPoints(Transformable& transform) {
 	HRESULT result = ERROR_SUCCESS;
 	switch( m_side ) {

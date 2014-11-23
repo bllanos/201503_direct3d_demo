@@ -19,7 +19,10 @@ Description
 */
 
 #include "Spline.h"
+#include "StaticKnot.h"
+#include "DynamicKnot.h"
 #include "defs.h"
+#include <exception>
 
 using namespace DirectX;
 using std::list;
@@ -30,6 +33,9 @@ Spline::Spline(const size_t capacity,
 	m_capacity(capacity), m_speed(0), m_useForward(useForward),
 	m_ownTransforms(ownTransforms), m_knots()
 {
+	if( m_capacity == 0 ) {
+		throw std::exception("Cannot create a spline with a capacity of zero segments.");
+	}
 	if( speed != 0 ) {
 		m_speed = new float(*speed);
 	} else if( m_useForward ) {
@@ -76,7 +82,7 @@ HRESULT Spline::getControlPoints(DirectX::XMFLOAT4*& controlPoints, const bool f
 	}
 
 	XMFLOAT4 zero = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	if( fillToCapacity && m_capacity > 0) {
+	if( fillToCapacity ) {
 		size_t n = getNumberOfControlPoints(true) - getNumberOfControlPoints(false);
 		for( size_t i = 0; i < n; ++i ) {
 			*controlPoints = zero;
@@ -96,7 +102,7 @@ size_t Spline::getNumberOfControlPoints(const bool capacity) const {
 	return 4 * n;
 }
 
-size_t Spline::getNumberOfSegments(const bool capacity = false) const {
+size_t Spline::getNumberOfSegments(const bool capacity) const {
 	if( capacity ) {
 		return m_capacity;
 	} else {
@@ -112,18 +118,122 @@ size_t Spline::getNumberOfSegments(const bool capacity = false) const {
 	}
 }
 
-HRESULT Spline::addToStart(const DirectX::XMFLOAT3* const controlPoints) {
+bool Spline::isAtCapacity(void) const {
+	return (getNumberOfSegments(false) == getNumberOfSegments(true));
+}
 
+HRESULT Spline::addToStart(const DirectX::XMFLOAT3* const controlPoints) {
+	StaticKnot* knot = new StaticKnot(Knot::PointSet::START, controlPoints);
+	return addKnot(knot, true);
 }
 
 HRESULT Spline::addToEnd(const DirectX::XMFLOAT3* const controlPoints) {
-
+	StaticKnot* knot = new StaticKnot(Knot::PointSet::END, controlPoints);
+	return addKnot(knot, false);
 }
 
 HRESULT Spline::addToStart(Transformable* const transform, const bool dynamic) {
-
+	Knot* knot = 0;
+	if( dynamic ) {
+		knot = new DynamicKnot(Knot::PointSet::START, transform,
+			m_ownTransforms, m_useForward, m_speed);
+	} else {
+		knot = new StaticKnot(Knot::PointSet::START, *transform,
+			m_useForward, m_speed);
+	}
+	return addKnot(knot, true);
 }
 
-HRESULT Spline::addToStart(Transformable* const transform, const bool dynamic) {
+HRESULT Spline::addToEnd(Transformable* const transform, const bool dynamic) {
+	Knot* knot = 0;
+	if( dynamic ) {
+		knot = new DynamicKnot(Knot::PointSet::END, transform,
+			m_ownTransforms, m_useForward, m_speed);
+	} else {
+		knot = new StaticKnot(Knot::PointSet::END, *transform,
+			m_useForward, m_speed);
+	}
+	return addKnot(knot, false);
+}
 
+HRESULT Spline::removeFromStart(void) {
+	if( m_knots.size() == 0 ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	delete m_knots.front();
+	m_knots.pop_front();
+
+	// Cleanup
+	HRESULT result = ERROR_SUCCESS;
+	list<Knot*>::size_type n = m_knots.size();
+	if( n > 1 ) {
+		result = (m_knots.front())->makeHalf(Knot::PointSet::START);
+	} else if( n == 1 ) {
+		result = (m_knots.front())->makeDouble();
+	}
+	if( FAILED(result) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	return result;
+}
+
+HRESULT Spline::removeFromEnd(void) {
+	if( m_knots.size() == 0 ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	delete m_knots.back();
+	m_knots.pop_back();
+
+	// Cleanup
+	HRESULT result = ERROR_SUCCESS;
+	list<Knot*>::size_type n = m_knots.size();
+	if( n > 1 ) {
+		result = (m_knots.back())->makeHalf(Knot::PointSet::END);
+	} else if( n == 1 ) {
+		result = (m_knots.back())->makeDouble();
+	}
+	if( FAILED(result) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	return result;
+}
+
+HRESULT Spline::addKnot(Knot* const knot, bool addToStart) {
+	HRESULT result = ERROR_SUCCESS;
+	if( isAtCapacity() ) {
+		// Make space first
+		if( addToStart ) {
+			result = removeFromEnd();
+		} else {
+			result = removeFromStart();
+		}
+		if( FAILED(result) ) {
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
+	list<Knot*>::size_type n = m_knots.size();
+	if( n > 1 ) {
+		if( addToStart ) {
+			result = (m_knots.front())->makeDouble();
+		} else {
+			result = (m_knots.back())->makeDouble();
+		}
+	} else {
+		result = knot->makeDouble();
+	}
+	if( FAILED(result) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	// Add the knot
+	if( addToStart ) {
+		m_knots.push_front(knot);
+	} else {
+		m_knots.push_back(knot);
+	}
+
+	return result;
 }

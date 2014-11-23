@@ -109,6 +109,15 @@ public:
 	 */
 	HRESULT makeDouble(void);
 
+	/* Converts a double-sided knot into a single-sided knot.
+	   Does nothing and returns a failure result if
+	   'm_side' not PointSet::BOTH.
+
+	   'side' indicates which half the knot will become,
+	   and must not be equal to PointSet::BOTH.
+	 */
+	HRESULT makeHalf(const PointSet side);
+
 	/* The following helper functions are not called by this class. */
 protected:
 	HRESULT updateControlPoints(Transformable& transform);

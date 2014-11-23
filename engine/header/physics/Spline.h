@@ -42,6 +42,9 @@ public:
 
 	   If 'speed' is null and 'useForward' is true,
 	   a default value of KNOT_DEFAULT_SPEED will be used.
+
+	   'capacity' must be greater than zero or the constructor
+	   will throw an exception.
 	 */
 	Spline(const size_t capacity,
 		const bool useForward = true, const float* const speed = 0,
@@ -93,6 +96,11 @@ public:
 	 */
 	size_t getNumberOfSegments(const bool capacity = false) const;
 
+	/* Returns whether or not the spline is holding
+	   a number of segments equal to its capacity.
+	 */
+	bool isAtCapacity(void) const;
+
 	/* Spline extension functions
 	   --------------------------
 	   If the spline reaches its capacity, adding to one end
@@ -116,7 +124,31 @@ public:
 	/* Adds a StaticKnot or DynamicKnot to the end of the spline,
 	   if 'dynamic' is false or true, respectively.
 	 */
-	HRESULT addToStart(Transformable* const transform, const bool dynamic = true);
+	HRESULT addToEnd(Transformable* const transform, const bool dynamic = true);
+
+	/* Removes the first knot in the spline.
+	   Does nothing and returns a failure result if the spline
+	   is empty.
+	 */
+	HRESULT removeFromStart(void);
+
+	/* Removes the last knot in the spline.
+	   Does nothing and returns a failure result if the spline
+	   is empty.
+	 */
+	HRESULT removeFromEnd(void);
+
+private:
+	/* Helper function for adding a knot to the spline.
+	   Takes care of ejecting knots if the spline is at capacity.
+	   Takes care of doubling the first knot added to the spline,
+	   and halving the first or last knot in the spline
+	   once a second knot is added.
+
+	   'addToStart' indicates if the knot is to be added to the start
+	   (true) or end (false) of the spline.
+	 */
+	HRESULT addKnot(Knot* const knot, bool addToStart);
 
 	// Data members
 private:
