@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cpp\rendering\SplineParticlesRenderer.cpp" />
     <ClCompile Include="cpp\geometry\SplineParticles.cpp" />
     <ClCompile Include="cpp\physics\Spline.cpp" />
     <ClCompile Include="cpp\physics\DynamicKnot.cpp" />
@@ -63,6 +64,7 @@
     <ClCompile Include="test\cpp\TexturedSphereTestState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\rendering\SplineParticlesRenderer.h" />
     <ClInclude Include="header\geometry\SplineParticles.h" />
     <ClInclude Include="header\physics\Spline.h" />
     <ClInclude Include="header\physics\DynamicKnot.h" />
