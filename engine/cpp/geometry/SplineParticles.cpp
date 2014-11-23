@@ -42,7 +42,7 @@ HRESULT SplineParticles::initialize(ID3D11Device* const device,
 	const  INVARIANTPARTICLES_VERTEX_TYPE* const vertices, const size_t nVertices,
 	const Transformable* const transform,
 	const Spline* const spline,
-	const D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST) {
+	const D3D_PRIMITIVE_TOPOLOGY topology) {
 
 	// Initialize the base class
 	if( FAILED(InvariantTexturedParticles::initialize(device,
@@ -167,7 +167,7 @@ HRESULT SplineParticles::drawUsingAppropriateRenderer(ID3D11DeviceContext* const
 
 	// Finish pipeline configuration and rendering in the base class
 	// -------------------------------------------------------------
-	return InvariantParticles::drawUsingAppropriateRenderer(context, manager, camera);
+	return InvariantTexturedParticles::drawUsingAppropriateRenderer(context, manager, camera);
 }
 
 size_t SplineParticles::getNumberOfSegments(const bool capacity) const {

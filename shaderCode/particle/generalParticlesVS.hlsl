@@ -27,9 +27,8 @@ cbuffer CameraProperties : register(cb0) {
 
 cbuffer Globals : register(cb1) {
 	matrix worldMatrix;
+	float4 blendAmountAndColorCast;
 	float2 time;
-	float blendAmount;
-	float3 colorCast;
 };
 
 struct VSInput {

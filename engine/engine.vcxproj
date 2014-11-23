@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cpp\geometry\SplineParticles.cpp" />
     <ClCompile Include="cpp\physics\Spline.cpp" />
     <ClCompile Include="cpp\physics\DynamicKnot.cpp" />
     <ClCompile Include="cpp\physics\Knot.cpp" />

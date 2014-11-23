@@ -24,8 +24,8 @@ Description
 
 cbuffer Globals : register(cb0) {
 	matrix worldMatrix;
+	float4 blendAmountAndColorCast;
 	float2 time;
-	float blendAmount;
 };
 
 /* Constant buffers bound only when lighting is enabled */
@@ -59,6 +59,6 @@ float4 PSMAIN(in PSInput input) : SV_TARGET
 	color = saturate(color);
 
 	color.w *= input.life.y;
-	color.w *= blendAmount;
+	color.w *= blendAmountAndColorCast.x;
 	return color;
 }

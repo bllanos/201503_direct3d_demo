@@ -631,7 +631,7 @@ HRESULT InvariantParticlesRenderer::setNoLightShaderParameters(
 		logMessage(L"Blend factor out of range (0.0f to 1.0f) - Defaulted to 1.0f.");
 		blend = 1.0f;
 	}
-	globalDataPtr->blendAmount = blend;
+	globalDataPtr->blendAmountColourCast.x = blend;
 
 	// World matrix
 	DirectX::XMFLOAT4X4 worldMatrixTranspose;
@@ -646,12 +646,18 @@ HRESULT InvariantParticlesRenderer::setNoLightShaderParameters(
 	DirectX::XMFLOAT2 time;
 	if( FAILED(geometry.getTime(time)) ) {
 		logMessage(L"Failed to get time vector from geometry.");
-		globalDataPtr->time = XMFLOAT2(0.0f, 0.0f);
+		globalDataPtr->timeAndPadding.x = 0.0f;
+		globalDataPtr->timeAndPadding.y = 0.0f;
+	} else {
+		globalDataPtr->timeAndPadding.x = time.x;
+		globalDataPtr->timeAndPadding.y = time.y;
 	}
-	globalDataPtr->time = time;
 
 	// Colour cast
-	globalDataPtr->colourCast = geometry.getColorCast();
+	DirectX::XMFLOAT3 colorCast = geometry.getColorCast();
+	globalDataPtr->blendAmountColourCast.y = colorCast.x;
+	globalDataPtr->blendAmountColourCast.z = colorCast.y;
+	globalDataPtr->blendAmountColourCast.w = colorCast.z;
 
 	// Unlock the buffer.
 	context->Unmap(m_globalBuffer, 0);

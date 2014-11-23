@@ -104,10 +104,8 @@ private:
 
 	struct GlobalBufferType {
 		DirectX::XMFLOAT4X4 world;
-		DirectX::XMFLOAT2 time;
-		float blendAmount;
-		DirectX::XMFLOAT3 colourCast;
-		DirectX::XMFLOAT2 padding;
+		DirectX::XMFLOAT4 blendAmountColourCast;
+		DirectX::XMFLOAT4 timeAndPadding;
 	};
 
 public:
