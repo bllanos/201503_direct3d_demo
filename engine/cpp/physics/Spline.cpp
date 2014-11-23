@@ -221,7 +221,13 @@ HRESULT Spline::addKnot(Knot* const knot, bool addToStart) {
 		} else {
 			result = (m_knots.back())->makeDouble();
 		}
-	} else {
+	} else if( n == 1 ) {
+		if( addToStart ) {
+			result = (m_knots.front())->makeHalf(Knot::PointSet::END);
+		} else {
+			result = (m_knots.back())->makeHalf(Knot::PointSet::START);
+		}
+	} else if( n == 0 ) {
 		result = knot->makeDouble();
 	}
 	if( FAILED(result) ) {

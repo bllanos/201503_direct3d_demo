@@ -22,6 +22,11 @@ Implementation Notes:
      at least one segment.
   -Treat a spline with a single knot as a special case
      in all applicable member functions.
+	 Invariant: In a spline with one knot, the knot is a two-sided knot.
+	 Invariant: In a spline with more than one knot,
+	   the first knot is a single-sided START knot,
+	   and the last knot is a single-sided END knot.
+	   All other knots are two-sided (BOTH).
 */
 
 #pragma once
@@ -89,7 +94,7 @@ public:
 
 	/* Returns the number of segments stored in the spline,
 	   if 'capacity' is false. If the spline is storing one
-	   knot, this function will return zero.
+	   knot (or zero knots), this function will return zero.
 
 	   If 'capacity' is true, returns the number of segments
 	   that would be stored if the spline was at capacity.
@@ -101,8 +106,8 @@ public:
 	 */
 	bool isAtCapacity(void) const;
 
-	/* Spline extension functions
-	   --------------------------
+	/* Spline extension and reduction functions
+	   ----------------------------------------
 	   If the spline reaches its capacity, adding to one end
 	   will result in removal from the other end.
 
