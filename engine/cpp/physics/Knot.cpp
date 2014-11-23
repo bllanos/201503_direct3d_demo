@@ -171,6 +171,39 @@ HRESULT Knot::getControlPoints(DirectX::XMFLOAT4*& controlPoints) {
 	return ERROR_SUCCESS;
 }
 
+HRESULT Knot::makeDouble(void) {
+	if( m_side == PointSet::BOTH ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	XMVECTOR v;
+
+	switch( m_side ) {
+	case PointSet::START:
+		m_p2 = new XMFLOAT3(0.0f, 0.0f, 0.0f);
+		m_p3 = new XMFLOAT3(0.0f, 0.0f, 0.0f);
+		*m_p3 = *m_p0;
+		v = XMVectorScale(XMLoadFloat3(m_p0), 2.0f);
+		v = XMVectorSubtract(v, XMLoadFloat3(m_p1));
+		XMStoreFloat3(m_p2, v);
+		break;
+	case PointSet::END:
+		m_p0 = new XMFLOAT3(0.0f, 0.0f, 0.0f);
+		m_p1 = new XMFLOAT3(0.0f, 0.0f, 0.0f);
+		*m_p0 = *m_p3;
+		v = XMVectorScale(XMLoadFloat3(m_p3), 2.0f);
+		v = XMVectorSubtract(v, XMLoadFloat3(m_p2));
+		XMStoreFloat3(m_p1, v);
+		break;
+	default:
+		throw std::exception("Unknown PointSet enumeration constant found in Knot::makeDouble().");
+		break;
+	}
+
+	m_side = PointSet::BOTH;
+	return ERROR_SUCCESS;
+}
+
 HRESULT Knot::updateControlPoints(Transformable& transform) {
 	HRESULT result = ERROR_SUCCESS;
 	switch( m_side ) {

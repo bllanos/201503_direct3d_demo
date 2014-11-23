@@ -93,12 +93,21 @@ public:
 
 	/* Outputs control points into 'controlPoints'.
 	   The control points which are output, and their order,
-	   is determined by the 'side' constructor parameter.
+	   is determined by the 'm_side' data member.
 
 	   'controlPoints' will be incremented to reflect the number
 	   of control points output.
 	 */
 	HRESULT getControlPoints(DirectX::XMFLOAT4*& controlPoints);
+
+	/* Converts a single-sided knot into a double-sided knot.
+	   Does nothing and returns a failure result if
+	   'm_side' is already PointSet::BOTH.
+
+	   Calculates the missing control points from the existing
+	   control points, assuming C_1 continuity.
+	 */
+	HRESULT makeDouble(void);
 
 	/* The following helper functions are not called by this class. */
 protected:
@@ -113,9 +122,9 @@ private:
 	// Data members
 private:
 	/* Determines which control points
-	   are allocated
+	   are allocated and output.
 	 */
-	const PointSet m_side;
+	PointSet m_side;
 
 	DirectX::XMFLOAT3* m_p2; // Final tangent control point of the previous segment
 	DirectX::XMFLOAT3* m_p3; // Final position control point of the previous segment
