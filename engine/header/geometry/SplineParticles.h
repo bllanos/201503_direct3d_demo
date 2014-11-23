@@ -19,6 +19,8 @@ Description
      of spline control points.
   -In the shader, particle positions should be computed first based on the spline,
      and then transformed using this object's current Transformable.
+  -This class does not update or otherwise manage the Spline
+     object to which it refers.
 */
 
 #pragma once
@@ -67,8 +69,11 @@ protected:
 		const Spline* const spline,
 		const D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-	/* Initializes the spline control point buffer. */
-	virtual HRESULT initializeSplineBuffer(ID3D11Device* const device);
+	/* Initializes the spline control point buffer
+	   and spline-related data members.
+	 */
+	virtual HRESULT initializeSplineData(ID3D11Device* const device,
+		const Spline* const spline);
 
 	/* Objects of this class can use renderers
 	   corresponding to enumeration constants
@@ -93,7 +98,7 @@ public:
 	/* Proxy of the corresponding function in the Spline class.
 	   To be used to set constant buffer parameters during rendering.
 	 */
-	size_t getNumberOfSegments(const bool capacity = false) const;
+	size_t getNumberOfSegments(const bool capacity) const;
 
 protected:
 	/* Prepares spline control point data on the pipeline
@@ -103,6 +108,7 @@ protected:
 
 	// Data members
 private:
+	/* Shared - Not deleted by the destructor */
 	const Spline* m_spline;
 	size_t m_splineCapacity;
 
@@ -133,7 +139,10 @@ template<typename ConfigIOClass> SplineParticles::SplineParticles(
 	filenameField,
 	directoryScope,
 	directoryField
-	) {}
+	),
+	m_spline(0), m_splineCapacity(0),
+	m_splineBuffer(0), m_splineBufferView(0)
+{}
 
 template<typename ConfigIOClass> SplineParticles::SplineParticles(
 	const bool enableLogging, const std::wstring& msgPrefix,
@@ -147,4 +156,7 @@ template<typename ConfigIOClass> SplineParticles::SplineParticles(
 	optionalLoader,
 	filename,
 	path
-	) {}
+	),
+	m_spline(0), m_splineCapacity(0),
+	m_splineBuffer(0), m_splineBufferView(0) 
+{}
