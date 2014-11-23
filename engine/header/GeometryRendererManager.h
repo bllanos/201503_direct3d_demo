@@ -75,14 +75,17 @@ public:
 		SkinnedTexturedRendererNoLight,
 		SkinnedTexturedRendererLight,
 
-		/* All particle system renderers are
+		/* All non-spline particle system renderers are
 		   presently of the same class.
 		 */
 		InvariantParticlesRendererNoLight,
-		InvariantParticlesRendererLight,
+		InvariantParticlesRendererLight, // Not yet implemented correctly
 
 		InvariantTexturedParticlesRendererNoLight,
-		InvariantTexturedParticlesRendererLight
+		InvariantTexturedParticlesRendererLight, // Not yet implemented
+
+		SplineParticlesRendererNoLight,
+		SplineParticlesRendererLight // Not yet implemented
 	};
 	/* When adding new data types to this enumeration, also do the following:
 	   -Update the 's_geometryRendererTypesInOrder' and

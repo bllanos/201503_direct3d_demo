@@ -37,7 +37,8 @@ GeometryRendererManager::s_geometryRendererTypesInOrder[] = {
 	GeometryRendererType::SkinnedTexturedRendererLight,
 	GeometryRendererType::InvariantParticlesRendererNoLight,
 	GeometryRendererType::InvariantParticlesRendererLight,
-	GeometryRendererType::InvariantTexturedParticlesRendererNoLight
+	GeometryRendererType::InvariantTexturedParticlesRendererNoLight,
+	GeometryRendererType::InvariantTexturedParticlesRendererLight
 };
 
 const size_t GeometryRendererManager::s_nGeometryRendererTypes =
@@ -52,7 +53,8 @@ const wstring GeometryRendererManager::s_geometryRendererTypeNames[] = {
 	L"SkinnedTexturedRendererLight",
 	L"InvariantParticlesRendererNoLight",
 	L"InvariantParticlesRendererLight",
-	L"InvariantTexturedParticlesRendererNoLight"
+	L"InvariantTexturedParticlesRendererNoLight",
+	L"InvariantTexturedParticlesRendererLight"
 };
 
 HRESULT GeometryRendererManager::wstringToGeometryRendererType(
@@ -171,6 +173,7 @@ HRESULT GeometryRendererManager::initialize(ID3D11Device* const device) {
 					INITIALIZE_RENDERER(InvariantParticlesRendererNoLight, InvariantParticlesRenderer)
 					INITIALIZE_RENDERER(InvariantParticlesRendererLight, InvariantParticlesRenderer)
 					INITIALIZE_RENDERER(InvariantTexturedParticlesRendererNoLight, InvariantParticlesRenderer)
+					INITIALIZE_RENDERER(InvariantTexturedParticlesRendererLight, InvariantParticlesRenderer)
 				default:
 					logMessage(L"Reached default case of geometry renderer initialization switch statement. Code is broken.");
 					return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);
