@@ -29,7 +29,8 @@ using std::wstring;
 
 InvariantParticlesRenderer::InvariantParticlesRenderer(
 	const wstring filename,
-	const wstring path
+	const wstring path,
+	const bool configureNow
 	) :
 	IGeometryRenderer(),
 	ConfigUser(
@@ -41,11 +42,13 @@ InvariantParticlesRenderer::InvariantParticlesRenderer(
 	m_cameraBuffer(0), m_materialBuffer(0), m_globalBuffer(0), m_lightBuffer(0),
 	m_lighting(false), m_light(0), m_configured(false),
 	m_additiveBlendState(0), m_dsState(0)
-	{
-	wstring logUserScopeDefault(INVARIANTPARTICLESRENDERER_LOGUSER_SCOPE);
-	wstring configUserScopeDefault(INVARIANTPARTICLESRENDERER_CONFIGUSER_SCOPE);
-	if (FAILED(configure(INVARIANTPARTICLESRENDERER_SCOPE, &configUserScopeDefault, &logUserScopeDefault))) {
-		logMessage(L"Configuration failed.");
+{
+	if( configureNow ) {
+		wstring logUserScopeDefault(INVARIANTPARTICLESRENDERER_LOGUSER_SCOPE);
+		wstring configUserScopeDefault(INVARIANTPARTICLESRENDERER_CONFIGUSER_SCOPE);
+		if( FAILED(configure(INVARIANTPARTICLESRENDERER_SCOPE, &configUserScopeDefault, &logUserScopeDefault)) ) {
+			logMessage(L"Configuration failed.");
+		}
 	}
 }
 

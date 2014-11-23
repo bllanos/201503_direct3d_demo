@@ -128,7 +128,8 @@ public:
 	*/
 	InvariantParticlesRenderer(
 		const std::wstring filename,
-		const std::wstring path = L""
+		const std::wstring path = L"",
+		const bool configureNow = true
 		);
 
 	virtual ~InvariantParticlesRenderer(void);
