@@ -16,6 +16,12 @@ Primary basis: None
 
 Description
   -A class defining a cubic Bezier spline
+
+Implementation Notes:
+  -Remember that a spline cannot be defined until it contains
+     at least one segment.
+  -Treat a spline with a single knot as a special case
+     in all applicable member functions.
 */
 
 #pragma once
@@ -58,6 +64,9 @@ public:
 	  If 'fillToCapacity' is true, the spline will
 	  output additional zero vectors beyond the valid control points
 	  until reaching the number of vectors corresponding to its capacity.
+
+	  No valid control points will be output if the spline
+	  is only storing one knot, as it does not have any segments.
 	*/
 	HRESULT getControlPoints(DirectX::XMFLOAT4*& controlPoints, const bool fillToCapacity = false) const;
 
@@ -66,10 +75,23 @@ public:
 	   If 'capacity' is true, returns the number of control points
 	   that would be stored if the spline was at capacity.
 
-	   Note: The number of control points does not equal the number
-	   of segments.
+	   Notes:
+	     -The number of control points does not equal the number
+	        of segments.
+		 -If the spline contains one knot, it will report
+		    that it is not storing any control points,
+			as there are no segments.
 	 */
 	size_t getNumberOfControlPoints(const bool capacity = false) const;
+
+	/* Returns the number of segments stored in the spline,
+	   if 'capacity' is false. If the spline is storing one
+	   knot, this function will return zero.
+
+	   If 'capacity' is true, returns the number of segments
+	   that would be stored if the spline was at capacity.
+	 */
+	size_t getNumberOfSegments(const bool capacity = false) const;
 
 	/* Spline extension functions
 	   --------------------------

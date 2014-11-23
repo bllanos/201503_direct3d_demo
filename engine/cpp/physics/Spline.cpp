@@ -64,36 +64,21 @@ HRESULT Spline::update(const DWORD currentTime, const DWORD updateTimeInterval) 
 }
 
 HRESULT Spline::getControlPoints(DirectX::XMFLOAT4*& controlPoints, const bool fillToCapacity) const {
-	list<Knot*>::const_iterator start = m_knots.cbegin();
-	list<Knot*>::const_iterator end = m_knots.cend();
-	while( start != end ) {
-		if( FAILED((*start)->getControlPoints(controlPoints)) ) {
-			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	if( getNumberOfSegments(false) > 0 ) {
+		list<Knot*>::const_iterator start = m_knots.cbegin();
+		list<Knot*>::const_iterator end = m_knots.cend();
+		while( start != end ) {
+			if( FAILED((*start)->getControlPoints(controlPoints)) ) {
+				return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+			}
+			++start;
 		}
-		++start;
 	}
 
 	XMFLOAT4 zero = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	
 	if( fillToCapacity && m_capacity > 0) {
-		list<Knot*>::size_type i = m_knots.size();
-		list<Knot*>::size_type capacityMinusOne = static_cast<list<Knot*>::size_type>(m_capacity) -1;
-		// Four control points per intermediate knot
-		while( i < capacityMinusOne ) {
-			*controlPoints = zero;
-			++controlPoints;
-			*controlPoints = zero;
-			++controlPoints;
-			*controlPoints = zero;
-			++controlPoints;
-			*controlPoints = zero;
-			++controlPoints;
-			++i;
-		}
-		// Two control points for the last knot
-		if( i < static_cast<list<Knot*>::size_type>(m_capacity) ) {
-			*controlPoints = zero;
-			++controlPoints;
+		size_t n = getNumberOfControlPoints(true) - getNumberOfControlPoints(false);
+		for( size_t i = 0; i < n; ++i ) {
 			*controlPoints = zero;
 			++controlPoints;
 		}
@@ -102,7 +87,29 @@ HRESULT Spline::getControlPoints(DirectX::XMFLOAT4*& controlPoints, const bool f
 }
 
 size_t Spline::getNumberOfControlPoints(const bool capacity) const {
+	size_t n = 0;
+	if( capacity ) {
+		n = m_capacity;
+	} else {
+		n = getNumberOfSegments(false);
+	}
+	return 4 * n;
+}
 
+size_t Spline::getNumberOfSegments(const bool capacity = false) const {
+	if( capacity ) {
+		return m_capacity;
+	} else {
+		size_t n = static_cast<size_t>(m_knots.size());
+		if( n < 2 ) {
+			/* The spline does not have segments until it has
+			   at least two knots
+			 */
+			return 0;
+		} else {
+			return n - 1;
+		}
+	}
 }
 
 HRESULT Spline::addToStart(const DirectX::XMFLOAT3* const controlPoints) {
