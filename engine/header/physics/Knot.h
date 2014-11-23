@@ -98,7 +98,7 @@ public:
 	   'controlPoints' will be incremented to reflect the number
 	   of control points output.
 	 */
-	HRESULT getControlPoints(DirectX::XMFLOAT4*& controlPoints);
+	HRESULT getControlPoints(DirectX::XMFLOAT4*& controlPoints) const;
 
 	/* Converts a single-sided knot into a double-sided knot.
 	   Does nothing and returns a failure result if

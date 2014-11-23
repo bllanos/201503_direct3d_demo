@@ -111,7 +111,7 @@ Knot::~Knot(void) {
 	}
 }
 
-HRESULT Knot::getControlPoints(DirectX::XMFLOAT4*& controlPoints) {
+HRESULT Knot::getControlPoints(DirectX::XMFLOAT4*& controlPoints) const {
 
 	if( controlPoints == 0 ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);

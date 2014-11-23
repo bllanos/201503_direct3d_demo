@@ -33,6 +33,9 @@ public:
 	   The 'useForward', 'speed' and 'ownTransforms' parameters
 	   are forwarded to the Knot derived class constructors
 	   when segments are added to the spline.
+
+	   If 'speed' is null and 'useForward' is true,
+	   a default value of KNOT_DEFAULT_SPEED will be used.
 	 */
 	Spline(const size_t capacity,
 		const bool useForward = true, const float* const speed = 0,
@@ -56,7 +59,7 @@ public:
 	  output additional zero vectors beyond the valid control points
 	  until reaching the number of vectors corresponding to its capacity.
 	*/
-	HRESULT getControlPoints(DirectX::XMFLOAT4*& controlPoints, const bool fillToCapacity = false);
+	HRESULT getControlPoints(DirectX::XMFLOAT4*& controlPoints, const bool fillToCapacity = false) const;
 
 	/* Returns the number of control points stored in the spline,
 	   if 'capacity' is false.
@@ -66,7 +69,7 @@ public:
 	   Note: The number of control points does not equal the number
 	   of segments.
 	 */
-	size_t getNumberOfControlPoints(const bool capacity = false);
+	size_t getNumberOfControlPoints(const bool capacity = false) const;
 
 	/* Spline extension functions
 	   --------------------------
@@ -103,10 +106,10 @@ private:
 	float* m_speed;
 
 	/* Same usage as in the Knot class. */
-	bool* m_useForward;
+	bool m_useForward;
 
 	/* Same usage as in the DynamicKnot class. */
-	bool* m_ownTransform;
+	bool m_ownTransforms;
 
 	/* The knots in the spline, implicitly defining its segments. */
 	std::list<Knot*> m_knots;
