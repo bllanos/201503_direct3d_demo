@@ -656,6 +656,11 @@ HRESULT InvariantParticlesRenderer::setNoLightShaderParameters(
 		globalDataPtr->timeAndPadding.y = time.y;
 	}
 
+	// SplineParticlesRenderer parameters
+	if( FAILED(setSplineParameters(*globalDataPtr, geometry)) ) {
+		logMessage(L"Call to setSplineParameters() failed.");
+	}
+
 	// Colour cast
 	DirectX::XMFLOAT3 colorCast = geometry.getColorCast();
 	globalDataPtr->blendAmountColourCast.y = colorCast.x;

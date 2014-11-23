@@ -17,7 +17,7 @@ Primary basis: InvariantParticlesRenderer.h
 Description
   -Extends the InvariantParticlesRenderer class to store
      spline segment count and segment capacity values
-	 in the 'timeAndPadding' member of the 'globals' constant buffer.
+	 in the 'timeAndPadding' member of the globals constant buffer.
 */
 
 #pragma once
@@ -51,21 +51,8 @@ public:
 	// Helper functions
 protected:
 
-	/* Basically a proxy for the base class's configuration function,
-	   which instructs the base class to use scope strings from this class.
-	 */
-	virtual HRESULT configure(const std::wstring& scope = SPLINEPARTICLESRENDERER_SCOPE,
-		const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0) override;
-
-	/* Sets light-independent pipeline state,
-	   including spline parameters
-	 */
-	virtual HRESULT setNoLightShaderParameters(
-		ID3D11DeviceContext* const,
-		const DirectX::XMFLOAT4X4 viewMatrix,
-		const DirectX::XMFLOAT4X4 projectionMatrix,
-		const DirectX::XMFLOAT4 cameraPosition,
-		const InvariantParticles& geometry) override;
+	virtual HRESULT setSplineParameters(GlobalBufferType& buffer,
+		const InvariantParticles& geometry) const override;
 
 	// Currently not implemented - will cause linker errors if called
 private:
