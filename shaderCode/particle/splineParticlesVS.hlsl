@@ -18,6 +18,14 @@ Primary basis: skinnedColorVS_noLight.hlsl
 Description
   -Cubic Bezier curve spline evaluation,
      in addition to the behaviour in generalParticlesVS.hlsl
+
+Notes
+  -The spline parameter, 't', is defined in the range 0 to 1.
+     - 0 = start of the first segment
+	 - 1 = end of the segment at index (spline capacity - 1)
+     -Particles will have 't' values that start from
+	    an initial value between 0 and 1, and wrap around at 1,
+		not at a value corresponding to the index of the last valid segment in the spline.
 */
 
 cbuffer CameraProperties : register(cb0) {
@@ -29,6 +37,11 @@ cbuffer CameraProperties : register(cb0) {
 cbuffer Globals : register(cb1) {
 	matrix worldMatrix;
 	float4 blendAmountAndColorCast;
+	/* x = current time (milliseconds)
+	   y = update time interval (milliseconds)
+	   z = current number of valid segments in the spline
+	   w = spline capacity (maximum number of valid segments)
+	 */
 	float4 timeAndSplineParameters;
 };
 
@@ -49,54 +62,89 @@ struct VSOutput {
 	float4 index : INDEX; // Same as input vertex
 };
 
+/* Cubic Bezier curve segment control points */
+struct Segment {
+	float4 p0;
+	float4 p1;
+	float4 p2;
+	float4 p3;
+};
+
+StructuredBuffer<Segment> Spline : register(t0);
+
 VSOutput VSMAIN(in VSInput input) {
 	VSOutput output;
 
-	// Change the position vector to be 4 units for proper matrix calculations
-	float4 inPosition = { input.position, 1.0f };
-
-	float age = max(0.0f, time.x - input.life.x); // If negative, particle has not yet been born.
+	// Compute age and health
+	// ----------------------
+	float time = timeAndSplineParameters.x;
+	float age = max(0.0f, time - input.life.x); // If negative, particle has not yet been born.
 	float health = input.life.y - ((input.life.z * age) % input.life.y);
 	// Recompute age based on health (wrap around)
 	age = (input.life.y - health) / input.life.z;
 	if( health < input.life.w ) {
-		health = 0.0f;
+		health = 0.0f; // Below death cutoff
 	}
 
-	// Linear motion
-	inPosition.xyz += (input.linearVelocity.xyz) * (input.linearVelocity.w) * age;
-	// Ballistic motion
-	// inPosition.y -= 0.0000002f * pow(age, 2);
+	// Compute spline parameter and segment
+	float t = frac(input.position.x + (input.linearVelocity.z) * age); // Between 0 and 1
+	float segmentIndex = t * timeAndSplineParameters.w;
+	if (segmentIndex >= timeAndSplineParameters.z) {
+		health = 0.0f; // Out of bounds
+	} else {
 
-	// World position
-	inPosition = mul(inPosition, worldMatrix);
+		// Compute spline base position
+		// ----------------------------
+		float segmentT = frac(segmentIndex);
+		Segment segment = Spline[(uint)segmentIndex];
+		float4 splinePosition =
+			pow(1.0f - segmentT, 3)*segment.p0 +
+			3.0f*segmentT*pow(1.0f - segmentT, 2)*segment.p1 +
+			3.0f*pow(segmentT, 2)*(1.0f - segmentT)*segment.p2 +
+			pow(segmentT, 3)*segment.p3;
 
-	// View space position
-	output.positionVS = mul(inPosition, viewMatrix).xyz;
+		// Compute offset from base position and final position
+		// ----------------------------------------------------
+		float angle = input.position.z + (input.linearVelocity.y * time);
+		// Start with the vector in the xy-plane
+		float3 offsetPosition = float2(cos(angle), sin(angle), 0.0f);
+		// Find the unit direction vector of the spline
+		float3 splineDirection = normalize(
+		3.0f*pow(1.0f - segmentT, 2)*(segment.p1 - segment.p0) +
+		6.0f*(1.0f - segmentT)*t*(segment.p2 - segment.p1) +
+		3.0f*pow(segmentT, 2)*(segment.p3 - segment.p2)
+			);
 
-	// View space direction - Assuming uniform scaling
-	// Note use of zero w-component
-	float3 viewDirection = mul(float4(input.linearVelocity.xyz, 0.0f), viewMatrix).xyz;
+		// Pick somewhat arbitrary basis vector for the plane normal to the spline
+		float3 tangent1 = normalize(splinePosition - dot(splinePosition, splineDirection) * splineDirection);
+		float3 tangent2 = cross(splineDirection, splinePosition);
+
+		// Compute the offset position
+		float radius = input.position.y + (input.linearVelocity.x * time);
+		offsetPosition = radius * (tangent1 * offsetPosition.x + tangent2 * offsetPosition.y) + splinePosition;
+
+		// World position
+		float4 inPosition = { offsetPosition, 1.0f };
+		inPosition = mul(inPosition, worldMatrix);
+
+		// View space position
+		output.positionVS = mul(inPosition, viewMatrix).xyz;
 
 		// Billboard
 		output.billboard = input.billboard.xy;
 
-	// Angular motion
-	output.angle = input.billboard.z * age;
+		// Angular motion
+		// For simplicity, there is no reversal of direction depending on the direction of motion
+		output.angle = input.billboard.z * age;
 
-	// If direction is away from viewer, reverse the direction of rotation
-	float dotV_Vel = dot(viewDirection, output.positionVS);
-	if( dotV_Vel > 0.0f ) {
-		output.angle = -output.angle;
+		// Updated life information
+		output.life.x = age;
+		output.life.y = health;
+		output.life.z = input.life.z;
+
+		// Index - pass-through
+		output.index = input.index;
+
+		return output;
 	}
-
-	// Updated life information
-	output.life.x = age;
-	output.life.y = health;
-	output.life.z = input.life.z;
-
-	// Index - pass-through
-	output.index = input.index;
-
-	return output;
 }
