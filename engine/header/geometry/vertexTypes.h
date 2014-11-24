@@ -76,3 +76,50 @@ struct ParticleVertexType {
 	//   or even a particle ID.
 	DirectX::XMFLOAT4 index;
 };
+
+/* Re-interpreting the particle vertex structure for spline-based trajectories.
+   The structure of the data has not changed, so I am not defining a new type
+   below. This is purely for documentation.
+ */
+//struct ParticleVertexType {
+//
+//	/* x = Spline parameter, 't', offset (initial position along the spline)
+//	   Offset from the spline, on the plane normal to the spline,
+//	   passing through the point corresponding to the current spline location.
+//	     y = Radius (length of separation from the current spline location)
+//		 z = Angle (Right-handed polar coordinate system angular coordinate
+//		       describing direction of offset from current spline location)
+//	 */
+//	DirectX::XMFLOAT3 position;
+//
+//	// Defines billboard dimensions and orientation
+//	// x = billboard width (view-space units),
+//	// y = billboard height (view-space units),
+//	// z = per-millisecond counter-clockwise turn around view-space 'look' axis (radians)
+//	DirectX::XMFLOAT3 billboard;
+//
+//	/* Velocity on plane normal to the spline at the current spline location
+//	     x = length of velocity vector (model-space units per millisecond)
+//		 y = direction of velocity vector (Right-handed polar coordinate system angular coordinate)
+//	   Rotation around the spline
+//	     z = Rotation of the offset defined by position.yz per millisecond
+//		       in the counter-clockwise direction around the spline position.
+//	   Motion along the spline
+//	     w = change in spline parameter, 't', per millisecond
+//	 */
+//	DirectX::XMFLOAT4 linearVelocity;
+//
+//	// Possibly multiple interpretations. Suggested interpetation is as follows:
+//	// x = creation time offset from base time (milliseconds)
+//	// y = lifespan (milliseconds) or initial "health", transparency, etc.
+//	//       -This will be set to zero if the particle is outside the current valid
+//	//          region of the spline parameter.
+//	//       -If zero, this is a hint for the geometry shader to cull the particle
+//	// z = decay factor (e.g. for linear or exponential decrease in life)
+//	// w = cutoff (amount below which life is clamped to zero)
+//	DirectX::XMFLOAT4 life;
+//
+//	// Multi-purpose: Color/albedo, or 1D to 4D texture coordinates,
+//	//   or even a particle ID.
+//	DirectX::XMFLOAT4 index;
+//};

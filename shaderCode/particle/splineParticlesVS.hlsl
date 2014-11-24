@@ -32,6 +32,7 @@ cbuffer Globals : register(cb1) {
 	float4 timeAndSplineParameters;
 };
 
+// See vertexTypes.h for details
 struct VSInput {
 	float3 position : POSITION;
 	float3 billboard : BILLBOARD;
