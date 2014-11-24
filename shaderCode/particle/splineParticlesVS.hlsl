@@ -18,6 +18,7 @@ Primary basis: skinnedColorVS_noLight.hlsl
 Description
   -Cubic Bezier curve spline evaluation,
      in addition to the behaviour in generalParticlesVS.hlsl
+  -
 
 Notes
   -The spline parameter, 't', is defined in the range 0 to 1.
@@ -103,11 +104,9 @@ VSOutput VSMAIN(in VSInput input) {
 			3.0f*pow(segmentT, 2)*(1.0f - segmentT)*segment.p2 +
 			pow(segmentT, 3)*segment.p3;
 
-		// Compute offset from base position and final position
-		// ----------------------------------------------------
+		// Compute offset from base position and compute final position
+		// ------------------------------------------------------------
 		float angle = input.position.z + (input.linearVelocity.y * time);
-		// Start with the vector in the xy-plane
-		float3 offsetPosition = float2(cos(angle), sin(angle), 0.0f);
 		// Find the unit direction vector of the spline
 		float3 splineDirection = normalize(
 		3.0f*pow(1.0f - segmentT, 2)*(segment.p1 - segment.p0) +
@@ -119,23 +118,38 @@ VSOutput VSMAIN(in VSInput input) {
 		float3 tangent1 = normalize(splinePosition - dot(splinePosition, splineDirection) * splineDirection);
 		float3 tangent2 = cross(splineDirection, splinePosition);
 
-		// Compute the offset position
+		// Compute the offset radius
 		float radius = input.position.y + (input.linearVelocity.x * time);
-		offsetPosition = radius * (tangent1 * offsetPosition.x + tangent2 * offsetPosition.y) + splinePosition;
 
-		// World position
-		float4 inPosition = { offsetPosition, 1.0f };
+		// Offset direction used for altering direction of rotation later
+		float3 offset = (tangent1 * cos(angle) + tangent2 * sin(angle));
+		float4 inPosition = float4(radius * offset + splinePosition, 1.0f);
+
+		// Transform position into view space
+		// ----------------------------------
+
+		// World space
 		inPosition = mul(inPosition, worldMatrix);
+		offset = mul(float4(offset, 0.0f), worldMatrix).xyz; // Assuming uniform scaling (otherwise not correct)
 
-		// View space position
+		// View space
 		output.positionVS = mul(inPosition, viewMatrix).xyz;
+		offset = mul(float4(offset, 0.0f), viewMatrix).xyz; // Assuming uniform scaling (otherwise not correct)
+
+		// Fill in the rest of the output values
+		// -------------------------------------
 
 		// Billboard
 		output.billboard = input.billboard.xy;
 
 		// Angular motion
-		// For simplicity, there is no reversal of direction depending on the direction of motion
 		output.angle = input.billboard.z * age;
+
+		// If direction is away from viewer, reverse the direction of rotation
+		float dotV_Vel = dot(offset, output.positionVS);
+		if (dotV_Vel > 0.0f) {
+			output.angle = -output.angle;
+		}
 
 		// Updated life information
 		output.life.x = age;
