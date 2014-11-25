@@ -24,6 +24,7 @@ Description
 #include "SimpleColorRenderer.h"
 #include "SkinnedRenderer.h"
 #include "InvariantParticlesRenderer.h"
+#include "SplineParticlesRenderer.h"
 
 using std::map;
 using std::wstring;
@@ -38,7 +39,9 @@ GeometryRendererManager::s_geometryRendererTypesInOrder[] = {
 	GeometryRendererType::InvariantParticlesRendererNoLight,
 	GeometryRendererType::InvariantParticlesRendererLight,
 	GeometryRendererType::InvariantTexturedParticlesRendererNoLight,
-	GeometryRendererType::InvariantTexturedParticlesRendererLight
+	GeometryRendererType::InvariantTexturedParticlesRendererLight,
+	GeometryRendererType::SplineParticlesRendererNoLight,
+	GeometryRendererType::SplineParticlesRendererLight
 };
 
 const size_t GeometryRendererManager::s_nGeometryRendererTypes =
@@ -54,7 +57,9 @@ const wstring GeometryRendererManager::s_geometryRendererTypeNames[] = {
 	L"InvariantParticlesRendererNoLight",
 	L"InvariantParticlesRendererLight",
 	L"InvariantTexturedParticlesRendererNoLight",
-	L"InvariantTexturedParticlesRendererLight"
+	L"InvariantTexturedParticlesRendererLight",
+	L"SplineParticlesRendererNoLight",
+	L"SplineParticlesRendererLight"
 };
 
 HRESULT GeometryRendererManager::wstringToGeometryRendererType(
@@ -174,6 +179,8 @@ HRESULT GeometryRendererManager::initialize(ID3D11Device* const device) {
 					INITIALIZE_RENDERER(InvariantParticlesRendererLight, InvariantParticlesRenderer)
 					INITIALIZE_RENDERER(InvariantTexturedParticlesRendererNoLight, InvariantParticlesRenderer)
 					INITIALIZE_RENDERER(InvariantTexturedParticlesRendererLight, InvariantParticlesRenderer)
+					INITIALIZE_RENDERER(SplineParticlesRendererNoLight, SplineParticlesRenderer)
+					INITIALIZE_RENDERER(SplineParticlesRendererLight, SplineParticlesRenderer)
 				default:
 					logMessage(L"Reached default case of geometry renderer initialization switch statement. Code is broken.");
 					return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);

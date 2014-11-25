@@ -13,7 +13,7 @@ BOOL -- GeometryRendererManager::InvariantParticlesRendererLight = false
 BOOL -- GeometryRendererManager::InvariantTexturedParticlesRendererNoLight = true
 # Not implemented yet
 BOOL -- GeometryRendererManager::InvariantTexturedParticlesRendererLight = false
-BOOL -- GeometryRendererManager::SplineParticlesRendererNoLight = false
+BOOL -- GeometryRendererManager::SplineParticlesRendererNoLight = true
 # Not implemented yet
 BOOL -- GeometryRendererManager::SplineParticlesRendererLight = false
 

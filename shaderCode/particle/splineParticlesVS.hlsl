@@ -87,51 +87,51 @@ VSOutput VSMAIN(in VSInput input) {
 		health = 0.0f; // Below death cutoff
 	}
 
-	// Compute spline parameter and segment
+	// Compute spline parameter and segment index
 	float t = frac(input.position.x + (input.linearVelocity.z) * age); // Between 0 and 1
 	float segmentIndex = t * timeAndSplineParameters.w;
-	if (segmentIndex >= timeAndSplineParameters.z) {
+	if (segmentIndex < 0.0f || segmentIndex >= timeAndSplineParameters.z) {
 		health = 0.0f; // Out of bounds
 	} else {
 
-		// Compute spline base position
-		// ----------------------------
+		// Compute base position by evaluating the spline
+		// ----------------------------------------------
 		float segmentT = frac(segmentIndex);
 		Segment segment = Spline[(uint)segmentIndex];
-		float4 splinePosition =
-			pow(1.0f - segmentT, 3)*segment.p0 +
+		float3 splinePosition =
+			(pow(1.0f - segmentT, 3)*segment.p0 +
 			3.0f*segmentT*pow(1.0f - segmentT, 2)*segment.p1 +
 			3.0f*pow(segmentT, 2)*(1.0f - segmentT)*segment.p2 +
-			pow(segmentT, 3)*segment.p3;
+			pow(segmentT, 3)*segment.p3).xyz;
 
 		// Compute offset from base position and compute final position
 		// ------------------------------------------------------------
 		
 		// Find the unit direction vector of the spline
 		float3 splineDirection = normalize(
-		3.0f*pow(1.0f - segmentT, 2)*(segment.p1 - segment.p0) +
+		(3.0f*pow(1.0f - segmentT, 2)*(segment.p1 - segment.p0) +
 		6.0f*(1.0f - segmentT)*t*(segment.p2 - segment.p1) +
-		3.0f*pow(segmentT, 2)*(segment.p3 - segment.p2)
+		3.0f*pow(segmentT, 2)*(segment.p3 - segment.p2)).xyz
 			);
 
-		// Pick somewhat arbitrary basis vectors for the plane normal to the spline
+		// Pick somewhat arbitrary basis vectors to describe the plane normal to the spline
 		float3 tangent1 = splinePosition - (dot(splinePosition, splineDirection) * splineDirection);
 		// Avoid trying to normalize a zero vector
 		if (!(any(tangent1))) {
 			tangent1.x += 0.0001;
 		}
 		tangent1 = normalize(tangent1);
-		float3 tangent2 = cross(splineDirection, splinePosition);
+		float3 tangent2 = cross(tangent1, splineDirection);
 
 		// Compute the offset radius
 		float radius = input.position.y + (input.linearVelocity.x * time);
 
-		// Calculate angle of the offset vector
+		// Calculate angle of the offset vector relative to 'tangent1'
 		float angle = input.position.z + (input.linearVelocity.y * time);
 		float3 offset = (tangent1 * cos(angle) + tangent2 * sin(angle));
 
 		// Final position
-		float4 inPosition = float4(radius * offset + splinePosition, 1.0f);
+		float4 inPosition = float4((radius * offset) + splinePosition, 1.0f);
 
 		// Transform position into view space
 		// ----------------------------------
@@ -153,7 +153,7 @@ VSOutput VSMAIN(in VSInput input) {
 		// Angular motion
 		output.angle = input.billboard.z * age;
 
-		// If direction is away from viewer, reverse the direction of rotation
+		// If direction of motion is away from viewer, reverse the direction of rotation
 		float dotV_Vel = dot(offset, output.positionVS);
 		if (dotV_Vel > 0.0f) {
 			output.angle = -output.angle;
@@ -166,7 +166,6 @@ VSOutput VSMAIN(in VSInput input) {
 
 		// Index - pass-through
 		output.index = input.index;
-
-		return output;
 	}
+	return output;
 }

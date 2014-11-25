@@ -79,11 +79,14 @@ public:
 		   presently of the same class.
 		 */
 		InvariantParticlesRendererNoLight,
-		InvariantParticlesRendererLight, // Not yet implemented correctly
+		InvariantParticlesRendererLight, // Not yet tested - may be incorrectly implemented
 
 		InvariantTexturedParticlesRendererNoLight,
 		InvariantTexturedParticlesRendererLight, // Not yet implemented
 
+		/* Presently, the shaders used for these renderers
+		   expect albedo textures.
+		 */
 		SplineParticlesRendererNoLight,
 		SplineParticlesRendererLight // Not yet implemented
 	};
@@ -91,6 +94,8 @@ public:
 	   -Update the 's_geometryRendererTypesInOrder' and
 	       's_geometryRendererTypeNames' static members
 	   -Create the new type of renderer in this class's initialize() function
+	   -Update configuration data (text files)
+	       to trigger the creation and initialization/configuration of the new renderers
 	 */
 
 	/* Outputs the GeometryRendererType constant name that

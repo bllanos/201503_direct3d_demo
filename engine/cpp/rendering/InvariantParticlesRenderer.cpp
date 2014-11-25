@@ -202,7 +202,7 @@ HRESULT InvariantParticlesRenderer::configure(const wstring& scope, const wstrin
 			// -----------------------------
 
 			// Enable or disable lighting
-			if (retrieve<Config::DataType::BOOL, bool>(INVARIANTPARTICLESRENDERER_SCOPE, INVARIANTPARTICLESRENDERER_LIGHT_FLAG_FIELD, boolValue)) {
+			if (retrieve<Config::DataType::BOOL, bool>(scope, INVARIANTPARTICLESRENDERER_LIGHT_FLAG_FIELD, boolValue)) {
 				m_lighting = *boolValue;
 				if (m_lighting) {
 					logMessage(L"Lighting is enabled in configuration data.");
@@ -222,10 +222,10 @@ HRESULT InvariantParticlesRenderer::configure(const wstring& scope, const wstrin
 				m_light->lightColor = INVARIANTPARTICLESRENDERER_LIGHT_COLOR_DEFAULT;
 				m_light->lightAmbientWeight = INVARIANTPARTICLESRENDERER_LIGHT_AMBIENT_WEIGHT_DEFAULT;
 
-				if (retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(INVARIANTPARTICLESRENDERER_SCOPE, INVARIANTPARTICLESRENDERER_LIGHT_COLOR_FIELD, float4Value)) {
+				if (retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(scope, INVARIANTPARTICLESRENDERER_LIGHT_COLOR_FIELD, float4Value)) {
 					m_light->lightColor = *float4Value;
 				}
-				if (retrieve<Config::DataType::DOUBLE, double>(INVARIANTPARTICLESRENDERER_SCOPE, INVARIANTPARTICLESRENDERER_LIGHT_AMBIENT_WEIGHT_FIELD, doubleValue)) {
+				if (retrieve<Config::DataType::DOUBLE, double>(scope, INVARIANTPARTICLESRENDERER_LIGHT_AMBIENT_WEIGHT_FIELD, doubleValue)) {
 					m_light->lightAmbientWeight = static_cast<float>(*doubleValue);
 				}
 			}
