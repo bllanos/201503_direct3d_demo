@@ -90,6 +90,11 @@ protected:
 	 */
 	virtual HRESULT setSpline(const Spline* const spline);
 
+	/* Calls the base class's version of this function,
+	   then calls setRendererType() appropriately.
+	 */
+	virtual HRESULT configure(const std::wstring& scope, const std::wstring* configUserScope = 0, const std::wstring* logUserScope = 0) override;
+
 public:
 	virtual ~SplineParticles(void);
 

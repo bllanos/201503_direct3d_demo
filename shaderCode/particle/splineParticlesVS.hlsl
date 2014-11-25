@@ -106,7 +106,7 @@ VSOutput VSMAIN(in VSInput input) {
 
 		// Compute offset from base position and compute final position
 		// ------------------------------------------------------------
-		float angle = input.position.z + (input.linearVelocity.y * time);
+		
 		// Find the unit direction vector of the spline
 		float3 splineDirection = normalize(
 		3.0f*pow(1.0f - segmentT, 2)*(segment.p1 - segment.p0) +
@@ -114,15 +114,23 @@ VSOutput VSMAIN(in VSInput input) {
 		3.0f*pow(segmentT, 2)*(segment.p3 - segment.p2)
 			);
 
-		// Pick somewhat arbitrary basis vector for the plane normal to the spline
-		float3 tangent1 = normalize(splinePosition - dot(splinePosition, splineDirection) * splineDirection);
+		// Pick somewhat arbitrary basis vectors for the plane normal to the spline
+		float3 tangent1 = splinePosition - (dot(splinePosition, splineDirection) * splineDirection);
+		// Avoid trying to normalize a zero vector
+		if (!(any(tangent1))) {
+			tangent1.x += 0.0001;
+		}
+		tangent1 = normalize(tangent1);
 		float3 tangent2 = cross(splineDirection, splinePosition);
 
 		// Compute the offset radius
 		float radius = input.position.y + (input.linearVelocity.x * time);
 
-		// Offset direction used for altering direction of rotation later
+		// Calculate angle of the offset vector
+		float angle = input.position.z + (input.linearVelocity.y * time);
 		float3 offset = (tangent1 * cos(angle) + tangent2 * sin(angle));
+
+		// Final position
 		float4 inPosition = float4(radius * offset + splinePosition, 1.0f);
 
 		// Transform position into view space

@@ -141,6 +141,46 @@ HRESULT SplineParticles::setSpline(const Spline* const spline) {
 	return ERROR_SUCCESS;
 }
 
+HRESULT SplineParticles::configure(const std::wstring& scope, const std::wstring* configUserScope, const std::wstring* logUserScope) {
+	HRESULT result = ERROR_SUCCESS;
+
+	if (hasConfigToUse()) {
+
+		// Configure base members
+		if (FAILED(InvariantTexturedParticles::configure(scope, configUserScope, logUserScope))) {
+			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+	else {
+		logMessage(L"Initialization from configuration data: No Config instance to use.");
+		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
+	}
+
+	// Adjust renderer settings configured by the base class
+	// -----------------------------------------------------
+	if (m_renderAlbedoTexture) {
+		if (m_renderLighting) {
+			result = setRendererType(GeometryRendererManager::GeometryRendererType::SplineParticlesRendererLight);
+		}
+		else {
+			result = setRendererType(GeometryRendererManager::GeometryRendererType::SplineParticlesRendererNoLight);
+		}
+		if (FAILED(result)) {
+			std::wstring msg = L"InvariantTexturedParticles::configure(): Error setting the renderer to use based on the lighting flag value of ";
+			msg += ((m_renderLighting) ? L"'true'" : L"'false'");
+			msg += L", and albedo texture rendering flag of 'true'.";
+			logMessage(msg);
+			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	} else {
+		logMessage(L"Cannot render the particle system using the spline-aware renderer, which expects an albedo texture."
+			L" Albedo texture rendering has been disabled, possibly because no texture was created.");
+	}
+
+	return result;
+}
+
+
 SplineParticles::~SplineParticles(void) {
 	if( m_splineBuffer ) {
 		m_splineBuffer->Release();
