@@ -85,11 +85,6 @@ protected:
 	 */
 	virtual HRESULT setRendererType(const GeometryRendererManager::GeometryRendererType type) override;
 
-	/* The new spline must have the same capacity as the spline
-	   passed to initialize().
-	 */
-	virtual HRESULT setSpline(const Spline* const spline);
-
 	/* Calls the base class's version of this function,
 	   then calls setRendererType() appropriately.
 	 */
@@ -104,6 +99,11 @@ public:
 	   To be used to set constant buffer parameters during rendering.
 	 */
 	size_t getNumberOfSegments(const bool capacity) const;
+
+	/* The new spline must have the same capacity as the spline
+	   passed to initialize().
+	*/
+	virtual HRESULT setSpline(const Spline* const spline);
 
 protected:
 	/* Prepares spline control point data on the pipeline
