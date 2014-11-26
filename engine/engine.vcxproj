@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\geometry\UniformRandomSplineModel.h" />
+    <ClInclude Include="header\physics\WanderingLineSpline.h" />
     <ClInclude Include="header\physics\WanderingLineTransformable.h" />
     <ClInclude Include="header\rendering\SplineParticlesRenderer.h" />
     <ClInclude Include="header\geometry\SplineParticles.h" />

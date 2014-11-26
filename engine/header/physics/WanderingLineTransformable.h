@@ -81,7 +81,7 @@ protected:
 	/* Re-interpolates position and scaling,
 	   then updates offsets and calculates final position and orientation.
 	 */
-	virtual HRESULT refresh(void);
+	virtual HRESULT refresh(const DWORD updateTimeInterval);
 
 	// Data members
 private:

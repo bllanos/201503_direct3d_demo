@@ -67,7 +67,7 @@ WanderingLineTransformable::WanderingLineTransformable(Transformable* const star
 	m_rollPitchYawDirection[1] = (m_offsetDistribution(m_generator) > 0.5f);
 	m_rollPitchYawDirection[2] = (m_offsetDistribution(m_generator) > 0.5f);
 
-	if (FAILED(refresh())) {
+	if (FAILED(refresh(0))) {
 		throw std::exception("WanderingLineTransformable: Initialization failed.");
 	}
 }
@@ -76,13 +76,15 @@ WanderingLineTransformable::~WanderingLineTransformable(void) {}
 
 
 HRESULT WanderingLineTransformable::update(const DWORD currentTime, const DWORD updateTimeInterval) {
-	if (FAILED(refresh())) {
+	if (FAILED(refresh(updateTimeInterval))) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	return Transformable::update(currentTime, updateTimeInterval);
 }
 
-HRESULT WanderingLineTransformable::refresh(void) {
+HRESULT WanderingLineTransformable::refresh(const DWORD updateTimeInterval) {
+
+	float timeInterval = static_cast<float>(updateTimeInterval);
 
 	// Position
 	// ---------
@@ -112,14 +114,14 @@ HRESULT WanderingLineTransformable::refresh(void) {
 
 	// Calculate final position
 	vector1 = XMVectorAdd(vector1, XMLoadFloat3(&m_offset));
-	XMVECTOR vector2 = XMVectorScale(XMLoadFloat3(&offsetChange), m_parameters.linearSpeed);
+	XMVECTOR vector2 = XMVectorScale(XMLoadFloat3(&offsetChange), m_parameters.linearSpeed * timeInterval);
 	vector2 = XMVectorAdd(vector1, vector2);
 
 	// Check if maximum radius is exceeded
 	XMFLOAT3 length;
 	XMStoreFloat3(&length, XMVector3Length(vector2));
 	if (length.x > m_parameters.maxRadius) {
-		vector2 = XMVectorScale(XMLoadFloat3(&offsetChange), -(m_parameters.linearSpeed));
+		vector2 = XMVectorScale(XMLoadFloat3(&offsetChange), -(m_parameters.linearSpeed * timeInterval));
 		vector2 = XMVectorAdd(vector1, vector2);
 	}
 
@@ -138,21 +140,21 @@ HRESULT WanderingLineTransformable::refresh(void) {
 
 	// Orientation
 	// -----------
-	float factor = m_rollPitchYawDirection[0] ? 1.0f : -1.0f;
+	float factor = (m_rollPitchYawDirection[0] ? 1.0f : -1.0f) * timeInterval;
 	m_rollPitchYaw.x += factor * m_parameters.rollPitchYawSpeeds.x;
 	if (m_rollPitchYaw.x > m_parameters.maxRollPitchYaw.x) {
 		m_rollPitchYaw.x += -2.0f * factor * m_parameters.rollPitchYawSpeeds.x;
 		m_rollPitchYawDirection[0] = !m_rollPitchYawDirection[0];
 	}
 
-	factor = m_rollPitchYawDirection[1] ? 1.0f : -1.0f;
+	factor = (m_rollPitchYawDirection[1] ? 1.0f : -1.0f) * timeInterval;
 	m_rollPitchYaw.y += factor * m_parameters.rollPitchYawSpeeds.y;
 	if (m_rollPitchYaw.y > m_parameters.maxRollPitchYaw.y) {
 		m_rollPitchYaw.y += -2.0f * factor * m_parameters.rollPitchYawSpeeds.y;
 		m_rollPitchYawDirection[1] = !m_rollPitchYawDirection[1];
 	}
 
-	factor = m_rollPitchYawDirection[2] ? 1.0f : -1.0f;
+	factor = (m_rollPitchYawDirection[2] ? 1.0f : -1.0f) * timeInterval;
 	m_rollPitchYaw.z += factor * m_parameters.rollPitchYawSpeeds.z;
 	if (m_rollPitchYaw.z > m_parameters.maxRollPitchYaw.z) {
 		m_rollPitchYaw.z += -2.0f * factor * m_parameters.rollPitchYawSpeeds.z;

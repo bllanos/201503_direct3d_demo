@@ -413,5 +413,8 @@
     <ClInclude Include="header\physics\WanderingLineTransformable.h">
       <Filter>header\physics</Filter>
     </ClInclude>
+    <ClInclude Include="header\physics\WanderingLineSpline.h">
+      <Filter>header\physics</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
