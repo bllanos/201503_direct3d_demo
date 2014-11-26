@@ -160,7 +160,7 @@ HRESULT WanderingLineTransformable::refresh(void) {
 	}
 
 
-	// Store the update value
+	// Store the updated value
 	XMStoreFloat4(&m_orientation, XMQuaternionRotationAxis(lineAxis, 0.0f));
 	Spin(m_rollPitchYaw.x, m_rollPitchYaw.y, m_rollPitchYaw.z);
 

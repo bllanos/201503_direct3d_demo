@@ -79,7 +79,7 @@ public:
 protected:
 
 	/* Re-interpolates position and scaling,
-	   then updates jitter and calculates final position and orientation.
+	   then updates offsets and calculates final position and orientation.
 	 */
 	virtual HRESULT refresh(void);
 
