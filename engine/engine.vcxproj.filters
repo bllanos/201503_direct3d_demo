@@ -225,6 +225,9 @@
     <ClCompile Include="cpp\rendering\SplineParticlesRenderer.cpp">
       <Filter>source\rendering</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\geometry\UniformRandomSplineModel.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -400,6 +403,9 @@
     </ClInclude>
     <ClInclude Include="header\rendering\SplineParticlesRenderer.h">
       <Filter>header\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\UniformRandomSplineModel.h">
+      <Filter>header\geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

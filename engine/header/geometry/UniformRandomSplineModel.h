@@ -102,6 +102,7 @@ public:
 	// Collision detection
 public:
 	virtual XMFLOAT3 getPosition() override;
+	/* Not implemented (throws an exception) */
 	virtual float getRadius() override;
 
 	// Geometry setup
