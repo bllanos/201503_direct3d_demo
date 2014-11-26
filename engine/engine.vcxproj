@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cpp\geometry\UniformRandomSplineModel.cpp" />
+    <ClCompile Include="cpp\physics\WanderingLineTransformable.cpp" />
     <ClCompile Include="cpp\rendering\SplineParticlesRenderer.cpp" />
     <ClCompile Include="cpp\geometry\SplineParticles.cpp" />
     <ClCompile Include="cpp\physics\Spline.cpp" />

@@ -17,7 +17,7 @@ Primary basis: Transformable.h
 Description
   -A Transformable which positions itself along a line
      joining two other Transformables.
-  -Additionally, a random offset and orientation
+  -Additionally, a random offset and non-random, cycling orientation
      can be applied to make the Transformable less
 	 tightly coupled to the line.
 */
@@ -26,6 +26,7 @@ Description
 
 #include <Windows.h>
 #include <DirectXMath.h>
+#include <random>
 #include "Transformable.h"
 
 class WanderingLineTransformable : public Transformable {
@@ -38,22 +39,25 @@ public:
 		float t;
 
 		/* Maximum allowed drift distance from the linearly interpolated position,
-		   when t = 1/2
-		   Actual allowed drift distance is maxRadius * (1.0 - abs(t - 0.5))
+		   when t = 1/2, as passed to the constructor.
+		   Actual allowed drift distance will be calculated as
+		     maxRadius * (1.0 - 2.0f * abs(t - 0.5))
 		 */
 		float maxRadius;
 
 		/* Amount of drift per millisecond
-		   (Length of drift vector which is sampled uniformly from
+		   (Length of drift vector which is sampled uniformly at random from
 		    the surface of a sphere)
 		 */
 		float linearSpeed;
 
 		/* Maximum allowed orientation deviation from the line connecting
-		   the start and end Transformables, when t = 1/2
-		   Actual allowed orientation deviation is maxRollPitchYaw * (1.0 - abs(t - 0.5))
+		   the start and end Transformables, when t = 1/2, as passed to the constructor.
+		   Actual allowed orientation deviation will
+		   be calculated (per component) as
+		     maxRollPitchYaw * (1.0 - 2.0f *abs(t - 0.5))
 		 */
-		float maxRollPitchYaw;
+		DirectX::XMFLOAT3 maxRollPitchYaw;
 
 		// Amount of rotational drift per millisecond
 		DirectX::XMFLOAT3 rollPitchYawSpeeds;
@@ -66,13 +70,18 @@ public:
 	WanderingLineTransformable(Transformable* const start,
 		Transformable* const end, const Parameters& parameters);
 
-public:
 	virtual ~WanderingLineTransformable(void);
 
-	/* Re-interpolates position, orientation and scaling,
-	   then updates jitter and calculates final position and orientation.
+	/* Calls refresh(), then calls the base class version of this function.
 	 */
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval) override;
+
+protected:
+
+	/* Re-interpolates position and scaling,
+	   then updates jitter and calculates final position and orientation.
+	 */
+	virtual HRESULT refresh(void);
 
 	// Data members
 private:
@@ -80,6 +89,15 @@ private:
 	DirectX::XMFLOAT3 m_rollPitchYaw; // Rotational offset
 
 	Parameters m_parameters;
+
+	Transformable* const m_start; // Shared - not deleted by destructor
+
+	Transformable* const m_end; // Shared - not deleted by destructor
+
+	std::default_random_engine m_generator;
+	std::uniform_real_distribution<float> m_offsetDistribution;
+
+	bool m_rollPitchYawDirection[3];
 
 	// Currently not implemented - will cause linker errors if called
 private:
