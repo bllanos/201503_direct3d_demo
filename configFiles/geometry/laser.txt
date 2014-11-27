@@ -22,12 +22,12 @@ BOOL -- UniformRandomSplineModel_ConfigUser::enableConfigUseLogging = true
 INT -- UniformRandomSplineModel::nParticles = 1000
 FLOAT4 -- UniformRandomSplineModel::vertexPositionMin = (0.0, 0.0, 0.0, 0.0)
 FLOAT4 -- UniformRandomSplineModel::vertexPositionMax = (1.0, 0.0, 0.0, 0.0)
-FLOAT4 -- UniformRandomSplineModel::vertexBillboardMin = (0.5, 0.6, 0.002, 0.0)
-FLOAT4 -- UniformRandomSplineModel::vertexBillboardMax = (0.5, 0.6, 0.002, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexBillboardMin = (0.01, 0.01, 0.002, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexBillboardMax = (0.15, 0.15, 0.002, 0.0)
 FLOAT4 -- UniformRandomSplineModel::vertexLinearVelocityMin = (0.0, 0.0, 0.0, 0.0)
 FLOAT4 -- UniformRandomSplineModel::vertexLinearVelocityMax = (0.0, 0.0, 0.0, 0.0)
-FLOAT4 -- UniformRandomSplineModel::vertexLifeMin = (0.0, 1.0, 0.0004, 0.0)
-FLOAT4 -- UniformRandomSplineModel::vertexLifeMax = (0.0, 1.0, 0.0004, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexLifeMin = (0.0, 1.0, 0.1, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexLifeMax = (0.0, 1.0, 0.2, 0.0)
 FLOAT4 -- UniformRandomSplineModel::vertexIndexMin = (1.0, 1.0, 1.0, 1.0)
 FLOAT4 -- UniformRandomSplineModel::vertexIndexMax = (1.0, 1.0, 1.0, 1.0)
 
@@ -86,5 +86,5 @@ COLOR -- albedoTexture::borderColor = (255, 255, 255, 255)
 # Texture
 # Note: Dashes were replaced with underscores in the filename
 #   (Otherwise the filename will not be deemed valid - Errors would be appended to this file.)
-FILENAME -- albedoTexture::textureFileName = "msh1162_512x379.dds"
+FILENAME -- albedoTexture::textureFileName = "msh1162_512x445.dds"
 DIRECTORY -- albedoTexture::textureFilePath = "..\textures"

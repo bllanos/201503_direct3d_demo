@@ -100,10 +100,11 @@ private:
 
 	Transformable* m_end; // Shared - not deleted by destructor
 
-	std::default_random_engine m_generator;
-	std::uniform_real_distribution<float> m_offsetDistribution;
-
 	bool m_rollPitchYawDirection[3];
+
+private:
+	static std::default_random_engine s_generator;
+	static std::uniform_real_distribution<float> s_offsetDistribution;
 
 	// Currently not implemented - will cause linker errors if called
 private:

@@ -21,9 +21,12 @@ Description
 #include "WanderingLineTransformable.h"
 #include "defs.h"
 #include <exception>
-#include <cmath> // For fabs()
+#include <cmath> // For fabs() and cbrt()
 
 using namespace DirectX;
+
+std::default_random_engine WanderingLineTransformable::s_generator;
+std::uniform_real_distribution<float> WanderingLineTransformable::s_offsetDistribution(0.0f, 1.0f);
 
 WanderingLineTransformable::WanderingLineTransformable(Transformable* const start,
 	Transformable* const end, const Parameters& parameters) :
@@ -34,8 +37,7 @@ WanderingLineTransformable::WanderingLineTransformable(Transformable* const star
 	m_offset(XMFLOAT3(0.0f, 0.0f, 0.0f)),
 	m_rollPitchYaw(XMFLOAT3(0.0f, 0.0f, 0.0f)),
 	m_parameters(parameters),
-	m_start(start), m_end(end),
-	m_generator(), m_offsetDistribution(0.0f, 1.0f)
+	m_start(start), m_end(end)
 {
 	if (parameters.t > 1.0f || parameters.t < 0.0f) {
 		throw std::exception("WanderingLineTransformable: Linear interpolation parameter is not in the range [0,1].");
@@ -48,24 +50,25 @@ WanderingLineTransformable::WanderingLineTransformable(Transformable* const star
 	m_parameters.maxRollPitchYaw.z *= factor;
 
 	// Set an initial offset
-	float u = m_offsetDistribution(m_generator);
-	float v = m_offsetDistribution(m_generator);
+	float u = s_offsetDistribution(s_generator);
+	float v = s_offsetDistribution(s_generator);
+	float w = cbrt(s_offsetDistribution(s_generator));
 	float sinPhi, cosPhi, sinTheta, cosTheta;
 	XMScalarSinCos(&sinPhi, &cosPhi, XMScalarACos(2.0f * v - 1));
 	XMScalarSinCos(&sinTheta, &cosTheta, XM_2PI * u);
-	m_offset.x = m_parameters.maxRadius * cosTheta * sinPhi;
-	m_offset.y = m_parameters.maxRadius * cosPhi;
-	m_offset.z = m_parameters.maxRadius * sinTheta * sinPhi;
+	m_offset.x = w * m_parameters.maxRadius * cosTheta * sinPhi;
+	m_offset.y = w * m_parameters.maxRadius * cosPhi;
+	m_offset.z = w * m_parameters.maxRadius * sinTheta * sinPhi;
 
 	// Set an initial rotational offset
-	m_rollPitchYaw.x = m_offsetDistribution(m_generator) * m_parameters.maxRollPitchYaw.x;
-	m_rollPitchYaw.y = m_offsetDistribution(m_generator) * m_parameters.maxRollPitchYaw.y;
-	m_rollPitchYaw.z = m_offsetDistribution(m_generator) * m_parameters.maxRollPitchYaw.z;
+	m_rollPitchYaw.x = s_offsetDistribution(s_generator) * m_parameters.maxRollPitchYaw.x;
+	m_rollPitchYaw.y = s_offsetDistribution(s_generator) * m_parameters.maxRollPitchYaw.y;
+	m_rollPitchYaw.z = s_offsetDistribution(s_generator) * m_parameters.maxRollPitchYaw.z;
 
 	// Set initial directions of rotation
-	m_rollPitchYawDirection[0] = (m_offsetDistribution(m_generator) > 0.5f);
-	m_rollPitchYawDirection[1] = (m_offsetDistribution(m_generator) > 0.5f);
-	m_rollPitchYawDirection[2] = (m_offsetDistribution(m_generator) > 0.5f);
+	m_rollPitchYawDirection[0] = (s_offsetDistribution(s_generator) > 0.5f);
+	m_rollPitchYawDirection[1] = (s_offsetDistribution(s_generator) > 0.5f);
+	m_rollPitchYawDirection[2] = (s_offsetDistribution(s_generator) > 0.5f);
 
 	if (FAILED(refresh(0))) {
 		throw std::exception("WanderingLineTransformable: Initialization failed.");
@@ -92,6 +95,8 @@ HRESULT WanderingLineTransformable::setEndpoints(Transformable* const start,
 
 HRESULT WanderingLineTransformable::refresh(const DWORD updateTimeInterval) {
 
+	XMVECTOR vector1;
+	XMVECTOR vector2;
 	float timeInterval = static_cast<float>(updateTimeInterval);
 
 	// Position
@@ -111,8 +116,8 @@ HRESULT WanderingLineTransformable::refresh(const DWORD updateTimeInterval) {
 
 	// Calculate position offset
 	if( m_parameters.maxRadius > 0.0f && timeInterval != 0.0f && m_parameters.linearSpeed != 0.0f ) {
-		float u = m_offsetDistribution(m_generator);
-		float v = m_offsetDistribution(m_generator);
+		float u = s_offsetDistribution(s_generator);
+		float v = s_offsetDistribution(s_generator);
 		float sinPhi, cosPhi, sinTheta, cosTheta;
 		XMScalarSinCos(&sinPhi, &cosPhi, XMScalarACos(2.0f * v - 1));
 		XMScalarSinCos(&sinTheta, &cosTheta, XM_2PI * u);
@@ -121,8 +126,8 @@ HRESULT WanderingLineTransformable::refresh(const DWORD updateTimeInterval) {
 			cosPhi,
 			sinTheta * sinPhi);
 
-		XMVECTOR vector1 = XMLoadFloat3(&m_offset);
-		XMVECTOR vector2 = XMVectorScale(XMLoadFloat3(&offsetChange), m_parameters.linearSpeed * timeInterval);
+		vector1 = XMLoadFloat3(&m_offset);
+		vector2 = XMVectorScale(XMLoadFloat3(&offsetChange), m_parameters.linearSpeed * timeInterval);
 		vector2 = XMVectorAdd(vector1, vector2);
 
 		// Check if maximum radius is exceeded
@@ -133,8 +138,13 @@ HRESULT WanderingLineTransformable::refresh(const DWORD updateTimeInterval) {
 			vector2 = XMVectorAdd(vector1, vector2);
 		}
 
+		// Save the offset for the next loop
+		XMStoreFloat3(&m_offset, vector2);
+
 		// Calculate final position
 		position = XMVectorAdd(vector2, position);
+	} else {
+		position = XMVectorAdd(XMLoadFloat3(&m_offset), position);
 	}
 
 	// Save the final position
@@ -181,7 +191,11 @@ HRESULT WanderingLineTransformable::refresh(const DWORD updateTimeInterval) {
 	}
 
 	// Store the updated value
-	XMStoreFloat4(&m_orientation, XMQuaternionRotationAxis(lineAxis, 0.0f));
+	XMFLOAT3 canonicalForward = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	vector1 = XMVector3Cross(XMLoadFloat3(&canonicalForward), lineAxis);
+	vector2 = XMVector3Dot(XMLoadFloat3(&canonicalForward), lineAxis);
+	XMStoreFloat3(&storedValue1, vector2);
+	XMStoreFloat4(&m_orientation, XMQuaternionRotationAxis(vector1, storedValue1.x));
 	if( m_rollPitchYaw.x != 0.0f || m_rollPitchYaw.y != 0.0f || m_rollPitchYaw.z != 0.0f ) {
 		Spin(m_rollPitchYaw.x, m_rollPitchYaw.y, m_rollPitchYaw.z);
 	}

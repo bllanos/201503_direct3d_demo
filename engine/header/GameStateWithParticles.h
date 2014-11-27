@@ -331,6 +331,10 @@ protected:
 	 */
 	virtual HRESULT updateDemo(void);
 
+	/* Used only in demo mode */
+	Transformable* m_demoStart;
+	Transformable* m_demoEnd;
+
 	// Currently not implemented - will cause linker errors if called
 private:
 	GameStateWithParticles(const GameStateWithParticles& other);

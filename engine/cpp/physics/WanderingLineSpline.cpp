@@ -22,7 +22,6 @@ Description
 
 #include "WanderingLineSpline.h"
 #include "defs.h"
-#include <random>
 #include <exception>
 
 using namespace DirectX;
@@ -37,12 +36,12 @@ WanderingLineSpline::WanderingLineSpline(const size_t capacity, const float spee
 	m_start(start), m_end(end),
 	m_knotTransforms()
 {
-	// Generate spline knots at random interpolation parameter values
-	static std::default_random_engine generator;
-	static std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+	// Generate spline knots at increasing interpolation parameter values
 	WanderingLineTransformable* transform = 0;
+	int i = 0;
 	while( !isAtCapacity() ) {
-		m_knotParameters.t = distribution(generator);
+		m_knotParameters.t = static_cast<float>(i) / static_cast<float>(capacity);
+		++i;
 		transform = new WanderingLineTransformable(m_start, m_end, m_knotParameters);
 
 		if( FAILED(addToEnd(transform, true)) ) {

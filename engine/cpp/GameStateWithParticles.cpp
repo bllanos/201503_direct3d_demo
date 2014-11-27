@@ -51,7 +51,8 @@ m_laserControlPointSpeed(GAMESTATEWITHPARTICLES_LASER_SPLINESPEED_DEFAULT),
 m_laserTransformParameters(0),
 m_currentTime(0), m_demo_enabled(GAMESTATEWITHPARTICLES_DEMO_DEFAULT),
 m_demo_nExplosions(GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_DEFAULT),
-m_demo_zoneRadius(GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_DEFAULT)
+m_demo_zoneRadius(GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_DEFAULT),
+m_demoStart(0), m_demoEnd(0)
 {
 	if( configureNow ) {
 		if( FAILED(configure()) ) {
@@ -115,19 +116,10 @@ GameStateWithParticles::~GameStateWithParticles(void) {
 	}
 
 	if( m_lasers != 0 ) {
-		Transformable* start;
-		Transformable* end;
 		const vector<ActiveSplineParticles<UniformRandomSplineModel>*>::size_type nLasers = m_lasers->size();
 		for( vector<ActiveSplineParticles<UniformRandomSplineModel>*>::size_type i = 0; i < nLasers; ++i ) {
 			activeLaser = (*m_lasers)[i];
 			if( activeLaser != 0 ) {
-				if( m_demo_enabled ) {
-					static_cast<GAMESTATEWITHPARTICLES_LASER_SPLINE_CLASS*>(activeLaser->getSpline())->getEndpoints(
-						start,
-						end);
-					delete start;
-					delete end;
-				}
 				delete activeLaser;
 				activeLaser = 0;
 				(*m_lasers)[i] = 0;
@@ -140,6 +132,17 @@ GameStateWithParticles::~GameStateWithParticles(void) {
 	if( m_laserTransformParameters != 0 ) {
 		delete m_laserTransformParameters;
 		m_laserTransformParameters = 0;
+	}
+
+	if( m_demo_enabled ) {
+		if( m_demoStart != 0 ) {
+			delete m_demoStart;
+			m_demoStart = 0;
+		}
+		if( m_demoEnd != 0 ) {
+			delete m_demoEnd;
+			m_demoEnd = 0;
+		}
 	}
 }
 
@@ -414,11 +417,6 @@ HRESULT GameStateWithParticles::removeLaser(Transformable* const startTransform)
 		}
 	}
 
-	// If in demo mode, assume ownership of transformables
-	if( m_demo_enabled ) {
-		delete start; // Assumes start == transform
-		delete end; // Assumes all ends are the same
-	}
 	return ERROR_SUCCESS;
 }
 
@@ -759,19 +757,21 @@ HRESULT GameStateWithParticles::updateDemo(void) {
 	}
 
 	if( m_lasers->size() < GAMESTATEWITHPARTICLES_DEMO_NLASERS ) {
-		transform = new Transformable(
-			XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
-			XMFLOAT3(-5.0f, -5.0f, 0.0f), // Position
-			XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
-			);
+		if( m_demoStart == 0 && m_demoEnd == 0 ) {
+			m_demoStart = new Transformable(
+				XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
+				XMFLOAT3(-10.0f, -10.0f, 30.0f), // Position
+				XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
+				);
 
-		Transformable* transform2 = new Transformable(
-			XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
-			XMFLOAT3(5.0f, 5.0f, 5.0f), // Position
-			XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
-			);
+			m_demoEnd = new Transformable(
+				XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
+				XMFLOAT3(20.0f, 15.0f, 40.0f), // Position
+				XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
+				);
+		}
 
-		if( FAILED(spawnLaser(transform, transform2))) {
+		if( FAILED(spawnLaser(m_demoStart, m_demoEnd)) ) {
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}

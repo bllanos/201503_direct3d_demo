@@ -285,7 +285,7 @@ HRESULT UniformRandomSplineModel::configure(const wstring& scope, const wstring*
 			// Query for initialization data
 			// -----------------------------
 			if( retrieve<Config::DataType::INT, int>(scope, UNIFORMRANDOMSPLINEMODEL_NPARTICLES_FIELD, intValue) ) {
-				m_nParticles = *intValue;
+				nParticles = *intValue;
 			}
 
 			for( size_t i = 0; i < nVertexParameters; ++i ) {
@@ -294,7 +294,7 @@ HRESULT UniformRandomSplineModel::configure(const wstring& scope, const wstring*
 				}
 			}
 
-			if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(scope, UNIFORMRANDOMSPLINEMODEL_COLORCAST_WEIGHT_FIELD, float4Value) ) {
+			if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(scope, UNIFORMRANDOMSPLINEMODEL_COLORCAST_COLOR_FIELD, float4Value) ) {
 				colorCast.x = float4Value->x;
 				colorCast.y = float4Value->y;
 				colorCast.z = float4Value->z;
