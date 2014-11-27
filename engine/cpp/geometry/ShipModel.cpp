@@ -27,19 +27,8 @@ using namespace DirectX;
 ShipModel::ShipModel()
 : IGeometry(),
 LogUser(true, SHIPMODEL_START_MSG_PREFIX),
-rootTransform(0), body(0), leftWing(0), rightWing(0)
+m_bones(0), body(0), leftWing(0), rightWing(0)
 {
-	rootTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-	body = new CubeModel(rootTransform,
-		1.0f, 0.75f, 4.0f, 0);
-
-	Transformable* wingTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f));
-	leftWing = new CubeModel(wingTransform,
-		1.0f, 0.75f, 3.0f, 0);
-
-	wingTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, -0.5f, 0.0f, 1.0f));
-	rightWing = new CubeModel(wingTransform,
-		1.0f, 0.75f, 3.0f, 0);
 }
 
 ShipModel::~ShipModel(void)
@@ -60,8 +49,29 @@ ShipModel::~ShipModel(void)
 	}
 }
 
-HRESULT ShipModel::initialize(ID3D11Device* d3dDevice)
+HRESULT ShipModel::initialize(ID3D11Device* d3dDevice, vector<Transformable*>* bones)
 {
+	if (bones == 0){
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	}
+
+	if (bones->size() != static_cast<std::vector<Transformable*>::size_type>(3)){
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	}
+
+	m_bones = bones;
+
+	//rootTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	body = new CubeModel(m_bones->at(0),
+		1.0f, 0.75f, 4.0f, 0);
+	//Transformable* wingTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f));
+	leftWing = new CubeModel(m_bones->at(1),
+		1.0f, 0.75f, 3.0f, 0);
+
+	//wingTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, -0.5f, 0.0f, 1.0f));
+	rightWing = new CubeModel(m_bones->at(2),
+		1.0f, 0.75f, 3.0f, 0);
+
 	if (FAILED(body->initialize(d3dDevice))) {
 		logMessage(L"Failed to initialize CubeModel object.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -74,13 +84,13 @@ HRESULT ShipModel::initialize(ID3D11Device* d3dDevice)
 		logMessage(L"Failed to initialize CubeModel object.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
-
-	leftWing->setParentTransformable(body->getTransformable());
-	rightWing->setParentTransformable(body->getTransformable());
-
+	/*
+	leftWing->setParentTransformable(m_bones->at(0));
+	rightWing->setParentTransformable(m_bones->at(0));
+	*/
 	return ERROR_SUCCESS;
 }
-
+/*
 HRESULT ShipModel::spawn(Octtree* octtree)
 {
 	ObjectModel* shipObject = new ObjectModel(this);
@@ -93,6 +103,7 @@ HRESULT ShipModel::spawn(Octtree* octtree)
 
 	return ERROR_SUCCESS;
 }
+*/
 
 HRESULT ShipModel::drawUsingAppropriateRenderer(
 	ID3D11DeviceContext* const context,
@@ -118,24 +129,50 @@ HRESULT ShipModel::drawUsingAppropriateRenderer(
 
 HRESULT ShipModel::setTransformables(const std::vector<Transformable*>* const transforms)
 {
-	if (FAILED(body->setTransformables(transforms))) {
-		logMessage(L"Failed to set CubeModel object transforms.");
+	if (transforms == 0){
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	}
+
+	if (transforms->size() != static_cast<std::vector<Transformable*>::size_type>(3)){
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	}
+
+	vector<Transformable*>* tform = new vector<Transformable*>();
+	tform->push_back(transforms->at(0));
+
+	if (FAILED(body->setTransformables(tform))) {
+		logMessage(L"Failed to set CubeModel body object transforms.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
-	if (FAILED(leftWing->setTransformables(transforms))) {
-		logMessage(L"Failed to set CubeModel object transforms.");
+
+	delete tform;
+
+	tform = new vector<Transformable*>();
+	tform->push_back(transforms->at(1));
+
+	if (FAILED(leftWing->setTransformables(tform))) {
+		logMessage(L"Failed to set CubeModel left wing object transforms.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
-	if (FAILED(rightWing->setTransformables(transforms))) {
-		logMessage(L"Failed to set CubeModel object transforms.");
+
+	delete tform;
+
+	tform = new vector<Transformable*>();
+	tform->push_back(transforms->at(2));
+
+	if (FAILED(rightWing->setTransformables(tform))) {
+		logMessage(L"Failed to set CubeModel right wing object transforms.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
+
+	delete tform;
+
 	return ERROR_SUCCESS;
 }
 
 XMFLOAT3 ShipModel::getPosition()
 {
-	return rootTransform->getPosition();
+	return XMFLOAT3(0,0,0);
 }
 
 float ShipModel::getRadius()

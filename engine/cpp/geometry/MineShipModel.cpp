@@ -11,36 +11,8 @@ using namespace DirectX;
 MineShipModel::MineShipModel()
 : IGeometry(),
 LogUser(true, MINESHIPMODEL_START_MSG_PREFIX),
-rootTransform(0), body(0), pins(0)
+body(0), pins(0), m_bones(0)
 {
-	rootTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(13.0f, 13.0f, 13.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-	body = new SphereModel(rootTransform, 1.0f, 0);
-
-	pins = new vector<CubeModel*>();
-
-	Transformable* pinRightTransforms = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
-	pins->push_back(new CubeModel(pinRightTransforms,
-		0.5f, 1.0f, 0.5f, 0));
-
-	Transformable* pinLeftTransforms = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-1, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
-	pins->push_back(new CubeModel(pinLeftTransforms,
-		0.5f, 1.0f, 0.5f, 0));
-
-	Transformable* pinTopTransforms = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, -1, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-	pins->push_back(new CubeModel(pinTopTransforms,
-		0.5f, 1.0f, 0.5f, 0));
-
-	Transformable* pinBottomTransforms = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 1, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-	pins->push_back(new CubeModel(pinBottomTransforms,
-		0.5f, 1.0f, 0.5f, 0));
-
-	Transformable* pinFrontTransforms = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -1), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
-	pins->push_back(new CubeModel(pinFrontTransforms,
-		0.5f, 1.0f, 0.5f, 0));
-
-	Transformable* pinBackTransforms = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
-	pins->push_back(new CubeModel(pinBackTransforms,
-		0.5f, 1.0f, 0.5f, 0));
 }
 
 MineShipModel::~MineShipModel(void)
@@ -63,8 +35,39 @@ MineShipModel::~MineShipModel(void)
 	}
 }
 
-HRESULT MineShipModel::initialize(ID3D11Device* d3dDevice)
+HRESULT MineShipModel::initialize(ID3D11Device* d3dDevice, vector<Transformable*>* bones)
 {
+	m_bones = bones;
+	
+	//new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(13.0f, 13.0f, 13.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	body = new SphereModel(m_bones->at(0), 1.0f, 0);
+
+	pins = new vector<CubeModel*>();
+
+	//Transformable* pinRightTransforms = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+	pins->push_back(new CubeModel(m_bones->at(1),
+		0.5f, 1.0f, 0.5f, 0));
+
+	//Transformable* pinLeftTransforms = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-1, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+	pins->push_back(new CubeModel(m_bones->at(2),
+		0.5f, 1.0f, 0.5f, 0));
+
+	//Transformable* pinTopTransforms = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, -1, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	pins->push_back(new CubeModel(m_bones->at(3),
+		0.5f, 1.0f, 0.5f, 0));
+
+	//Transformable* pinBottomTransforms = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 1, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	pins->push_back(new CubeModel(m_bones->at(4),
+		0.5f, 1.0f, 0.5f, 0));
+
+	//Transformable* pinFrontTransforms = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -1), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
+	pins->push_back(new CubeModel(m_bones->at(5),
+		0.5f, 1.0f, 0.5f, 0));
+
+	//Transformable* pinBackTransforms = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
+	pins->push_back(new CubeModel(m_bones->at(6),
+		0.5f, 1.0f, 0.5f, 0));
+
 	if (FAILED(body->initialize(d3dDevice))) {
 		logMessage(L"Failed to initialize CubeModel object.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
@@ -79,7 +82,7 @@ HRESULT MineShipModel::initialize(ID3D11Device* d3dDevice)
 
 	return ERROR_SUCCESS;
 }
-
+/*
 HRESULT MineShipModel::spawn(Octtree* octtree)
 {
 	ObjectModel* mineShipObject = new ObjectModel(this);
@@ -93,6 +96,7 @@ HRESULT MineShipModel::spawn(Octtree* octtree)
 
 	return ERROR_SUCCESS;
 }
+*/
 
 HRESULT MineShipModel::drawUsingAppropriateRenderer(
 	ID3D11DeviceContext* const context,
@@ -116,22 +120,39 @@ HRESULT MineShipModel::drawUsingAppropriateRenderer(
 
 HRESULT MineShipModel::setTransformables(const std::vector<Transformable*>* const transforms)
 {
-	if (FAILED(body->setTransformables(transforms))) {
+	if (transforms == 0){
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	}
+
+	if (transforms->size() != static_cast<std::vector<Transformable*>::size_type>(7)){
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
+	}
+
+	vector<Transformable*>* tform = new vector<Transformable*>();
+	tform->push_back(transforms->at(0));
+
+	if (FAILED(body->setTransformables(tform))) {
 		logMessage(L"Failed to set CubeModel object transforms.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
+	delete tform;
+
 	for (size_t i = 0; i < pins->size(); i++){
-		if (FAILED(pins->at(i)->setTransformables(transforms))) {
+		tform = new vector<Transformable*>();
+		tform->push_back(transforms->at(i + 1));
+		if (FAILED(pins->at(i)->setTransformables(tform))) {
 			logMessage(L"Failed to set CubeModel object transforms.");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
+		delete tform;
 	}
+
 	return ERROR_SUCCESS;
 }
 
 XMFLOAT3 MineShipModel::getPosition()
 {
-	return rootTransform->getPosition();
+	return XMFLOAT3(0, 0, 0);
 }
 
 float MineShipModel::getRadius()

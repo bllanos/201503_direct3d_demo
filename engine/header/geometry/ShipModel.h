@@ -56,10 +56,9 @@ public:
 	ShipModel();
 	virtual ~ShipModel(void);
 
-	HRESULT spawn(Octtree*);
-	HRESULT initialize(ID3D11Device* d3dDevice);
-	// body is root transform
-	Transformable* rootTransform;
+	//HRESULT spawn(Octtree*);
+	HRESULT initialize(ID3D11Device* d3dDevice, vector<Transformable*>* bones);
+	vector<Transformable*>* m_bones;
 
 	virtual HRESULT drawUsingAppropriateRenderer(
 		ID3D11DeviceContext* const context,

@@ -153,7 +153,9 @@ protected:
 	virtual HRESULT spawnAsteroidsGrid(const size_t x, const size_t y, const size_t z);
 
 	/* Adds a ship to the octree */
-	virtual HRESULT spawnShip();
+	virtual HRESULT spawnPlayerShip();
+
+	virtual HRESULT spawnEnemyShip();
 
 	virtual HRESULT spawnMine();
 

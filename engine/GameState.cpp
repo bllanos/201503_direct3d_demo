@@ -397,11 +397,16 @@ HRESULT GameState::fillOctree(void) {
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}
-
-	if (FAILED(spawnShip())) {
+	
+	if (FAILED(spawnPlayerShip())) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
-
+	
+	
+	if (FAILED(spawnEnemyShip())){
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	
 	if (FAILED(spawnMine())) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
@@ -420,11 +425,11 @@ HRESULT GameState::spawnAsteroids(const size_t n) {
 	}
 
 	XMFLOAT3 offset(0.0f, 0.0f, 0.0f);
-	XMFLOAT3 southOffset(0.0f, -(asteroid_Radius*8), 0.0f);
-	XMFLOAT3 northOffset(0.0f, asteroid_Radius*8, 0.0f);
+	XMFLOAT3 southOffset(0.0f, -(asteroid_Radius), 0.0f);
+	XMFLOAT3 northOffset(0.0f, asteroid_Radius, 0.0f);
 
-	XMFLOAT3 scale(asteroid_Radius*3, asteroid_Radius*8, asteroid_Radius*3);
-	XMFLOAT3 scalesides(asteroid_Radius, asteroid_Radius*3, asteroid_Radius);
+	XMFLOAT3 scale(asteroid_Radius, asteroid_Radius, asteroid_Radius);
+	XMFLOAT3 scalesides(asteroid_Radius, asteroid_Radius, asteroid_Radius);
 	XMFLOAT4 orientation(0.0f, 0.0f, 0.0f, 1.0f);
 
 	ObjectModel* newObject = 0;
@@ -435,7 +440,7 @@ HRESULT GameState::spawnAsteroids(const size_t n) {
 
 		newObject = new ObjectModel(m_asteroid);
 
-		offset = XMFLOAT3(static_cast<float>(i*2), static_cast<float>(i*2), static_cast<float>(i*2));
+		offset = XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i));
 
 		// Center
 		bone = new Transformable(scale, offset, orientation);
@@ -515,27 +520,155 @@ HRESULT GameState::spawnAsteroidsGrid(const size_t x, const size_t y, const size
 
 HRESULT GameState::initializeShip(ID3D11Device* d3dDevice)
 {
-	return m_ship->initialize(d3dDevice);
+	vector<Transformable*>* bones = new vector<Transformable*>();
+
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)));
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f)));
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, -0.5f, 0.0f, 1.0f)));
+
+	HRESULT result = m_ship->initialize(d3dDevice, bones);
+
+	if (bones != 0){
+		vector<Transformable*>::size_type i = 0;
+		vector<Transformable*>::size_type size = bones->size();
+		for (i = 0; i < size; ++i) {
+			if ((*bones)[i] != 0) {
+				delete (*bones)[i];
+				(*bones)[i] = 0;
+			}
+		}
+		delete bones;
+	}
+
+	return result;
 }
 
 HRESULT GameState::initializeMine(ID3D11Device * d3dDevice){
-	return m_mine->initialize(d3dDevice);
+	vector<Transformable*>* bones = new vector<Transformable*>();
+
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)));
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)));
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-1, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)));
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, -1, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)));
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 1, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)));
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -1), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)));
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)));
+
+	HRESULT result = m_mine->initialize(d3dDevice, bones);
+
+	if (bones != 0){
+		vector<Transformable*>::size_type i = 0;
+		vector<Transformable*>::size_type size = bones->size();
+		for (i = 0; i < size; ++i) {
+			if ((*bones)[i] != 0) {
+				delete (*bones)[i];
+				(*bones)[i] = 0;
+			}
+		}
+		delete bones;
+	}
+
+	return result;
 }
 
 HRESULT GameState::initializeGalleon(ID3D11Device * d3dDevice){
-	return m_galleon->initialize(d3dDevice);
+	vector<Transformable*>* bones = new vector<Transformable*>();
+
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)));
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f)));
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, -0.5f, 0.0f, 1.0f)));
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)));
+	bones->push_back(new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)));
+
+	HRESULT result = m_galleon->initialize(d3dDevice, bones);
+
+	if (bones != 0){
+		vector<Transformable*>::size_type i = 0;
+		vector<Transformable*>::size_type size = bones->size();
+		for (i = 0; i < size; ++i) {
+			if ((*bones)[i] != 0) {
+				delete (*bones)[i];
+				(*bones)[i] = 0;
+			}
+		}
+		delete bones;
+	}
+
+	return result;
 }
 
-HRESULT GameState::spawnShip()
+HRESULT GameState::spawnPlayerShip()
 {
 	if (m_ship == 0) {
 		logMessage(L"Cannot spawn the ship before the ship has been constructed and configured.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
 	}
 
-	m_camera->SetFollowTransform(m_ship->rootTransform);
+	ObjectModel* newObject = 0;
+	Transformable* bone = 0;
+	Transformable* parent = 0;
 
-	return m_ship->spawn(m_tree);
+	newObject = new ObjectModel(m_ship);
+
+	//root
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	parent = bone;
+	newObject->addTransformable(bone);
+
+	//left wing
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+	//right wing
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, -0.5f, 0.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+	if (m_tree->addObject(newObject) == -1){
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	
+	m_camera->SetFollowTransform(parent);
+	return ERROR_SUCCESS;
+
+	//return m_ship->spawn(m_tree);
+}
+
+HRESULT GameState::spawnEnemyShip(){
+	if (m_ship == 0) {
+		logMessage(L"Cannot spawn the ship before the ship has been constructed and configured.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	ObjectModel* newObject = 0;
+	Transformable* bone = 0;
+	Transformable* parent = 0;
+
+	newObject = new ObjectModel(m_ship);
+
+	//root
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-5.0f, -5.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	parent = bone;
+	newObject->addTransformable(bone);
+
+	//left wing
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+	//right wing
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, -0.5f, 0.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+
+	if (m_tree->addObject(newObject) == -1){
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	return ERROR_SUCCESS;
+
+	//return m_ship->spawn(m_tree);
 }
 
 HRESULT GameState::spawnMine(){
@@ -544,7 +677,51 @@ HRESULT GameState::spawnMine(){
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
 	}
 
-	return m_mine->spawn(m_tree);
+	ObjectModel* newObject = 0;
+	Transformable* bone = 0;
+	Transformable* parent = 0;
+
+	newObject = new ObjectModel(m_mine);
+
+	//root
+	bone = new Transformable(XMFLOAT3(1.0f,1.0f,1.0f), XMFLOAT3(13.0f,13.0f,0.0f), XMFLOAT4(0.0f,0.0f,0.0f,1.0f));
+	parent = bone;
+	newObject->addTransformable(bone);
+
+	//right pin
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+	//left pin
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-1, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+	//top pin
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, -1, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+	//bottom pin
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 1, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+	//front pin
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -1), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+	//back pin
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+	if (m_tree->addObject(newObject) == -1){
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	return ERROR_SUCCESS;
 }
 
 HRESULT GameState::spawnGalleon(){
@@ -553,5 +730,40 @@ HRESULT GameState::spawnGalleon(){
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
 	}
 
-	return m_galleon->spawn(m_tree);
+	ObjectModel* newObject = 0;
+	Transformable* bone = 0;
+	Transformable* parent = 0;
+
+	newObject = new ObjectModel(m_galleon);
+
+	//root
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-10.0f, -10.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	parent = bone;
+	newObject->addTransformable(bone);
+
+	//left wing
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+	//right wing
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, -0.5f, 0.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+	//front body
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+	//back body
+	bone = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	bone->setParent(parent);
+	newObject->addTransformable(bone);
+
+	if (m_tree->addObject(newObject) == -1){
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	return ERROR_SUCCESS;
+	//return m_galleon->spawn(m_tree);
 }

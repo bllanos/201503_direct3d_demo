@@ -40,10 +40,10 @@ public:
 	GalleonShipModel();
 	virtual ~GalleonShipModel(void);
 
-	HRESULT spawn(Octtree*);
-	HRESULT initialize(ID3D11Device* d3dDevice);
+	//HRESULT spawn(Octtree*);
+	HRESULT initialize(ID3D11Device* d3dDevice, vector<Transformable*>* bones);
 	// body is root transform
-	Transformable* rootTransform;
+	vector<Transformable*>* m_bones;
 
 	virtual HRESULT drawUsingAppropriateRenderer(
 		ID3D11DeviceContext* const context,
