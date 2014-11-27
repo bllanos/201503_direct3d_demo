@@ -51,17 +51,28 @@ struct ParticleVertexType {
 
 #define PARTICLEVERTEXTYPE_COMPONENTS 5
 struct ParticleVertexType {
-	DirectX::XMFLOAT3 position; // World-space position offset (at time zero) from a base position
-	DirectX::XMFLOAT3 billboard;	// Defines billboard dimensions and orientation
-									// x = billboard width (view-space units),
-									// y = billboard height (view-space units),
-									// z = per-millisecond counter-clockwise turn around view-space 'look' axis (radians)
-	DirectX::XMFLOAT4 linearVelocity;	// xyz = Normalized model-space linear direction vector,
-										// w = speed (model-space units per millisecond)
-	DirectX::XMFLOAT4 life;	// Possibly multiple interpretations. Suggested interpetation is as follows:
-							// x = creation time offset from base time (milliseconds)
-							// y = lifespan (milliseconds) or initial "health", transparency, etc.
-							// z = decay factor (e.g. for linear or exponential decrease in life)
-							// w = cutoff (amount below which life is clamped to zero)
-	DirectX::XMFLOAT4 index; // Multi-purpose: Color/albedo, or 1D to 4D texture coordinates
+
+	// World-space position offset (at time zero) from a base position
+	DirectX::XMFLOAT3 position;
+
+	// Defines billboard dimensions and orientation
+	// x = billboard width (view-space units),
+	// y = billboard height (view-space units),
+	// z = per-millisecond counter-clockwise turn around view-space 'look' axis (radians)
+	DirectX::XMFLOAT3 billboard;
+
+	// xyz = Normalized model-space linear direction vector,
+	//   w = speed (model-space units per millisecond)
+	DirectX::XMFLOAT4 linearVelocity;
+
+	// Possibly multiple interpretations. Suggested interpetation is as follows:
+	// x = creation time offset from base time (milliseconds)
+	// y = lifespan (milliseconds) or initial "health", transparency, etc.
+	// z = decay factor (e.g. for linear or exponential decrease in life)
+	// w = cutoff (amount below which life is clamped to zero)
+	DirectX::XMFLOAT4 life;
+
+	// Multi-purpose: Color/albedo, or 1D to 4D texture coordinates,
+	//   or even a particle ID.
+	DirectX::XMFLOAT4 index;
 };

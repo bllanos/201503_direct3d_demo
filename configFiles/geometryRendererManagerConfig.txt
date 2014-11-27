@@ -7,6 +7,10 @@ BOOL -- GeometryRendererManager::SkinnedRendererNoLight = true
 BOOL -- GeometryRendererManager::SkinnedRendererLight = true
 BOOL -- GeometryRendererManager::SkinnedTexturedRendererNoLight = true
 BOOL -- GeometryRendererManager::SkinnedTexturedRendererLight = true
+BOOL -- GeometryRendererManager::InvariantParticlesRendererNoLight = true
+# Not working properly yet
+BOOL -- GeometryRendererManager::InvariantParticlesRendererLight = false
+BOOL -- GeometryRendererManager::InvariantTexturedParticlesRendererNoLight = true
 
 # Where to find configuration data for the SimpleColorRenderer
 # ------------------------------------------------------------
@@ -26,3 +30,12 @@ DIRECTORY -- GeometryRendererManager::SkinnedTexturedRendererNoLight_inputConfig
 
 FILENAME -- GeometryRendererManager::SkinnedTexturedRendererLight_inputConfigFileName = "SkinnedTexturedRendererLight.txt"
 DIRECTORY -- GeometryRendererManager::SkinnedTexturedRendererLight_inputConfigFilePath = "..\configFiles\renderers"
+
+FILENAME -- GeometryRendererManager::InvariantParticlesRendererNoLight_inputConfigFileName = "InvariantParticlesRendererNoLight.txt"
+DIRECTORY -- GeometryRendererManager::InvariantParticlesRendererNoLight_inputConfigFilePath = "..\configFiles\renderers\particle"
+
+FILENAME -- GeometryRendererManager::InvariantParticlesRendererLight_inputConfigFileName = "InvariantParticlesRendererLight.txt"
+DIRECTORY -- GeometryRendererManager::InvariantParticlesRendererLight_inputConfigFilePath = "..\configFiles\renderers\particle"
+
+FILENAME -- GeometryRendererManager::InvariantTexturedParticlesRendererNoLight_inputConfigFileName = "InvariantTexturedParticlesRendererNoLight.txt"
+DIRECTORY -- GeometryRendererManager::InvariantTexturedParticlesRendererNoLight_inputConfigFilePath = "..\configFiles\renderers\particle"

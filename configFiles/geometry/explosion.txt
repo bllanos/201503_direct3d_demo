@@ -1,0 +1,91 @@
+# Configuration file for the explosion particle system
+# (a UniformBurstSphere object)
+
+# UniformBurstSphere LogUser configuration
+# -----------------------------------------------
+BOOL -- UniformBurstSphere_LogUser::enableLogging = true
+WSTRING -- UniformBurstSphere_LogUser::msgPrefix = L"Explosion Geometry"
+BOOL -- UniformBurstSphere_LogUser::useGlobalLog = false
+BOOL -- UniformBurstSphere_LogUser::allocConsole = false
+BOOL -- UniformBurstSphere_LogUser::allocLogFile = true
+FILENAME -- UniformBurstSphere_LogUser::logFileName = "GameStateWithParticles_ParticlesLog.txt"
+DIRECTORY -- UniformBurstSphere_LogUser::logFilePath = "..\logFiles"
+BOOL -- UniformBurstSphere_LogUser::overwriteFile = false
+BOOL -- UniformBurstSphere_LogUser::timestampEnable = true
+
+# UniformBurstSphere ConfigUser configuration
+# -----------------------------------------
+BOOL -- UniformBurstSphere_ConfigUser::enableConfigUseLogging = true
+
+# UniformBurstSphere geometry configuration
+# -----------------------------------------------
+INT -- UniformBurstSphere::nColumns = 30
+INT -- UniformBurstSphere::nRows = 30
+BOOL -- UniformBurstSphere::createPoleParticles = false
+DOUBLE -- UniformBurstSphere::billboardWidth = 0.5
+DOUBLE -- UniformBurstSphere::billboardHeight = 0.6
+DOUBLE -- UniformBurstSphere::billboardSpin = 0.01
+DOUBLE -- UniformBurstSphere::linearSpeed = 0.01
+DOUBLE -- UniformBurstSphere::creationTimeOffset = 0.0
+DOUBLE -- UniformBurstSphere::lifeAmount = 1.0
+DOUBLE -- UniformBurstSphere::decay = 0.0002
+DOUBLE -- UniformBurstSphere::deathCutoff = 0.0
+
+FLOAT4 -- UniformBurstSphere::colorCast = (1.0, 0.9, 1.0, 1.0)
+DOUBLE -- UniformBurstSphere::colorCastWeight = 0.5
+BOOL -- UniformBurstSphere::debugColorCasts = false
+
+# UniformBurstSphere material configuration
+# ---------------------------------------
+FLOAT4 -- UniformBurstSphere::ambientAlbedo = (1.0, 1.0, 1.0, 1.0)
+DOUBLE -- UniformBurstSphere::transparencyMultiplier = 1.0
+
+# UniformBurstSphere lighting configuration
+# ---------------------------------------
+BOOL -- UniformBurstSphere::renderWithLighting = false
+
+# UniformBurstSphere albedo texture controls
+# ----------------------------------------------
+BOOL -- UniformBurstSphere::createAlbedoTexture = true
+BOOL -- UniformBurstSphere::renderAlbedoTexture = true
+
+# UniformBurstSphere albedo texture configuration
+# ----------------------------------------------
+BOOL -- UniformBurstSphere::albedoTexture_enableLogging = true
+WSTRING -- UniformBurstSphere::albedoTexture_msgPrefix = L"Explosion Geometry Albedo Texture"
+WSTRING -- UniformBurstSphere::albedoTextureScope = L"albedoTexture"
+WSTRING -- UniformBurstSphere::albedoTextureScope_LogUser = L"albedoTexture_LogUser"
+WSTRING -- UniformBurstSphere::albedoTextureScope_ConfigUser = L"albedoTexture_ConfigUser"
+FILENAME -- UniformBurstSphere::albedoTexture_inputConfigFileName = "explosion.txt"
+DIRECTORY -- UniformBurstSphere::albedoTexture_inputConfigFilePath = "..\configFiles\geometry"
+
+# Albedo texture object configuration
+# ----------------------------------------------
+# LogUser
+BOOL -- albedoTexture_LogUser::enableLogging = true
+WSTRING -- albedoTexture_LogUser::msgPrefix = L"Explosion Geometry Albedo Texture"
+BOOL -- albedoTexture_LogUser::useGlobalLog = false
+BOOL -- albedoTexture_LogUser::allocConsole = false
+BOOL -- albedoTexture_LogUser::allocLogFile = true
+FILENAME -- albedoTexture_LogUser::logFileName = "GameStateWithParticles_ParticlesLog.txt"
+DIRECTORY -- albedoTexture_LogUser::logFilePath = "..\logFiles"
+BOOL -- albedoTexture_LogUser::overwriteFile = false
+BOOL -- albedoTexture_LogUser::timestampEnable = true
+
+# ConfigUser
+BOOL -- albedoTexture_ConfigUser::enableConfigUseLogging = true
+
+# Sampler State
+INT -- albedoTexture::filter = 21
+INT -- albedoTexture::addressU = 4
+INT -- albedoTexture::addressV = 4
+INT -- albedoTexture::addressW = 4
+INT -- albedoTexture::maxAnisotropy = 1
+INT -- albedoTexture::comparisonFunc = 1
+COLOR -- albedoTexture::borderColor = (255, 255, 255, 255)
+
+# Texture
+# Note: Dashes were replaced with underscores in the filename
+#   (Otherwise the filename will not be deemed valid - Errors would be appended to this file.)
+FILENAME -- albedoTexture::textureFileName = "IMG_3317_512x313.dds"
+DIRECTORY -- albedoTexture::textureFilePath = "..\textures"

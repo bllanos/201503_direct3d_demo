@@ -23,6 +23,7 @@ Description
 #include "fileUtil.h"
 #include "SimpleColorRenderer.h"
 #include "SkinnedRenderer.h"
+#include "InvariantParticlesRenderer.h"
 
 using std::map;
 using std::wstring;
@@ -33,7 +34,10 @@ GeometryRendererManager::s_geometryRendererTypesInOrder[] = {
 	GeometryRendererType::SkinnedRendererNoLight,
 	GeometryRendererType::SkinnedRendererLight,
 	GeometryRendererType::SkinnedTexturedRendererNoLight,
-	GeometryRendererType::SkinnedTexturedRendererLight
+	GeometryRendererType::SkinnedTexturedRendererLight,
+	GeometryRendererType::InvariantParticlesRendererNoLight,
+	GeometryRendererType::InvariantParticlesRendererLight,
+	GeometryRendererType::InvariantTexturedParticlesRendererNoLight
 };
 
 const size_t GeometryRendererManager::s_nGeometryRendererTypes =
@@ -45,7 +49,10 @@ const wstring GeometryRendererManager::s_geometryRendererTypeNames[] = {
 	L"SkinnedRendererNoLight",
 	L"SkinnedRendererLight",
 	L"SkinnedTexturedRendererNoLight",
-	L"SkinnedTexturedRendererLight"
+	L"SkinnedTexturedRendererLight",
+	L"InvariantParticlesRendererNoLight",
+	L"InvariantParticlesRendererLight",
+	L"InvariantTexturedParticlesRendererNoLight"
 };
 
 HRESULT GeometryRendererManager::wstringToGeometryRendererType(
@@ -161,6 +168,9 @@ HRESULT GeometryRendererManager::initialize(ID3D11Device* const device) {
 					INITIALIZE_RENDERER(SkinnedRendererLight, SkinnedRenderer)
 					INITIALIZE_RENDERER(SkinnedTexturedRendererNoLight, SkinnedRenderer)
 					INITIALIZE_RENDERER(SkinnedTexturedRendererLight, SkinnedRenderer)
+					INITIALIZE_RENDERER(InvariantParticlesRendererNoLight, InvariantParticlesRenderer)
+					INITIALIZE_RENDERER(InvariantParticlesRendererLight, InvariantParticlesRenderer)
+					INITIALIZE_RENDERER(InvariantTexturedParticlesRendererNoLight, InvariantParticlesRenderer)
 				default:
 					logMessage(L"Reached default case of geometry renderer initialization switch statement. Code is broken.");
 					return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);

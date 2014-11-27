@@ -18,6 +18,8 @@ Primary basis: "SkinnedRenderer.h", with ideas from
     _Practical Rendering and Computation with Direct 3D 11._
     Boca Raton: CRC Press Taylor & Francis Group, 2011.
 
+Other references: COMP3501A fire demo, Fall 2014 (for additive blending setup)
+
 Description
   -A class for rendering particle systems, in which the stored
    state of each particle does not change between rendering passes.
@@ -104,11 +106,14 @@ private:
 		DirectX::XMFLOAT4X4 world;
 		DirectX::XMFLOAT2 time;
 		float blendAmount;
-		float padding;
+		DirectX::XMFLOAT3 colourCast;
+		DirectX::XMFLOAT2 padding;
 	};
 
 public:
-	// Point light source
+	/* Point light source
+	   (also serves as a constant buffer structure)
+	 */
 	struct Light {
 		DirectX::XMFLOAT4 lightColor;
 		float lightAmbientWeight;
@@ -171,6 +176,9 @@ protected:
 	/* Creates lighting-dependent constant buffers */
 	virtual HRESULT createLightConstantBuffers(ID3D11Device* const);
 
+	/* Sets up blend and depth stencil states for particle blending */
+	virtual HRESULT createBlendAndDSStates(ID3D11Device* const device);
+
 	virtual HRESULT setShaderParameters(
 		ID3D11DeviceContext* const,
 		const DirectX::XMFLOAT4X4 viewMatrix,
@@ -217,6 +225,10 @@ private:
 
 	/* True if configuration was completed successfully. */
 	bool m_configured;
+
+	/* For additive blending */
+	ID3D11BlendState *m_additiveBlendState;
+	ID3D11DepthStencilState *m_dsState;
 
 	// Currently not implemented - will cause linker errors if called
 private:

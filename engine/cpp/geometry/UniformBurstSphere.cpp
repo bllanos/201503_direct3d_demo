@@ -24,7 +24,7 @@ using namespace DirectX;
 using std::wstring;
 
 UniformBurstSphere::UniformBurstSphere(const bool enableLogging, const wstring& msgPrefix,
-	Config* sharedConfig) :
+	Config* sharedConfig, const bool configureNow) :
 	InvariantTexturedParticles(enableLogging, msgPrefix, sharedConfig),
 	m_nColumns(0), m_nRows(0), m_createPoles(UNIFORMBURSTSPHERE_POLES_FLAG_DEFAULT),
 	m_billboardWidth(0.0f), m_billboardHeight(0.0f), m_billboardSpin(0.0f),
@@ -39,8 +39,10 @@ UniformBurstSphere::UniformBurstSphere(const bool enableLogging, const wstring& 
 		),
 	m_debugColorCasts(UNIFORMBURSTSPHERE_DEBUG_FLAG_DEFAULT)
 {
-	if( FAILED(configure()) ) {
-		logMessage(L"Configuration failed.");
+	if( configureNow ) {
+		if( FAILED(configure()) ) {
+			logMessage(L"Configuration failed.");
+		}
 	}
 }
 
@@ -48,10 +50,6 @@ UniformBurstSphere::~UniformBurstSphere(void) {}
 
 HRESULT UniformBurstSphere::initialize(ID3D11Device* const device,
 	const Transformable* const transform) {
-
-	if( transform == 0 ) {
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
-	}
 
 	HRESULT result = ERROR_SUCCESS;
 
@@ -78,6 +76,17 @@ HRESULT UniformBurstSphere::initialize(ID3D11Device* const device,
 	delete[] vertices;
 
 	return result;
+}
+
+XMFLOAT3 UniformBurstSphere::getPosition() {
+	return m_transform->getPosition();
+}
+
+float UniformBurstSphere::getRadius() {
+	XMFLOAT3 scale = m_transform->getScale();
+	float maxScale = (scale.x > scale.y) ? scale.x : scale.y;
+	maxScale = (scale.y > scale.z) ? scale.y : scale.z;
+	return (m_time.x * m_linearSpeed + 1.0f) * maxScale; // + 1.0f for the initial radius
 }
 
 size_t UniformBurstSphere::getNumberOfVerticesToAdd(void) const {
@@ -164,7 +173,8 @@ HRESULT UniformBurstSphere::addVertices(
 	for( i = 0; i < m_nRows; ++i ) {
 
 		// Account for pole locations
-		v = static_cast<float>(i + 1) / static_cast<float>(m_nRows + 1);
+		// v = static_cast<float>(i + 1) / static_cast<float>(m_nRows + 2);
+		v = static_cast<float>(i) / static_cast<float>(m_nRows);
 
 		for( j = 0; j < m_nColumns; ++j ) {
 
@@ -212,10 +222,10 @@ HRESULT UniformBurstSphere::uvToPosition(DirectX::XMFLOAT3& position, const floa
 	if( u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
 	}
-	// v = phi / XM_PI
+	// phi = cos-1(2v - 1)
 	// u = theta / XM_2PI
 	float sinPhi, cosPhi, sinTheta, cosTheta;
-	XMScalarSinCos(&sinPhi, &cosPhi, XM_PI * v);
+	XMScalarSinCos(&sinPhi, &cosPhi, XMScalarACos(2.0f*v - 1.0f));
 	XMScalarSinCos(&sinTheta, &cosTheta, XM_2PI * u);
 	position.x = cosTheta * sinPhi;
 	position.y = cosPhi;

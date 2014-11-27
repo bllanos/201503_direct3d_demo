@@ -148,6 +148,11 @@ HRESULT TwoFrameSSSE::initializeTextures(ID3D11Device* const device, ID3D11Textu
 	/* The second texture is the past frame texture and must be initialized
 	   with the background colour as it will otherwise not be filled
 	   until after the first rendering pass.
+
+	   I assume that all DXGI format types will have a size of at most
+	   4x32 bits. Therefore, even if the format is not a 4 x 32-bit component
+	   data type, the initialization should not cause a segmentation fault,
+	   although the resulting appearance of the texture may not be as expected.
 	 */
 	size_t n = m_width*m_height;
 	DirectX::XMFLOAT4* data = new DirectX::XMFLOAT4[n];

@@ -13,13 +13,13 @@ Created November 10, 2014
 Primary basis: GameState.h
 
 Description
-  -Extends the GameState class to add screen-space special effects.
+  -Extends the GameStateWithParticles class to add screen-space special effects.
   -Press CTRL + 'o' to cycle through screen-space special effects.
 */
 
 #pragma once
 
-#include "GameState.h"
+#include "GameStateWithParticles.h"
 #include "SSSE.h"
 #include <vector>
 
@@ -45,7 +45,7 @@ Description
 // Two-frame SSSEs
 #define GAMESTATEWITHSSSE_SMEAR_SSSE_SCOPE L"smear"
 
-class GameStateWithSSSE : public GameState {
+class GameStateWithSSSE : public GameStateWithParticles {
 
 	// Data members
 private:
@@ -80,7 +80,7 @@ protected:
 
 	/* Retrieves configuration data, or sets default values
 	   in the absence of configuration data
-	   -Calls GameState::configure() if there is a Config instance to use
+	   -Calls GameStateWithParticles::configure() if there is a Config instance to use
 	*/
 	virtual HRESULT configure(void) override;
 

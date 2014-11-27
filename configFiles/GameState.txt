@@ -47,6 +47,26 @@ DIRECTORY -- asteroid::inputConfigFilePath = "..\configFiles\geometry"
 FILENAME -- shipmodel::inputConfigFileName = "shipmodel.txt"
 DIRECTORY -- shipmodel::inputConfigFilePath = "..\configFiles\geometry"
 
+# ///////////////////////////////////
+# Particle Systems
+# ///////////////////////////////////
+
+INT -- GameStateWithParticles::explosionLife = 5000
+INT -- GameStateWithParticles::jetLife = 2000
+
+BOOL -- GameStateWithParticles::demoMode = false
+INT -- GameStateWithParticles::nExplosions = 10
+DOUBLE -- GameStateWithParticles::zoneRadius = 50.0
+
+# Explosion particle system internal configuration
+# -------------------------------------------------
+FILENAME -- explosion::inputConfigFileName = "explosion.txt"
+DIRECTORY -- explosion::inputConfigFilePath = "..\configFiles\geometry"
+
+# Jet particle system internal configuration
+# -------------------------------------------------
+FILENAME -- jet::inputConfigFileName = "jet.txt"
+DIRECTORY -- jet::inputConfigFilePath = "..\configFiles\geometry"
 
 # ///////////////////////////////////
 # Screen-Space Special Effects

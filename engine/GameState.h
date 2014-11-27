@@ -71,9 +71,12 @@
 #define GAMESTATE_CONFIGIO_CLASS FlatAtomicConfigIO
 
 class GameState : public State, public ConfigUser{
-private:
+
+	// Data members
+protected:
 	Camera* m_camera;
 
+private:
 	Octtree* m_tree;
 
 	GridSphereTextured* m_asteroid;
@@ -143,4 +146,34 @@ protected:
 	/* Adds 'n' ships to the octree */
 	virtual HRESULT spawnShip(const size_t n);
 
+	// Particle system API (implemented in a derived class)
+	/* Do not use these functions if the GameStateWithParticles
+	   class has been configured to be in demo mode,
+	   meaning that it spawns particle systems by itself.
+	   (This will result in double deallocations of Transformable objects,
+	    or dangling pointers.)
+	 */
+protected:
+
+	/* Adds an explosion with the given transformation */
+	virtual HRESULT spawnExplosion(Transformable* const transform) = 0;
+
+	/* Adds a jet with the given transformation */
+	virtual HRESULT spawnJet(Transformable* const transform) = 0;
+
+	/* Removes all explosions with the transformation at the given
+	   memory location.
+	   Call this function only to remove an explosion early.
+	   GameStateWithParticles will automatically delete explosions
+	   when they reach the end of their lives.
+	*/
+	virtual HRESULT removeExplosion(Transformable* const transform) = 0;
+
+	/* Removes all jets with the transformation at the given
+	   memory location.
+	   Call this function only to remove a jet early.
+	   GameStateWithParticles will automatically delete jets
+	   when they reach the end of their lives.
+	*/
+	virtual HRESULT removeJet(Transformable* const transform) = 0;
 };
