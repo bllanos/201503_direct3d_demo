@@ -33,6 +33,7 @@ WanderingLineTransformable::WanderingLineTransformable(Transformable* const star
 	XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f)),
 	m_offset(XMFLOAT3(0.0f, 0.0f, 0.0f)),
 	m_rollPitchYaw(XMFLOAT3(0.0f, 0.0f, 0.0f)),
+	m_parameters(parameters),
 	m_start(start), m_end(end),
 	m_generator(), m_offsetDistribution(0.0f, 1.0f)
 {
@@ -40,7 +41,6 @@ WanderingLineTransformable::WanderingLineTransformable(Transformable* const star
 		throw std::exception("WanderingLineTransformable: Linear interpolation parameter is not in the range [0,1].");
 	}
 
-	m_parameters = parameters;
 	float factor = 1.0f - 2.0f * fabs(m_parameters.t - 0.5f);
 	m_parameters.maxRadius *= factor;
 	m_parameters.maxRollPitchYaw.x *= factor;

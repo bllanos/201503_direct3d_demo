@@ -34,19 +34,25 @@ Description
 class WanderingLineSpline : public Spline {
 
 public:
-	/* Creates a Spline that holds 'capacity' segments.
+	/* Creates a Spline that holds 'capacity' segments
+	   and uses a speed of 'speed' (in conjunction
+	   with the instruction to use Transformable forward vectors)
+	   for knot construction.
+
 	   The 'knotParameters' structure will be passed
 	   to the WanderingLineSpline constructor
 	   when knots are created, although its 't' member
-	   will be modified according to the position
-	   of the knot along the curve.
+	   will be ignored in favour of a uniformly distributed
+	   random value.
 
 	   'capacity' must be greater than zero or the constructor
 	   will throw an exception.
 
 	   'start' and 'end' define the ends of the spline.
 	 */
-	WanderingLineSpline(const size_t capacity, Transformable* const start,
+	WanderingLineSpline(const size_t capacity,
+		const float speed,
+		Transformable* const start,
 		Transformable* const end,
 		const WanderingLineTransformable::Parameters& knotParameters);
 
@@ -73,8 +79,8 @@ private:
 	WanderingLineTransformable::Parameters m_knotParameters;
 
 	/* Endpoints of the spline */
-	Transformable* const m_start; // Shared - not deleted by destructor
-	Transformable* const m_end; // Shared - not deleted by destructor
+	Transformable* m_start; // Shared - not deleted by destructor
+	Transformable* m_end; // Shared - not deleted by destructor
 
 	/* The transformations contained within the knots of the spline.
 	 */
