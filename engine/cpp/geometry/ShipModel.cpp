@@ -135,7 +135,7 @@ HRESULT ShipModel::setTransformables(const std::vector<Transformable*>* const tr
 
 XMFLOAT3 ShipModel::getPosition()
 {
-	return rootTransform->getPosition();
+	return XMFLOAT3(0.0f, 0.0f, 0.0f);
 }
 
 float ShipModel::getRadius()

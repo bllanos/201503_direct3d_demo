@@ -292,7 +292,7 @@ int D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwn
 	// Create the swap chain, Direct3D device, and Direct3D device context.
 	result = D3D11CreateDeviceAndSwapChain(
 		 NULL,   //use default graphics adapter
-		 D3D_DRIVER_TYPE_WARP, //hardware graphics acceleration
+		 D3D_DRIVER_TYPE_HARDWARE, //hardware graphics acceleration
 		 NULL, //no software driver, we are using hardware driver
 		 D3D11_CREATE_DEVICE_DEBUG, //set up for single threaded use
 		 &featureLevel, //pointer to D3D feature levels array (enum)
