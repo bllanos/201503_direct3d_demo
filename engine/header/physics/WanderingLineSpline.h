@@ -27,6 +27,7 @@ Description
 
 #include <Windows.h>
 #include <DirectXMath.h>
+#include <list>
 #include "Spline.h"
 #include "WanderingLineTransformable.h"
 
@@ -42,17 +43,42 @@ public:
 
 	   'capacity' must be greater than zero or the constructor
 	   will throw an exception.
+
+	   'start' and 'end' define the ends of the spline.
 	 */
-	WanderingLineSpline(const size_t capacity,
+	WanderingLineSpline(const size_t capacity, Transformable* const start,
+		Transformable* const end,
 		const WanderingLineTransformable::Parameters& knotParameters);
 
 	virtual ~WanderingLineSpline(void);
+
+	/* Changes the endpoints of the spline,
+	   also setting them in all knots.
+	 */
+	HRESULT setEndpoints(Transformable* const start,
+		Transformable* const end);
+
+	/* Updates the knots of this Spline for the specified time interval,
+	   'updateTimeInterval', starting from the time indicated by the 'currentTime'
+	   parameter. (e.g. 'currentTime' could be the time since program startup.)
+
+	   Time values are in milliseconds.
+	 */
+	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval) override;
 
 	// Data members
 private:
 
 	/* Parameters used to construct knots. */
 	WanderingLineTransformable::Parameters m_knotParameters;
+
+	/* Endpoints of the spline */
+	Transformable* const m_start; // Shared - not deleted by destructor
+	Transformable* const m_end; // Shared - not deleted by destructor
+
+	/* The transformations contained within the knots of the spline.
+	 */
+	std::list<WanderingLineTransformable*> m_knotTransforms;
 
 	// Currently not implemented - will cause linker errors if called
 private:

@@ -82,6 +82,14 @@ HRESULT WanderingLineTransformable::update(const DWORD currentTime, const DWORD 
 	return Transformable::update(currentTime, updateTimeInterval);
 }
 
+HRESULT WanderingLineTransformable::setEndpoints(Transformable* const start,
+	Transformable* const end) {
+
+	m_start = start;
+	m_end = end;
+	return refresh(0);
+}
+
 HRESULT WanderingLineTransformable::refresh(const DWORD updateTimeInterval) {
 
 	float timeInterval = static_cast<float>(updateTimeInterval);
@@ -92,7 +100,7 @@ HRESULT WanderingLineTransformable::refresh(const DWORD updateTimeInterval) {
 	// Linear interpolation of position
 	XMFLOAT3 storedValue1 = m_start->getPosition();
 	XMFLOAT3 storedValue2 = m_end->getPosition();
-	XMVECTOR vector1 = XMVectorLerp(
+	XMVECTOR interpolatedPosition = XMVectorLerp(
 		XMLoadFloat3(&storedValue1),
 		XMLoadFloat3(&storedValue2),
 		m_parameters.t
@@ -112,8 +120,7 @@ HRESULT WanderingLineTransformable::refresh(const DWORD updateTimeInterval) {
 		cosPhi,
 		sinTheta * sinPhi);
 
-	// Calculate final position
-	vector1 = XMVectorAdd(vector1, XMLoadFloat3(&m_offset));
+	XMVECTOR vector1 = XMLoadFloat3(&m_offset);
 	XMVECTOR vector2 = XMVectorScale(XMLoadFloat3(&offsetChange), m_parameters.linearSpeed * timeInterval);
 	vector2 = XMVectorAdd(vector1, vector2);
 
@@ -124,6 +131,9 @@ HRESULT WanderingLineTransformable::refresh(const DWORD updateTimeInterval) {
 		vector2 = XMVectorScale(XMLoadFloat3(&offsetChange), -(m_parameters.linearSpeed * timeInterval));
 		vector2 = XMVectorAdd(vector1, vector2);
 	}
+
+	// Calculate final position
+	vector2 = XMVectorAdd(vector2, interpolatedPosition);
 
 	// Save the final position
 	XMStoreFloat3(&m_position, vector2);

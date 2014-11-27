@@ -76,6 +76,12 @@ public:
 	 */
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval) override;
 
+	/* Changes the endpoints of the line used for interpolation,
+	   then calls refresh().
+	 */
+	HRESULT setEndpoints(Transformable* const start,
+		Transformable* const end);
+
 protected:
 
 	/* Re-interpolates position and scaling,
@@ -90,9 +96,9 @@ private:
 
 	Parameters m_parameters;
 
-	Transformable* const m_start; // Shared - not deleted by destructor
+	Transformable* m_start; // Shared - not deleted by destructor
 
-	Transformable* const m_end; // Shared - not deleted by destructor
+	Transformable* m_end; // Shared - not deleted by destructor
 
 	std::default_random_engine m_generator;
 	std::uniform_real_distribution<float> m_offsetDistribution;
