@@ -201,6 +201,12 @@
     <ClCompile Include="cpp\ssse\TwoFrameSSSE.cpp">
       <Filter>source\ssse</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\GameStateWithParticles.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\geometry\RandomBurstCone.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -352,6 +358,12 @@
     </ClInclude>
     <ClInclude Include="header\ssse\TwoFrameSSSE.h">
       <Filter>header\ssse</Filter>
+    </ClInclude>
+    <ClInclude Include="header\GameStateWithParticles.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\RandomBurstCone.h">
+      <Filter>header\geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

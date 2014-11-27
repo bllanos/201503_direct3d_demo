@@ -119,7 +119,9 @@ protected:
 
 	/* 'vertices' is the array of particles.
 	   'transform' will be used as the base transformation
-	   for the particle system.
+	   for the particle system. If it is passed in as a null pointer,
+	   it must be set to a non-null pointer prior to rendering,
+	   using setTransformable*().
 
 	   Using anything other than 'D3D_PRIMITIVE_TOPOLOGY_POINTLIST'
 	   for the 'topology' argument will probably require
@@ -127,7 +129,7 @@ protected:
 	*/
 	virtual HRESULT initialize(ID3D11Device* const device,
 		const INVARIANTPARTICLES_VERTEX_TYPE* const vertices, const size_t nVertices,
-		const Transformable* const transform,
+		const Transformable* const transform = 0,
 		const D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	/* Initializes the model's vertex buffer only.
@@ -181,6 +183,8 @@ public:
 
 	virtual HRESULT setTime(const DirectX::XMFLOAT2& time);
 
+	virtual void setColorCast(const DirectX::XMFLOAT3& colorCast);
+
 	// Functions to support rendering
 public:
 
@@ -194,6 +198,8 @@ public:
 	const Material* getMaterial(void) const;
 
 	virtual HRESULT getTime(DirectX::XMFLOAT2& time) const;
+
+	virtual DirectX::XMFLOAT3 getColorCast(void) const;
 
 protected:
 	/* Performs vertex buffer-related pipeline
@@ -236,7 +242,6 @@ public:
 	// Data members
 private:
 	ID3D11Buffer *m_vertexBuffer;
-	const Transformable* m_transform; // Shared - not deleted by the destructor
 	D3D_PRIMITIVE_TOPOLOGY m_primitive_topology;
 	size_t m_vertexCount;
 
@@ -246,6 +251,11 @@ private:
 	   which can be obtained from configuration data
 	 */
 	float m_blend;
+
+	DirectX::XMFLOAT3 m_colorCast;
+
+protected:
+	const Transformable* m_transform; // Shared - not deleted by the destructor
 
 	/* (currentTimeOffset, updateTimeInterval) [milliseconds]
 	   The currentTimeOffset is the offset relative to the creation time
@@ -292,7 +302,8 @@ template<typename ConfigIOClass> InvariantParticles::InvariantParticles(
 	m_blend(INVARIANTPARTICLES_BLEND_DEFAULT),
 	m_rendererType(0),
 	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT),
-	m_time(XMFLOAT2(0.0f, 0.0f)) {}
+	m_time(XMFLOAT2(0.0f, 0.0f)),
+	m_colorCast(XMFLOAT3(0.0f, 0.0f, 0.0f)) {}
 
 template<typename ConfigIOClass> InvariantParticles::InvariantParticles(
 	const bool enableLogging, const std::wstring& msgPrefix,
@@ -314,4 +325,5 @@ template<typename ConfigIOClass> InvariantParticles::InvariantParticles(
 	m_blend(INVARIANTPARTICLES_BLEND_DEFAULT),
 	m_rendererType(0),
 	m_renderLighting(INVARIANTPARTICLES_USE_LIGHTING_FLAG_DEFAULT),
-	m_time(XMFLOAT2(0.0f, 0.0f)) {}
+	m_time(XMFLOAT2(0.0f, 0.0f)),
+	m_colorCast(XMFLOAT3(0.0f, 0.0f, 0.0f)) {}

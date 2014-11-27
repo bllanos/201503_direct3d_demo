@@ -29,6 +29,7 @@ cbuffer Globals : register(cb1) {
 	matrix worldMatrix;
 	float2 time;
 	float blendAmount;
+	float3 colorCast;
 };
 
 struct VSInput {
@@ -41,7 +42,7 @@ struct VSInput {
 
 struct VSOutput {
 	float3 positionVS : POSITION_VIEW; // View space
-	float2 billboard : BILLBOARD_WH; // Billboard dimensions
+	float2 billboard : BILLBOARD_WH; // Billboard dimensions (width, height)
 	float angle : ANGLE; // Calculated based on direction, view direction, and rotation speed
 	float3 life : LIFE; // (current age, current health, decay factor)
 	float4 index : INDEX; // Same as input vertex
@@ -53,14 +54,18 @@ VSOutput VSMAIN(in VSInput input) {
 	// Change the position vector to be 4 units for proper matrix calculations
 	float4 inPosition = { input.position, 1.0f };
 
-	float age = max(time.x - input.life.x, 0);
-	float health = input.life.y - (input.life.z * age);
+	float age = max(0.0f, time.x - input.life.x); // If negative, particle has not yet been born.
+	float health = input.life.y - ((input.life.z * age) % input.life.y);
+	// Recompute age based on health (wrap around)
+	age = (input.life.y - health) / input.life.z;
 	if (health < input.life.w) {
 		health = 0.0f;
 	}
 
 	// Linear motion
-	inPosition += (input.linearVelocity.xyz) * (input.linearVelocity.w) * age;
+	inPosition.xyz += (input.linearVelocity.xyz) * (input.linearVelocity.w) * age;
+	// Ballistic motion
+	// inPosition.y -= 0.0000002f * pow(age, 2);
 
 	// World position
 	inPosition = mul(inPosition, worldMatrix);
@@ -68,8 +73,9 @@ VSOutput VSMAIN(in VSInput input) {
 	// View space position
 	output.positionVS = mul(inPosition, viewMatrix).xyz;
 
-	// View space direction
-	float3 viewDirection = mul(float4(input.linearVelocity.xyz, 1.0f), viewMatrix).xyz;
+	// View space direction - Assuming uniform scaling
+	// Note use of zero w-component
+	float3 viewDirection = mul(float4(input.linearVelocity.xyz, 0.0f), viewMatrix).xyz;
 
 	// Billboard
 	output.billboard = input.billboard.xy;

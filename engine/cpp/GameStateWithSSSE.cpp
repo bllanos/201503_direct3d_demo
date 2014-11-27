@@ -28,7 +28,7 @@ using std::wstring;
 using std::vector;
 
 GameStateWithSSSE::GameStateWithSSSE(void) :
-GameState(false),
+GameStateWithParticles(false),
 m_SSSEs(0), m_currentSSSEIndex(0), m_currentSSSE(0)
 {
 	if( FAILED(configure()) ) {
@@ -39,7 +39,7 @@ m_SSSEs(0), m_currentSSSEIndex(0), m_currentSSSE(0)
 GameStateWithSSSE::~GameStateWithSSSE(void) {
 	if( m_SSSEs != 0 ) {
 		const vector<SSSE*>::size_type nSSSEs = m_SSSEs->size();
-		for( vector<SSSE**>::size_type i = 0; i < nSSSEs; ++i ) {
+		for( vector<SSSE*>::size_type i = 0; i < nSSSEs; ++i ) {
 			if( (*m_SSSEs)[i] != 0 ) {
 				delete (*m_SSSEs)[i];
 				(*m_SSSEs)[i] = 0;
@@ -54,7 +54,7 @@ HRESULT GameStateWithSSSE::initialize(ID3D11Device* device, ID3D11Texture2D* bac
 	HRESULT result = ERROR_SUCCESS;
 
 	// Initialize base members
-	result = GameState::initialize(device, backBuffer, screenWidth, screenHeight);
+	result = GameStateWithParticles::initialize(device, backBuffer, screenWidth, screenHeight);
 	if( FAILED(result) ) {
 		return result;
 	}
@@ -71,8 +71,8 @@ HRESULT GameStateWithSSSE::initialize(ID3D11Device* device, ID3D11Texture2D* bac
 		return result;
 	}
 
-	// Start using the first SSSE
-	m_currentSSSEIndex = 0;
+	// Start using the last SSSE
+	m_currentSSSEIndex = m_SSSEs->size() - 1;
 	m_currentSSSE = (*m_SSSEs)[m_currentSSSEIndex];
 
 	return result;
@@ -89,7 +89,7 @@ HRESULT GameStateWithSSSE::drawContents(ID3D11DeviceContext* const context, Geom
 	}
 
 	// Render as usual
-	result = GameState::drawContents(context, manager);
+	result = GameStateWithParticles::drawContents(context, manager);
 	if( FAILED(result) ) {
 		return result;
 	}
@@ -117,7 +117,7 @@ HRESULT GameStateWithSSSE::update(const DWORD currentTime, const DWORD updateTim
 	}
 	
 	// Update the base class
-	return GameState::update(currentTime, updateTimeInterval);
+	return GameStateWithParticles::update(currentTime, updateTimeInterval);
 }
 
 HRESULT GameStateWithSSSE::poll(Keyboard& input, Mouse& mouse) {
@@ -142,7 +142,7 @@ HRESULT GameStateWithSSSE::poll(Keyboard& input, Mouse& mouse) {
 	}
 
 	// Allow the base class to poll
-	return GameState::poll(input, mouse);
+	return GameStateWithParticles::poll(input, mouse);
 }
 
 HRESULT GameStateWithSSSE::configure(void) {
@@ -151,7 +151,7 @@ HRESULT GameStateWithSSSE::configure(void) {
 	if( hasConfigToUse() ) {
 
 		// Configure base members
-		if( FAILED(GameState::configure()) ) {
+		if( FAILED(GameStateWithParticles::configure()) ) {
 			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		} else {
 

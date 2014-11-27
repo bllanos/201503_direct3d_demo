@@ -11,9 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cpp\GameStateWithParticles.cpp" />
     <ClCompile Include="cpp\camera\Camera.cpp" />
     <ClCompile Include="cpp\camera\CameraTransformable.cpp" />
     <ClCompile Include="cpp\GameStateWithSSSE.cpp" />
+    <ClCompile Include="cpp\geometry\RandomBurstCone.cpp" />
     <ClCompile Include="cpp\ssse\OneTextureSSSE.cpp" />
     <ClCompile Include="cpp\ssse\TwoFrameSSSE.cpp" />
     <ClCompile Include="cpp\util\Texture2DFromBytes.cpp" />
@@ -56,7 +58,9 @@
     <ClCompile Include="test\cpp\TexturedSphereTestState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\GameStateWithParticles.h" />
     <ClInclude Include="header\GameStateWithSSSE.h" />
+    <ClInclude Include="header\geometry\RandomBurstCone.h" />
     <ClInclude Include="header\ssse\OneTextureSSSE.h" />
     <ClInclude Include="header\geometry\vertexTypes.h" />
     <ClInclude Include="header\ssse\SSSE.h" />

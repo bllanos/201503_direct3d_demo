@@ -105,19 +105,26 @@ public:
 		const std::wstring filenameScope,
 		const std::wstring filenameField,
 		const std::wstring directoryScope = L"",
-		const std::wstring directoryField = L""
+		const std::wstring directoryField = L"",
+		const bool configureNow = true
 		);
 
 	UniformBurstSphere(const bool enableLogging, const std::wstring& msgPrefix,
-		Config* sharedConfig);
+		Config* sharedConfig, const bool configureNow = true);
 
 	virtual ~UniformBurstSphere(void);
 
 	/* The effective constructor.
 	 */
 	virtual HRESULT initialize(ID3D11Device* const device,
-		const Transformable* const transform);
+		const Transformable* const transform = 0);
 
+	// Collision detection
+public:
+	virtual XMFLOAT3 getPosition() override;
+	virtual float getRadius() override;
+
+	// Geometry setup
 public:
 
 	virtual size_t getNumberOfVerticesToAdd(void) const override;
@@ -197,7 +204,8 @@ template<typename ConfigIOClass> UniformBurstSphere::UniformBurstSphere(
 	const std::wstring filenameScope,
 	const std::wstring filenameField,
 	const std::wstring directoryScope,
-	const std::wstring directoryField
+	const std::wstring directoryField,
+	const bool configureNow
 	) :
 	InvariantTexturedParticles(
 	true, UNIFORMBURSTSPHERE_START_MSG_PREFIX,
@@ -221,7 +229,9 @@ template<typename ConfigIOClass> UniformBurstSphere::UniformBurstSphere(
 			),
 	m_debugColorCasts(UNIFORMBURSTSPHERE_DEBUG_FLAG_DEFAULT)
 {
-	if( FAILED(configure()) ) {
-		logMessage(L"Configuration failed.");
+	if( configureNow ) {
+		if( FAILED(configure()) ) {
+			logMessage(L"Configuration failed.");
+		}
 	}
 }

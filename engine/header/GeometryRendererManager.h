@@ -75,6 +75,9 @@ public:
 		SkinnedTexturedRendererNoLight,
 		SkinnedTexturedRendererLight,
 
+		/* All particle system renderers are
+		   presently of the same class.
+		 */
 		InvariantParticlesRendererNoLight,
 		InvariantParticlesRendererLight,
 
@@ -82,8 +85,8 @@ public:
 		InvariantTexturedParticlesRendererLight
 	};
 	/* When adding new data types to this enumeration, also do the following:
-	   -Update the 's_geometryRendererTypeNames' and
-	      's_geometryRendererTypesInOrder' static members
+	   -Update the 's_geometryRendererTypesInOrder' and
+	       's_geometryRendererTypeNames' static members
 	   -Create the new type of renderer in this class's initialize() function
 	 */
 

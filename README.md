@@ -123,6 +123,15 @@ The following works were consulted for ideas during development:
   - Retrieved October 31, 2014
   - Usage terms: Permissive (http://www.nasa.gov/audience/formedia/features/MP_Photo_Guidelines.html#.VEQBixaDbfc)
 
+- "Clouds and Sun" (`textures\IMG_3317.JPG`)
+  - Image Source: Bernard Llanos
+
+- "Fifteen Years of NASA's Chandra X-ray Observatory" (`textures\0087_xray.jpg`)
+  - Downloaded from http://www.nasa.gov/sites/default/files/thumbnails/image/0087_xray.jpg
+  - Image Credit: NASA/CXC/SAO
+  - Retrieved November 17, 2014
+  - Usage terms: Permissive (http://www.nasa.gov/audience/formedia/features/MP_Photo_Guidelines.html#.VEQBixaDbfc)
+
 ### Textures used by test code only
 
 - "King Fire in California, False-Color Infrared" (`textures\test\kingfire_oli_2014262_swir_lrg.jpg`)
