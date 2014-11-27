@@ -35,9 +35,10 @@ public:
 	/* Returns the previous value */
 	virtual float setTransparencyBlendFactor(float newFactor);
 
-	//float getBoundingRadius();
+	HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
 
-	//XMFLOAT3 getBoundingOrigin();
+	void setParentTransformable(Transformable* theParent);
+	Transformable* getTransformable() const;
 
 	/* Expects only a single Transformable */
 	virtual HRESULT setTransformables(const std::vector<Transformable*>* const transform) override;
@@ -50,7 +51,7 @@ protected:
 	/* The Transformable object is responsible for making this
 	   model behave like a physical entity.
 	*/
-	const Transformable* m_transformable;
+	Transformable* m_transformable;
 
 	/* Model dimensions */
 	float m_radius;

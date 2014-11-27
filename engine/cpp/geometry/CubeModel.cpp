@@ -50,11 +50,6 @@ m_blend(1.0f), m_pColors(pColors)
 
 CubeModel::~CubeModel(void)
 {
-	if( m_transform != 0 ) {
-		delete m_transform;
-		m_transform = 0;
-	}
-
 	if( m_pColors != 0 ) {
 		delete m_pColors;
 		m_pColors = 0;

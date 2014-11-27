@@ -14,6 +14,8 @@
 #include "oct_tree.h"
 #include "GridSphereTextured.h"
 #include "ShipModel.h"
+#include "MineShipModel.h"
+#include "GalleonShipModel.h"
 #include "FlatAtomicConfigIO.h"
 
 // Logging message prefix
@@ -83,6 +85,10 @@ private:
 
 	ShipModel* m_ship;
 
+	MineShipModel * m_mine;
+
+	GalleonShipModel * m_galleon;
+
 	// spawn grid of asteroids or not
 	bool m_bSpawnGrid;
 
@@ -132,6 +138,9 @@ protected:
 
 	virtual HRESULT initializeShip(ID3D11Device* device);
 
+	virtual HRESULT initializeMine(ID3D11Device* device);
+
+	virtual HRESULT initializeGalleon(ID3D11Device* device);
 	// Octree setup helpers
 protected:
 	/* For first-time setup */
@@ -143,9 +152,12 @@ protected:
 	/* Adds asteroids to the octree */
 	virtual HRESULT spawnAsteroidsGrid(const size_t x, const size_t y, const size_t z);
 
-	/* Adds 'n' ships to the octree */
-	virtual HRESULT spawnShip(const size_t n);
+	/* Adds a ship to the octree */
+	virtual HRESULT spawnShip();
 
+	virtual HRESULT spawnMine();
+
+	virtual HRESULT spawnGalleon();
 	// Particle system API (implemented in a derived class)
 	/* Do not use these functions if the GameStateWithParticles
 	   class has been configured to be in demo mode,

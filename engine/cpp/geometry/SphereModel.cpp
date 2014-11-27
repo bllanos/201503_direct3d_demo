@@ -131,6 +131,16 @@ float SphereModel::setTransparencyBlendFactor(float newFactor) {
 	return temp;
 }
 
+void SphereModel::setParentTransformable(Transformable* theParent)
+{
+	m_transformable->setParent(theParent);
+}
+
+Transformable* SphereModel::getTransformable() const
+{
+	return m_transformable;
+}
+
 HRESULT SphereModel::setTransformables(const std::vector<Transformable*>* const transform) {
 	if (transform == 0) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_NULL_INPUT);
@@ -141,6 +151,13 @@ HRESULT SphereModel::setTransformables(const std::vector<Transformable*>* const 
 	m_transformable = (*transform)[0];
 	return ERROR_SUCCESS;
 }
+
+
+HRESULT SphereModel::update(const DWORD currentTime, const DWORD updateTimeInterval)
+{
+	return m_transformable->update(currentTime, updateTimeInterval);
+}
+
 
 float SphereModel::getRadius(){
 	//XMFLOAT3 scale = m_transformable->getScale();
