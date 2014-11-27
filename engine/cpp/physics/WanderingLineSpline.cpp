@@ -80,6 +80,12 @@ HRESULT WanderingLineSpline::setEndpoints(Transformable* const startTransform,
 	return ERROR_SUCCESS;
 }
 
+void WanderingLineSpline::getEndpoints(Transformable*& start,
+	Transformable*& end) {
+	start = m_start;
+	end = m_end;
+}
+
 HRESULT WanderingLineSpline::update(const DWORD currentTime, const DWORD updateTimeInterval) {
 
 	// Update base class data

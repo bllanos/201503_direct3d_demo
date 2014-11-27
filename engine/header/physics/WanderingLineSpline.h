@@ -64,6 +64,9 @@ public:
 	HRESULT setEndpoints(Transformable* const start,
 		Transformable* const end);
 
+	void getEndpoints(Transformable*& start,
+		Transformable*& end);
+
 	/* Updates the knots of this Spline for the specified time interval,
 	   'updateTimeInterval', starting from the time indicated by the 'currentTime'
 	   parameter. (e.g. 'currentTime' could be the time since program startup.)

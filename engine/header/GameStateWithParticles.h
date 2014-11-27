@@ -21,6 +21,8 @@ Description
 #include "GameState.h"
 #include "UniformBurstSphere.h"
 #include "RandomBurstCone.h"
+#include "WanderingLineSpline.h"
+#include "UniformRandomSplineModel.h"
 #include <vector>
 
 // Logging message prefix
@@ -44,6 +46,46 @@ Description
 #define GAMESTATEWITHPARTICLES_JET_LIFE_DEFAULT 10000 // Milliseconds
 #define GAMESTATEWITHPARTICLES_JET_LIFE_FIELD L"jetLife"
 
+/* Laser particle system configuration */
+#define GAMESTATEWITHPARTICLES_LASER_LIFE_MIN 0
+#define GAMESTATEWITHPARTICLES_LASER_LIFE_DEFAULT 10000 // Milliseconds
+#define GAMESTATEWITHPARTICLES_LASER_LIFE_FIELD L"laserLife"
+
+#define GAMESTATEWITHPARTICLES_LASER_NSPLINES_DEFAULT 1
+#define GAMESTATEWITHPARTICLES_LASER_NSPLINES_FIELD L"laser_nSplinesPerLaser"
+
+#define GAMESTATEWITHPARTICLES_LASER_SPLINECAPACITY_DEFAULT 1
+#define GAMESTATEWITHPARTICLES_LASER_SPLINECAPACITY_FIELD L"laser_nSegmentsPerSpline"
+
+#define GAMESTATEWITHPARTICLES_LASER_SPLINESPEED_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_LASER_SPLINESPEED_FIELD L"laser_controlPointSpeed"
+
+#define GAMESTATEWITHPARTICLES_LASER_MAXRADIUS_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_LASER_MAXRADIUS_FIELD L"laser_maxRadius"
+
+#define GAMESTATEWITHPARTICLES_LASER_LINEARSPEED_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_LASER_LINEARSPEED_FIELD L"laser_linearSpeed"
+
+#define GAMESTATEWITHPARTICLES_LASER_MAXROLL_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_LASER_MAXROLL_FIELD L"laser_maxRoll"
+
+#define GAMESTATEWITHPARTICLES_LASER_MAXPITCH_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_LASER_MAXPITCH_FIELD L"laser_maxPitch"
+
+#define GAMESTATEWITHPARTICLES_LASER_MAXYAW_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_LASER_MAXYAW_FIELD L"laser_maxYaw"
+
+#define GAMESTATEWITHPARTICLES_LASER_ROLLSPEED_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_LASER_ROLLSPEED_FIELD L"laser_rollSpeed"
+
+#define GAMESTATEWITHPARTICLES_LASER_PITCHSPEED_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_LASER_PITCHSPEED_FIELD L"laser_pitchSpeed"
+
+#define GAMESTATEWITHPARTICLES_LASER_YAWSPEED_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_LASER_YAWSPEED_FIELD L"laser_yawSpeed"
+
+#define GAMESTATEWITHPARTICLES_LASER_SPLINE_CLASS WanderingLineSpline
+
 /* If true, a continual fireworks show will be produced. */
 #define GAMESTATEWITHPARTICLES_DEMO_FIELD L"demoMode"
 #define GAMESTATEWITHPARTICLES_DEMO_DEFAULT false
@@ -53,6 +95,7 @@ Description
 #define GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_FIELD L"nExplosions"
 
 #define GAMESTATEWITHPARTICLES_DEMO_NJETS 1
+#define GAMESTATEWITHPARTICLES_DEMO_NLASERS 1
 
 // Radius of the spherical area in which to spawn fireworks
 #define GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_MIN 0.0f
@@ -70,6 +113,9 @@ Description
 // Cone/Jet configuration
 #define GAMESTATEWITHPARTICLES_GEOMETRY_JET_SCOPE L"jet"
 
+// Laser configuration
+#define GAMESTATEWITHPARTICLES_GEOMETRY_LASER_SCOPE L"laser"
+
 class GameStateWithParticles : public GameState {
 
 private:
@@ -82,10 +128,11 @@ private:
 	   'T' should be a class derived from InvariantParticles
 	 */
 	template <typename T> class ActiveParticles {
-	private:
+	protected:
 		// Shared - not deleted upon destruction
 		T* m_particles;
 
+	private:
 		// Shared - not deleted upon destruction
 		Transformable* m_transform;
 
@@ -124,6 +171,35 @@ private:
 		ActiveParticles& operator=(const ActiveParticles& other);
 	};
 
+private:
+	/* Datatype used to store and render spline particle systems,
+	   as well as track when they expire.
+
+	   'T' should be a class derived from SplineParticles
+	*/
+	template <typename T> class ActiveSplineParticles : public ActiveParticles<T> {
+	private:
+		// Assumed to be owned by this object
+		Spline* m_spline;
+
+	public:
+		ActiveSplineParticles(T* particles, Transformable* transform, Spline* spline, DWORD lifespan, DWORD currentTime, const DirectX::XMFLOAT3& colorCast);
+		~ActiveSplineParticles(void);
+
+		/* The object will update its Spline regardless
+		   of the value of 'isDemo'.
+		 */
+		HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval, bool& isExpired, const bool isDemo = false);
+		HRESULT drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const Camera* const camera);
+
+		Spline* getSpline(void);
+
+		// Currently not implemented - will cause linker errors if called
+	private:
+		ActiveSplineParticles(const ActiveSplineParticles& other);
+		ActiveSplineParticles& operator=(const ActiveSplineParticles& other);
+	};
+
 	// Data members
 private:
 
@@ -139,11 +215,24 @@ private:
 	// Keeps track of the positions at which to render jets
 	std::vector<ActiveParticles<RandomBurstCone>*>* m_jets;
 
+	// The model for all lasers
+	UniformRandomSplineModel* m_laserModel;
+
+	// Keeps track of the positions at which to render lasers
+	std::vector<ActiveSplineParticles<UniformRandomSplineModel>*>* m_lasers;
+
 	/* Set globally for all explosions based on configuration data */
 	DWORD m_explosionLifespan;
 
 	/* Set globally for all jets based on configuration data */
 	DWORD m_jetLifespan;
+
+	/* Set globally for all lasers based on configuration data */
+	DWORD m_laserLifespan;
+	size_t m_nSplinesPerLaser;
+	size_t m_nSegmentsPerLaserSpline;
+	float m_laserControlPointSpeed;
+	WanderingLineTransformable::Parameters* m_laserTransformParameters;
 
 	DWORD m_currentTime;
 
@@ -176,6 +265,9 @@ public:
 	/* Adds a jet with the given transformation */
 	virtual HRESULT spawnJet(Transformable* const transform) override;
 
+	/* Adds a laser with the given endpoints */
+	virtual HRESULT spawnLaser(Transformable* const start, Transformable* const end) override;
+
 	/* Removes all explosions with the transformation at the given
 	   memory location.
 	   If 'm_demo_enabled' is true, 'transform' is deleted.
@@ -201,6 +293,19 @@ public:
 	   elements to lower indices.
 	*/
 	virtual HRESULT removeJet(Transformable* const transform) override;
+
+	/* Removes all lasers with the 'start' transformation at the given
+	   memory location.
+	   If 'm_demo_enabled' is true, 'transform' is deleted.
+	   Otherwise, 'transform' is assumed to be owned by another class.
+
+	   If calling this function from within this class while iterating
+	   over 'm_lasers', be sure to iterate backwards,
+	   as this function may result in the deletion of an element
+	   in 'm_lasers', followed by the shifting of remaining
+	   elements to lower indices.
+	 */
+	virtual HRESULT removeLaser(Transformable* const startTransform) override;
 
 protected:
 
@@ -232,6 +337,10 @@ private:
 	GameStateWithParticles& operator=(const GameStateWithParticles& other);
 };
 
+/* ------------------------------------
+   ActiveParticles Class Implementation
+   ------------------------------------
+ */
 template <typename T> GameStateWithParticles::ActiveParticles<T>::ActiveParticles(T* particles, Transformable* transform, DWORD lifespan, DWORD currentTime, const DirectX::XMFLOAT3& colorCast) :
 m_particles(particles), m_transform(transform),
 m_startTime(currentTime), m_lifespan(lifespan),
@@ -283,4 +392,53 @@ template <typename T> HRESULT GameStateWithParticles::ActiveParticles<T>::drawUs
 
 template <typename T> Transformable* GameStateWithParticles::ActiveParticles<T>::getTransform(void) {
 	return m_transform;
+}
+
+/* ------------------------------------------
+   ActiveSplineParticles Class Implementation
+   ------------------------------------------
+*/
+template <typename T> GameStateWithParticles::ActiveSplineParticles<T>::ActiveSplineParticles(T* particles, Transformable* transform,
+	Spline* spline, DWORD lifespan, DWORD currentTime, const DirectX::XMFLOAT3& colorCast) :
+	ActiveParticles(particles, transform, lifespan, currentTime, colorCast),
+	m_spline(spline)
+{}
+
+template <typename T> GameStateWithParticles::ActiveSplineParticles<T>::~ActiveSplineParticles(void) {
+	if( m_spline != 0 ) {
+		delete m_spline;
+		m_spline = 0;
+	}
+}
+
+template <typename T> HRESULT GameStateWithParticles::ActiveSplineParticles<T>::update(const DWORD currentTime, const DWORD updateTimeInterval, bool& isExpired, const bool isDemo) {
+	if( FAILED(ActiveParticles::update(currentTime, updateTimeInterval, isExpired, isDemo)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	// Assumes ownership of the spline
+	if( FAILED(m_spline->update(currentTime, updateTimeInterval)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	return ERROR_SUCCESS;
+}
+
+template <typename T> HRESULT GameStateWithParticles::ActiveSplineParticles<T>::drawUsingAppropriateRenderer(ID3D11DeviceContext* const context, GeometryRendererManager& manager, const Camera* const camera) {
+
+	// Set the appropriate spline
+	if( FAILED(m_particles->setSpline(m_spline)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	// Set the appropriate transformation
+	if( FAILED(ActiveParticles::drawUsingAppropriateRenderer(context, manager, camera)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	return ERROR_SUCCESS;
+}
+
+template <typename T> Spline* GameStateWithParticles::ActiveSplineParticles<T>::getSpline(void) {
+	return m_spline;
 }
