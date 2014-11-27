@@ -53,7 +53,25 @@ DIRECTORY -- shipmodel::inputConfigFilePath = "..\configFiles\geometry"
 
 INT -- GameStateWithParticles::explosionLife = 5000
 INT -- GameStateWithParticles::jetLife = 2000
+INT -- GameStateWithParticles::jetLife = 0
 
+# Detailed laser particle system external configuration
+# -----------------------------------------------------
+INT -- GameStateWithParticles::laser_nSplinesPerLaser = 1
+INT -- GameStateWithParticles::laser_nSegmentsPerSpline = 1
+# Units are units per second (convention from the Transformable class)
+DOUBLE -- GameStateWithParticles::laser_controlPointSpeed = 1.0
+DOUBLE -- GameStateWithParticles::laser_maxRadius = 1.0
+DOUBLE -- GameStateWithParticles::laser_linearSpeed = 0.0
+DOUBLE -- GameStateWithParticles::laser_maxRoll = 0.0
+DOUBLE -- GameStateWithParticles::laser_maxPitch = 0.0
+DOUBLE -- GameStateWithParticles::laser_maxYaw = 0.0
+DOUBLE -- GameStateWithParticles::laser_rollSpeed = 0.0
+DOUBLE -- GameStateWithParticles::laser_pitchSpeed = 0.0
+DOUBLE -- GameStateWithParticles::laser_yawSpeed = 0.0
+
+# Demo mode configuration
+# -----------------------
 BOOL -- GameStateWithParticles::demoMode = true
 INT -- GameStateWithParticles::nExplosions = 10
 DOUBLE -- GameStateWithParticles::zoneRadius = 50.0
@@ -67,6 +85,11 @@ DIRECTORY -- explosion::inputConfigFilePath = "..\configFiles\geometry"
 # -------------------------------------------------
 FILENAME -- jet::inputConfigFileName = "jet.txt"
 DIRECTORY -- jet::inputConfigFilePath = "..\configFiles\geometry"
+
+# Laser particle system internal configuration
+# -------------------------------------------------
+FILENAME -- laser::inputConfigFileName = "laser.txt"
+DIRECTORY -- laser::inputConfigFilePath = "..\configFiles\geometry"
 
 # ///////////////////////////////////
 # Screen-Space Special Effects

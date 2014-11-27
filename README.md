@@ -132,6 +132,12 @@ The following works were consulted for ideas during development:
   - Retrieved November 17, 2014
   - Usage terms: Permissive (http://www.nasa.gov/audience/formedia/features/MP_Photo_Guidelines.html#.VEQBixaDbfc)
 
+- "MSH 11-62 Supernova Remnant" (`textures\msh1162.jpg`)
+  - Downloaded from http://www.nasa.gov/sites/default/files/msh1162.jpg
+  - Image Credit: NASA/CXC/SAO/P. Slane et al.
+  - Retrieved November 26, 2014
+  - Usage terms: Permissive (http://www.nasa.gov/audience/formedia/features/MP_Photo_Guidelines.html#.VEQBixaDbfc)
+
 ### Textures used by test code only
 
 - "King Fire in California, False-Color Infrared" (`textures\test\kingfire_oli_2014262_swir_lrg.jpg`)
