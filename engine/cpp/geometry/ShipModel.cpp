@@ -27,7 +27,7 @@ using namespace DirectX;
 ShipModel::ShipModel() 
 	: IGeometry(),
 	LogUser(true, SHIPMODEL_START_MSG_PREFIX),
-	rootTransform(0), body(0), leftWing(0), rightWing(0) 
+	rootTransform(0), body(0), leftWing(0), rightWing(0)
 {
 	rootTransform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	body = new CubeModel(rootTransform,

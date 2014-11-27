@@ -25,6 +25,7 @@ Description
 #include <DirectXMath.h>
 #include "Transformable.h"
 #include "CubeModel.h"
+#include "GridQuadTextured.h"
 #include "LogUser.h"
 #include "../../oct_tree.h"
 #include "../../ObjectModel.h"
