@@ -490,14 +490,14 @@ float GridSphereTextured::getRadius(){
 }
 
 XMFLOAT3 GridSphereTextured::getPosition(){
-	/*
+	
 	XMFLOAT3 pos;
-
+	/*
 	for (size_t i = 0; i < m_bones->size(); i++){
 		if (!(m_bones->at(i)->hasParent())){
 			return m_bones->at(i)->getPosition();
 		}
-	}
-	*/
+	}*/
+	
 	return XMFLOAT3(0, 0, 0);
 }

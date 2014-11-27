@@ -130,7 +130,7 @@ protected:
 
 	virtual HRESULT initializeAsteroid(ID3D11Device* device);
 
-	virtual HRESULT initializeShip(ID3D11Device* device);
+	virtual HRESULT initializeShip(ID3D11Device* d3dDevice);
 
 	// Octree setup helpers
 protected:
@@ -142,9 +142,8 @@ protected:
 
 	/* Adds asteroids to the octree */
 	virtual HRESULT spawnAsteroidsGrid(const size_t x, const size_t y, const size_t z);
-
-	/* Adds 'n' ships to the octree */
-	virtual HRESULT spawnShip(const size_t n);
+	
+	virtual HRESULT spawnShip();
 
 	// Particle system API (implemented in a derived class)
 	/* Do not use these functions if the GameStateWithParticles

@@ -271,15 +271,28 @@ XMFLOAT3 Transformable::getScale() const
 XMFLOAT3 Transformable::getPosition(void) const {
 	XMFLOAT3 newPos = m_position;
 	if (m_parent != 0) {
-		newPos = XMFLOAT3(newPos.x + m_parent->getPosition().x,
-						  newPos.y + m_parent->getPosition().y, 
-					      newPos.z + m_parent->getPosition().z);
+		XMFLOAT3 parentPos = m_parent->getPosition();
+		newPos = XMFLOAT3(newPos.x + parentPos.x,
+						  newPos.y + parentPos.y, 
+					      newPos.z + parentPos.z);
 	}
 	return newPos;
 }
 
 XMFLOAT4 Transformable::getOrientation(void) const {
-	return m_orientation;
+	XMFLOAT4 newOri = m_orientation;
+
+	/*
+	if (m_parent != 0) {
+		XMFLOAT4 parentOri = m_parent->getOrientation();
+		newOri = XMFLOAT4(newOri.x + parentOri.x,
+						  newOri.y + parentOri.y,
+						  newOri.z + parentOri.z,
+						  newOri.w + parentOri.w);
+	}
+	*/
+
+	return newOri;
 }
 
 XMFLOAT3 Transformable::getForwardLocalDirection(void) 
