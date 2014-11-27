@@ -15,7 +15,7 @@ Created November 22, 2014
 Primary basis: None
 
 Description
-  -A class defining a cubic Bezier spline
+  -A non-instantiable base class defining a cubic Bezier spline
 
 Implementation Notes:
   -Remember that a spline cannot be defined until it contains
@@ -39,7 +39,7 @@ Implementation Notes:
 
 class Spline {
 
-public:
+protected:
 	/* Creates a Spline that will hold up to 'capacity' segments.
 	   The 'useForward', 'speed' and 'ownTransforms' parameters
 	   are forwarded to the Knot derived class constructors
@@ -55,6 +55,7 @@ public:
 		const bool useForward = true, const float* const speed = 0,
 		const bool ownTransforms = false);
 
+public:
 	virtual ~Spline(void);
 
 	/* Updates the knots of this Spline for the specified time interval,
@@ -114,34 +115,34 @@ public:
 	   The 'controlPoints' and 'transform' arguments
 	   get forwarded to the Knot derived class constructors.
 	 */
-public:
+protected:
 	/* Adds a StaticKnot to the start of the spline. */
-	HRESULT addToStart(const DirectX::XMFLOAT3* const controlPoints);
+	virtual HRESULT addToStart(const DirectX::XMFLOAT3* const controlPoints);
 
 	/* Adds a StaticKnot to the end of the spline. */
-	HRESULT addToEnd(const DirectX::XMFLOAT3* const controlPoints);
+	virtual HRESULT addToEnd(const DirectX::XMFLOAT3* const controlPoints);
 
 	/* Adds a StaticKnot or DynamicKnot to the start of the spline,
 	   if 'dynamic' is false or true, respectively.
 	 */
-	HRESULT addToStart(Transformable* const transform, const bool dynamic = true);
+	virtual HRESULT addToStart(Transformable* const transform, const bool dynamic = true);
 
 	/* Adds a StaticKnot or DynamicKnot to the end of the spline,
 	   if 'dynamic' is false or true, respectively.
 	 */
-	HRESULT addToEnd(Transformable* const transform, const bool dynamic = true);
+	virtual HRESULT addToEnd(Transformable* const transform, const bool dynamic = true);
 
 	/* Removes the first knot in the spline.
 	   Does nothing and returns a failure result if the spline
 	   is empty.
 	 */
-	HRESULT removeFromStart(void);
+	virtual HRESULT removeFromStart(void);
 
 	/* Removes the last knot in the spline.
 	   Does nothing and returns a failure result if the spline
 	   is empty.
 	 */
-	HRESULT removeFromEnd(void);
+	virtual HRESULT removeFromEnd(void);
 
 private:
 	/* Helper function for adding a knot to the spline.

@@ -184,6 +184,8 @@ protected:
 	   Call this function only to remove a laser early.
 	   GameStateWithParticles will automatically delete lasers
 	   when they reach the end of their lives.
+	   (However, as currently configured by the configuration text file,
+	    the laser beam has an infinite life - November 27, 2014)
 	 */
 	virtual HRESULT removeLaser(Transformable* const startTransform) = 0;
 };

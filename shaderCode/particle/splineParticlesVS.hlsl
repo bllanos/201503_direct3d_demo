@@ -124,10 +124,10 @@ VSOutput VSMAIN(in VSInput input) {
 		float3 tangent2 = cross(tangent1, splineDirection);
 
 		// Compute the offset radius
-		float radius = input.position.y + (input.linearVelocity.x * time);
+		float radius = input.position.y + (input.linearVelocity.x * age);
 
 		// Calculate angle of the offset vector relative to 'tangent1'
-		float angle = input.position.z + (input.linearVelocity.y * time);
+		float angle = input.position.z + (input.linearVelocity.y * age);
 		float3 offset = (tangent1 * cos(angle) + tangent2 * sin(angle));
 
 		// Final position

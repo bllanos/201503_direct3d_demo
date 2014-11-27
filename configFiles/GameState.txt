@@ -57,23 +57,23 @@ INT -- GameStateWithParticles::laserLife = 0
 
 # Detailed laser particle system external configuration
 # -----------------------------------------------------
-INT -- GameStateWithParticles::laser_nSplinesPerLaser = 10
-INT -- GameStateWithParticles::laser_nSegmentsPerSpline = 10
+INT -- GameStateWithParticles::laser_nSplinesPerLaser = 1
+INT -- GameStateWithParticles::laser_nSegmentsPerSpline = 4
 # Units are units per second (convention from the Transformable class)
-DOUBLE -- GameStateWithParticles::laser_controlPointSpeed = 6.0
-DOUBLE -- GameStateWithParticles::laser_maxRadius = 5.0
+DOUBLE -- GameStateWithParticles::laser_controlPointSpeed = 30.0
+DOUBLE -- GameStateWithParticles::laser_maxRadius = 1.0
 DOUBLE -- GameStateWithParticles::laser_linearSpeed = 0.001
 DOUBLE -- GameStateWithParticles::laser_maxRoll = 0.0
-DOUBLE -- GameStateWithParticles::laser_maxPitch = 50.0
-DOUBLE -- GameStateWithParticles::laser_maxYaw = 50.0
+DOUBLE -- GameStateWithParticles::laser_maxPitch = 0.0
+DOUBLE -- GameStateWithParticles::laser_maxYaw = 0.0
 DOUBLE -- GameStateWithParticles::laser_rollSpeed = 0.0
-DOUBLE -- GameStateWithParticles::laser_pitchSpeed = 0.001
-DOUBLE -- GameStateWithParticles::laser_yawSpeed = 0.013
+DOUBLE -- GameStateWithParticles::laser_pitchSpeed = 0.0
+DOUBLE -- GameStateWithParticles::laser_yawSpeed = 0.0
 
 # Demo mode configuration
 # -----------------------
-BOOL -- GameStateWithParticles::demoMode = true
-INT -- GameStateWithParticles::nExplosions = 0
+BOOL -- GameStateWithParticles::demoMode = false
+INT -- GameStateWithParticles::nExplosions = 10
 DOUBLE -- GameStateWithParticles::zoneRadius = 50.0
 
 # Explosion particle system internal configuration

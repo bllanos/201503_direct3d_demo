@@ -25,6 +25,7 @@ Description
 #pragma once
 
 #include "GameStateWithParticles.h"
+#include "BasicSpline.h"
 #include <string>
 #include <iterator>
 #include "fileUtil.h"
@@ -689,7 +690,7 @@ HRESULT GameStateWithParticles::initializeParticles(ID3D11Device* device) {
 	   is the same as the capacity of all splines which
 	   will be used with this model.
 	 */
-	Spline dummySpline(m_nSegmentsPerLaserSpline, false, 0, false);
+	BasicSpline dummySpline(m_nSegmentsPerLaserSpline, false, 0, false);
 	if( FAILED(m_laserModel->initialize(device, 0, &dummySpline)) ) {
 		logMessage(L"Failed to initialize the laser particle system.");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
