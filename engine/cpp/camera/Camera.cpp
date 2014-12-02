@@ -207,6 +207,9 @@ void Camera::SetFollowTransform(Transformable* followTransform)
 
 XMFLOAT3 Camera::GetPosition() const
 {
+	if (m_followTransform != 0) {
+		return m_followTransform->getPosition();
+	}
 	return m_transform->getPosition();
 }
 
@@ -502,10 +505,10 @@ HRESULT Camera::poll(Keyboard& input, Mouse& mouse)
 
 
 		if (input.IsKeyDown(Keyboard::ascii_Q)) {
-			m_followTransform->Spin(-PLAYER_ROLL_SPEED, 0.0f, 0.0f);
+			m_followTransform->Spin(PLAYER_ROLL_SPEED, 0.0f, 0.0f);
 		}
 		if (input.IsKeyDown(Keyboard::ascii_E)) {
-			m_followTransform->Spin(PLAYER_ROLL_SPEED, 0.0f, 0.0f);
+			m_followTransform->Spin(-PLAYER_ROLL_SPEED, 0.0f, 0.0f);
 		}
 
 		if (input.IsKeyDown(VK_SHIFT)) {

@@ -25,6 +25,7 @@ Description
 #include <DirectXMath.h>
 #include "Transformable.h"
 #include "CubeModel.h"
+#include "GridQuadTextured.h"
 #include "LogUser.h"
 #include "../../oct_tree.h"
 #include "../../ObjectModel.h"
@@ -69,7 +70,6 @@ public:
 	virtual HRESULT setTransformables(const std::vector<Transformable*>* const transforms) override;
 	virtual XMFLOAT3 getPosition() override;
 	virtual float getRadius() override;
-
 private:
 	CubeModel* body;
 	CubeModel* leftWing;

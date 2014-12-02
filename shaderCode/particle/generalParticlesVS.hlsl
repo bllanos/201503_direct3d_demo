@@ -27,11 +27,11 @@ cbuffer CameraProperties : register(cb0) {
 
 cbuffer Globals : register(cb1) {
 	matrix worldMatrix;
+	float4 blendAmountAndColorCast;
 	float2 time;
-	float blendAmount;
-	float3 colorCast;
 };
 
+// See vertexTypes.h for details
 struct VSInput {
 	float3 position : POSITION;
 	float3 billboard : BILLBOARD;
@@ -75,7 +75,8 @@ VSOutput VSMAIN(in VSInput input) {
 
 	// View space direction - Assuming uniform scaling
 	// Note use of zero w-component
-	float3 viewDirection = mul(float4(input.linearVelocity.xyz, 0.0f), viewMatrix).xyz;
+	float3 viewDirection = mul(float4(input.linearVelocity.xyz, 0.0f), worldMatrix).xyz;
+	viewDirection = mul(float4(viewDirection, 0.0f), viewMatrix).xyz;
 
 	// Billboard
 	output.billboard = input.billboard.xy;

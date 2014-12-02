@@ -44,7 +44,7 @@ GameState::~GameState(void) {
 		delete m_asteroid;
 		m_asteroid = 0;
 	}
-
+	
 	if (m_ship != 0) {
 		delete m_ship;
 		m_ship = 0;

@@ -136,7 +136,7 @@ protected:
 
 	virtual HRESULT initializeAsteroid(ID3D11Device* device);
 
-	virtual HRESULT initializeShip(ID3D11Device* device);
+	virtual HRESULT initializeShip(ID3D11Device* d3dDevice);
 
 	virtual HRESULT initializeMine(ID3D11Device* device);
 
@@ -175,6 +175,9 @@ protected:
 	/* Adds a jet with the given transformation */
 	virtual HRESULT spawnJet(Transformable* const transform) = 0;
 
+	/* Adds a laser with the given endpoints */
+	virtual HRESULT spawnLaser(Transformable* const start, Transformable* const end) = 0;
+
 	/* Removes all explosions with the transformation at the given
 	   memory location.
 	   Call this function only to remove an explosion early.
@@ -190,4 +193,14 @@ protected:
 	   when they reach the end of their lives.
 	*/
 	virtual HRESULT removeJet(Transformable* const transform) = 0;
+
+	/* Removes all laser beams with the transformation at the given
+	   memory location.
+	   Call this function only to remove a laser early.
+	   GameStateWithParticles will automatically delete lasers
+	   when they reach the end of their lives.
+	   (However, as currently configured by the configuration text file,
+	    the laser beam has an infinite life - November 27, 2014)
+	 */
+	virtual HRESULT removeLaser(Transformable* const startTransform) = 0;
 };

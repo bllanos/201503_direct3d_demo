@@ -25,7 +25,6 @@ Description
 #include <DirectXMath.h>
 #include "vertexTypes.h"
 #include "SimpleColorGeometry.h"
-#include "CubeTransformable.h"
 #include "Transformable.h"
 
 #include <string>

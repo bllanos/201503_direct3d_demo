@@ -29,7 +29,8 @@ using std::wstring;
 
 InvariantParticlesRenderer::InvariantParticlesRenderer(
 	const wstring filename,
-	const wstring path
+	const wstring path,
+	const bool configureNow
 	) :
 	IGeometryRenderer(),
 	ConfigUser(
@@ -41,11 +42,13 @@ InvariantParticlesRenderer::InvariantParticlesRenderer(
 	m_cameraBuffer(0), m_materialBuffer(0), m_globalBuffer(0), m_lightBuffer(0),
 	m_lighting(false), m_light(0), m_configured(false),
 	m_additiveBlendState(0), m_dsState(0)
-	{
-	wstring logUserScopeDefault(INVARIANTPARTICLESRENDERER_LOGUSER_SCOPE);
-	wstring configUserScopeDefault(INVARIANTPARTICLESRENDERER_CONFIGUSER_SCOPE);
-	if (FAILED(configure(INVARIANTPARTICLESRENDERER_SCOPE, &configUserScopeDefault, &logUserScopeDefault))) {
-		logMessage(L"Configuration failed.");
+{
+	if( configureNow ) {
+		wstring logUserScopeDefault(INVARIANTPARTICLESRENDERER_LOGUSER_SCOPE);
+		wstring configUserScopeDefault(INVARIANTPARTICLESRENDERER_CONFIGUSER_SCOPE);
+		if( FAILED(configure(INVARIANTPARTICLESRENDERER_SCOPE, &configUserScopeDefault, &logUserScopeDefault)) ) {
+			logMessage(L"Configuration failed.");
+		}
 	}
 }
 
@@ -199,7 +202,7 @@ HRESULT InvariantParticlesRenderer::configure(const wstring& scope, const wstrin
 			// -----------------------------
 
 			// Enable or disable lighting
-			if (retrieve<Config::DataType::BOOL, bool>(INVARIANTPARTICLESRENDERER_SCOPE, INVARIANTPARTICLESRENDERER_LIGHT_FLAG_FIELD, boolValue)) {
+			if (retrieve<Config::DataType::BOOL, bool>(scope, INVARIANTPARTICLESRENDERER_LIGHT_FLAG_FIELD, boolValue)) {
 				m_lighting = *boolValue;
 				if (m_lighting) {
 					logMessage(L"Lighting is enabled in configuration data.");
@@ -219,10 +222,10 @@ HRESULT InvariantParticlesRenderer::configure(const wstring& scope, const wstrin
 				m_light->lightColor = INVARIANTPARTICLESRENDERER_LIGHT_COLOR_DEFAULT;
 				m_light->lightAmbientWeight = INVARIANTPARTICLESRENDERER_LIGHT_AMBIENT_WEIGHT_DEFAULT;
 
-				if (retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(INVARIANTPARTICLESRENDERER_SCOPE, INVARIANTPARTICLESRENDERER_LIGHT_COLOR_FIELD, float4Value)) {
+				if (retrieve<Config::DataType::COLOR, DirectX::XMFLOAT4>(scope, INVARIANTPARTICLESRENDERER_LIGHT_COLOR_FIELD, float4Value)) {
 					m_light->lightColor = *float4Value;
 				}
-				if (retrieve<Config::DataType::DOUBLE, double>(INVARIANTPARTICLESRENDERER_SCOPE, INVARIANTPARTICLESRENDERER_LIGHT_AMBIENT_WEIGHT_FIELD, doubleValue)) {
+				if (retrieve<Config::DataType::DOUBLE, double>(scope, INVARIANTPARTICLESRENDERER_LIGHT_AMBIENT_WEIGHT_FIELD, doubleValue)) {
 					m_light->lightAmbientWeight = static_cast<float>(*doubleValue);
 				}
 			}
@@ -631,7 +634,7 @@ HRESULT InvariantParticlesRenderer::setNoLightShaderParameters(
 		logMessage(L"Blend factor out of range (0.0f to 1.0f) - Defaulted to 1.0f.");
 		blend = 1.0f;
 	}
-	globalDataPtr->blendAmount = blend;
+	globalDataPtr->blendAmountColourCast.x = blend;
 
 	// World matrix
 	DirectX::XMFLOAT4X4 worldMatrixTranspose;
@@ -646,12 +649,23 @@ HRESULT InvariantParticlesRenderer::setNoLightShaderParameters(
 	DirectX::XMFLOAT2 time;
 	if( FAILED(geometry.getTime(time)) ) {
 		logMessage(L"Failed to get time vector from geometry.");
-		globalDataPtr->time = XMFLOAT2(0.0f, 0.0f);
+		globalDataPtr->timeAndPadding.x = 0.0f;
+		globalDataPtr->timeAndPadding.y = 0.0f;
+	} else {
+		globalDataPtr->timeAndPadding.x = time.x;
+		globalDataPtr->timeAndPadding.y = time.y;
 	}
-	globalDataPtr->time = time;
+
+	// SplineParticlesRenderer parameters
+	if( FAILED(setSplineParameters(*globalDataPtr, geometry)) ) {
+		logMessage(L"Call to setSplineParameters() failed.");
+	}
 
 	// Colour cast
-	globalDataPtr->colourCast = geometry.getColorCast();
+	DirectX::XMFLOAT3 colorCast = geometry.getColorCast();
+	globalDataPtr->blendAmountColourCast.y = colorCast.x;
+	globalDataPtr->blendAmountColourCast.z = colorCast.y;
+	globalDataPtr->blendAmountColourCast.w = colorCast.z;
 
 	// Unlock the buffer.
 	context->Unmap(m_globalBuffer, 0);

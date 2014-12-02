@@ -9,12 +9,13 @@ PLEASE READ *HOW TO USE* BELOW
 Created for: COMP3501A Game
 Fall 2014, Carleton University
 
-Author:
+Authors:
+Brandon Keyes, ID: 100897196
 Bernard Llanos, ID: 100793648
 
 Created October 2, 2014
 
-Adapted from A2Transformable.h (COMP3501A Assignment 2 code)
+Adapted from A2Transformable.h (COMP3501A Assignment 2 code, Bernard Llanos)
 and from the COMP3501A quaternion camera demo posted on cuLearn.
 
 Description
@@ -69,7 +70,7 @@ public:
 	DirectX::XMFLOAT4 m_L; // angular momentum (use as velocity)
 	DirectX::XMFLOAT3 m_velDirection; // linear velocity direction (expected to be a unit vector)
 	
-	float m_speed; // Linear speed (units per second)
+	float m_speed; // Local linear speed (units per second)
 	float m_radius;
 
 public:
@@ -80,6 +81,24 @@ public:
 	virtual HRESULT getWorldTransform(DirectX::XMFLOAT4X4& worldTransform) const override;
 
 	virtual HRESULT getWorldTransformNoScale(DirectX::XMFLOAT4X4& worldTransformNoScale) const;
+
+	/* Computes the world-space direction vector (normalized)
+	   corresponding to this object's linear velocity.
+
+	   If 'speed' is not null, it will be assigned
+	   this object's linear speed in world space.
+	*/
+	virtual HRESULT getWorldDirectionAndSpeed(DirectX::XMFLOAT3& worldDirection, float* const speed = 0) const;
+
+	/* Computes the world-space (direction * speed) vector (non-normalized, therefore)
+	   corresponding to this object's linear velocity.
+	 */
+	virtual HRESULT getWorldVelocity(DirectX::XMFLOAT3& worldVelocity) const;
+
+	/* Computes the world-space forward vector (normalized)
+	   corresponding to this object's orientation.
+	*/
+	virtual HRESULT getWorldForward(DirectX::XMFLOAT3& worldForward);
 
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
 
@@ -105,14 +124,20 @@ public:
 	DirectX::XMFLOAT4 getOrientation() const;
 
 	// computes and returns the respective direction
-	DirectX::XMFLOAT3 getForwardWorldDirection();
-	DirectX::XMFLOAT3 getUpWorldDirection();
-	DirectX::XMFLOAT3 getLeftWorldDirection();
+	DirectX::XMFLOAT3 getForwardLocalDirection();
+	DirectX::XMFLOAT3 getUpLocalDirection();
+	DirectX::XMFLOAT3 getLeftLocalDirection();
 
 protected:
 	virtual void computeLocalTransform(DirectX::XMFLOAT4X4& localTransformNoScale, const DWORD updateTimeInterval);
 	virtual void computeTransforms(DirectX::XMFLOAT4X4 newWorldTransform, const DWORD updateTimeInterval);
 	void updateTransformProperties();
+
+	/* Transforms the local space direction vector into world space,
+	   normalizing it in the process if 'normalize' is true.
+	 */
+	HRESULT getDirectionInWorld(DirectX::XMFLOAT3& unitWorldDirection,
+		const DirectX::XMFLOAT3& localDirection, const bool normalize) const;
 
 	// Currently not implemented - will cause linker errors if called
 private:
