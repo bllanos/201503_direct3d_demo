@@ -115,7 +115,7 @@ HRESULT InvariantParticles::configure(const std::wstring& scope, const std::wstr
 	}
 	if (FAILED(result)) {
 		std::wstring msg = L"InvariantParticles::configure(): Error setting the renderer to use based on the lighting flag value of ";
-		logMessage(msg + ((m_renderLighting) ? L"true." : L"false."));
+		// logMessage(msg + ((m_renderLighting) ? L"true." : L"false."));
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 

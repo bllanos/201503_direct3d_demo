@@ -11,6 +11,11 @@ BOOL -- GeometryRendererManager::InvariantParticlesRendererNoLight = true
 # Not working properly yet
 BOOL -- GeometryRendererManager::InvariantParticlesRendererLight = false
 BOOL -- GeometryRendererManager::InvariantTexturedParticlesRendererNoLight = true
+# Not implemented yet
+BOOL -- GeometryRendererManager::InvariantTexturedParticlesRendererLight = false
+BOOL -- GeometryRendererManager::SplineParticlesRendererNoLight = true
+# Not implemented yet
+BOOL -- GeometryRendererManager::SplineParticlesRendererLight = false
 
 # Where to find configuration data for the SimpleColorRenderer
 # ------------------------------------------------------------
@@ -39,3 +44,12 @@ DIRECTORY -- GeometryRendererManager::InvariantParticlesRendererLight_inputConfi
 
 FILENAME -- GeometryRendererManager::InvariantTexturedParticlesRendererNoLight_inputConfigFileName = "InvariantTexturedParticlesRendererNoLight.txt"
 DIRECTORY -- GeometryRendererManager::InvariantTexturedParticlesRendererNoLight_inputConfigFilePath = "..\configFiles\renderers\particle"
+
+FILENAME -- GeometryRendererManager::InvariantTexturedParticlesRendererLight_inputConfigFileName = "InvariantTexturedParticlesRendererLight.txt"
+DIRECTORY -- GeometryRendererManager::InvariantTexturedParticlesRendererLight_inputConfigFilePath = "..\configFiles\renderers\particle"
+
+FILENAME -- GeometryRendererManager::SplineParticlesRendererNoLight_inputConfigFileName = "SplineParticlesRendererNoLight.txt"
+DIRECTORY -- GeometryRendererManager::SplineParticlesRendererNoLight_inputConfigFilePath = "..\configFiles\renderers\particle"
+
+FILENAME -- GeometryRendererManager::SplineParticlesRendererLight_inputConfigFileName = "SplineParticlesRendererLight.txt"
+DIRECTORY -- GeometryRendererManager::SplineParticlesRendererLight_inputConfigFilePath = "..\configFiles\renderers\particle"

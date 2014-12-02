@@ -91,7 +91,7 @@ Description
 #define INVARIANTPARTICLESRENDERER_CONFIGIO_CLASS_SHADER FlatAtomicConfigIO
 
 class InvariantParticlesRenderer : public IGeometryRenderer, public ConfigUser {
-private:
+protected:
 	struct CameraBufferType {
 		DirectX::XMFLOAT4X4 view;
 		DirectX::XMFLOAT4X4 projection;
@@ -104,10 +104,8 @@ private:
 
 	struct GlobalBufferType {
 		DirectX::XMFLOAT4X4 world;
-		DirectX::XMFLOAT2 time;
-		float blendAmount;
-		DirectX::XMFLOAT3 colourCast;
-		DirectX::XMFLOAT2 padding;
+		DirectX::XMFLOAT4 blendAmountColourCast;
+		DirectX::XMFLOAT4 timeAndPadding;
 	};
 
 public:
@@ -130,7 +128,8 @@ public:
 	*/
 	InvariantParticlesRenderer(
 		const std::wstring filename,
-		const std::wstring path = L""
+		const std::wstring path = L"",
+		const bool configureNow = true
 		);
 
 	virtual ~InvariantParticlesRenderer(void);
@@ -193,6 +192,12 @@ protected:
 		const DirectX::XMFLOAT4X4 projectionMatrix,
 		const DirectX::XMFLOAT4 cameraPosition,
 		const InvariantParticles& geometry);
+
+	/* Overridden by SplineParticlesRenderer */
+	virtual HRESULT setSplineParameters(GlobalBufferType& buffer,
+		const InvariantParticles& geometry) const {
+		return ERROR_SUCCESS;
+	}
 
 	/* Sets light-dependent pipeline state */
 	virtual HRESULT setLightShaderParameters(

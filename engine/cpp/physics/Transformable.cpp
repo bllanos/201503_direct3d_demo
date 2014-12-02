@@ -6,24 +6,26 @@
 Created for: COMP3501A Game
 Fall 2014, Carleton University
 
-Author:
+Authors:
+Brandon Keyes, ID: 100897196
 Bernard Llanos, ID: 100793648
 
 Created October 2, 2014
 
-Adapted from A2Transformable.h (COMP3501A Assignment 2 code)
+Adapted from A2Transformable.h (COMP3501A Assignment 2 code, Bernard Llanos)
 and from the COMP3501A quaternion camera demo posted on cuLearn.
+
+Reference on transforming non-position vectors:
+http://en.wikipedia.org/wiki/Normal_%28geometry%29#Transforming_normals
 
 Description
 -Implementation of the Transformable class
 */
 
 #include "Transformable.h"
+#include "defs.h"
 
 using namespace DirectX;
-
-// Action period in milliseconds
-#define CUBE_PERIOD (10.0f * MILLISECS_PER_SEC_FLOAT)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Transformable
@@ -58,6 +60,51 @@ HRESULT Transformable::getWorldTransform(XMFLOAT4X4& worldTransform) const {
 
 HRESULT Transformable::getWorldTransformNoScale(XMFLOAT4X4& worldTransformNoScale) const {
 	worldTransformNoScale = m_worldTransformNoScale;
+	return ERROR_SUCCESS;
+}
+
+HRESULT Transformable::getWorldDirectionAndSpeed(DirectX::XMFLOAT3& worldDirection, float* const speed) const {
+	DirectX::XMFLOAT3 unitWorldDirection;
+	if( FAILED(getDirectionInWorld(unitWorldDirection, m_velDirection, false)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	DirectX::XMFLOAT3 speedVector;
+	XMStoreFloat3(&speedVector, XMVector3Length(XMLoadFloat3(&unitWorldDirection)));
+	XMStoreFloat3(&unitWorldDirection, XMVector3Normalize(XMLoadFloat3(&unitWorldDirection)));
+
+
+	// Output results
+	worldDirection = unitWorldDirection;
+
+	if( speed != 0 ) {
+		*speed = m_speed * speedVector.x;
+	}
+	return ERROR_SUCCESS;
+}
+
+HRESULT Transformable::getWorldVelocity(DirectX::XMFLOAT3& worldVelocity) const {
+	DirectX::XMFLOAT3 unitVector;
+	float speed;
+	if( FAILED(getWorldDirectionAndSpeed(unitVector, &speed)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	XMStoreFloat3(&worldVelocity,
+		XMVectorScale(XMLoadFloat3(&unitVector), speed));
+	return ERROR_SUCCESS;
+}
+
+HRESULT Transformable::getWorldForward(DirectX::XMFLOAT3& worldForward) {
+
+	updateTransformProperties();
+
+	DirectX::XMFLOAT3 unitWorldDirection;
+	if( FAILED(getDirectionInWorld(unitWorldDirection, m_forward, true)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	// Output results
+	worldForward = unitWorldDirection;
+
 	return ERROR_SUCCESS;
 }
 
@@ -224,18 +271,31 @@ XMFLOAT3 Transformable::getScale() const
 XMFLOAT3 Transformable::getPosition(void) const {
 	XMFLOAT3 newPos = m_position;
 	if (m_parent != 0) {
-		newPos = XMFLOAT3(newPos.x + m_parent->getPosition().x,
-						  newPos.y + m_parent->getPosition().y, 
-					      newPos.z + m_parent->getPosition().z);
+		XMFLOAT3 parentPos = m_parent->getPosition();
+		newPos = XMFLOAT3(newPos.x + parentPos.x,
+						  newPos.y + parentPos.y, 
+					      newPos.z + parentPos.z);
 	}
 	return newPos;
 }
 
 XMFLOAT4 Transformable::getOrientation(void) const {
-	return m_orientation;
+	XMFLOAT4 newOri = m_orientation;
+
+	/*
+	if (m_parent != 0) {
+		XMFLOAT4 parentOri = m_parent->getOrientation();
+		newOri = XMFLOAT4(newOri.x + parentOri.x,
+						  newOri.y + parentOri.y,
+						  newOri.z + parentOri.z,
+						  newOri.w + parentOri.w);
+	}
+	*/
+
+	return newOri;
 }
 
-XMFLOAT3 Transformable::getForwardWorldDirection(void) 
+XMFLOAT3 Transformable::getForwardLocalDirection(void) 
 {
 	updateTransformProperties();
 	return m_forward;
@@ -252,13 +312,13 @@ XMFLOAT3 Transformable::getForwardWorldDirection(void)
 	*/
 }
 
-XMFLOAT3 Transformable::getUpWorldDirection()
+XMFLOAT3 Transformable::getUpLocalDirection()
 {
 	updateTransformProperties();
 	return m_up;
 }
 
-XMFLOAT3 Transformable::getLeftWorldDirection()
+XMFLOAT3 Transformable::getLeftLocalDirection()
 {
 	updateTransformProperties();
 	return m_left;
@@ -287,4 +347,27 @@ bool Transformable::hasParent(){
 		return false;
 	}
 	return true;
+}
+
+HRESULT Transformable::getDirectionInWorld(DirectX::XMFLOAT3& unitWorldDirection,
+	const DirectX::XMFLOAT3& localDirection, const bool normalize) const {
+	DirectX::XMFLOAT4X4 storedTempMatrix;
+	if( FAILED(getWorldTransform(storedTempMatrix)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	DirectX::XMMATRIX tempMatrix = XMLoadFloat4x4(&storedTempMatrix);
+	tempMatrix = XMMatrixInverse(0, tempMatrix);
+	tempMatrix = XMMatrixTranspose(tempMatrix);
+
+	DirectX::XMFLOAT4 worldDirection4D = XMFLOAT4(localDirection.x, localDirection.y, localDirection.z, 0.0f);
+	DirectX::XMVECTOR worldDirection4DVector = XMVector4Transform(XMLoadFloat4(&worldDirection4D), tempMatrix);
+
+	if( normalize ) {
+		worldDirection4DVector = XMVector3Normalize(worldDirection4DVector);
+	}
+
+	// Output results
+	XMStoreFloat3(&unitWorldDirection, worldDirection4DVector);
+
+	return ERROR_SUCCESS;
 }

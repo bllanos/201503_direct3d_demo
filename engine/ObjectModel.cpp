@@ -36,6 +36,7 @@ ObjectModel::~ObjectModel(){
 
 XMFLOAT3 ObjectModel::getBoundingOrigin(){
 	XMFLOAT3 pos = model->getPosition();
+	
 	XMFLOAT3 newPos;
 
 	for (size_t i = 0; i < tForms->size(); i++){
@@ -47,13 +48,13 @@ XMFLOAT3 ObjectModel::getBoundingOrigin(){
 	pos.x += newPos.x;
 	pos.y += newPos.y;
 	pos.z += newPos.z;
-
+	
 	return pos;
-	//return XMFLOAT3(1, 1, 1);
 }
 
 float ObjectModel::getBoundingRadius(){
 	float radi = model->getRadius();
+	
 	float greatestScale = 0.0f;
 	XMFLOAT3 scale;
 
@@ -67,8 +68,8 @@ float ObjectModel::getBoundingRadius(){
 		}
 	}
 	return radi * greatestScale;
-
-	//return 1.0f;
+	
+	//turn radi;
 }
 
 HRESULT ObjectModel::updateContainedTransforms(const DWORD currentTime, const DWORD updateTimeInterval){

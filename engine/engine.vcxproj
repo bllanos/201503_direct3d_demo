@@ -11,6 +11,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cpp\physics\BasicSpline.cpp" />
+    <ClCompile Include="cpp\physics\WanderingLineSpline.cpp" />
+    <ClCompile Include="cpp\geometry\UniformRandomSplineModel.cpp" />
+    <ClCompile Include="cpp\physics\WanderingLineTransformable.cpp" />
+    <ClCompile Include="cpp\rendering\SplineParticlesRenderer.cpp" />
+    <ClCompile Include="cpp\geometry\SplineParticles.cpp" />
+    <ClCompile Include="cpp\physics\Spline.cpp" />
+    <ClCompile Include="cpp\physics\DynamicKnot.cpp" />
+    <ClCompile Include="cpp\physics\Knot.cpp" />
+    <ClCompile Include="cpp\physics\StaticKnot.cpp" />
     <ClCompile Include="cpp\GameStateWithParticles.cpp" />
     <ClCompile Include="cpp\camera\Camera.cpp" />
     <ClCompile Include="cpp\camera\CameraTransformable.cpp" />
@@ -58,6 +68,16 @@
     <ClCompile Include="test\cpp\TexturedSphereTestState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\geometry\UniformRandomSplineModel.h" />
+    <ClInclude Include="header\physics\BasicSpline.h" />
+    <ClInclude Include="header\physics\WanderingLineSpline.h" />
+    <ClInclude Include="header\physics\WanderingLineTransformable.h" />
+    <ClInclude Include="header\rendering\SplineParticlesRenderer.h" />
+    <ClInclude Include="header\geometry\SplineParticles.h" />
+    <ClInclude Include="header\physics\Spline.h" />
+    <ClInclude Include="header\physics\DynamicKnot.h" />
+    <ClInclude Include="header\physics\Knot.h" />
+    <ClInclude Include="header\physics\StaticKnot.h" />
     <ClInclude Include="header\GameStateWithParticles.h" />
     <ClInclude Include="header\GameStateWithSSSE.h" />
     <ClInclude Include="header\geometry\RandomBurstCone.h" />

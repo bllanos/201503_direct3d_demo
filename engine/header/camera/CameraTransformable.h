@@ -7,7 +7,7 @@
 #include "../input/IInteractive.h"
 
 // relative to the tracking object
-const float CAMERA_FIRST_PERSON_DIST = -1.05f;
+const float CAMERA_FIRST_PERSON_DIST = 1.00f;
 const float CAMERA_THIRD_PERSON_DIST = -10.0f;
 const float CAMERA_THIRD_PERSON_HEIGHT = 1.5f;
 

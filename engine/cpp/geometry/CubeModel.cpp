@@ -29,7 +29,7 @@ SimpleColorGeometry(true, CUBEMODEL_START_MSG_PREFIX, 0),
 m_xlen(lengthX), m_ylen(lengthY), m_zlen(lengthZ),
 m_blend(1.0f), m_pColors(pColors)
 {
-	m_transform = new CubeTransformable(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	m_transform = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 	if (m_xlen <= 0.0f || m_ylen <= 0.0f || m_zlen <= 0.0f) {
 		// This is a Microsoft-specific constructor
 		throw std::exception("Attempt to construct a CubeModel object with one or more negative or zero dimensions.");
@@ -50,10 +50,12 @@ m_blend(1.0f), m_pColors(pColors)
 
 CubeModel::~CubeModel(void)
 {
+	/*
 	if( m_transform != 0 ) {
 		delete m_transform;
 		m_transform = 0;
 	}
+	*/
 
 	if( m_pColors != 0 ) {
 		delete m_pColors;
@@ -295,11 +297,10 @@ HRESULT CubeModel::setTransformables(const std::vector<Transformable*>* const tr
 }
 
 float CubeModel::getRadius(){
-	XMFLOAT3 scale = m_transform->getScale();
 
-	float theX = m_xlen * scale.x;
-	float theY = m_ylen * scale.y;
-	float theZ = m_zlen * scale.z;
+	float theX = m_xlen;
+	float theY = m_ylen;
+	float theZ = m_zlen;
 
 	float theDiagonal = sqrt(pow(theX, 2) + pow(theY, 2) + pow(theZ, 2));
 

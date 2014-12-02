@@ -63,7 +63,7 @@
     </Filter>
     <Filter Include="source\camera">
       <UniqueIdentifier>{5593d4eb-95bd-4239-8339-3e57ee398210}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="header\ssse">
       <UniqueIdentifier>{afbe15ce-1e49-4fda-a198-92a74650a3dc}</UniqueIdentifier>
     </Filter>
@@ -179,7 +179,7 @@
     </ClCompile>
     <ClCompile Include="cpp\camera\CameraTransformable.cpp">
       <Filter>source\camera</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="cpp\geometry\InvariantTexturedParticles.cpp">
       <Filter>source\geometry</Filter>
     </ClCompile>
@@ -206,6 +206,36 @@
     </ClCompile>
     <ClCompile Include="cpp\geometry\RandomBurstCone.cpp">
       <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\physics\Knot.cpp">
+      <Filter>source\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\physics\StaticKnot.cpp">
+      <Filter>source\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\physics\DynamicKnot.cpp">
+      <Filter>source\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\physics\Spline.cpp">
+      <Filter>source\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\geometry\SplineParticles.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\rendering\SplineParticlesRenderer.cpp">
+      <Filter>source\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\geometry\UniformRandomSplineModel.cpp">
+      <Filter>source\geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\physics\WanderingLineTransformable.cpp">
+      <Filter>source\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\physics\WanderingLineSpline.cpp">
+      <Filter>source\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\physics\BasicSpline.cpp">
+      <Filter>source\physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -334,7 +364,7 @@
     </ClInclude>
     <ClInclude Include="header\camera\CameraTransformable.h">
       <Filter>header\camera</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="header\geometry\InvariantTexturedParticles.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
@@ -364,6 +394,36 @@
     </ClInclude>
     <ClInclude Include="header\geometry\RandomBurstCone.h">
       <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\physics\Knot.h">
+      <Filter>header\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="header\physics\StaticKnot.h">
+      <Filter>header\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="header\physics\DynamicKnot.h">
+      <Filter>header\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="header\physics\Spline.h">
+      <Filter>header\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\SplineParticles.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\rendering\SplineParticlesRenderer.h">
+      <Filter>header\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="header\geometry\UniformRandomSplineModel.h">
+      <Filter>header\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="header\physics\WanderingLineTransformable.h">
+      <Filter>header\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="header\physics\WanderingLineSpline.h">
+      <Filter>header\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="header\physics\BasicSpline.h">
+      <Filter>header\physics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

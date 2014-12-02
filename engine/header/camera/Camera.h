@@ -45,7 +45,7 @@ Pan-Tilt-Roll-Strafe-Dolly-Crane-Zooom
 
 	const float PLAYER_MOVE_SPEED = 0.2f; // speed at which player moves
 	const float PLAYER_TILT_SPEED = 4.0f; //up and down rotation about the sideways vector direction
-	const float PLAYER_PAN_SPEED = 0.04f; //left and right rotation about the up vector
+	const float PLAYER_PAN_SPEED = 0.01f; //left and right rotation about the up vector
 	const float PLAYER_ROLL_SPEED = 4.0f; //left and right rotation about the camera direction vector
 	const float PLAYER_DOLLY_SPEED = 0.4f;; //used for forward and backward travel along the camera direction vector
 	const float PLAYER_STRAFE_SPEED = 0.35f; //sideways translation along the sideways vector direction

@@ -1,0 +1,90 @@
+# Configuration file for the laser particle system
+# (a UniformRandomSplineModel object)
+
+# UniformRandomSplineModel LogUser configuration
+# -----------------------------------------------
+BOOL -- UniformRandomSplineModel_LogUser::enableLogging = true
+WSTRING -- UniformRandomSplineModel_LogUser::msgPrefix = L"Laser Geometry"
+BOOL -- UniformRandomSplineModel_LogUser::useGlobalLog = false
+BOOL -- UniformRandomSplineModel_LogUser::allocConsole = false
+BOOL -- UniformRandomSplineModel_LogUser::allocLogFile = true
+FILENAME -- UniformRandomSplineModel_LogUser::logFileName = "GameStateWithParticles_ParticlesLog.txt"
+DIRECTORY -- UniformRandomSplineModel_LogUser::logFilePath = "..\logFiles"
+BOOL -- UniformRandomSplineModel_LogUser::overwriteFile = false
+BOOL -- UniformRandomSplineModel_LogUser::timestampEnable = true
+
+# UniformRandomSplineModel ConfigUser configuration
+# -----------------------------------------
+BOOL -- UniformRandomSplineModel_ConfigUser::enableConfigUseLogging = true
+
+# UniformRandomSplineModel geometry configuration
+# -----------------------------------------------
+INT -- UniformRandomSplineModel::nParticles = 10000
+FLOAT4 -- UniformRandomSplineModel::vertexPositionMin = (0.0, 0.4, 0.0, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexPositionMax = (1.0, 0.5, 6.283185307, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexBillboardMin = (0.05, 0.05, 0.0002, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexBillboardMax = (0.1, 0.1, 0.002, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexLinearVelocityMin = (0.00001, 0.0005, 0.00001, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexLinearVelocityMax = (0.0001, 0.002, 0.00005, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexLifeMin = (0.0, 1.0, 0.00005, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexLifeMax = (0.0, 1.0, 0.0005, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexIndexMin = (1.0, 1.0, 1.0, 1.0)
+FLOAT4 -- UniformRandomSplineModel::vertexIndexMax = (1.0, 1.0, 1.0, 1.0)
+
+FLOAT4 -- UniformRandomSplineModel::colorCast = (0.9, 1.0, 0.5, 1.0)
+DOUBLE -- UniformRandomSplineModel::colorCastWeight = 0.5
+
+# UniformRandomSplineModel material configuration
+# ---------------------------------------
+FLOAT4 -- UniformRandomSplineModel::ambientAlbedo = (1.0, 1.0, 1.0, 1.0)
+DOUBLE -- UniformRandomSplineModel::transparencyMultiplier = 1.0
+
+# UniformRandomSplineModel lighting configuration
+# ---------------------------------------
+BOOL -- UniformRandomSplineModel::renderWithLighting = false
+
+# UniformRandomSplineModel albedo texture controls
+# ----------------------------------------------
+BOOL -- UniformRandomSplineModel::createAlbedoTexture = true
+BOOL -- UniformRandomSplineModel::renderAlbedoTexture = true
+
+# UniformRandomSplineModel albedo texture configuration
+# ----------------------------------------------
+BOOL -- UniformRandomSplineModel::albedoTexture_enableLogging = true
+WSTRING -- UniformRandomSplineModel::albedoTexture_msgPrefix = L"Laser Geometry Albedo Texture"
+WSTRING -- UniformRandomSplineModel::albedoTextureScope = L"albedoTexture"
+WSTRING -- UniformRandomSplineModel::albedoTextureScope_LogUser = L"albedoTexture_LogUser"
+WSTRING -- UniformRandomSplineModel::albedoTextureScope_ConfigUser = L"albedoTexture_ConfigUser"
+FILENAME -- UniformRandomSplineModel::albedoTexture_inputConfigFileName = "laser.txt"
+DIRECTORY -- UniformRandomSplineModel::albedoTexture_inputConfigFilePath = "..\configFiles\geometry"
+
+# Albedo texture object configuration
+# ----------------------------------------------
+# LogUser
+BOOL -- albedoTexture_LogUser::enableLogging = true
+WSTRING -- albedoTexture_LogUser::msgPrefix = L"Laser Geometry Albedo Texture"
+BOOL -- albedoTexture_LogUser::useGlobalLog = false
+BOOL -- albedoTexture_LogUser::allocConsole = false
+BOOL -- albedoTexture_LogUser::allocLogFile = true
+FILENAME -- albedoTexture_LogUser::logFileName = "GameStateWithParticles_ParticlesLog.txt"
+DIRECTORY -- albedoTexture_LogUser::logFilePath = "..\logFiles"
+BOOL -- albedoTexture_LogUser::overwriteFile = false
+BOOL -- albedoTexture_LogUser::timestampEnable = true
+
+# ConfigUser
+BOOL -- albedoTexture_ConfigUser::enableConfigUseLogging = true
+
+# Sampler State
+INT -- albedoTexture::filter = 21
+INT -- albedoTexture::addressU = 4
+INT -- albedoTexture::addressV = 4
+INT -- albedoTexture::addressW = 4
+INT -- albedoTexture::maxAnisotropy = 1
+INT -- albedoTexture::comparisonFunc = 1
+COLOR -- albedoTexture::borderColor = (255, 255, 255, 255)
+
+# Texture
+# Note: Dashes were replaced with underscores in the filename
+#   (Otherwise the filename will not be deemed valid - Errors would be appended to this file.)
+FILENAME -- albedoTexture::textureFileName = "msh1162_512x445.dds"
+DIRECTORY -- albedoTexture::textureFilePath = "..\textures"

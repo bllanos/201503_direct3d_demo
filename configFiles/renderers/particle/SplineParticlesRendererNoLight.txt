@@ -1,0 +1,71 @@
+# Configuration file for the SplineParticlesRenderer class
+# Version to be used for unlit, textured particles
+
+# LogUser configuration
+# ---------------------
+BOOL -- SplineParticlesRenderer_LogUser::enableLogging = true
+WSTRING -- SplineParticlesRenderer_LogUser::msgPrefix = L"SplineParticlesRendererNoLight"
+BOOL -- SplineParticlesRenderer_LogUser::useGlobalLog = true
+
+# ConfigUser configuration
+# ------------------------
+BOOL -- SplineParticlesRenderer_ConfigUser::enableConfigUseLogging = true
+
+# Disable lighting
+# ----------------
+BOOL -- SplineParticlesRenderer::enableLighting = false
+
+# Vertex Shader setup
+# -------------------
+BOOL -- SplineParticlesRenderer::VS_enableLogging = true
+WSTRING -- SplineParticlesRenderer::VS_msgPrefix = L"SplineParticlesRendererNoLight VS"
+WSTRING -- SplineParticlesRenderer::VS_scope = L"VS"
+WSTRING -- SplineParticlesRenderer::VS_scope_LogUser = L"shader_LogUser"
+WSTRING -- SplineParticlesRenderer::VS_scope_ConfigUser = L"shader_ConfigUser"
+FILENAME -- SplineParticlesRenderer::VS_inputConfigFileName = "SplineParticlesRendererNoLight.txt"
+DIRECTORY -- SplineParticlesRenderer::VS_inputConfigFilePath = "..\configFiles\renderers\particle"
+
+WSTRING -- VS::type = L"VertexShader"
+FILENAME -- VS::fileName = "splineParticlesVS.hlsl"
+DIRECTORY -- VS::filePath = "..\shaderCode\particle"
+WSTRING -- VS::shaderModel = L"vs_4_0"
+WSTRING -- VS::entryPoint = L"VSMAIN"
+
+# Geometry Shader setup
+# -------------------
+BOOL -- SplineParticlesRenderer::GS_enableLogging = true
+WSTRING -- SplineParticlesRenderer::GS_msgPrefix = L"SplineParticlesRendererNoLight GS"
+WSTRING -- SplineParticlesRenderer::GS_scope = L"GS"
+WSTRING -- SplineParticlesRenderer::GS_scope_LogUser = L"shader_LogUser"
+WSTRING -- SplineParticlesRenderer::GS_scope_ConfigUser = L"shader_ConfigUser"
+FILENAME -- SplineParticlesRenderer::GS_inputConfigFileName = "SplineParticlesRendererNoLight.txt"
+DIRECTORY -- SplineParticlesRenderer::GS_inputConfigFilePath = "..\configFiles\renderers\particle"
+
+WSTRING -- GS::type = L"GeometryShader"
+FILENAME -- GS::fileName = "generalParticlesGS_textured.hlsl"
+DIRECTORY -- GS::filePath = "..\shaderCode\particle"
+WSTRING -- GS::shaderModel = L"gs_4_0"
+WSTRING -- GS::entryPoint = L"GSMAIN"
+
+# Pixel Shader setup
+# -------------------
+BOOL -- SplineParticlesRenderer::PS_enableLogging = true
+WSTRING -- SplineParticlesRenderer::PS_msgPrefix = L"SplineParticlesRendererNoLight PS"
+WSTRING -- SplineParticlesRenderer::PS_scope = L"PS"
+WSTRING -- SplineParticlesRenderer::PS_scope_LogUser = L"shader_LogUser"
+WSTRING -- SplineParticlesRenderer::PS_scope_ConfigUser = L"shader_ConfigUser"
+FILENAME -- SplineParticlesRenderer::PS_inputConfigFileName = "SplineParticlesRendererNoLight.txt"
+DIRECTORY -- SplineParticlesRenderer::PS_inputConfigFilePath = "..\configFiles\renderers\particle"
+
+WSTRING -- PS::type = L"PixelShader"
+FILENAME -- PS::fileName = "generalParticlesPS_textured.hlsl"
+DIRECTORY -- PS::filePath = "..\shaderCode\particle"
+WSTRING -- PS::shaderModel = L"ps_4_0"
+WSTRING -- PS::entryPoint = L"PSMAIN"
+
+# Common shader setup
+# ---------------------
+BOOL -- shader_LogUser::enableLogging = true
+# WSTRING -- shader_LogUser::msgPrefix = L"SplineParticlesRendererNoLight Shader"
+BOOL -- shader_LogUser::useGlobalLog = true
+BOOL -- shader_ConfigUser::enableConfigUseLogging = true
