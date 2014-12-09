@@ -221,6 +221,9 @@ private:
 	// Keeps track of the positions at which to render lasers
 	std::vector<ActiveSplineParticles<UniformRandomSplineModel>*>* m_lasers;
 
+	// Prevents double-transformation of lasers
+	Transformable* m_identity;
+
 	/* Set globally for all explosions based on configuration data */
 	DWORD m_explosionLifespan;
 

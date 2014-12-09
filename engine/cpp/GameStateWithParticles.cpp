@@ -42,7 +42,7 @@ GameStateWithParticles::GameStateWithParticles(const bool configureNow) :
 GameState(false),
 m_explosionModel(0), m_explosions(0),
 m_jetModel(0), m_jets(0),
-m_laserModel(0), m_lasers(0),
+m_laserModel(0), m_lasers(0), m_identity(0),
 m_explosionLifespan(GAMESTATEWITHPARTICLES_EXPLOSION_LIFE_DEFAULT),
 m_jetLifespan(GAMESTATEWITHPARTICLES_JET_LIFE_DEFAULT),
 m_laserLifespan(GAMESTATEWITHPARTICLES_LASER_LIFE_DEFAULT),
@@ -60,6 +60,8 @@ m_demoStart(0), m_demoEnd(0)
 			throw std::exception("GameStateWithParticles configuration failed.");
 		}
 	}
+
+	m_identity = new Transformable(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 }
 
 GameStateWithParticles::~GameStateWithParticles(void) {
@@ -133,6 +135,11 @@ GameStateWithParticles::~GameStateWithParticles(void) {
 	if( m_laserTransformParameters != 0 ) {
 		delete m_laserTransformParameters;
 		m_laserTransformParameters = 0;
+	}
+
+	if (m_identity != 0) {
+		delete m_identity;
+		m_identity = 0;
 	}
 
 	if( m_demo_enabled ) {
@@ -354,7 +361,7 @@ HRESULT GameStateWithParticles::spawnLaser(Transformable* const start, Transform
 			end,
 			*m_laserTransformParameters);
 		newLaser = new ActiveSplineParticles<UniformRandomSplineModel>(
-			m_laserModel, start, newSpline, m_laserLifespan, m_currentTime,
+			m_laserModel, m_identity, newSpline, m_laserLifespan, m_currentTime,
 			XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 		m_lasers->emplace_back(newLaser);
@@ -407,10 +414,10 @@ HRESULT GameStateWithParticles::removeLaser(Transformable* const startTransform)
 	Transformable* end = 0;
 
 	while( it != m_lasers->end() ) {
-		if( (*it)->getTransform() == startTransform ) {
-			static_cast<GAMESTATEWITHPARTICLES_LASER_SPLINE_CLASS*>((*it)->getSpline())->getEndpoints(
-				start,
-				end);
+		static_cast<GAMESTATEWITHPARTICLES_LASER_SPLINE_CLASS*>((*it)->getSpline())->getEndpoints(
+			start,
+			end);
+		if (start == startTransform) {
 			delete *it;
 			it = m_lasers->erase(it);
 		} else {

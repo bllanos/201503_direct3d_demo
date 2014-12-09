@@ -60,8 +60,8 @@ INT -- GameStateWithParticles::laserLife = 0
 INT -- GameStateWithParticles::laser_nSplinesPerLaser = 1
 INT -- GameStateWithParticles::laser_nSegmentsPerSpline = 4
 # Units are units per second (convention from the Transformable class)
-DOUBLE -- GameStateWithParticles::laser_controlPointSpeed = 30.0
-DOUBLE -- GameStateWithParticles::laser_maxRadius = 1.0
+DOUBLE -- GameStateWithParticles::laser_controlPointSpeed = 5.0
+DOUBLE -- GameStateWithParticles::laser_maxRadius = 0.2
 DOUBLE -- GameStateWithParticles::laser_linearSpeed = 0.001
 DOUBLE -- GameStateWithParticles::laser_maxRoll = 0.0
 DOUBLE -- GameStateWithParticles::laser_maxPitch = 0.0
