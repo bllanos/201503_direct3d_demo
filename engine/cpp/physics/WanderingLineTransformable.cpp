@@ -193,7 +193,15 @@ HRESULT WanderingLineTransformable::refresh(const DWORD updateTimeInterval) {
 	// Store the updated value
 	XMFLOAT3 canonicalForward = XMFLOAT3(0.0f, 0.0f, 1.0f);
 	vector1 = XMVector3Cross(XMLoadFloat3(&canonicalForward), lineAxis);
-	vector2 = XMVector3Dot(XMLoadFloat3(&canonicalForward), lineAxis);
+
+	// Avoid zero vectors
+	vector2 = XMVectorNotEqual(vector1, XMVectorZero());
+	XMStoreFloat3(&storedValue1, vector2);
+	if( storedValue1.x == 0 && storedValue1.y == 0 && storedValue1.z == 0 ) {
+		vector1 = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	}
+	
+	vector2 = XMVector3AngleBetweenVectors(XMLoadFloat3(&canonicalForward), lineAxis);
 	XMStoreFloat3(&storedValue1, vector2);
 	XMStoreFloat4(&m_orientation, XMQuaternionRotationAxis(vector1, storedValue1.x));
 	if( m_rollPitchYaw.x != 0.0f || m_rollPitchYaw.y != 0.0f || m_rollPitchYaw.z != 0.0f ) {

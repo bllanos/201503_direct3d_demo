@@ -95,10 +95,10 @@ HRESULT Transformable::getWorldVelocity(DirectX::XMFLOAT3& worldVelocity) const 
 
 HRESULT Transformable::getWorldForward(DirectX::XMFLOAT3& worldForward) {
 
-	updateTransformProperties();
+	// updateTransformProperties();
 
-	DirectX::XMFLOAT3 unitWorldDirection;
-	if( FAILED(getDirectionInWorld(unitWorldDirection, m_forward, true)) ) {
+	DirectX::XMFLOAT3 unitWorldDirection = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	if( FAILED(getDirectionInWorld(unitWorldDirection, unitWorldDirection, true)) ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
