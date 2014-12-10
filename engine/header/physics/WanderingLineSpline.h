@@ -40,7 +40,7 @@ public:
 	   for knot construction.
 
 	   The 'knotParameters' structure will be passed
-	   to the WanderingLineSpline constructor
+	   to the WanderingLineTransformable constructor
 	   when knots are created, although its 't' member
 	   will be ignored in favour of a uniformly distributed
 	   random value.
@@ -65,7 +65,7 @@ public:
 		Transformable* const end);
 
 	void getEndpoints(Transformable*& start,
-		Transformable*& end);
+		Transformable*& end) const;
 
 	/* Updates the knots of this Spline for the specified time interval,
 	   'updateTimeInterval', starting from the time indicated by the 'currentTime'

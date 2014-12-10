@@ -80,7 +80,7 @@ HRESULT WanderingLineSpline::setEndpoints(Transformable* const startTransform,
 }
 
 void WanderingLineSpline::getEndpoints(Transformable*& start,
-	Transformable*& end) {
+	Transformable*& end) const {
 	start = m_start;
 	end = m_end;
 }
