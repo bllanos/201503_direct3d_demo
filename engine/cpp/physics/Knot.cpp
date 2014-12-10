@@ -171,6 +171,38 @@ HRESULT Knot::getControlPoints(DirectX::XMFLOAT4*& controlPoints) const {
 	return ERROR_SUCCESS;
 }
 
+HRESULT Knot::getP0(DirectX::XMFLOAT3& p0) const {
+	if( m_p0 == 0 ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+	p0 = *m_p0;
+	return ERROR_SUCCESS;
+}
+
+HRESULT Knot::getP1(DirectX::XMFLOAT3& p1) const {
+	if( m_p1 == 0 ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+	p1 = *m_p1;
+	return ERROR_SUCCESS;
+}
+
+HRESULT Knot::getP2(DirectX::XMFLOAT3& p2) const {
+	if( m_p2 == 0 ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+	p2 = *m_p2;
+	return ERROR_SUCCESS;
+}
+
+HRESULT Knot::getP3(DirectX::XMFLOAT3& p3) const {
+	if( m_p3 == 0 ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+	p3 = *m_p3;
+	return ERROR_SUCCESS;
+}
+
 HRESULT Knot::makeDouble(void) {
 	if( m_side == PointSet::BOTH ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);

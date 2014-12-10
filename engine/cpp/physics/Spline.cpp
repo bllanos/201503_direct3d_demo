@@ -23,6 +23,7 @@ Description
 #include "DynamicKnot.h"
 #include "defs.h"
 #include <exception>
+#include <cmath>
 
 using namespace DirectX;
 using std::list;
@@ -242,4 +243,107 @@ HRESULT Spline::addKnot(Knot* const knot, bool addToStart) {
 	}
 
 	return result;
+}
+
+HRESULT Spline::eval(XMFLOAT3* const position, XMFLOAT3* const direction, const float& t) const {
+	Knot* preKnot = 0;
+	Knot* postKnot = 0;
+	float segmentT = 0.0f;
+	if( !globalTtoSegmentT(preKnot, postKnot, segmentT, t) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	// Get segment control points
+	DirectX::XMFLOAT3 temp;
+	XMVECTOR p0, p1, p2, p3;
+	if( FAILED(preKnot->getP0(temp)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	} else {
+		p0 = XMLoadFloat3(&temp);
+	}
+	if( FAILED(preKnot->getP1(temp)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	} else {
+		p1 = XMLoadFloat3(&temp);
+	}
+	if( FAILED(postKnot->getP2(temp)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	} else {
+		p2 = XMLoadFloat3(&temp);
+	}
+	if( FAILED(postKnot->getP3(temp)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	} else {
+		p3 = XMLoadFloat3(&temp);
+	}
+
+	// Compute spline position
+	float invSegmentT = 1.0f - segmentT;
+	XMVECTOR result =
+		XMVectorAdd(
+			XMVectorAdd(
+				XMVectorScale(p0, pow(invSegmentT, 3.0f)),
+				XMVectorScale(p1, 3.0f*segmentT*pow(invSegmentT, 2.0f))
+			),
+			XMVectorAdd(
+				XMVectorScale(p2, 3.0f*pow(segmentT, 2.0f)*invSegmentT),
+				XMVectorScale(p3, pow(segmentT, 3.0f))
+			)
+		);
+	XMStoreFloat3(position, result);
+
+	// Compute spline direction
+	result =
+		XMVectorAdd(
+			XMVectorAdd(
+				XMVectorScale(XMVectorSubtract(p1, p0), 3.0f*pow(invSegmentT, 2.0f)),
+				XMVectorScale(XMVectorSubtract(p2, p1), 6.0f*(invSegmentT)*segmentT)
+			),
+				XMVectorScale(XMVectorSubtract(p3, p2), 3.0f*pow(segmentT, 2.0f))
+		);
+
+	// Normalize
+	result = XMVector3Normalize(result);
+	XMStoreFloat3(direction, result);
+	return ERROR_SUCCESS;
+}
+
+HRESULT Spline::eval(Transformable* const transform, const float& t) const {
+	HRESULT result;
+	DirectX::XMFLOAT3 position(0.0f, 0.0f, 0.0f);
+	DirectX::XMFLOAT3 direction(0.0f, 0.0f, 0.0f);
+	result = eval(&position, &direction, t);
+	if( FAILED(result) ) {
+		return result;
+	}
+
+	transform->setPosition(position);
+	result = transform->setOrientation(direction);
+	if( result ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+	return ERROR_SUCCESS;
+}
+
+bool Spline::globalTtoSegmentT(Knot*& preKnot, Knot*& postKnot, float& segmentT, const float& t) const {
+	size_t segments = getNumberOfSegments();
+	if( segments == 0 ) {
+		return false;
+	}
+
+	// Compute segment parameters
+	float adjustedT = t - floor(t); // Wrap to [0, 1]
+	segmentT = adjustedT * segments;
+	size_t segmentIndex = static_cast<size_t>(segmentT);
+	segmentT = segmentT - floor(segmentT);
+
+	// Retrieve knots corresponding to the segment
+	std::list<Knot*>::const_iterator itr = m_knots.cbegin();
+	for( size_t i = 0; i < segmentIndex; ++i ) {
+		++itr;
+	}
+	preKnot = *itr;
+	++itr;
+	postKnot = *itr;
+	return true;
 }

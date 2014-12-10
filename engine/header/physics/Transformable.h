@@ -123,6 +123,21 @@ public:
 	DirectX::XMFLOAT3 getPosition() const;
 	DirectX::XMFLOAT4 getOrientation() const;
 
+	void setScale(const DirectX::XMFLOAT3&);
+	void setPosition(const DirectX::XMFLOAT3&);
+
+	/* Expects a valid, normalized quaternion as input */
+	void setOrientation(const DirectX::XMFLOAT4& quaternion);
+
+	/* Input is a direction vector (not necessarily normalized).
+	   This object's orientation quaternion will be such
+	   that it rotates (0, 0, 1) to align with 'direction'.
+
+	   Returns a failure result and does nothing
+	   if 'direction' is a zero vector.
+	 */
+	HRESULT setOrientation(const DirectX::XMFLOAT3& direction);
+
 	// computes and returns the respective direction
 	DirectX::XMFLOAT3 getForwardLocalDirection();
 	DirectX::XMFLOAT3 getUpLocalDirection();

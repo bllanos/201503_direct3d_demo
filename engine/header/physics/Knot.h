@@ -100,6 +100,15 @@ public:
 	 */
 	HRESULT getControlPoints(DirectX::XMFLOAT4*& controlPoints) const;
 
+	/* The following functions do nothing
+	   and return failure results if the object
+	   does not have the specified control point.
+	 */
+	HRESULT getP0(DirectX::XMFLOAT3& p0) const;
+	HRESULT getP1(DirectX::XMFLOAT3& p1) const;
+	HRESULT getP2(DirectX::XMFLOAT3& p2) const;
+	HRESULT getP3(DirectX::XMFLOAT3& p3) const;
+
 	/* Converts a single-sided knot into a double-sided knot.
 	   Does nothing and returns a failure result if
 	   'm_side' is already PointSet::BOTH.

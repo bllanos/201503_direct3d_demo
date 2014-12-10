@@ -97,11 +97,12 @@ VSOutput VSMAIN(in VSInput input) {
 		// Compute base position by evaluating the spline
 		// ----------------------------------------------
 		float segmentT = frac(segmentIndex);
+		float invSegmentT = 1.0f - segmentT;
 		Segment segment = Spline[(uint)segmentIndex];
 		float3 splinePosition =
-			(pow(1.0f - segmentT, 3)*segment.p0 +
-			3.0f*segmentT*pow(1.0f - segmentT, 2)*segment.p1 +
-			3.0f*pow(segmentT, 2)*(1.0f - segmentT)*segment.p2 +
+			(pow(invSegmentT, 3)*segment.p0 +
+			3.0f*segmentT*pow(invSegmentT, 2)*segment.p1 +
+			3.0f*pow(segmentT, 2)*(invSegmentT)*segment.p2 +
 			pow(segmentT, 3)*segment.p3).xyz;
 
 		// Compute offset from base position and compute final position
@@ -109,8 +110,8 @@ VSOutput VSMAIN(in VSInput input) {
 		
 		// Find the unit direction vector of the spline
 		float3 splineDirection = normalize(
-		(3.0f*pow(1.0f - segmentT, 2)*(segment.p1 - segment.p0) +
-		6.0f*(1.0f - segmentT)*t*(segment.p2 - segment.p1) +
+		(3.0f*pow(invSegmentT, 2)*(segment.p1 - segment.p0) +
+		6.0f*(invSegmentT)*segmentT*(segment.p2 - segment.p1) +
 		3.0f*pow(segmentT, 2)*(segment.p3 - segment.p2)).xyz
 			);
 

@@ -282,17 +282,42 @@ XMFLOAT3 Transformable::getPosition(void) const {
 XMFLOAT4 Transformable::getOrientation(void) const {
 	XMFLOAT4 newOri = m_orientation;
 
-	/*
-	if (m_parent != 0) {
-		XMFLOAT4 parentOri = m_parent->getOrientation();
-		newOri = XMFLOAT4(newOri.x + parentOri.x,
-						  newOri.y + parentOri.y,
-						  newOri.z + parentOri.z,
-						  newOri.w + parentOri.w);
-	}
-	*/
-
 	return newOri;
+}
+
+void Transformable::setScale(const DirectX::XMFLOAT3& scale) {
+	m_scale = scale;
+}
+
+void Transformable::setPosition(const DirectX::XMFLOAT3& position) {
+	m_position = position;
+}
+
+void Transformable::setOrientation(const DirectX::XMFLOAT4& orientation) {
+	m_orientation = orientation;
+}
+
+HRESULT Transformable::setOrientation(const DirectX::XMFLOAT3& direction) {
+	if( direction.x == 0 && direction.y == 0 && direction.z == 0 ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_INVALID_INPUT);
+	}
+
+	XMFLOAT3 canonicalForward(0.0f, 0.0f, 1.0f);
+	XMVECTOR vector1 = XMVector3Cross(XMLoadFloat3(&canonicalForward), XMLoadFloat3(&direction));
+
+	// Test for zero vectors
+	XMFLOAT3 storedValue1(0.0f, 0.0f, 0.0f);
+	XMVECTOR vector2 = XMVectorNotEqual(vector1, XMVectorZero());
+	XMStoreFloat3(&storedValue1, vector2);
+	if( storedValue1.x == 0 && storedValue1.y == 0 && storedValue1.z == 0 ) {
+		m_orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+		return ERROR_SUCCESS;
+	}
+
+	vector2 = XMVector3AngleBetweenVectors(XMLoadFloat3(&canonicalForward), XMLoadFloat3(&direction));
+	XMStoreFloat3(&storedValue1, vector2);
+	XMStoreFloat4(&m_orientation, XMQuaternionRotationAxis(vector1, storedValue1.x));
+	return ERROR_SUCCESS;
 }
 
 XMFLOAT3 Transformable::getForwardLocalDirection(void) 

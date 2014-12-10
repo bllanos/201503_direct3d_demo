@@ -156,6 +156,42 @@ private:
 	 */
 	HRESULT addKnot(Knot* const knot, bool addToStart);
 
+	/* Spline evaluation
+	   -----------------
+	 */
+public:
+
+	/* Determines the spline position vector and unit direction vector at the parameter
+	   value of 't' (which will be wrapped around to lie in the interval [0,1]).
+
+	   Returns a failure result and does nothing if the spline has no segments.
+	 */
+	HRESULT eval(DirectX::XMFLOAT3* const position, DirectX::XMFLOAT3* const direction, const float& t) const;
+
+	/* Alters a Transformable to represent the position and orientation
+	   of the spline evaluated at the value of 't'.
+	   ('t' will be wrapped to the interval [0,1]).
+
+	   Returns a failure result and does nothing if the spline has no segments.
+	 */
+	HRESULT eval(Transformable* const transform, const float& t) const;
+
+	// Spline evaluation helper functions
+private:
+
+	/* Returns false and does nothing if there are no segments
+	   in the spline.
+
+	   Otherwise, returns true and outputs the knots delimiting the segment
+	   corresponding to the spline parameter 't',
+	   and outputs the interpolation parameter within
+	   the segment, 'segmentT'.
+
+	   't' will be wrapped around if it is less than zero
+	   or greater than 1 to obtain an input value in the interval [0,1].
+	  */
+	bool globalTtoSegmentT(Knot*& preKnot, Knot*& postKnot, float& segmentT, const float& t) const;
+
 	// Data members
 private:
 
