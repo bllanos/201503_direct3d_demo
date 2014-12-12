@@ -74,6 +74,11 @@ Transformable* HomingSpline::getEnd(void) const {
 }
 
 HRESULT HomingSpline::update(const DWORD currentTime, const DWORD updateTimeInterval) {
+
+	if( FAILED(Spline::update(currentTime, updateTimeInterval)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
 	XMFLOAT3 presentPosition = m_end->getPosition();
 	float distance = 0.0f;
 	XMStoreFloat(&distance, 

@@ -83,8 +83,8 @@ public:
 
 	   Time values are in milliseconds.
 
-	   This function actually does not use the time values,
-	   but only checks if the endpoint of the spline needs to be resampled
+	   This function calls the base class's version of update().
+	   It then checks if the endpoint of the spline needs to be resampled
 	   and, if so, adjusts the spline to add the new sample.
 	 */
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval) override;
