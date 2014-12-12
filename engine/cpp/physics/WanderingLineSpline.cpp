@@ -18,8 +18,6 @@ Description
   -Implementation of the WanderingLineSpline class
 */
 
-#pragma once
-
 #include "WanderingLineSpline.h"
 #include "defs.h"
 #include <exception>
@@ -45,7 +43,15 @@ WanderingLineSpline::WanderingLineSpline(const size_t capacity, const float spee
 		transform = new WanderingLineTransformable(m_start, m_end, m_knotParameters);
 
 		if( FAILED(addToEnd(transform, true)) ) {
-			throw std::exception("WanderingLineSpline: Failed to add a knot to the spline.");
+			list<WanderingLineTransformable*>::iterator startItr = m_knotTransforms.begin();
+			list<WanderingLineTransformable*>::iterator endItr = m_knotTransforms.end();
+			while( startItr != endItr ) {
+				delete *startItr;
+				*startItr = 0;
+				++startItr;
+			}
+			delete transform;
+			throw std::exception("WanderingLineSpline: Failed to add a knot to the spline during initialization.");
 		}
 
 		m_knotTransforms.push_back(transform);

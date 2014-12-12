@@ -93,8 +93,8 @@ void GSMAIN(point VSOutput input[1], inout TriangleStream<PSInput> QuadStream)
 		   to make billboard normal to the view vector
 		 */
 		float3 normalizedPosition = normalize(input0.positionVS);
-		float3 side = cross(g_up, normalizedPosition);
-		float3 up = cross(normalizedPosition, side);
+		float3 side = normalize(cross(g_up, normalizedPosition));
+		float3 up = normalize(cross(normalizedPosition, side));
 
 		// Apply billboard rotation and scaling
 		side = rotate(side, normalizedPosition, input0.angle);

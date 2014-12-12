@@ -19,7 +19,7 @@ Description
      between two endpoints, with WanderingLineTransformable
 	 objects defining the knots in-between.
   -WanderingLineTransformable objects are constructed
-     with uniformly-distributed random interpolation parameter values
+     with uniformly-spaced interpolation parameter values
 	 between 0 and 1.
 */
 
@@ -42,8 +42,7 @@ public:
 	   The 'knotParameters' structure will be passed
 	   to the WanderingLineTransformable constructor
 	   when knots are created, although its 't' member
-	   will be ignored in favour of a uniformly distributed
-	   random value.
+	   will be ignored in favour of a uniformly spaced value.
 
 	   'capacity' must be greater than zero or the constructor
 	   will throw an exception.
