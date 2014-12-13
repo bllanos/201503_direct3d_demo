@@ -60,7 +60,7 @@ public:
 
 	/* The radius property of this class is not actually
 	   related to the operation of the class,
-	   but is an add on which can be used to make the object
+	   but is an add-on which can be used to make the object
 	   provide information needed for collision detection.
 
 	   getRadius() will throw an exception if no radius has been set.
@@ -75,18 +75,23 @@ public:
 	   Time values are in milliseconds.
 
 	   This function updates this object's position on the spline,
-	   and updates the spline itself.
+	   after updating the spline itself.
 	 */
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval) override;
 
-	/* Returns true if this object has reached an end of the spline,
+	/* Returns true if this object has reached the end of the spline
+	   towards which it was moving,
 	   and has been configured not to loop around to the other
-	   end of the spline when it reaches either end of the spline.
+	   end of the spline when it reaches one end.
 	 */
 	bool isAtEnd(void) const;
 
 	/* Returns the target endpoint of the spline. */
 	Transformable* getEnd(void) const;
+
+protected:
+	/* Helper function called by update() */
+	HRESULT updateSplineLocation(const DWORD currentTime);
 
 	// Data members
 private:
@@ -99,7 +104,7 @@ private:
 	 */
 	DWORD m_startTime;
 
-	/* Rate of change of spline evaluation parameter,
+	/* Rate of change of the spline evaluation parameter,
 	   possibly negative.
 	   [spline parameter units per second]
 	 */
@@ -112,6 +117,16 @@ private:
 	   an end of the spline.
 	 */
 	bool m_loop;
+
+	/* Keeps track of whether or not this object has reached
+	   the end of the spline towards which it was travelling.
+
+	   When true, further changes to the position of this object
+	   along the spline are disabled.
+
+	   (If 'm_loop' is false, this member is unused.)
+	 */
+	bool m_isAtEnd;
 
 	/* The spline that this object is tracking. */
 	HomingSpline* m_spline;

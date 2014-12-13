@@ -246,6 +246,9 @@
     <ClCompile Include="cpp\physics\HomingSpline.cpp">
       <Filter>source\physics</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\physics\HomingTransformable.cpp">
+      <Filter>source\physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -441,6 +444,9 @@
       <Filter>header\physics</Filter>
     </ClInclude>
     <ClInclude Include="header\physics\HomingSpline.h">
+      <Filter>header\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="header\physics\HomingTransformable.h">
       <Filter>header\physics</Filter>
     </ClInclude>
   </ItemGroup>
