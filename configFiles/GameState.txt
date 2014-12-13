@@ -74,18 +74,18 @@ DOUBLE -- GameStateWithParticles::laser_yawSpeed = 0.0
 # Detailed ball lightning particle system external configuration
 # --------------------------------------------------------------
 INT -- GameStateWithParticles::ball_nSegmentsMax = 64
-INT -- GameStateWithParticles::ball_nSegmentsInitial = 5
+INT -- GameStateWithParticles::ball_nSegmentsInitial = 3
 # Units are units per second (convention from the Transformable class)
-DOUBLE -- GameStateWithParticles::ball_controlPointSpeed = 50.0
-DOUBLE -- GameStateWithParticles::ball_maxRadius = 5.0
+DOUBLE -- GameStateWithParticles::ball_controlPointSpeed = 100.0
+DOUBLE -- GameStateWithParticles::ball_maxRadius = 10.0
 DOUBLE -- GameStateWithParticles::ball_maxRoll = 0.0
 DOUBLE -- GameStateWithParticles::ball_maxPitch = 0.0
 DOUBLE -- GameStateWithParticles::ball_maxYaw = 0.0
-DOUBLE -- GameStateWithParticles::ball_thresholdDistance = 1.0
-DOUBLE -- GameStateWithParticles::ball_splineParameterSpeed = 0.1
-DOUBLE -- GameStateWithParticles::ball_splineParameterOffset = 0.9
+DOUBLE -- GameStateWithParticles::ball_thresholdDistance = 100.0
+DOUBLE -- GameStateWithParticles::ball_splineParameterSpeed = 0.15
+DOUBLE -- GameStateWithParticles::ball_splineParameterOffset = 0.0
 BOOL -- GameStateWithParticles::ball_loopOverSpline = false
-DOUBLE -- GameStateWithParticles::ball_radius = 3.0
+DOUBLE -- GameStateWithParticles::ball_radius = 1.5
 
 # Demo mode configuration
 # -----------------------
