@@ -1,0 +1,97 @@
+# Configuration file for the ball lightning particle system
+# (a RandomBurstCone object)
+
+# RandomBurstCone LogUser configuration
+# -----------------------------------------------
+BOOL -- RandomBurstCone_LogUser::enableLogging = true
+WSTRING -- RandomBurstCone_LogUser::msgPrefix = L"Ball Geometry"
+BOOL -- RandomBurstCone_LogUser::useGlobalLog = false
+BOOL -- RandomBurstCone_LogUser::allocConsole = false
+BOOL -- RandomBurstCone_LogUser::allocLogFile = true
+FILENAME -- RandomBurstCone_LogUser::logFileName = "GameStateWithParticles_ParticlesLog.txt"
+DIRECTORY -- RandomBurstCone_LogUser::logFilePath = "..\logFiles"
+BOOL -- RandomBurstCone_LogUser::overwriteFile = false
+BOOL -- RandomBurstCone_LogUser::timestampEnable = true
+
+# RandomBurstCone ConfigUser configuration
+# -----------------------------------------
+BOOL -- RandomBurstCone_ConfigUser::enableConfigUseLogging = true
+
+# RandomBurstCone geometry configuration
+# -----------------------------------------------
+INT -- RandomBurstCone::nColumns = 10
+INT -- RandomBurstCone::nRows = 10
+BOOL -- RandomBurstCone::createPoleParticles = false
+DOUBLE -- RandomBurstCone::billboardWidth = 0.5
+DOUBLE -- RandomBurstCone::billboardHeight = 0.5
+DOUBLE -- RandomBurstCone::billboardSpin = 0.005
+DOUBLE -- RandomBurstCone::linearSpeed = 0.0001
+DOUBLE -- RandomBurstCone::creationTimeOffset = 1000.0
+DOUBLE -- RandomBurstCone::lifeAmount = 1.0
+DOUBLE -- RandomBurstCone::decay = 0.004
+DOUBLE -- RandomBurstCone::deathCutoff = 0.2
+
+FLOAT4 -- RandomBurstCone::colorCast = (0.7, 1.0, 1.0, 1.0)
+DOUBLE -- RandomBurstCone::colorCastWeight = 0.5
+BOOL -- RandomBurstCone::debugColorCasts = false
+
+# RandomBurstCone material configuration
+# ---------------------------------------
+FLOAT4 -- RandomBurstCone::ambientAlbedo = (1.0, 1.0, 1.0, 1.0)
+DOUBLE -- RandomBurstCone::transparencyMultiplier = 1.0
+
+# RandomBurstCone lighting configuration
+# ---------------------------------------
+BOOL -- RandomBurstCone::renderWithLighting = false
+
+# RandomBurstCone albedo texture controls
+# ----------------------------------------------
+BOOL -- RandomBurstCone::createAlbedoTexture = true
+BOOL -- RandomBurstCone::renderAlbedoTexture = true
+
+# RandomBurstCone non-inherited parameters
+# -----------------------------------------
+DOUBLE -- RandomBurstCone::maximumPhiRange = 0.9
+DOUBLE -- RandomBurstCone::minimumRadius = 0.0
+DOUBLE -- RandomBurstCone::maximumRadius = 1.0
+
+# RandomBurstCone albedo texture configuration
+# ----------------------------------------------
+BOOL -- RandomBurstCone::albedoTexture_enableLogging = true
+WSTRING -- RandomBurstCone::albedoTexture_msgPrefix = L"Ball Geometry Albedo Texture"
+WSTRING -- RandomBurstCone::albedoTextureScope = L"albedoTexture"
+WSTRING -- RandomBurstCone::albedoTextureScope_LogUser = L"albedoTexture_LogUser"
+WSTRING -- RandomBurstCone::albedoTextureScope_ConfigUser = L"albedoTexture_ConfigUser"
+FILENAME -- RandomBurstCone::albedoTexture_inputConfigFileName = "ball.txt"
+DIRECTORY -- RandomBurstCone::albedoTexture_inputConfigFilePath = "..\configFiles\geometry"
+
+# Albedo texture object configuration
+# ----------------------------------------------
+# LogUser
+BOOL -- albedoTexture_LogUser::enableLogging = true
+WSTRING -- albedoTexture_LogUser::msgPrefix = L"Ball Geometry Albedo Texture"
+BOOL -- albedoTexture_LogUser::useGlobalLog = false
+BOOL -- albedoTexture_LogUser::allocConsole = false
+BOOL -- albedoTexture_LogUser::allocLogFile = true
+FILENAME -- albedoTexture_LogUser::logFileName = "GameStateWithParticles_ParticlesLog.txt"
+DIRECTORY -- albedoTexture_LogUser::logFilePath = "..\logFiles"
+BOOL -- albedoTexture_LogUser::overwriteFile = false
+BOOL -- albedoTexture_LogUser::timestampEnable = true
+
+# ConfigUser
+BOOL -- albedoTexture_ConfigUser::enableConfigUseLogging = true
+
+# Sampler State
+INT -- albedoTexture::filter = 21
+INT -- albedoTexture::addressU = 4
+INT -- albedoTexture::addressV = 4
+INT -- albedoTexture::addressW = 4
+INT -- albedoTexture::maxAnisotropy = 1
+INT -- albedoTexture::comparisonFunc = 1
+COLOR -- albedoTexture::borderColor = (255, 255, 255, 255)
+
+# Texture
+# Note: Dashes were replaced with underscores in the filename
+#   (Otherwise the filename will not be deemed valid - Errors would be appended to this file.)
+FILENAME -- albedoTexture::textureFileName = "IMG_1931.dds"
+DIRECTORY -- albedoTexture::textureFilePath = "..\textures"

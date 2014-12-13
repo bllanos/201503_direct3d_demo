@@ -129,6 +129,8 @@ Description
 #define GAMESTATEWITHPARTICLES_BALL_RADIUS_DEFAULT 0.0f
 #define GAMESTATEWITHPARTICLES_BALL_RADIUS_FIELD L"ball_radius"
 
+#define GAMESTATEWITHPARTICLES_BALL_MODELCLASS RandomBurstCone
+
 /* If true, a continual fireworks show will be produced. */
 #define GAMESTATEWITHPARTICLES_DEMO_FIELD L"demoMode"
 #define GAMESTATEWITHPARTICLES_DEMO_DEFAULT false
@@ -269,10 +271,10 @@ private:
 	std::vector<ActiveSplineParticles<UniformRandomSplineModel>*>* m_lasers;
 
 	// The model for all ball lightning effects
-	RandomBurstCone* m_ballModel;
+	GAMESTATEWITHPARTICLES_BALL_MODELCLASS* m_ballModel;
 
 	// Keeps track of the positions at which to render ball lightning effects
-	std::vector<ActiveParticles<RandomBurstCone>*>* m_balls;
+	std::vector<ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>*>* m_balls;
 
 	// Prevents double-transformation of lasers
 	Transformable* m_identity;

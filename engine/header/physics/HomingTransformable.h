@@ -43,6 +43,9 @@ public:
 
 	   'currentTime' should be the current time
 	   as used elsewhere in the program.
+
+	   Note: The constructor initializes this object's scaling
+	         vector to (1,1,1).
 	 */
 	HomingTransformable(const size_t capacity,
 		const size_t initialSize,

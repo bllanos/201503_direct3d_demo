@@ -80,7 +80,7 @@ GameStateWithParticles::~GameStateWithParticles(void) {
 	ActiveParticles<UniformBurstSphere>* activeExplosion = 0;
 	ActiveParticles<RandomBurstCone>* activeJet = 0;
 	ActiveSplineParticles<UniformRandomSplineModel>* activeLaser = 0;
-	ActiveParticles<RandomBurstCone>* activeBall = 0;
+	ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>* activeBall = 0;
 
 	if( m_explosionModel != 0 ) {
 		delete m_explosionModel;
@@ -156,8 +156,8 @@ GameStateWithParticles::~GameStateWithParticles(void) {
 	}
 
 	if( m_balls != 0 ) {
-		const vector<ActiveParticles<RandomBurstCone>*>::size_type nBalls = m_balls->size();
-		for( vector<ActiveParticles<RandomBurstCone>*>::size_type i = 0; i < nBalls; ++i ) {
+		const vector<ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>*>::size_type nBalls = m_balls->size();
+		for( vector<ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>*>::size_type i = 0; i < nBalls; ++i ) {
 			activeBall = (*m_balls)[i];
 			if( activeBall != 0 ) {
 				delete activeBall->getTransform();
@@ -250,8 +250,8 @@ HRESULT GameStateWithParticles::drawContents(ID3D11DeviceContext* const context,
 	}
 
 	// Draw all balls
-	const vector<ActiveParticles<RandomBurstCone>*>::size_type nBalls = m_balls->size();
-	for( vector<ActiveParticles<RandomBurstCone>*>::size_type i = 0; i < nBalls; ++i ) {
+	const vector<ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>*>::size_type nBalls = m_balls->size();
+	for( vector<ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>*>::size_type i = 0; i < nBalls; ++i ) {
 		result = (*m_balls)[i]->drawUsingAppropriateRenderer(context, manager, m_camera);
 		if( FAILED(result) ) {
 			logMessage(L"Failed to render ball particle system at index = " + std::to_wstring(i) + L".");
@@ -355,9 +355,9 @@ HRESULT GameStateWithParticles::update(const DWORD currentTime, const DWORD upda
 
 	// Update all ball lightning effects
 	HomingTransformable* ballTransform = 0;
-	vector<ActiveParticles<RandomBurstCone>*>::size_type nBalls = m_balls->size();
+	vector<ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>*>::size_type nBalls = m_balls->size();
 	if( nBalls > 0 ) {
-		for( vector<ActiveParticles<RandomBurstCone>*>::size_type i = nBalls - 1; (i >= 0) && (i < nBalls); --i ) {
+		for( vector<ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>*>::size_type i = nBalls - 1; (i >= 0) && (i < nBalls); --i ) {
 			result = (*m_balls)[i]->update(currentTime, updateTimeInterval, isExpired, true);
 			if( FAILED(result) ) {
 				logMessage(L"Failed to update ball particle system at index = " + std::to_wstring(i) + L".");
@@ -469,8 +469,8 @@ HRESULT GameStateWithParticles::spawnBall(Transformable* const start, Transforma
 
 	tempHandle->setRadius(m_ballRadius);
 
-	ActiveParticles<RandomBurstCone>* newBall = 0;
-	newBall = new ActiveParticles<RandomBurstCone>(
+	ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>* newBall = 0;
+	newBall = new ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>(
 		m_ballModel, tempHandle, m_ballLifespan, m_currentTime,
 		XMFLOAT3(1.0f, 1.0f, 1.0f));
 
@@ -541,7 +541,7 @@ HRESULT GameStateWithParticles::removeLaser(Transformable* const startTransform)
 }
 
 HRESULT GameStateWithParticles::removeBall(HomingTransformable*& transform) {
-	vector<ActiveParticles<RandomBurstCone>*>::iterator it = m_balls->begin();
+	vector<ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>*>::iterator it = m_balls->begin();
 
 	HRESULT result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
 	bool found = false;
@@ -569,7 +569,7 @@ HRESULT GameStateWithParticles::removeBall(HomingTransformable*& transform) {
 }
 
 HRESULT GameStateWithParticles::removeBallsByEndpoint(Transformable* const transform) {
-	vector<ActiveParticles<RandomBurstCone>*>::iterator it = m_balls->begin();
+	vector<ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>*>::iterator it = m_balls->begin();
 	HomingTransformable* ballTransform = 0;
 
 	while( it != m_balls->end() ) {
@@ -926,7 +926,7 @@ HRESULT GameStateWithParticles::configureParticles(void) {
 		CONFIGUSER_INPUT_FILE_PATH_FIELD
 		);
 
-	m_ballModel = new RandomBurstCone(
+	m_ballModel = new GAMESTATEWITHPARTICLES_BALL_MODELCLASS(
 		&configIO, // Used to load configuration file
 		&config, // Queried for location of configuration file
 		GAMESTATEWITHPARTICLES_GEOMETRY_BALL_SCOPE,
@@ -970,7 +970,7 @@ HRESULT GameStateWithParticles::initializeParticles(ID3D11Device* device) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
-	m_balls = new vector<ActiveParticles<RandomBurstCone>*>();
+	m_balls = new vector<ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>*>();
 
 	return ERROR_SUCCESS;
 }

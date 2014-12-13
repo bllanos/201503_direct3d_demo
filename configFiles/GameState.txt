@@ -73,24 +73,23 @@ DOUBLE -- GameStateWithParticles::laser_yawSpeed = 0.0
 
 # Detailed ball lightning particle system external configuration
 # --------------------------------------------------------------
-INT -- GameStateWithParticles::ball_nSegmentsMax = 2
-INT -- GameStateWithParticles::ball_nSegmentsInitial = 2
+INT -- GameStateWithParticles::ball_nSegmentsMax = 64
+INT -- GameStateWithParticles::ball_nSegmentsInitial = 5
 # Units are units per second (convention from the Transformable class)
-DOUBLE -- GameStateWithParticles::ball_controlPointSpeed = 20.0
-DOUBLE -- GameStateWithParticles::ball_maxRadius = 3.0
-DOUBLE -- GameStateWithParticles::ball_linearSpeed = 0.001
+DOUBLE -- GameStateWithParticles::ball_controlPointSpeed = 50.0
+DOUBLE -- GameStateWithParticles::ball_maxRadius = 5.0
 DOUBLE -- GameStateWithParticles::ball_maxRoll = 0.0
 DOUBLE -- GameStateWithParticles::ball_maxPitch = 0.0
 DOUBLE -- GameStateWithParticles::ball_maxYaw = 0.0
 DOUBLE -- GameStateWithParticles::ball_thresholdDistance = 1.0
-DOUBLE -- GameStateWithParticles::ball_splineParameterSpeed = 0.02
-DOUBLE -- GameStateWithParticles::ball_splineParameterOffset = 0.3
-BOOL -- GameStateWithParticles::ball_loopOverSpline = true
+DOUBLE -- GameStateWithParticles::ball_splineParameterSpeed = 0.1
+DOUBLE -- GameStateWithParticles::ball_splineParameterOffset = 0.9
+BOOL -- GameStateWithParticles::ball_loopOverSpline = false
 DOUBLE -- GameStateWithParticles::ball_radius = 3.0
 
 # Demo mode configuration
 # -----------------------
-BOOL -- GameStateWithParticles::demoMode = false
+BOOL -- GameStateWithParticles::demoMode = true
 INT -- GameStateWithParticles::nExplosions = 10
 DOUBLE -- GameStateWithParticles::zoneRadius = 50.0
 
@@ -111,7 +110,7 @@ DIRECTORY -- laser::inputConfigFilePath = "..\configFiles\geometry"
 
 # Ball particle system internal configuration
 # -------------------------------------------------
-FILENAME -- ball::inputConfigFileName = "ball.txt"
+FILENAME -- ball::inputConfigFileName = "ball_RandomBurstCone.txt"
 DIRECTORY -- ball::inputConfigFilePath = "..\configFiles\geometry"
 
 # ///////////////////////////////////

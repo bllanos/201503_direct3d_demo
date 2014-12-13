@@ -1,75 +1,69 @@
 # Configuration file for the ball lightning particle system
-# (a RandomBurstCone object)
+# (a UniformBurstSphere object)
 
-# RandomBurstCone LogUser configuration
+# UniformBurstSphere LogUser configuration
 # -----------------------------------------------
-BOOL -- RandomBurstCone_LogUser::enableLogging = true
-WSTRING -- RandomBurstCone_LogUser::msgPrefix = L"Ball Geometry"
-BOOL -- RandomBurstCone_LogUser::useGlobalLog = false
-BOOL -- RandomBurstCone_LogUser::allocConsole = false
-BOOL -- RandomBurstCone_LogUser::allocLogFile = true
-FILENAME -- RandomBurstCone_LogUser::logFileName = "GameStateWithParticles_ParticlesLog.txt"
-DIRECTORY -- RandomBurstCone_LogUser::logFilePath = "..\logFiles"
-BOOL -- RandomBurstCone_LogUser::overwriteFile = false
-BOOL -- RandomBurstCone_LogUser::timestampEnable = true
+BOOL -- UniformBurstSphere_LogUser::enableLogging = true
+WSTRING -- UniformBurstSphere_LogUser::msgPrefix = L"Ball Lightning Geometry"
+BOOL -- UniformBurstSphere_LogUser::useGlobalLog = false
+BOOL -- UniformBurstSphere_LogUser::allocConsole = false
+BOOL -- UniformBurstSphere_LogUser::allocLogFile = true
+FILENAME -- UniformBurstSphere_LogUser::logFileName = "GameStateWithParticles_ParticlesLog.txt"
+DIRECTORY -- UniformBurstSphere_LogUser::logFilePath = "..\logFiles"
+BOOL -- UniformBurstSphere_LogUser::overwriteFile = false
+BOOL -- UniformBurstSphere_LogUser::timestampEnable = true
 
-# RandomBurstCone ConfigUser configuration
+# UniformBurstSphere ConfigUser configuration
 # -----------------------------------------
-BOOL -- RandomBurstCone_ConfigUser::enableConfigUseLogging = true
+BOOL -- UniformBurstSphere_ConfigUser::enableConfigUseLogging = true
 
-# RandomBurstCone geometry configuration
+# UniformBurstSphere geometry configuration
 # -----------------------------------------------
-INT -- RandomBurstCone::nColumns = 20
-INT -- RandomBurstCone::nRows = 20
-BOOL -- RandomBurstCone::createPoleParticles = false
-DOUBLE -- RandomBurstCone::billboardWidth = 0.5
-DOUBLE -- RandomBurstCone::billboardHeight = 0.5
-DOUBLE -- RandomBurstCone::billboardSpin = 0.005
-DOUBLE -- RandomBurstCone::linearSpeed = 0.01
-DOUBLE -- RandomBurstCone::creationTimeOffset = 100.0
-DOUBLE -- RandomBurstCone::lifeAmount = 1.0
-DOUBLE -- RandomBurstCone::decay = 0.0004
-DOUBLE -- RandomBurstCone::deathCutoff = 0.1
+INT -- UniformBurstSphere::nColumns = 20
+INT -- UniformBurstSphere::nRows = 20
+BOOL -- UniformBurstSphere::createPoleParticles = false
+DOUBLE -- UniformBurstSphere::billboardWidth = 0.1
+DOUBLE -- UniformBurstSphere::billboardHeight = 0.1
+DOUBLE -- UniformBurstSphere::billboardSpin = 0.001
+DOUBLE -- UniformBurstSphere::linearSpeed = 0.0
+DOUBLE -- UniformBurstSphere::creationTimeOffset = 0.0
+DOUBLE -- UniformBurstSphere::lifeAmount = 1.0
+DOUBLE -- UniformBurstSphere::decay = 0.0001
+DOUBLE -- UniformBurstSphere::deathCutoff = 0.0
 
-FLOAT4 -- RandomBurstCone::colorCast = (0.7, 1.0, 1.0, 1.0)
-DOUBLE -- RandomBurstCone::colorCastWeight = 0.5
-BOOL -- RandomBurstCone::debugColorCasts = false
+FLOAT4 -- UniformBurstSphere::colorCast = (1.0, 0.9, 1.0, 1.0)
+DOUBLE -- UniformBurstSphere::colorCastWeight = 0.5
+BOOL -- UniformBurstSphere::debugColorCasts = false
 
-# RandomBurstCone material configuration
+# UniformBurstSphere material configuration
 # ---------------------------------------
-FLOAT4 -- RandomBurstCone::ambientAlbedo = (1.0, 1.0, 1.0, 1.0)
-DOUBLE -- RandomBurstCone::transparencyMultiplier = 1.0
+FLOAT4 -- UniformBurstSphere::ambientAlbedo = (1.0, 1.0, 1.0, 1.0)
+DOUBLE -- UniformBurstSphere::transparencyMultiplier = 1.0
 
-# RandomBurstCone lighting configuration
+# UniformBurstSphere lighting configuration
 # ---------------------------------------
-BOOL -- RandomBurstCone::renderWithLighting = false
+BOOL -- UniformBurstSphere::renderWithLighting = false
 
-# RandomBurstCone albedo texture controls
+# UniformBurstSphere albedo texture controls
 # ----------------------------------------------
-BOOL -- RandomBurstCone::createAlbedoTexture = true
-BOOL -- RandomBurstCone::renderAlbedoTexture = true
+BOOL -- UniformBurstSphere::createAlbedoTexture = true
+BOOL -- UniformBurstSphere::renderAlbedoTexture = true
 
-# RandomBurstCone non-inherited parameters
-# -----------------------------------------
-DOUBLE -- RandomBurstCone::maximumPhiRange = 0.8
-DOUBLE -- RandomBurstCone::minimumRadius = 0.0
-DOUBLE -- RandomBurstCone::maximumRadius = 3.0
-
-# RandomBurstCone albedo texture configuration
+# UniformBurstSphere albedo texture configuration
 # ----------------------------------------------
-BOOL -- RandomBurstCone::albedoTexture_enableLogging = true
-WSTRING -- RandomBurstCone::albedoTexture_msgPrefix = L"Ball Geometry Albedo Texture"
-WSTRING -- RandomBurstCone::albedoTextureScope = L"albedoTexture"
-WSTRING -- RandomBurstCone::albedoTextureScope_LogUser = L"albedoTexture_LogUser"
-WSTRING -- RandomBurstCone::albedoTextureScope_ConfigUser = L"albedoTexture_ConfigUser"
-FILENAME -- RandomBurstCone::albedoTexture_inputConfigFileName = "ball.txt"
-DIRECTORY -- RandomBurstCone::albedoTexture_inputConfigFilePath = "..\configFiles\geometry"
+BOOL -- UniformBurstSphere::albedoTexture_enableLogging = true
+WSTRING -- UniformBurstSphere::albedoTexture_msgPrefix = L"Ball Lightning Geometry Albedo Texture"
+WSTRING -- UniformBurstSphere::albedoTextureScope = L"albedoTexture"
+WSTRING -- UniformBurstSphere::albedoTextureScope_LogUser = L"albedoTexture_LogUser"
+WSTRING -- UniformBurstSphere::albedoTextureScope_ConfigUser = L"albedoTexture_ConfigUser"
+FILENAME -- UniformBurstSphere::albedoTexture_inputConfigFileName = "ball.txt"
+DIRECTORY -- UniformBurstSphere::albedoTexture_inputConfigFilePath = "..\configFiles\geometry"
 
 # Albedo texture object configuration
 # ----------------------------------------------
 # LogUser
 BOOL -- albedoTexture_LogUser::enableLogging = true
-WSTRING -- albedoTexture_LogUser::msgPrefix = L"Ball Geometry Albedo Texture"
+WSTRING -- albedoTexture_LogUser::msgPrefix = L"Ball Lightning Geometry Albedo Texture"
 BOOL -- albedoTexture_LogUser::useGlobalLog = false
 BOOL -- albedoTexture_LogUser::allocConsole = false
 BOOL -- albedoTexture_LogUser::allocLogFile = true

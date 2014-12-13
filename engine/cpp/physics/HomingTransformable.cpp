@@ -37,7 +37,7 @@ HomingTransformable::HomingTransformable(const size_t capacity,
 	const bool loop,
 	DWORD currentTime) :
 	Transformable(
-	XMFLOAT3(0.0f, 0.0f, 0.0f),
+	XMFLOAT3(1.0f, 1.0f, 1.0f),
 	XMFLOAT3(0.0f, 0.0f, 0.0f),
 	XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f)),
 	m_startTime(currentTime), m_speedT(speedT),
@@ -46,7 +46,7 @@ HomingTransformable::HomingTransformable(const size_t capacity,
 	m_spline = new HomingSpline(capacity, initialSize, speed, start, end,
 		knotParameters, thresholdDistance);
 
-	float timeOffset = offsetT / fabs(m_speedT);
+	float timeOffset = offsetT / fabs(m_speedT / MILLISECS_PER_SEC_FLOAT);
 	m_startTime = static_cast<DWORD>(
 		static_cast<float>(m_startTime) + timeOffset
 		);
