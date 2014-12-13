@@ -62,7 +62,7 @@ public:
 
 	   'thresholdDistance' is the distance by which the 'end'
 	   Transformable must move before a new knot is added
-	   to the spline to capture its recent motion
+	   to the spline to capture its recent motion, and must be greater than zero.
 	*/
 	HomingSpline(const size_t capacity,
 		const size_t initialSize,

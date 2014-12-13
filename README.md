@@ -138,6 +138,9 @@ The following works were consulted for ideas during development:
   - Retrieved November 26, 2014
   - Usage terms: Permissive (http://www.nasa.gov/audience/formedia/features/MP_Photo_Guidelines.html#.VEQBixaDbfc)
 
+- "Orchid" (`textures\IMG_1931.JPG`)
+  - Image Source: Bernard Llanos
+
 ### Textures used by test code only
 
 - "King Fire in California, False-Color Infrared" (`textures\test\kingfire_oli_2014262_swir_lrg.jpg`)

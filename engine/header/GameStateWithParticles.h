@@ -23,6 +23,7 @@ Description
 #include "RandomBurstCone.h"
 #include "WanderingLineSpline.h"
 #include "UniformRandomSplineModel.h"
+#include "HomingTransformable.h"
 #include <vector>
 
 // Logging message prefix
@@ -86,6 +87,48 @@ Description
 
 #define GAMESTATEWITHPARTICLES_LASER_SPLINE_CLASS WanderingLineSpline
 
+/* Ball lightning particle system configuration */
+#define GAMESTATEWITHPARTICLES_BALL_LIFE_MIN 0
+#define GAMESTATEWITHPARTICLES_BALL_LIFE_DEFAULT 10000 // Milliseconds
+#define GAMESTATEWITHPARTICLES_BALL_LIFE_FIELD L"ballLife"
+
+#define GAMESTATEWITHPARTICLES_BALL_SPLINECAPACITY_DEFAULT 1
+#define GAMESTATEWITHPARTICLES_BALL_SPLINECAPACITY_FIELD L"ball_nSegmentsMax"
+
+#define GAMESTATEWITHPARTICLES_BALL_SPLINEINITIALCAPACITY_DEFAULT 1
+#define GAMESTATEWITHPARTICLES_BALL_SPLINEINITIALCAPACITY_FIELD L"ball_nSegmentsInitial"
+
+#define GAMESTATEWITHPARTICLES_BALL_SPLINESPEED_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_BALL_SPLINESPEED_FIELD L"ball_controlPointSpeed"
+
+#define GAMESTATEWITHPARTICLES_BALL_MAXRADIUS_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_BALL_MAXRADIUS_FIELD L"ball_maxRadius"
+
+#define GAMESTATEWITHPARTICLES_BALL_MAXROLL_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_BALL_MAXROLL_FIELD L"ball_maxRoll"
+
+#define GAMESTATEWITHPARTICLES_BALL_MAXPITCH_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_BALL_MAXPITCH_FIELD L"ball_maxPitch"
+
+#define GAMESTATEWITHPARTICLES_BALL_MAXYAW_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_BALL_MAXYAW_FIELD L"ball_maxYaw"
+
+#define GAMESTATEWITHPARTICLES_BALL_THRESHOLDDISTANCE_MIN 1.0f
+#define GAMESTATEWITHPARTICLES_BALL_THRESHOLDDISTANCE_DEFAULT 1.0f
+#define GAMESTATEWITHPARTICLES_BALL_THRESHOLDDISTANCE_FIELD L"ball_thresholdDistance"
+
+#define GAMESTATEWITHPARTICLES_BALL_SPEEDT_DEFAULT 0.01f
+#define GAMESTATEWITHPARTICLES_BALL_SPEEDT_FIELD L"ball_splineParameterSpeed"
+
+#define GAMESTATEWITHPARTICLES_BALL_OFFSETT_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_BALL_OFFSETT_FIELD L"ball_splineParameterOffset"
+
+#define GAMESTATEWITHPARTICLES_BALL_LOOP_DEFAULT false
+#define GAMESTATEWITHPARTICLES_BALL_LOOP_FIELD L"ball_loopOverSpline"
+
+#define GAMESTATEWITHPARTICLES_BALL_RADIUS_DEFAULT 0.0f
+#define GAMESTATEWITHPARTICLES_BALL_RADIUS_FIELD L"ball_radius"
+
 /* If true, a continual fireworks show will be produced. */
 #define GAMESTATEWITHPARTICLES_DEMO_FIELD L"demoMode"
 #define GAMESTATEWITHPARTICLES_DEMO_DEFAULT false
@@ -96,6 +139,7 @@ Description
 
 #define GAMESTATEWITHPARTICLES_DEMO_NJETS 1
 #define GAMESTATEWITHPARTICLES_DEMO_NLASERS 1
+#define GAMESTATEWITHPARTICLES_DEMO_NBALLS 1
 
 // Radius of the spherical area in which to spawn fireworks
 #define GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_MIN 0.0f
@@ -115,6 +159,9 @@ Description
 
 // Laser configuration
 #define GAMESTATEWITHPARTICLES_GEOMETRY_LASER_SCOPE L"laser"
+
+// Ball configuration
+#define GAMESTATEWITHPARTICLES_GEOMETRY_BALL_SCOPE L"ball"
 
 class GameStateWithParticles : public GameState {
 
@@ -221,6 +268,12 @@ private:
 	// Keeps track of the positions at which to render lasers
 	std::vector<ActiveSplineParticles<UniformRandomSplineModel>*>* m_lasers;
 
+	// The model for all ball lightning effects
+	RandomBurstCone* m_ballModel;
+
+	// Keeps track of the positions at which to render ball lightning effects
+	std::vector<ActiveParticles<RandomBurstCone>*>* m_balls;
+
 	// Prevents double-transformation of lasers
 	Transformable* m_identity;
 
@@ -236,6 +289,18 @@ private:
 	size_t m_nSegmentsPerLaserSpline;
 	float m_laserControlPointSpeed;
 	WanderingLineTransformable::Parameters* m_laserTransformParameters;
+
+	/* Set globally for all ball lightning effects based on configuration data */
+	DWORD m_ballLifespan;
+	size_t m_nSegmentsPerBallMax;
+	size_t m_nSegmentsPerBallInitial;
+	float m_ballControlPointSpeed;
+	WanderingLineTransformable::Parameters* m_ballTransformParameters;
+	float m_ballThresholdDistance;
+	float m_ballSplineParameterSpeed;
+	float m_ballSplineParameterOffset;
+	bool m_ballLoopOverSpline;
+	float m_ballRadius;
 
 	DWORD m_currentTime;
 
@@ -270,6 +335,20 @@ public:
 
 	/* Adds a laser with the given endpoints */
 	virtual HRESULT spawnLaser(Transformable* const start, Transformable* const end) override;
+
+	/* Adds a ball lightning effect with the given endpoints.
+	   Outputs a pointer to the ball lightning effect, which allows
+	   for querying whether the effect has reached its target,
+	   its current position, and its radius.
+	   Refer to the HomingTransformable class for more information.
+
+	   (If the 'ballHandle' output parameter is passed in null,
+	    no handle will be output.)
+
+	   'ballHandle' is not owned by the caller (i.e. the caller
+	   must not delete it).
+	 */
+	virtual HRESULT spawnBall(Transformable* const start, Transformable* const end, HomingTransformable** ballHandle) override;
 
 	/* Removes all explosions with the transformation at the given
 	   memory location.
@@ -309,6 +388,40 @@ public:
 	   elements to lower indices.
 	 */
 	virtual HRESULT removeLaser(Transformable* const startTransform) override;
+
+	/* Removes the ball lightning effect with the transformation at the given
+	   memory location.
+	   'transform' is deleted and set to null if there exists a ball lightning
+	   effect corresponding to the transformation.
+
+	   If calling this function from within this class while iterating
+	   over 'm_balls', be sure to iterate backwards,
+	   as this function will result in the deletion of an element
+	   in 'm_balls', followed by the shifting of remaining
+	   elements to lower indices.
+
+	   If no ball lightning effect is found with the given transformation,
+	   this function returns a failure result and does nothing.
+	 */
+	virtual HRESULT removeBall(HomingTransformable*& transform) override;
+
+	/* Removes all ball lightning effects that had the transformation at the given
+	   memory location as their endpoint.
+	   'transform' is not deleted by this function.
+
+	   If calling this function from within this class while iterating
+	   over 'm_balls', be sure to iterate backwards,
+	   as this function may result in the deletion of an element
+	   in 'm_balls', followed by the shifting of remaining
+	   elements to lower indices.
+
+	   Tip: This function is useful to prevent errors resulting from
+	        the deletion of the target of a ball lightning effect
+	        before the lightning effect has been deleted.
+	        (Otherwise, the program will ball lightning effect will trigger
+	         a crash when querying its target for an updated position.)
+	 */
+	virtual HRESULT removeBallsByEndpoint(Transformable* const transform) override;
 
 protected:
 

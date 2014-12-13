@@ -17,6 +17,7 @@
 #include "MineShipModel.h"
 #include "GalleonShipModel.h"
 #include "FlatAtomicConfigIO.h"
+#include "HomingTransformable.h"
 
 // Logging message prefix
 #define GAMESTATE_START_MSG_PREFIX L"GameState"
@@ -77,6 +78,9 @@ class GameState : public State, public ConfigUser{
 	// Data members
 protected:
 	Camera* m_camera;
+
+	/* The transformation locating the player's ship */
+	Transformable* m_shipTransform;
 
 private:
 	Octtree* m_tree;
@@ -160,7 +164,9 @@ protected:
 	virtual HRESULT spawnMine();
 
 	virtual HRESULT spawnGalleon();
+
 	// Particle system API (implemented in a derived class)
+	// ----------------------------------------------------
 	/* Do not use these functions if the GameStateWithParticles
 	   class has been configured to be in demo mode,
 	   meaning that it spawns particle systems by itself.
@@ -177,6 +183,20 @@ protected:
 
 	/* Adds a laser with the given endpoints */
 	virtual HRESULT spawnLaser(Transformable* const start, Transformable* const end) = 0;
+
+	/* Adds a ball lightning effect with the given endpoints.
+	   Outputs a pointer to the ball lightning effect, which allows
+	   for querying whether the effect has reached its target,
+	   its current position, and its radius.
+	   Refer to the HomingTransformable class for more information.
+
+	   (If the 'ballHandle' output parameter is passed in null,
+	    no handle will be output.)
+
+	   'ballHandle' is not owned by the caller (i.e. the caller
+	   must not delete it).
+	*/
+	virtual HRESULT spawnBall(Transformable* const start, Transformable* const end, HomingTransformable** ballHandle) = 0;
 
 	/* Removes all explosions with the transformation at the given
 	   memory location.
@@ -203,4 +223,31 @@ protected:
 	    the laser beam has an infinite life - November 27, 2014)
 	 */
 	virtual HRESULT removeLaser(Transformable* const startTransform) = 0;
+
+	/* Removes the ball lightning effect with the transformation
+	   at the given memory location.
+	   'transform' is deleted and set to null if there exists a ball lightning
+	   effect corresponding to the transformation.
+
+	   If no ball lightning effect is found with the given transformation,
+	   this function returns a failure result and does nothing.
+
+	   Call this function only to remove a ball lightning effect early.
+	   GameStateWithParticles will automatically delete ball lightning
+	   effects when they either reach their targets, or reach the ends
+	   of their lives.
+	 */
+	virtual HRESULT removeBall(HomingTransformable*& transform) = 0;
+
+	/* Removes all ball lightning effects that had the transformation
+	   at the given memory location as their endpoint.
+	   'transform' is not deleted by this function.
+
+	   Tip: This function is useful to prevent errors resulting from
+	        the deletion of the target of a ball lightning effect
+	        before the lightning effect has been deleted.
+	        (Otherwise, the program will ball lightning effect will trigger
+	         a crash when querying its target for an updated position.)
+	  */
+	virtual HRESULT removeBallsByEndpoint(Transformable* const transform) = 0;
 };

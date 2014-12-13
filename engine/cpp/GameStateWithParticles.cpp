@@ -42,14 +42,26 @@ GameStateWithParticles::GameStateWithParticles(const bool configureNow) :
 GameState(false),
 m_explosionModel(0), m_explosions(0),
 m_jetModel(0), m_jets(0),
-m_laserModel(0), m_lasers(0), m_identity(0),
+m_laserModel(0), m_lasers(0),
+m_ballModel(0), m_balls(0),
+m_identity(0),
 m_explosionLifespan(GAMESTATEWITHPARTICLES_EXPLOSION_LIFE_DEFAULT),
 m_jetLifespan(GAMESTATEWITHPARTICLES_JET_LIFE_DEFAULT),
 m_laserLifespan(GAMESTATEWITHPARTICLES_LASER_LIFE_DEFAULT),
+m_ballLifespan(GAMESTATEWITHPARTICLES_BALL_LIFE_DEFAULT),
 m_nSplinesPerLaser(GAMESTATEWITHPARTICLES_LASER_NSPLINES_DEFAULT),
 m_nSegmentsPerLaserSpline(GAMESTATEWITHPARTICLES_LASER_SPLINECAPACITY_DEFAULT),
 m_laserControlPointSpeed(GAMESTATEWITHPARTICLES_LASER_SPLINESPEED_DEFAULT),
 m_laserTransformParameters(0),
+m_nSegmentsPerBallMax(GAMESTATEWITHPARTICLES_BALL_SPLINECAPACITY_DEFAULT),
+m_nSegmentsPerBallInitial(GAMESTATEWITHPARTICLES_BALL_SPLINEINITIALCAPACITY_DEFAULT),
+m_ballControlPointSpeed(GAMESTATEWITHPARTICLES_BALL_SPLINESPEED_DEFAULT),
+m_ballTransformParameters(0),
+m_ballThresholdDistance(GAMESTATEWITHPARTICLES_BALL_THRESHOLDDISTANCE_DEFAULT),
+m_ballSplineParameterSpeed(GAMESTATEWITHPARTICLES_BALL_SPEEDT_DEFAULT),
+m_ballSplineParameterOffset(GAMESTATEWITHPARTICLES_BALL_OFFSETT_DEFAULT),
+m_ballLoopOverSpline(GAMESTATEWITHPARTICLES_BALL_LOOP_DEFAULT),
+m_ballRadius(GAMESTATEWITHPARTICLES_BALL_RADIUS_DEFAULT),
 m_currentTime(0), m_demo_enabled(GAMESTATEWITHPARTICLES_DEMO_DEFAULT),
 m_demo_nExplosions(GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_DEFAULT),
 m_demo_zoneRadius(GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_DEFAULT),
@@ -68,6 +80,7 @@ GameStateWithParticles::~GameStateWithParticles(void) {
 	ActiveParticles<UniformBurstSphere>* activeExplosion = 0;
 	ActiveParticles<RandomBurstCone>* activeJet = 0;
 	ActiveSplineParticles<UniformRandomSplineModel>* activeLaser = 0;
+	ActiveParticles<RandomBurstCone>* activeBall = 0;
 
 	if( m_explosionModel != 0 ) {
 		delete m_explosionModel;
@@ -135,6 +148,31 @@ GameStateWithParticles::~GameStateWithParticles(void) {
 	if( m_laserTransformParameters != 0 ) {
 		delete m_laserTransformParameters;
 		m_laserTransformParameters = 0;
+	}
+
+	if( m_ballModel != 0 ) {
+		delete m_ballModel;
+		m_ballModel = 0;
+	}
+
+	if( m_balls != 0 ) {
+		const vector<ActiveParticles<RandomBurstCone>*>::size_type nBalls = m_balls->size();
+		for( vector<ActiveParticles<RandomBurstCone>*>::size_type i = 0; i < nBalls; ++i ) {
+			activeBall = (*m_balls)[i];
+			if( activeBall != 0 ) {
+				delete activeBall->getTransform();
+				delete activeBall;
+				activeBall = 0;
+				(*m_balls)[i] = 0;
+			}
+		}
+		delete m_balls;
+		m_balls = 0;
+	}
+
+	if( m_ballTransformParameters != 0 ) {
+		delete m_ballTransformParameters;
+		m_ballTransformParameters = 0;
 	}
 
 	if (m_identity != 0) {
@@ -207,6 +245,16 @@ HRESULT GameStateWithParticles::drawContents(ID3D11DeviceContext* const context,
 		result = (*m_lasers)[i]->drawUsingAppropriateRenderer(context, manager, m_camera);
 		if( FAILED(result) ) {
 			logMessage(L"Failed to render laser particle system at index = " + std::to_wstring(i) + L".");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
+	// Draw all balls
+	const vector<ActiveParticles<RandomBurstCone>*>::size_type nBalls = m_balls->size();
+	for( vector<ActiveParticles<RandomBurstCone>*>::size_type i = 0; i < nBalls; ++i ) {
+		result = (*m_balls)[i]->drawUsingAppropriateRenderer(context, manager, m_camera);
+		if( FAILED(result) ) {
+			logMessage(L"Failed to render ball particle system at index = " + std::to_wstring(i) + L".");
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}
@@ -305,6 +353,36 @@ HRESULT GameStateWithParticles::update(const DWORD currentTime, const DWORD upda
 		}
 	}
 
+	// Update all ball lightning effects
+	HomingTransformable* ballTransform = 0;
+	vector<ActiveParticles<RandomBurstCone>*>::size_type nBalls = m_balls->size();
+	if( nBalls > 0 ) {
+		for( vector<ActiveParticles<RandomBurstCone>*>::size_type i = nBalls - 1; (i >= 0) && (i < nBalls); --i ) {
+			result = (*m_balls)[i]->update(currentTime, updateTimeInterval, isExpired, true);
+			if( FAILED(result) ) {
+				logMessage(L"Failed to update ball particle system at index = " + std::to_wstring(i) + L".");
+				return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+			} else {
+				ballTransform = static_cast<HomingTransformable*>((*m_balls)[i]->getTransform());
+				if( isExpired || ballTransform->isAtEnd() ) {
+					result = removeBall(ballTransform);
+					if( FAILED(result) ) {
+						logMessage(L"Failed to remove expired ball particle system at index = " + std::to_wstring(i) + L".");
+						return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+					} else {
+						nBalls = m_balls->size();
+						if( i >= nBalls ) {
+							/* This may result in multiple update() calls to the same
+							   ball, but it is assumed that this does not matter.
+							 */
+							i = nBalls - 1;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	// Update internal timer
 	m_currentTime = currentTime;
 
@@ -370,6 +448,40 @@ HRESULT GameStateWithParticles::spawnLaser(Transformable* const start, Transform
 	return ERROR_SUCCESS;
 }
 
+HRESULT GameStateWithParticles::spawnBall(Transformable* const start, Transformable* const end, HomingTransformable** ballHandle) {
+	if( m_ballModel == 0 ) {
+		logMessage(L"Cannot spawn balls before the ball particle system has been constructed and configured.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	HomingTransformable* tempHandle = new HomingTransformable(
+		m_nSegmentsPerBallMax,
+		m_nSegmentsPerBallInitial,
+		m_ballControlPointSpeed,
+		start,
+		end,
+		*m_ballTransformParameters,
+		m_ballThresholdDistance,
+		m_ballSplineParameterSpeed,
+		m_ballSplineParameterOffset,
+		m_ballLoopOverSpline,
+		m_currentTime);
+
+	tempHandle->setRadius(m_ballRadius);
+
+	ActiveParticles<RandomBurstCone>* newBall = 0;
+	newBall = new ActiveParticles<RandomBurstCone>(
+		m_ballModel, tempHandle, m_ballLifespan, m_currentTime,
+		XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+	m_balls->emplace_back(newBall);
+
+	if( ballHandle != 0 ) {
+		*ballHandle = tempHandle;
+	}
+	return ERROR_SUCCESS;
+}
+
 HRESULT GameStateWithParticles::removeExplosion(Transformable* const transform) {
 	vector<ActiveParticles<UniformBurstSphere>*>::iterator it = m_explosions->begin();
 
@@ -428,6 +540,53 @@ HRESULT GameStateWithParticles::removeLaser(Transformable* const startTransform)
 	return ERROR_SUCCESS;
 }
 
+HRESULT GameStateWithParticles::removeBall(HomingTransformable*& transform) {
+	vector<ActiveParticles<RandomBurstCone>*>::iterator it = m_balls->begin();
+
+	HRESULT result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_DATA_NOT_FOUND);
+	bool found = false;
+	while( it != m_balls->end() ) {
+		if( (*it)->getTransform() == transform ) {
+			if( found ) {
+				logMessage(L"Found multiple ball lightning effects with the same HomingTransformable pointer.");
+				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_BROKEN_CODE);
+			} else {
+				found = true;
+				result = ERROR_SUCCESS;
+			}
+			delete *it;
+			it = m_balls->erase(it);
+		} else {
+			++it;
+		}
+	}
+
+	if( SUCCEEDED(result) ) {
+		delete transform;
+		transform = 0;
+	}
+	return result;
+}
+
+HRESULT GameStateWithParticles::removeBallsByEndpoint(Transformable* const transform) {
+	vector<ActiveParticles<RandomBurstCone>*>::iterator it = m_balls->begin();
+	HomingTransformable* ballTransform = 0;
+
+	while( it != m_balls->end() ) {
+		ballTransform = static_cast<HomingTransformable*>((*it)->getTransform());
+		if( ballTransform->getEnd() == transform ) {
+			delete ballTransform;
+			ballTransform = 0;
+			delete *it;
+			it = m_balls->erase(it);
+		} else {
+			++it;
+		}
+	}
+
+	return ERROR_SUCCESS;
+}
+
 HRESULT GameStateWithParticles::configure(void) {
 	HRESULT result = ERROR_SUCCESS;
 
@@ -450,6 +609,26 @@ HRESULT GameStateWithParticles::configure(void) {
 	m_laserTransformParameters->rollPitchYawSpeeds.x = GAMESTATEWITHPARTICLES_LASER_ROLLSPEED_DEFAULT;
 	m_laserTransformParameters->rollPitchYawSpeeds.y = GAMESTATEWITHPARTICLES_LASER_PITCHSPEED_DEFAULT;
 	m_laserTransformParameters->rollPitchYawSpeeds.z = GAMESTATEWITHPARTICLES_LASER_YAWSPEED_DEFAULT;
+
+	m_ballLifespan = GAMESTATEWITHPARTICLES_BALL_LIFE_DEFAULT;
+	m_nSegmentsPerBallMax = GAMESTATEWITHPARTICLES_BALL_SPLINECAPACITY_DEFAULT;
+	m_nSegmentsPerBallInitial = GAMESTATEWITHPARTICLES_BALL_SPLINEINITIALCAPACITY_DEFAULT;
+	m_ballControlPointSpeed = GAMESTATEWITHPARTICLES_BALL_SPLINESPEED_DEFAULT;
+	m_ballTransformParameters = new WanderingLineTransformable::Parameters;
+	SecureZeroMemory(m_ballTransformParameters, sizeof(WanderingLineTransformable::Parameters));
+	m_ballTransformParameters->maxRadius = GAMESTATEWITHPARTICLES_BALL_MAXRADIUS_DEFAULT;
+	m_ballTransformParameters->linearSpeed = 0.0f;
+	m_ballTransformParameters->maxRollPitchYaw.x = GAMESTATEWITHPARTICLES_BALL_MAXROLL_DEFAULT;
+	m_ballTransformParameters->maxRollPitchYaw.y = GAMESTATEWITHPARTICLES_BALL_MAXPITCH_DEFAULT;
+	m_ballTransformParameters->maxRollPitchYaw.z = GAMESTATEWITHPARTICLES_BALL_MAXYAW_DEFAULT;
+	m_ballTransformParameters->rollPitchYawSpeeds.x = 0.0f;
+	m_ballTransformParameters->rollPitchYawSpeeds.y = 0.0f;
+	m_ballTransformParameters->rollPitchYawSpeeds.z = 0.0f;
+	m_ballThresholdDistance = GAMESTATEWITHPARTICLES_BALL_THRESHOLDDISTANCE_DEFAULT;
+	m_ballSplineParameterSpeed = GAMESTATEWITHPARTICLES_BALL_SPEEDT_DEFAULT;
+	m_ballSplineParameterOffset = GAMESTATEWITHPARTICLES_BALL_OFFSETT_DEFAULT;
+	m_ballLoopOverSpline = GAMESTATEWITHPARTICLES_BALL_LOOP_DEFAULT;
+	m_ballRadius = GAMESTATEWITHPARTICLES_BALL_RADIUS_DEFAULT;
 
 	m_demo_enabled = GAMESTATEWITHPARTICLES_DEMO_DEFAULT;
 	m_demo_nExplosions = GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_DEFAULT;
@@ -548,6 +727,78 @@ HRESULT GameStateWithParticles::configure(void) {
 
 			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_LASER_YAWSPEED_FIELD, doubleValue) ) {
 				m_laserTransformParameters->rollPitchYawSpeeds.z = static_cast<float>(*doubleValue);
+			}
+
+			if( retrieve<Config::DataType::INT, int>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_LIFE_FIELD, intValue) ) {
+				if( *intValue < GAMESTATEWITHPARTICLES_BALL_LIFE_MIN ) {
+					logMessage(L"The ball lifespan value retrieved from configuration data is too low. Using the default value of "
+						+ std::to_wstring(GAMESTATEWITHPARTICLES_BALL_LIFE_DEFAULT) + L".");
+				} else {
+					m_ballLifespan = static_cast<DWORD>(*intValue);
+				}
+			}
+
+			if( retrieve<Config::DataType::INT, int>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_SPLINECAPACITY_FIELD, intValue) ) {
+				if( *intValue < 1 ) {
+					logMessage(L"The ball spline maximum capacity retrieved from configuration data is too low. Using the default value of "
+						+ std::to_wstring(GAMESTATEWITHPARTICLES_BALL_SPLINECAPACITY_DEFAULT) + L".");
+				} else {
+					m_nSegmentsPerBallMax = static_cast<DWORD>(*intValue);
+				}
+			}
+
+			if( retrieve<Config::DataType::INT, int>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_SPLINEINITIALCAPACITY_FIELD, intValue) ) {
+				if( *intValue < 1 ) {
+					logMessage(L"The ball spline initial capacity retrieved from configuration data is too low. Using the default value of "
+						+ std::to_wstring(GAMESTATEWITHPARTICLES_BALL_SPLINEINITIALCAPACITY_DEFAULT) + L".");
+				} else {
+					m_nSegmentsPerBallInitial = static_cast<DWORD>(*intValue);
+				}
+			}
+
+			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_SPLINESPEED_FIELD, doubleValue) ) {
+				m_ballControlPointSpeed = static_cast<float>(*doubleValue);
+			}
+
+			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_MAXRADIUS_FIELD, doubleValue) ) {
+				m_ballTransformParameters->maxRadius = static_cast<float>(*doubleValue);
+			}
+
+			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_MAXROLL_FIELD, doubleValue) ) {
+				m_ballTransformParameters->maxRollPitchYaw.x = static_cast<float>(*doubleValue);
+			}
+
+			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_MAXPITCH_FIELD, doubleValue) ) {
+				m_ballTransformParameters->maxRollPitchYaw.y = static_cast<float>(*doubleValue);
+			}
+
+			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_MAXYAW_FIELD, doubleValue) ) {
+				m_ballTransformParameters->maxRollPitchYaw.z = static_cast<float>(*doubleValue);
+			}
+
+			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_THRESHOLDDISTANCE_FIELD, doubleValue) ) {
+				if( *doubleValue < GAMESTATEWITHPARTICLES_BALL_THRESHOLDDISTANCE_MIN ) {
+					logMessage(L"The ball spline threshold updating distance retrieved from configuration data is too low. Using the default value of "
+						+ std::to_wstring(GAMESTATEWITHPARTICLES_BALL_THRESHOLDDISTANCE_MIN) + L".");
+				} else {
+					m_ballThresholdDistance = static_cast<float>(*doubleValue);
+				}
+			}
+
+			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_SPEEDT_FIELD, doubleValue) ) {
+				m_ballSplineParameterSpeed = static_cast<float>(*doubleValue);
+			}
+
+			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_OFFSETT_FIELD, doubleValue) ) {
+				m_ballSplineParameterOffset = static_cast<float>(*doubleValue);
+			}
+
+			if( retrieve<Config::DataType::BOOL, bool>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_LOOP_FIELD, boolValue) ) {
+				m_ballLoopOverSpline = *boolValue;
+			}
+
+			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_RADIUS_FIELD, doubleValue) ) {
+				m_ballRadius = static_cast<float>(*doubleValue);
 			}
 
 			if( retrieve<Config::DataType::BOOL, bool>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_DEMO_FIELD, boolValue) ) {
@@ -675,6 +926,15 @@ HRESULT GameStateWithParticles::configureParticles(void) {
 		CONFIGUSER_INPUT_FILE_PATH_FIELD
 		);
 
+	m_ballModel = new RandomBurstCone(
+		&configIO, // Used to load configuration file
+		&config, // Queried for location of configuration file
+		GAMESTATEWITHPARTICLES_GEOMETRY_BALL_SCOPE,
+		CONFIGUSER_INPUT_FILE_NAME_FIELD,
+		GAMESTATEWITHPARTICLES_GEOMETRY_BALL_SCOPE,
+		CONFIGUSER_INPUT_FILE_PATH_FIELD
+		);
+
 	return result;
 }
 
@@ -704,6 +964,14 @@ HRESULT GameStateWithParticles::initializeParticles(ID3D11Device* device) {
 	}
 
 	m_lasers = new vector<ActiveSplineParticles<UniformRandomSplineModel>*>();
+
+	if( FAILED(m_ballModel->initialize(device, 0)) ) {
+		logMessage(L"Failed to initialize the ball lightning particle system.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	m_balls = new vector<ActiveParticles<RandomBurstCone>*>();
+
 	return ERROR_SUCCESS;
 }
 
@@ -780,6 +1048,21 @@ HRESULT GameStateWithParticles::updateDemo(void) {
 		}
 
 		if( FAILED(spawnLaser(m_demoStart, m_demoEnd)) ) {
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
+	if( m_balls->size() < GAMESTATEWITHPARTICLES_DEMO_NBALLS ) {
+
+		if( m_demoStart == 0 ) {
+			m_demoStart = new Transformable(
+				XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
+				XMFLOAT3(-10.0f, -10.0f, 30.0f), // Position
+				XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
+				);
+		}
+
+		if( FAILED(spawnBall(m_demoStart, m_shipTransform, 0)) ) {
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}
