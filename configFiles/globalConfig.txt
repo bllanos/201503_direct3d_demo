@@ -17,8 +17,8 @@ BOOL -- BasicWindow_ConfigUser::enableConfigUseLogging = true
 # The title will appear only in the logs, being overwritten with FPS data by the StateControl instance
 WSTRING -- BasicWindow::windowTitle = L"Main Window"
 BOOL -- BasicWindow::exitOnClose = true
-INT -- BasicWindow::width = 800
-INT -- BasicWindow::height = 600
+INT -- BasicWindow::width = 1200
+INT -- BasicWindow::height = 1000
 
 # GeometryRendererManager setup
 # -----------------------------

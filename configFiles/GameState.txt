@@ -89,7 +89,7 @@ DOUBLE -- GameStateWithParticles::ball_radius = 1.5
 
 # Demo mode configuration
 # -----------------------
-BOOL -- GameStateWithParticles::demoMode = false
+BOOL -- GameStateWithParticles::demoMode = true
 INT -- GameStateWithParticles::nExplosions = 10
 DOUBLE -- GameStateWithParticles::zoneRadius = 50.0
 

@@ -32,7 +32,7 @@ BOOL -- TwoFrameSSSE::pastFrameContainsSSSE = true
 # Constant buffer parameters
 # --------------------------
 FLOAT4 -- TwoFrameSSSE::globals_globalIndex = (0.0, 0.0, 0.0, 1.0)
-FLOAT4 -- TwoFrameSSSE::globals_parameters = (0.25, 0.8, 1000.0, 0.9)
+FLOAT4 -- TwoFrameSSSE::globals_parameters = (0.20, 0.85, 1000.0, 0.9)
 
 # Vertex Shader setup
 # -------------------
