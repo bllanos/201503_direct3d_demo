@@ -174,20 +174,16 @@ The following works were consulted for ideas during development:
   as mip maps will not be generated at runtime.
 
 ## Camera Controls
-Toggle Camera Mode:
-- First/third/free Camera: P
-
-- Read below for first/third/free camera controls.
   
 ## Free Camera Controls
-Move Camera with Mouse:
-- Pan/Tilt: CTRL + Move Mouse
+Use the mouse for small panning and tilting motion:
+- CTRL + Move Mouse
     
 Move Camera:
-- Left:     SHIFT + LEFT ARROW
-- Right:    SHIFT + Right ARROW
-- Forward:  SHIFT + UP ARROW
-- Backward: SHIFT + DOWN ARROW
+- Left:     LEFT ARROW
+- Right:    Right ARROW
+- Forward:  UP ARROW
+- Backward: DOWN ARROW
     
 Pan Camera:
 - Left:  CTRL + LEFT ARROW
@@ -198,7 +194,6 @@ Tilt Camera:
 - Down: CTRL + UP ARROW
     
 Crane Camera:
-
 - Up:   C + UP ARROW
 - Down: C + DOWN ARROW
     
@@ -209,24 +204,6 @@ Roll Camera:
 Zoom Camera:
 - In:  Z + UP ARROW
 - Out: Z + DOWN ARROW
-
-## Player Controls (First Person / Third Person Camera)
-Spin Player with Mouse:
-- Pan/Tilt: There is a deadzone in the center of the screen where the mouse will not affect
-			the camera orientation. Move away from this deadzone and the orientation will
-			accelerate toward that direction.
-			
-Horizontal Movement:
-- Left:  A
-- Right: D
-
-Vertical Movement:
-- Up:   SHIFT
-- Down: CTRL
-
-Z Movement:
-- Forward:  W
-- Backward: S
 
 ## Debugging Controls
 

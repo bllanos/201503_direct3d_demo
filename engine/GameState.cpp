@@ -633,7 +633,6 @@ HRESULT GameState::spawnPlayerShip()
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	
-	m_camera->SetFollowTransform(parent);
 	m_shipTransform = parent;
 	return ERROR_SUCCESS;
 

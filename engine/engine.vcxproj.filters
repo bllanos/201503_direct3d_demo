@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -46,9 +46,6 @@
     <Filter Include="test\source">
       <UniqueIdentifier>{d8e4676c-b3ec-45eb-90e2-3a4211ded724}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\input">
-      <UniqueIdentifier>{b7e4783b-55dc-41da-9497-4e22a2d8602d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="header\util">
       <UniqueIdentifier>{124a1acb-2c5c-40da-ac9b-8175cc9fc999}</UniqueIdentifier>
     </Filter>
@@ -69,6 +66,9 @@
     </Filter>
     <Filter Include="source\ssse">
       <UniqueIdentifier>{36fd3c9b-270f-4a2d-9ed9-bc4c0336a806}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\input">
+      <UniqueIdentifier>{b7e4783b-55dc-41da-9497-4e22a2d8602d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -175,9 +175,6 @@
       <Filter>source\geometry</Filter>
     </ClCompile>
     <ClCompile Include="cpp\camera\Camera.cpp">
-      <Filter>source\camera</Filter>
-    </ClCompile>
-    <ClCompile Include="cpp\camera\CameraTransformable.cpp">
       <Filter>source\camera</Filter>
     </ClCompile>
     <ClCompile Include="cpp\geometry\InvariantTexturedParticles.cpp">
@@ -372,9 +369,6 @@
       <Filter>header\geometry</Filter>
     </ClInclude>
     <ClInclude Include="header\camera\Camera.h">
-      <Filter>header\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="header\camera\CameraTransformable.h">
       <Filter>header\camera</Filter>
     </ClInclude>
     <ClInclude Include="header\geometry\InvariantTexturedParticles.h">

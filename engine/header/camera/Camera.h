@@ -17,7 +17,6 @@
 #include <DirectXMath.h>
 #include "IInteractive.h"
 #include "Transformable.h"
-#include "CameraTransformable.h"
 #include "LogUser.h"
 
 using namespace DirectX;
@@ -58,8 +57,6 @@ Pan-Tilt-Roll-Strafe-Dolly-Crane-Zooom
 	const float MAX_CAMERA_FIELD_OF_VIEW = NOMINAL_FIELD_OF_VIEW * 3;
 	const float MIN_CAMERA_FIELD_OF_VIEW = NOMINAL_FIELD_OF_VIEW / 3;
 
-	enum CameraMode { FIRST_PERSON_CAMERA = 0, THIRD_PERSON_CAMERA, FREE_CAMERA };
-
 class Camera : public IInteractive, public LogUser
 {
 public:
@@ -81,9 +78,6 @@ public:
 	void RollRight(); //rotate right around cameara direction vector
 	void ZoomIn(); //increase the effective focal length for camera lens (smaller field of view angle)
 	void ZoomOut(); //decrease the effective focal length of the camera lens (greater field of view angle)
-
-	// follow the given transform if the user wishes to (a key toggle)
-	void SetFollowTransform(Transformable* followTransform);
 
 	XMFLOAT3 GetPosition() const;
 
@@ -112,13 +106,7 @@ private:
 	XMFLOAT4X4 m_viewMatrix;
 	XMFLOAT4X4 m_projectionMatrix;
 
-	CameraTransformable* m_transform;
-	
-	// follow this transformable (object tracking)
-	Transformable* m_followTransform;
-
-	// the user may toggle whether or not they wish to follow the transform (for now)
-	CameraMode cameraMode;
+	Transformable* m_transform;
 };
 
 #endif
