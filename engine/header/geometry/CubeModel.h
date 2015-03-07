@@ -67,9 +67,6 @@ public:
 	/* Expects only a single Transformable */
 	virtual HRESULT setTransformables(const std::vector<Transformable*>* const transform) override;
 
-	virtual float getRadius() override;
-	virtual XMFLOAT3 getPosition() override;
-
 	// Data members
 protected:
 	/* The Transformable object is responsible for making this

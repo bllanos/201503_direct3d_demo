@@ -27,15 +27,8 @@ Description
 //#include "TexturedSphereTestState.h"
 //#define STATECONTROL_FIRST_STATE TexturedSphereTestState
 
-// Class of the first State to be run
-//#include "HierarchicalCubesTestState.h"
-//#define STATECONTROL_FIRST_STATE HierarchicalCubesTestState
-
 #include "GameStateWithSSSE.h"
 #define STATECONTROL_FIRST_STATE GameStateWithSSSE
-
-//#include "ShipModelTestState.h"
-//#define STATECONTROL_FIRST_STATE ShipModelTestState
 
 #include "BasicWindow.h"
 #include "State.h"

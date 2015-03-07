@@ -78,17 +78,6 @@ HRESULT UniformBurstSphere::initialize(ID3D11Device* const device,
 	return result;
 }
 
-XMFLOAT3 UniformBurstSphere::getPosition() {
-	return m_transform->getPosition();
-}
-
-float UniformBurstSphere::getRadius() {
-	XMFLOAT3 scale = m_transform->getScale();
-	float maxScale = (scale.x > scale.y) ? scale.x : scale.y;
-	maxScale = (scale.y > scale.z) ? scale.y : scale.z;
-	return (m_time.x * m_linearSpeed + 1.0f) * maxScale; // + 1.0f for the initial radius
-}
-
 size_t UniformBurstSphere::getNumberOfVerticesToAdd(void) const {
 	if( m_createPoles ) {
 		return m_nColumns * m_nRows + 2;

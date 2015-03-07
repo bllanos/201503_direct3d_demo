@@ -171,9 +171,6 @@
     <ClCompile Include="cpp\rendering\InvariantParticlesRenderer.cpp">
       <Filter>source\rendering</Filter>
     </ClCompile>
-    <ClCompile Include="cpp\geometry\ShipModel.cpp">
-      <Filter>source\geometry</Filter>
-    </ClCompile>
     <ClCompile Include="cpp\camera\Camera.cpp">
       <Filter>source\camera</Filter>
     </ClCompile>
@@ -202,12 +199,6 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="cpp\geometry\RandomBurstCone.cpp">
-      <Filter>source\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="cpp\geometry\MineShipModel.cpp">
-      <Filter>source\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="cpp\geometry\GalleonShipModel.cpp">
       <Filter>source\geometry</Filter>
     </ClCompile>
     <ClCompile Include="cpp\physics\Knot.cpp">
@@ -365,9 +356,6 @@
     <ClInclude Include="header\physics\Transformable.h">
       <Filter>header\physics</Filter>
     </ClInclude>
-    <ClInclude Include="header\geometry\ShipModel.h">
-      <Filter>header\geometry</Filter>
-    </ClInclude>
     <ClInclude Include="header\camera\Camera.h">
       <Filter>header\camera</Filter>
     </ClInclude>
@@ -399,12 +387,6 @@
       <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="header\geometry\RandomBurstCone.h">
-      <Filter>header\geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="header\geometry\MineShipModel.h">
-      <Filter>header\geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="header\geometry\GalleonShipModel.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
     <ClInclude Include="header\physics\Knot.h">

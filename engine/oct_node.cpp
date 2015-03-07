@@ -59,51 +59,8 @@ Octnode::~Octnode(){
 }
 
 int Octnode::fits(ObjectModel * newGameObject){
-	//check to make sure the object's bounded size is less than or equal to the size of the node cube
-	//this is the fast check to make sure it would be able to fit
-	if(newGameObject->getBoundingRadius()*2 > length){
-		return -1;
-	}
-	
-	/*this checks if the object is contained within the node's cubic boundaries by checking against 3 planes
-	*these planes are defined as the left side of the cube, the top side of the cube, the front side of the cube
-	*the check against the cube is defined as checking the distance from the bounding sphere's origin against the bounds of the cube
-	*how this bounds checking works is by
-	*/
-
-//left plane
-	
-	//first vector 0th and 4th
-	//second vector 0th and 1st
-	XMFLOAT3 plane1[] = { vertices[0], vertices[4], vertices[1] };
-	if (!spherePlaneCheck(plane1, newGameObject->getBoundingOrigin(), length, newGameObject->getBoundingRadius())) return -1;
-
-	//top plane
-
-	//first vector 0th and 4th
-	//second vector 0th and 2nd
-	XMFLOAT3 plane2[] = { vertices[0], vertices[4], vertices[2] };
-	if (!spherePlaneCheck(plane2, newGameObject->getBoundingOrigin(), length, newGameObject->getBoundingRadius())) return -1;
-
-//front plane
-	
-	//first vector 0th and 2nd
-	//second vector 0th and 1st
-	XMFLOAT3 plane3[] = { vertices[0], vertices[2], vertices[1] };
-	if (!spherePlaneCheck(plane3, newGameObject->getBoundingOrigin(), length, newGameObject->getBoundingRadius())) return -1;
-	
-//it fits in this node but we have to check if it fits in a smaller node
-	for(int i = 0; i < 8; i++){
-		//make sure that the children exist
-		if(children[i] == NULL) continue;
-		//oh hey look the object fit into a child, not this nodes problem to put it in
-		if(children[i]->fits(newGameObject) == 0) return 0;
-	}
-	
-	
-//doesn't fit in children but fits here so add it to this node
+	// Add it to this node
 	nodeObjectList->push_back(newGameObject);
-	
 	return 0;
 }
 
@@ -113,39 +70,6 @@ return int is a marker of if something must be done to find the new home for thi
 -1 = something does need to happen to fit it in again
 */
 int Octnode::refit(ObjectModel * gameObject){
-	//check to make sure the object's bounded size is less than or equal to the size of the node cube
-	//this is the fast check to make sure it would be able to fit
-	if (gameObject->getBoundingRadius() * 2 > length){
-		return -1;
-	}
-
-	/*this checks if the object is contained within the node's cubic boundaries by checking against 3 planes
-	*these planes are defined as the left side of the cube, the top side of the cube, the front side of the cube
-	*the check against the cube is defined as checking the distance from the bounding sphere's origin against the bounds of the cube
-	*how this bounds checking works is by
-	*/
-
-	//left plane
-
-	//first vector 0th and 4th
-	//second vector 0th and 1st
-	XMFLOAT3 plane1[] = { vertices[0], vertices[4], vertices[1] };
-	if (!spherePlaneCheck(plane1, gameObject->getBoundingOrigin(), length, gameObject->getBoundingRadius())) return -1;
-
-	//top plane
-
-	//first vector 0th and 4th
-	//second vector 0th and 2nd
-	XMFLOAT3 plane2[] = { vertices[0], vertices[4], vertices[2] };
-	if (!spherePlaneCheck(plane2, gameObject->getBoundingOrigin(), length, gameObject->getBoundingRadius())) return -1;
-
-	//front plane
-
-	//first vector 0th and 2nd
-	//second vector 0th and 1st
-	XMFLOAT3 plane3[] = { vertices[0], vertices[2], vertices[1] };
-	if (!spherePlaneCheck(plane3, gameObject->getBoundingOrigin(), length, gameObject->getBoundingRadius())) return -1;
-
 	return 0;
 }
 

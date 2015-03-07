@@ -20,9 +20,6 @@ class ObjectModel : public LogUser {
 		ObjectModel(IGeometry* geometry);
 		virtual ~ObjectModel(void);
 
-		virtual XMFLOAT3 getBoundingOrigin();
-		virtual float getBoundingRadius();
-
 		virtual HRESULT updateContainedTransforms(const DWORD currentTime, const DWORD updateTimeInterval);
 		virtual HRESULT addTransformable(Transformable*);
 		virtual HRESULT draw(ID3D11DeviceContext* const context, GeometryRendererManager& manager, Camera * camera);

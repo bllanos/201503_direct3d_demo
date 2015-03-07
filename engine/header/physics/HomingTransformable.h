@@ -61,16 +61,6 @@ public:
 
 	virtual ~HomingTransformable(void);
 
-	/* The radius property of this class is not actually
-	   related to the operation of the class,
-	   but is an add-on which can be used to make the object
-	   provide information needed for collision detection.
-
-	   getRadius() will throw an exception if no radius has been set.
-	 */
-	virtual float getRadius(void) const;
-	void setRadius(const float radius);
-
 	/* Updates the object for the specified time interval,
 	   'updateTimeInterval', starting from the time indicated by the 'currentTime'
 	   parameter. (e.g. 'currentTime' could be the time since program startup.)

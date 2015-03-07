@@ -10,12 +10,9 @@
 #include "Transformable.h"
 #include "State.h"
 #include "ConfigUser.h"
-#include "../camera/Camera.h"
+#include "Camera.h"
 #include "oct_tree.h"
 #include "GridSphereTextured.h"
-#include "ShipModel.h"
-#include "MineShipModel.h"
-#include "GalleonShipModel.h"
 #include "FlatAtomicConfigIO.h"
 #include "HomingTransformable.h"
 
@@ -68,9 +65,6 @@
 // Asteroid configuration
 #define GAMESTATE_GEOMETRY_ASTEROID_SCOPE L"asteroid"
 
-// Ship configuration
-#define GAMESTATE_GEOMETRY_SHIP_SCOPE L"shipmodel"
-
 #define GAMESTATE_CONFIGIO_CLASS FlatAtomicConfigIO
 
 class GameState : public State, public ConfigUser{
@@ -79,19 +73,10 @@ class GameState : public State, public ConfigUser{
 protected:
 	Camera* m_camera;
 
-	/* The transformation locating the player's ship */
-	Transformable* m_shipTransform;
-
 private:
 	Octtree* m_tree;
 
 	GridSphereTextured* m_asteroid;
-
-	ShipModel* m_ship;
-
-	MineShipModel * m_mine;
-
-	GalleonShipModel * m_galleon;
 
 	// spawn grid of asteroids or not
 	bool m_bSpawnGrid;
@@ -140,11 +125,6 @@ protected:
 
 	virtual HRESULT initializeAsteroid(ID3D11Device* device);
 
-	virtual HRESULT initializeShip(ID3D11Device* d3dDevice);
-
-	virtual HRESULT initializeMine(ID3D11Device* device);
-
-	virtual HRESULT initializeGalleon(ID3D11Device* device);
 	// Octree setup helpers
 protected:
 	/* For first-time setup */
@@ -155,15 +135,6 @@ protected:
 
 	/* Adds asteroids to the octree */
 	virtual HRESULT spawnAsteroidsGrid(const size_t x, const size_t y, const size_t z);
-
-	/* Adds a ship to the octree */
-	virtual HRESULT spawnPlayerShip();
-
-	virtual HRESULT spawnEnemyShip();
-
-	virtual HRESULT spawnMine();
-
-	virtual HRESULT spawnGalleon();
 
 	// Particle system API (implemented in a derived class)
 	// ----------------------------------------------------

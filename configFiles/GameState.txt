@@ -42,11 +42,6 @@ DIRECTORY -- GameState::inputConfigFilePath = "..\configFiles"
 FILENAME -- asteroid::inputConfigFileName = "asteroid.txt"
 DIRECTORY -- asteroid::inputConfigFilePath = "..\configFiles\geometry"
 
-# Ship model internal configuration
-# --------------------------------
-FILENAME -- shipmodel::inputConfigFileName = "shipmodel.txt"
-DIRECTORY -- shipmodel::inputConfigFilePath = "..\configFiles\geometry"
-
 # ///////////////////////////////////
 # Particle Systems
 # ///////////////////////////////////

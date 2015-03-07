@@ -469,35 +469,3 @@ HRESULT GridSphereTextured::uvToBoneWeights(DirectX::XMFLOAT4& boneWeights, cons
 
 	return ERROR_SUCCESS;
 }
-
-float GridSphereTextured::getRadius(){
-	/*
-	float radi = 1.0f;
-	float greatestScale = 0.0f;
-	XMFLOAT3 scale;
-
-	for (size_t i = 0; i < m_bones->size(); i++){
-		if (!(m_bones->at(i)->hasParent())){
-			scale = m_bones->at(i)->getScale();
-			greatestScale = scale.x;
-			greatestScale < scale.y ? greatestScale = scale.y : greatestScale = greatestScale;
-			greatestScale < scale.z ? greatestScale = scale.z : greatestScale = greatestScale;
-			return radi * greatestScale;
-		}
-	}
-	*/
-	return 1.0f;
-}
-
-XMFLOAT3 GridSphereTextured::getPosition(){
-	
-	XMFLOAT3 pos;
-	/*
-	for (size_t i = 0; i < m_bones->size(); i++){
-		if (!(m_bones->at(i)->hasParent())){
-			return m_bones->at(i)->getPosition();
-		}
-	}*/
-	
-	return XMFLOAT3(0, 0, 0);
-}

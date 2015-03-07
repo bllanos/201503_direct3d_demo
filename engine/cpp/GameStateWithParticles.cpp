@@ -467,8 +467,6 @@ HRESULT GameStateWithParticles::spawnBall(Transformable* const start, Transforma
 		m_ballLoopOverSpline,
 		m_currentTime);
 
-	tempHandle->setRadius(m_ballRadius);
-
 	ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>* newBall = 0;
 	newBall = new ActiveParticles<GAMESTATEWITHPARTICLES_BALL_MODELCLASS>(
 		m_ballModel, tempHandle, m_ballLifespan, m_currentTime,
@@ -1062,7 +1060,7 @@ HRESULT GameStateWithParticles::updateDemo(void) {
 				);
 		}
 
-		if( FAILED(spawnBall(m_demoStart, m_shipTransform, 0)) ) {
+		if( FAILED(spawnBall(m_demoStart, m_demoEnd, 0)) ) {
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}

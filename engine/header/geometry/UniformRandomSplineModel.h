@@ -99,12 +99,6 @@ public:
 		const Transformable* const transform,
 		const Spline* const spline);
 
-	// Collision detection
-public:
-	virtual XMFLOAT3 getPosition() override;
-	/* Not implemented (throws an exception) */
-	virtual float getRadius() override;
-
 	// Geometry setup
 public:
 

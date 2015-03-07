@@ -56,9 +56,6 @@ public:
 
 	virtual HRESULT setTransformables(const std::vector<Transformable*>* const transforms) = 0;
 
-	virtual XMFLOAT3 getPosition() = 0;
-	virtual float getRadius() = 0;
-
 	// Currently not implemented - will cause linker errors if called
 private:
 	IGeometry(const IGeometry& other);

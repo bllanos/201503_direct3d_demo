@@ -75,14 +75,6 @@ HRESULT UniformRandomSplineModel::initialize(ID3D11Device* const device,
 	return result;
 }
 
-XMFLOAT3 UniformRandomSplineModel::getPosition() {
-	return m_transform->getPosition();
-}
-
-float UniformRandomSplineModel::getRadius() {
-	throw std::exception("No function implemented for calculating the radius of an arbitrary spline.");
-}
-
 size_t UniformRandomSplineModel::getNumberOfVerticesToAdd(void) const {
 	return m_nParticles;
 }

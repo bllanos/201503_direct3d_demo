@@ -67,21 +67,6 @@ HomingTransformable::~HomingTransformable(void) {
 	}
 }
 
-float HomingTransformable::getRadius(void) const {
-	if( m_radius == 0 ) {
-		throw std::exception("HomingTransformable::getRadius() : No radius has been set.");
-	}
-	return *m_radius;
-}
-
-void HomingTransformable::setRadius(const float radius) {
-	if( m_radius == 0 ) {
-		m_radius = new float(radius);
-	} else {
-		*m_radius = radius;
-	}
-}
-
 HRESULT HomingTransformable::update(const DWORD currentTime, const DWORD updateTimeInterval) {
 	if( FAILED(m_spline->update(currentTime, updateTimeInterval)) ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);

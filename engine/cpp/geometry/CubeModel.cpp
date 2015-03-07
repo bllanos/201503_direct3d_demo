@@ -288,18 +288,3 @@ HRESULT CubeModel::setTransformables(const std::vector<Transformable*>* const tr
 	m_transform = (*transform)[0];
 	return ERROR_SUCCESS;
 }
-
-float CubeModel::getRadius(){
-
-	float theX = m_xlen;
-	float theY = m_ylen;
-	float theZ = m_zlen;
-
-	float theDiagonal = sqrt(pow(theX, 2) + pow(theY, 2) + pow(theZ, 2));
-
-	return theDiagonal*0.5f;
-}
-
-XMFLOAT3 CubeModel::getPosition(){
-	return m_transform->getPosition();
-}

@@ -26,8 +26,6 @@
     <ClCompile Include="cpp\GameStateWithParticles.cpp" />
     <ClCompile Include="cpp\camera\Camera.cpp" />
     <ClCompile Include="cpp\GameStateWithSSSE.cpp" />
-    <ClCompile Include="cpp\geometry\GalleonShipModel.cpp" />
-    <ClCompile Include="cpp\geometry\MineShipModel.cpp" />
     <ClCompile Include="cpp\geometry\RandomBurstCone.cpp" />
     <ClCompile Include="cpp\ssse\OneTextureSSSE.cpp" />
     <ClCompile Include="cpp\ssse\TwoFrameSSSE.cpp" />
@@ -38,7 +36,6 @@
     <ClCompile Include="cpp\geometry\GridQuadTextured.cpp" />
     <ClCompile Include="cpp\geometry\GridSphereTextured.cpp" />
     <ClCompile Include="cpp\geometry\InvariantParticles.cpp" />
-    <ClCompile Include="cpp\geometry\ShipModel.cpp" />
     <ClCompile Include="cpp\geometry\SkinnedTexturedGeometry.cpp" />
     <ClCompile Include="cpp\physics\Transformable.cpp" />
     <ClCompile Include="cpp\rendering\InvariantParticlesRenderer.cpp" />
@@ -85,8 +82,6 @@
     <ClInclude Include="header\physics\StaticKnot.h" />
     <ClInclude Include="header\GameStateWithParticles.h" />
     <ClInclude Include="header\GameStateWithSSSE.h" />
-    <ClInclude Include="header\geometry\GalleonShipModel.h" />
-    <ClInclude Include="header\geometry\MineShipModel.h" />
     <ClInclude Include="header\geometry\RandomBurstCone.h" />
     <ClInclude Include="header\ssse\OneTextureSSSE.h" />
     <ClInclude Include="header\geometry\vertexTypes.h" />
@@ -100,7 +95,6 @@
     <ClInclude Include="header\camera\Camera.h" />
     <ClInclude Include="header\geometry\GridQuadTextured.h" />
     <ClInclude Include="header\geometry\GridSphereTextured.h" />
-    <ClInclude Include="header\geometry\ShipModel.h" />
     <ClInclude Include="header\geometry\SkinnedTexturedGeometry.h" />
     <ClInclude Include="header\geometry\SphereModel.h" />
     <ClInclude Include="header\rendering\InvariantParticlesRenderer.h" />
@@ -171,10 +165,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)\..\win32_base\header\util;$(ProjectDir)\..\win32_base\header\interface;$(ProjectDir)\..\win32_base\header;$(ProjectDir)\header\input;$(ProjectDir)\header\physics;$(ProjectDir)\header\rendering;$(ProjectDir)\header;$(ProjectDir)\test\header;$(ProjectDir)\header\geometry;$(ProjectDir)\header\util;$(ProjectDir)\header\ssse;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)\..\win32_base\header\util;$(ProjectDir)\..\win32_base\header\interface;$(ProjectDir)\..\win32_base\header;$(ProjectDir)\header\input;$(ProjectDir)\header\physics;$(ProjectDir)\header\rendering;$(ProjectDir)\header;$(ProjectDir)\test\header;$(ProjectDir)\header\geometry;$(ProjectDir)\header\util;$(ProjectDir)\header\ssse;$(ProjectDir)\header\camera;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(ProjectDir);$(ProjectDir)\..\win32_base\header\util;$(ProjectDir)\..\win32_base\header\interface;$(ProjectDir)\..\win32_base\header;$(ProjectDir)\header\input;$(ProjectDir)\header\physics;$(ProjectDir)\header\rendering;$(ProjectDir)\header;$(ProjectDir)\test\header;$(ProjectDir)\header\geometry;$(ProjectDir)\header\util;$(ProjectDir)\header\ssse;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)\..\win32_base\header\util;$(ProjectDir)\..\win32_base\header\interface;$(ProjectDir)\..\win32_base\header;$(ProjectDir)\header\input;$(ProjectDir)\header\physics;$(ProjectDir)\header\rendering;$(ProjectDir)\header;$(ProjectDir)\test\header;$(ProjectDir)\header\geometry;$(ProjectDir)\header\util;$(ProjectDir)\header\ssse;$(ProjectDir)\header\camera;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

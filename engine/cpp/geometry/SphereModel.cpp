@@ -157,13 +157,3 @@ HRESULT SphereModel::update(const DWORD currentTime, const DWORD updateTimeInter
 {
 	return m_transformable->update(currentTime, updateTimeInterval);
 }
-
-
-float SphereModel::getRadius(){
-	//XMFLOAT3 scale = m_transformable->getScale();
-	return 1.0f;//((scale.x > scale.y) ? scale.x : scale.y) > scale.z ? ((scale.x > scale.y) ? scale.x : scale.y):scale.z;
-}
-
-XMFLOAT3 SphereModel::getPosition(){
-	return XMFLOAT3(0, 0, 0);//return m_transformable->getPosition();
-}
