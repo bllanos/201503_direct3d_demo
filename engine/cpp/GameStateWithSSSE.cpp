@@ -71,8 +71,7 @@ HRESULT GameStateWithSSSE::initialize(ID3D11Device* device, ID3D11Texture2D* bac
 		return result;
 	}
 
-	// Start using the last SSSE
-	m_currentSSSEIndex = m_SSSEs->size() - 1;
+	m_currentSSSEIndex = GAMESTATEWITHSSSE_N_TWOFRAMESSSE;
 	m_currentSSSE = (*m_SSSEs)[m_currentSSSEIndex];
 
 	return result;
@@ -83,7 +82,7 @@ HRESULT GameStateWithSSSE::drawContents(ID3D11DeviceContext* const context, Geom
 	HRESULT result = ERROR_SUCCESS;
 
 	// Set up for rendering to a texture
-	if( FAILED(m_currentSSSE->setRenderTarget(context)) ) {
+	if( m_currentSSSE != 0 && FAILED(m_currentSSSE->setRenderTarget(context)) ) {
 		logMessage(L"Call to m_currentSSSE->setRenderTarget() failed. m_currentSSSEIndex = " + std::to_wstring(m_currentSSSEIndex) + L".");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
@@ -95,7 +94,7 @@ HRESULT GameStateWithSSSE::drawContents(ID3D11DeviceContext* const context, Geom
 	}
 
 	// Apply the SSSE
-	if( FAILED(m_currentSSSE->apply(context)) ) {
+	if( m_currentSSSE != 0 && FAILED(m_currentSSSE->apply(context)) ) {
 		logMessage(L"Call to m_currentSSSE->apply() failed. m_currentSSSEIndex = " + std::to_wstring(m_currentSSSEIndex) + L".");
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
@@ -109,6 +108,9 @@ HRESULT GameStateWithSSSE::update(const DWORD currentTime, const DWORD updateTim
 
 	// Give all SSSEs the current time
 	for( vector<SSSE**>::size_type i = 0; i < GAMESTATEWITHSSSE_NSSSE; ++i ) {
+		if((*m_SSSEs)[i] == 0) {
+			continue;
+		}
 		result = ((*m_SSSEs)[i])->update(currentTime, updateTimeInterval);
 		if( FAILED(result) ) {
 			logMessage(L"Call to update() of SSSE at index " + std::to_wstring(i) + L" failed.");
@@ -126,6 +128,9 @@ HRESULT GameStateWithSSSE::poll(Keyboard& input, Mouse& mouse) {
 
 	// Give the current SSSE the cursor position
 	for( vector<SSSE**>::size_type i = 0; i < GAMESTATEWITHSSSE_NSSSE; ++i ) {
+		if( (*m_SSSEs)[i] == 0 ) {
+			continue;
+		}
 		result = ((*m_SSSEs)[i])->poll(input, mouse);
 		if( FAILED(result) ) {
 			logMessage(L"Call to poll() of SSSE at index " + std::to_wstring(i) + L" failed.");
@@ -134,8 +139,7 @@ HRESULT GameStateWithSSSE::poll(Keyboard& input, Mouse& mouse) {
 	}
 
 	// Cycle through SSSEs
-	// if (input.IsKeyDown(VK_CONTROL) && input.Down(Keyboard::ascii_O)) { // Ineffective!?
-	if( input.IsKeyDown(VK_CONTROL) && input.TimePressed(Keyboard::ascii_O) > static_cast<DWORD>(0) && input.TimePressed(Keyboard::ascii_O) < static_cast<DWORD>(30) ) {
+	if( input.Down(Keyboard::ascii_O) ) {
 		++m_currentSSSEIndex;
 		m_currentSSSEIndex %= m_SSSEs->size();
 		m_currentSSSE = (*m_SSSEs)[m_currentSSSEIndex];
@@ -168,6 +172,8 @@ HRESULT GameStateWithSSSE::configure(void) {
 				result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 				return result;
 			}
+
+			m_SSSEs->emplace_back(static_cast<SSSE*>(0));
 
 		}
 

@@ -205,7 +205,7 @@ Zoom Camera:
 - In:  Z + UP ARROW
 - Out: Z + DOWN ARROW
 
-## Debugging Controls
+## Screen-Space Special Effects
 
-CTRL + O: When in the game state with SSSEs, switch between the shockwave SSSE
-          and the motion blur SSSE.
+O: When in the game state with SSSEs, cycle between the shockwave SSSE,
+   the motion blur SSSE, and no SSSE.

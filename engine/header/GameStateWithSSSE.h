@@ -35,9 +35,10 @@ Description
 #define GAMESTATEWITHSSSE_SCOPE L"GameStateWithSSSE"
 
 // Configuration of each SSSE
-#define GAMESTATEWITHSSSE_NSSSE 2 // Total number of SSSEs
+#define GAMESTATEWITHSSSE_NSSSE 3 // Total number of SSSEs
 #define GAMESTATEWITHSSSE_N_ONETEXTURESSSE 1 // Number of one-texture SSSEs
 #define GAMESTATEWITHSSSE_N_TWOFRAMESSSE 1 // Number of two-frame SSSEs
+// The last SSSE will be null
 
 // One-texture SSSEs
 #define GAMESTATEWITHSSSE_RIPPLE_SSSE_SCOPE L"ripple"
@@ -50,6 +51,7 @@ class GameStateWithSSSE : public GameStateWithParticles {
 	// Data members
 private:
 	/* One-texture SSSE objects are to be placed first in the vector
+	   The last SSSE will be null
 	 */
 	std::vector<SSSE*>* m_SSSEs;
 
