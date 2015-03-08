@@ -12,7 +12,7 @@ Mark Wilkes, ID: 100884169
 
 Created October 13, 2014
 
-Primary basis: Phase1TestState.h
+Primary basis: Phase1TestState.h (which no longer exists)
 
 Description
   -A class derived from State used for testing vertex skinning

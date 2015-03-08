@@ -12,7 +12,7 @@ Mark Wilkes, ID: 100884169
 
 Created October 13, 2014
 
-Primary basis: Phase1TestState.cpp
+Primary basis: Phase1TestState.cpp (which no longer exists)
 
 Description
   -Implementation of the SkinnedColorTestState class

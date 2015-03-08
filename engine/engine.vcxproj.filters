@@ -85,9 +85,6 @@
     <ClCompile Include="cpp\engineMain.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="test\cpp\Phase1TestState.cpp">
-      <Filter>test\source</Filter>
-    </ClCompile>
     <ClCompile Include="cpp\input\Keyboard.cpp">
       <Filter>source\input</Filter>
     </ClCompile>
@@ -99,9 +96,6 @@
     </ClCompile>
     <ClCompile Include="test\cpp\SkinnedColorTestState.cpp">
       <Filter>test\source</Filter>
-    </ClCompile>
-    <ClCompile Include="cpp\geometry\SphereModel.cpp">
-      <Filter>source\geometry</Filter>
     </ClCompile>
     <ClCompile Include="cpp\geometry\SkinnedColorGeometry.cpp">
       <Filter>source\geometry</Filter>
@@ -138,9 +132,6 @@
     </ClCompile>
     <ClCompile Include="test\cpp\HierarchicalCubesTestState.cpp">
       <Filter>test\source</Filter>
-    </ClCompile>
-    <ClCompile Include="GameState.cpp">
-      <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="cpp\util\Shader.cpp">
       <Filter>source\util</Filter>
@@ -220,7 +211,10 @@
     <ClCompile Include="cpp\physics\HomingTransformable.cpp">
       <Filter>source\physics</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectModel.cpp">
+    <ClCompile Include="cpp\GameState.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp\ObjectModel.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -261,9 +255,6 @@
     <ClInclude Include="header\StateControl.h">
       <Filter>header</Filter>
     </ClInclude>
-    <ClInclude Include="test\header\Phase1TestState.h">
-      <Filter>test\header</Filter>
-    </ClInclude>
     <ClInclude Include="header\input\Mouse.h">
       <Filter>header\input</Filter>
     </ClInclude>
@@ -297,9 +288,6 @@
     <ClInclude Include="test\header\AlbedoTextureTestState.h">
       <Filter>test\header</Filter>
     </ClInclude>
-    <ClInclude Include="header\geometry\SphereModel.h">
-      <Filter>header\geometry</Filter>
-    </ClInclude>
     <ClInclude Include="header\geometry\GridSphereTextured.h">
       <Filter>header\geometry</Filter>
     </ClInclude>
@@ -314,9 +302,6 @@
     </ClInclude>
     <ClInclude Include="test\header\HierarchicalCubesTestState.h">
       <Filter>test\header</Filter>
-    </ClInclude>
-    <ClInclude Include="GameState.h">
-      <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="header\util\pipelineDefs.h">
       <Filter>header\util</Filter>
@@ -402,7 +387,10 @@
     <ClInclude Include="header\physics\HomingTransformable.h">
       <Filter>header\physics</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectModel.h">
+    <ClInclude Include="header\GameState.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="header\ObjectModel.h">
       <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>
