@@ -22,7 +22,7 @@ GAMESTATE_SCOPE,
 CONFIGUSER_INPUT_FILE_PATH_FIELD
 ),
 m_camera(0), m_objectList(0), m_asteroid(0),
-m_nAsteroids(0), m_asteroidGridSpacing(1.0f),
+m_asteroidRadius(0.0f), m_asteroidGridSpacing(1.0f),
 m_nAsteroidsX(0), m_nAsteroidsY(0), m_nAsteroidsZ(0)
 {
 	if (configureNow) {
@@ -131,8 +131,7 @@ HRESULT GameState::configure(void) {
 
 	// Initialization with default values
 	// ----------------------------------
-	int nAsteroids = GAMESTATE_NUMBER_OF_ASTEROIDS_DEFAULT;
-
+	double asteroidRadius = GAMESTATE_RADIUS_OF_ASTEROIDS_DEFAULT;
 	double asteroidGridSpacing = GAMESTATE_ASTEROID_GRID_SPACING_DEFAULT;
 	int nAsteroidsX = GAMESTATE_NUMBER_OF_ASTEROIDS_X_DEFAULT;
 	int nAsteroidsY = GAMESTATE_NUMBER_OF_ASTEROIDS_Y_DEFAULT;
@@ -155,13 +154,9 @@ HRESULT GameState::configure(void) {
 
 			// Query for initialization data
 			// -----------------------------
-
-			if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_FIELD, intValue)) {
-				nAsteroids = *intValue;
-			}
 			
 			if (retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_RADIUS_OF_ASTEROIDS_FIELD, doubleValue)){
-				asteroid_Radius = static_cast<float>(*doubleValue);
+				asteroidRadius = *doubleValue;
 			}
 
 			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_ASTEROID_GRID_SPACING_FIELD, doubleValue) ) {
@@ -195,11 +190,11 @@ HRESULT GameState::configure(void) {
 
 	// Validation
 	// -----------
-	if (nAsteroids < 0) {
-		nAsteroids = GAMESTATE_NUMBER_OF_ASTEROIDS_DEFAULT;
-		logMessage(L"nAsteroids cannot be zero or negative. Reverting to default value of " + std::to_wstring(nAsteroids));
+	if( asteroidRadius <= 0.0 ) {
+		asteroidRadius = GAMESTATE_RADIUS_OF_ASTEROIDS_DEFAULT;
+		logMessage(L"radiAsteroids cannot be zero or negative. Reverting to default value of " + std::to_wstring(asteroidRadius));
 	}
-	if (asteroidGridSpacing < 1.0f) {
+	if (asteroidGridSpacing < 1.0) {
 		asteroidGridSpacing = GAMESTATE_NUMBER_OF_ASTEROIDS_X_DEFAULT;
 		logMessage(L"asteroidGridSpacing cannot be below 1. Reverting to default value of " + std::to_wstring(asteroidGridSpacing));
 	}
@@ -217,7 +212,7 @@ HRESULT GameState::configure(void) {
 	}
 
 	// Initialization
-	m_nAsteroids = nAsteroids;
+	m_asteroidRadius = static_cast<float>(asteroidRadius);
 	m_asteroidGridSpacing = asteroidGridSpacing;
 	m_nAsteroidsX = nAsteroidsX;
 	m_nAsteroidsY = nAsteroidsY;
@@ -367,10 +362,10 @@ HRESULT GameState::spawnAsteroidsGrid(const size_t x, const size_t y, const size
 	}
 
 	XMFLOAT3 offset(0.0f, 0.0f, 0.0f);
-	XMFLOAT3 southOffset(0.0f, -(asteroid_Radius), 0.0f);
-	XMFLOAT3 northOffset(0.0f, asteroid_Radius, 0.0f);
+	XMFLOAT3 southOffset(0.0f, -(m_asteroidRadius), 0.0f);
+	XMFLOAT3 northOffset(0.0f, m_asteroidRadius, 0.0f);
 
-	XMFLOAT3 scale(asteroid_Radius, asteroid_Radius, asteroid_Radius);
+	XMFLOAT3 scale(m_asteroidRadius, m_asteroidRadius, m_asteroidRadius);
 	XMFLOAT4 orientation(0.0f, 0.0f, 0.0f, 1.0f);
 
 	ObjectModel* newObject = 0;

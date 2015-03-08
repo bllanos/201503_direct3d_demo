@@ -18,7 +18,6 @@ BOOL -- GameState_ConfigUser::enableConfigUseLogging = true
 
 # Asteroids external configuration
 # --------------------------------
-INT -- GameState::nAsteroids = 1
 DOUBLE -- GameState::radiAsteroids = 1.0
 DOUBLE -- GameState::asteroidGridSpacing = 5.0
 INT -- GameState::nAsteroidsX = 3

@@ -25,8 +25,6 @@
 #define GAMESTATE_SCOPE L"GameState"
 
 // Default values to use in the absence of configuration data
-#define GAMESTATE_NUMBER_OF_ASTEROIDS_FIELD L"nAsteroids"
-#define GAMESTATE_NUMBER_OF_ASTEROIDS_DEFAULT 0 // 10
 #define GAMESTATE_RADIUS_OF_ASTEROIDS_FIELD L"radiAsteroids"
 #define GAMESTATE_RADIUS_OF_ASTEROIDS_DEFAULT 1 // 1
 
@@ -64,8 +62,7 @@ private:
 	GridSphereTextured* m_asteroid;
 
 	// Asteroid parameters
-	size_t m_nAsteroids;
-	float asteroid_Radius;
+	float m_asteroidRadius;
 	double m_asteroidGridSpacing;
 	size_t m_nAsteroidsX, m_nAsteroidsY, m_nAsteroidsZ;
 
