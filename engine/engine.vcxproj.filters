@@ -26,14 +26,6 @@
     <Filter Include="source\rendering">
       <UniqueIdentifier>{aa063488-3bba-4a6f-8c8b-3304a3679667}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Unprocessed Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Unprocessed Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="source\geometry">
       <UniqueIdentifier>{778bb804-9868-4364-8487-cc2de902f0f0}</UniqueIdentifier>
     </Filter>
@@ -147,15 +139,6 @@
     <ClCompile Include="test\cpp\HierarchicalCubesTestState.cpp">
       <Filter>test\source</Filter>
     </ClCompile>
-    <ClCompile Include="oct_node.cpp">
-      <Filter>Unprocessed Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="oct_tree.cpp">
-      <Filter>Unprocessed Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectModel.cpp">
-      <Filter>Unprocessed Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameState.cpp">
       <Filter>source</Filter>
     </ClCompile>
@@ -236,6 +219,9 @@
     </ClCompile>
     <ClCompile Include="cpp\physics\HomingTransformable.cpp">
       <Filter>source\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectModel.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -329,15 +315,6 @@
     <ClInclude Include="test\header\HierarchicalCubesTestState.h">
       <Filter>test\header</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectModel.h">
-      <Filter>Unprocessed Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Oct_node.h">
-      <Filter>Unprocessed Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="oct_tree.h">
-      <Filter>Unprocessed Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameState.h">
       <Filter>header</Filter>
     </ClInclude>
@@ -424,6 +401,9 @@
     </ClInclude>
     <ClInclude Include="header\physics\HomingTransformable.h">
       <Filter>header\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectModel.h">
+      <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

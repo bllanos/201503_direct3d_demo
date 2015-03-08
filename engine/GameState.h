@@ -1,20 +1,17 @@
 /*
 	GameState.h
-
-	To render the asteroids grid, set the bSpawnGrid boolean
-	in the config file. To render the default asteroids, set to false.
 */
 
 #pragma once
 
+#include <vector>
+#include "ObjectModel.h"
 #include "Transformable.h"
 #include "State.h"
 #include "ConfigUser.h"
 #include "Camera.h"
-#include "oct_tree.h"
 #include "GridSphereTextured.h"
 #include "FlatAtomicConfigIO.h"
-#include "HomingTransformable.h"
 
 // Logging message prefix
 #define GAMESTATE_START_MSG_PREFIX L"GameState"
@@ -28,18 +25,6 @@
 #define GAMESTATE_SCOPE L"GameState"
 
 // Default values to use in the absence of configuration data
-#define GAMESTATE_TREEDEPTH_FIELD L"treeDepth"
-#define GAMESTATE_TREEDEPTH_DEFAULT 0 // 4
-#define GAMESTATE_TREELENGTH_FIELD L"treeLength"
-#define GAMESTATE_TREELENGTH_DEFAULT 0 // 20
-#define GAMESTATE_TREELOCATION_FIELD L"treeLocation"
-#define GAMESTATE_TREELOCATION_X_DEFAULT 0 // -10
-#define GAMESTATE_TREELOCATION_Y_DEFAULT 0 // 10
-#define GAMESTATE_TREELOCATION_Z_DEFAULT 0 // -10
-
-#define GAMESTATE_SPAWN_ASTEROIDS_GRID_FIELD L"bSpawnGrid"
-#define GAMESTATE_SPAWN_ASTEROIDS_GRID_DEFAULT false // 10
-
 #define GAMESTATE_NUMBER_OF_ASTEROIDS_FIELD L"nAsteroids"
 #define GAMESTATE_NUMBER_OF_ASTEROIDS_DEFAULT 0 // 10
 #define GAMESTATE_RADIUS_OF_ASTEROIDS_FIELD L"radiAsteroids"
@@ -74,18 +59,13 @@ protected:
 	Camera* m_camera;
 
 private:
-	Octtree* m_tree;
+	std::vector<ObjectModel*>* m_objectList;
 
 	GridSphereTextured* m_asteroid;
 
-	// spawn grid of asteroids or not
-	bool m_bSpawnGrid;
-
-	// Initial number of asteroids
+	// Asteroid parameters
 	size_t m_nAsteroids;
 	float asteroid_Radius;
-
-	// if spawning a grid of asteroids
 	double m_asteroidGridSpacing;
 	size_t m_nAsteroidsX, m_nAsteroidsY, m_nAsteroidsZ;
 
@@ -125,100 +105,7 @@ protected:
 
 	virtual HRESULT initializeAsteroid(ID3D11Device* device);
 
-	// Octree setup helpers
 protected:
-	/* For first-time setup */
-	virtual HRESULT fillOctree(void);
 
-	/* Adds 'n' asteroids to the octree */
-	virtual HRESULT spawnAsteroids(const size_t n);
-
-	/* Adds asteroids to the octree */
 	virtual HRESULT spawnAsteroidsGrid(const size_t x, const size_t y, const size_t z);
-
-	// Particle system API (implemented in a derived class)
-	// ----------------------------------------------------
-	/* Do not use these functions if the GameStateWithParticles
-	   class has been configured to be in demo mode,
-	   meaning that it spawns particle systems by itself.
-	   (This will result in double deallocations of Transformable objects,
-	    or dangling pointers.)
-	 */
-protected:
-
-	/* Adds an explosion with the given transformation */
-	virtual HRESULT spawnExplosion(Transformable* const transform) = 0;
-
-	/* Adds a jet with the given transformation */
-	virtual HRESULT spawnJet(Transformable* const transform) = 0;
-
-	/* Adds a laser with the given endpoints */
-	virtual HRESULT spawnLaser(Transformable* const start, Transformable* const end) = 0;
-
-	/* Adds a ball lightning effect with the given endpoints.
-	   Outputs a pointer to the ball lightning effect, which allows
-	   for querying whether the effect has reached its target,
-	   its current position, and its radius.
-	   Refer to the HomingTransformable class for more information.
-
-	   (If the 'ballHandle' output parameter is passed in null,
-	    no handle will be output.)
-
-	   'ballHandle' is not owned by the caller (i.e. the caller
-	   must not delete it).
-	*/
-	virtual HRESULT spawnBall(Transformable* const start, Transformable* const end, HomingTransformable** ballHandle) = 0;
-
-	/* Removes all explosions with the transformation at the given
-	   memory location.
-	   Call this function only to remove an explosion early.
-	   GameStateWithParticles will automatically delete explosions
-	   when they reach the end of their lives.
-	*/
-	virtual HRESULT removeExplosion(Transformable* const transform) = 0;
-
-	/* Removes all jets with the transformation at the given
-	   memory location.
-	   Call this function only to remove a jet early.
-	   GameStateWithParticles will automatically delete jets
-	   when they reach the end of their lives.
-	*/
-	virtual HRESULT removeJet(Transformable* const transform) = 0;
-
-	/* Removes all laser beams with the transformation at the given
-	   memory location.
-	   Call this function only to remove a laser early.
-	   GameStateWithParticles will automatically delete lasers
-	   when they reach the end of their lives.
-	   (However, as currently configured by the configuration text file,
-	    the laser beam has an infinite life - November 27, 2014)
-	 */
-	virtual HRESULT removeLaser(Transformable* const startTransform) = 0;
-
-	/* Removes the ball lightning effect with the transformation
-	   at the given memory location.
-	   'transform' is deleted and set to null if there exists a ball lightning
-	   effect corresponding to the transformation.
-
-	   If no ball lightning effect is found with the given transformation,
-	   this function returns a failure result and does nothing.
-
-	   Call this function only to remove a ball lightning effect early.
-	   GameStateWithParticles will automatically delete ball lightning
-	   effects when they either reach their targets, or reach the ends
-	   of their lives.
-	 */
-	virtual HRESULT removeBall(HomingTransformable*& transform) = 0;
-
-	/* Removes all ball lightning effects that had the transformation
-	   at the given memory location as their endpoint.
-	   'transform' is not deleted by this function.
-
-	   Tip: This function is useful to prevent errors resulting from
-	        the deletion of the target of a ball lightning effect
-	        before the lightning effect has been deleted.
-	        (Otherwise, the program will ball lightning effect will trigger
-	         a crash when querying its target for an updated position.)
-	  */
-	virtual HRESULT removeBallsByEndpoint(Transformable* const transform) = 0;
 };

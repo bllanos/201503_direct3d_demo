@@ -330,13 +330,13 @@ public:
 	// Control functions
 public:
 	/* Adds an explosion with the given transformation */
-	virtual HRESULT spawnExplosion(Transformable* const transform) override;
+	virtual HRESULT spawnExplosion(Transformable* const transform);
 
 	/* Adds a jet with the given transformation */
-	virtual HRESULT spawnJet(Transformable* const transform) override;
+	virtual HRESULT spawnJet(Transformable* const transform);
 
 	/* Adds a laser with the given endpoints */
-	virtual HRESULT spawnLaser(Transformable* const start, Transformable* const end) override;
+	virtual HRESULT spawnLaser(Transformable* const start, Transformable* const end);
 
 	/* Adds a ball lightning effect with the given endpoints.
 	   Outputs a pointer to the ball lightning effect, which allows
@@ -350,7 +350,7 @@ public:
 	   'ballHandle' is not owned by the caller (i.e. the caller
 	   must not delete it).
 	 */
-	virtual HRESULT spawnBall(Transformable* const start, Transformable* const end, HomingTransformable** ballHandle) override;
+	virtual HRESULT spawnBall(Transformable* const start, Transformable* const end, HomingTransformable** ballHandle);
 
 	/* Removes all explosions with the transformation at the given
 	   memory location.
@@ -363,7 +363,7 @@ public:
 	   in 'm_explosions', followed by the shifting of remaining
 	   elements to lower indices.
 	 */
-	virtual HRESULT removeExplosion(Transformable* const transform) override;
+	virtual HRESULT removeExplosion(Transformable* const transform);
 
 	/* Removes all jets with the transformation at the given
 	   memory location.
@@ -376,7 +376,7 @@ public:
 	   in 'm_jets', followed by the shifting of remaining
 	   elements to lower indices.
 	*/
-	virtual HRESULT removeJet(Transformable* const transform) override;
+	virtual HRESULT removeJet(Transformable* const transform);
 
 	/* Removes all lasers with the 'start' transformation at the given
 	   memory location.
@@ -389,7 +389,7 @@ public:
 	   in 'm_lasers', followed by the shifting of remaining
 	   elements to lower indices.
 	 */
-	virtual HRESULT removeLaser(Transformable* const startTransform) override;
+	virtual HRESULT removeLaser(Transformable* const startTransform);
 
 	/* Removes the ball lightning effect with the transformation at the given
 	   memory location.
@@ -405,7 +405,7 @@ public:
 	   If no ball lightning effect is found with the given transformation,
 	   this function returns a failure result and does nothing.
 	 */
-	virtual HRESULT removeBall(HomingTransformable*& transform) override;
+	virtual HRESULT removeBall(HomingTransformable*& transform);
 
 	/* Removes all ball lightning effects that had the transformation at the given
 	   memory location as their endpoint.
@@ -423,7 +423,7 @@ public:
 	        (Otherwise, the program will ball lightning effect will trigger
 	         a crash when querying its target for an updated position.)
 	 */
-	virtual HRESULT removeBallsByEndpoint(Transformable* const transform) override;
+	virtual HRESULT removeBallsByEndpoint(Transformable* const transform);
 
 protected:
 

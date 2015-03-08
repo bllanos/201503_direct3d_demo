@@ -1,13 +1,10 @@
 /*
-	This is supposed to be for the OctTree as a general object for storage of the game geometry
+	A container for a model and its transformational information
 */
 
 #pragma once
 
 #include <vector>
-
-using namespace std;
-
 #include "Transformable.h"
 #include "IGeometry.h"
 #include "LogUser.h"
@@ -26,5 +23,5 @@ class ObjectModel : public LogUser {
 
 	protected:
 		IGeometry* model;
-		vector<Transformable*>* tForms;
+		std::vector<Transformable*>* tForms;
 };

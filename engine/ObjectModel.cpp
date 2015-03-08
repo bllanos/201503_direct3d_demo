@@ -9,6 +9,8 @@ It is used for the storage of these attributes in the OctTree
 #include "ObjectModel.h"
 #include "FlatAtomicConfigIO.h"
 
+using std::vector;
+
 #define OBJECTMODEL_CONFIGIO_CLASS FlatAtomicConfigIO
 
 // Logging output and configuration input filename
@@ -24,7 +26,10 @@ model(0), tForms(0)
 
 ObjectModel::~ObjectModel(){
 	for (size_t i = 0; i < tForms->size(); i++){
-		delete (*tForms)[i];
+		if( (*tForms)[i] != 0 ) {
+			delete (*tForms)[i];
+			(*tForms)[i] = 0;
+		}
 	}
 
 	if (tForms != 0){

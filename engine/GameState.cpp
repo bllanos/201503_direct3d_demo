@@ -21,8 +21,8 @@ CONFIGUSER_INPUT_FILE_NAME_FIELD,
 GAMESTATE_SCOPE,
 CONFIGUSER_INPUT_FILE_PATH_FIELD
 ),
-m_camera(0), m_tree(0), m_asteroid(0),
-m_bSpawnGrid(false), m_nAsteroids(0), m_asteroidGridSpacing(1.0f),
+m_camera(0), m_objectList(0), m_asteroid(0),
+m_nAsteroids(0), m_asteroidGridSpacing(1.0f),
 m_nAsteroidsX(0), m_nAsteroidsY(0), m_nAsteroidsZ(0)
 {
 	if (configureNow) {
@@ -38,9 +38,17 @@ GameState::~GameState(void) {
 		m_camera = 0;
 	}
 
-	if (m_tree != 0){
-		delete m_tree;
-		m_tree = 0;
+	if( m_objectList != 0 ) {
+		std::vector<ObjectModel*>::size_type i = 0;
+		std::vector<ObjectModel*>::size_type size = m_objectList->size();
+		for( i = 0; i < size; ++i ) {
+			if( (*m_objectList)[i] != 0 ) {
+				delete (*m_objectList)[i];
+				(*m_objectList)[i] = 0;
+			}
+		}
+		delete m_objectList;
+		m_objectList = 0;
 	}
 
 	if (m_asteroid != 0) {
@@ -56,16 +64,18 @@ HRESULT GameState::initialize(ID3D11Device* device, ID3D11Texture2D* backBuffer,
 
 	// Initialize the camera
 	m_camera = new Camera(screenWidth, screenHeight);
+
 	// Initialize geometry
 	if (FAILED(initializeGeometry(device))) {
 		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		return result;
 	}
 
-	// Fill the octree
-	if (FAILED(fillOctree())) {
-		result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-		return result;
+	m_objectList = new vector<ObjectModel*>();
+
+	// Initialize models (geometry + spatial transformations)
+	if( FAILED(spawnAsteroidsGrid(m_nAsteroidsX, m_nAsteroidsY, m_nAsteroidsZ)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
 	return result;
@@ -78,11 +88,32 @@ HRESULT GameState::next(State*& nextState) {
 }
 
 HRESULT GameState::drawContents(ID3D11DeviceContext* const context, GeometryRendererManager& manager) {
-	return m_tree->drawContents(context, manager, m_camera);
+	HRESULT result = ERROR_SUCCESS;
+
+	// Draw all models
+	const vector<ObjectModel*>::size_type nObjects = m_objectList->size();
+	for( vector<ObjectModel*>::size_type i = 0; i < nObjects; ++i ) {
+		result = (*m_objectList)[i]->draw(context, manager, m_camera);
+		if( FAILED(result) ) {
+			logMessage(L"Failed to render model at index = " + std::to_wstring(i) + L" in the object list.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+	return result;
 }
 
 HRESULT GameState::update(const DWORD currentTime, const DWORD updateTimeInterval) {
-	return m_tree->update(currentTime, updateTimeInterval);
+	HRESULT result = ERROR_SUCCESS;
+
+	const vector<ObjectModel*>::size_type nObjects = m_objectList->size();
+	for( vector<ObjectModel*>::size_type i = 0; i < nObjects; ++i ) {
+		result = (*m_objectList)[i]->updateContainedTransforms(currentTime, updateTimeInterval);
+		if( FAILED(result) ) {
+			logMessage(L"Failed to update model at index = " + std::to_wstring(i) + L" in the object list.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+	return result;
 }
 
 HRESULT GameState::poll(Keyboard& input, Mouse& mouse) {
@@ -100,14 +131,6 @@ HRESULT GameState::configure(void) {
 
 	// Initialization with default values
 	// ----------------------------------
-	int treeDepth = GAMESTATE_TREEDEPTH_DEFAULT;
-	double treeLength = GAMESTATE_TREELENGTH_DEFAULT;
-	XMFLOAT3 treeLocation = XMFLOAT3(
-		GAMESTATE_TREELOCATION_X_DEFAULT,
-		GAMESTATE_TREELOCATION_Y_DEFAULT,
-		GAMESTATE_TREELOCATION_Z_DEFAULT);
-
-	bool bSpawnGrid = GAMESTATE_SPAWN_ASTEROIDS_GRID_DEFAULT;
 	int nAsteroids = GAMESTATE_NUMBER_OF_ASTEROIDS_DEFAULT;
 
 	double asteroidGridSpacing = GAMESTATE_ASTEROID_GRID_SPACING_DEFAULT;
@@ -132,24 +155,6 @@ HRESULT GameState::configure(void) {
 
 			// Query for initialization data
 			// -----------------------------
-
-			if( retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_TREEDEPTH_FIELD, intValue) ) {
-				treeDepth = *intValue;
-			}
-
-			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_TREELENGTH_FIELD, doubleValue) ) {
-				treeLength = *doubleValue;
-			}
-
-			if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(GAMESTATE_SCOPE, GAMESTATE_TREELOCATION_FIELD, float4Value) ) {
-				treeLocation.x = float4Value->x;
-				treeLocation.y = float4Value->y;
-				treeLocation.z = float4Value->z;
-			}
-
-			if( retrieve<Config::DataType::BOOL, bool>(GAMESTATE_SCOPE, GAMESTATE_SPAWN_ASTEROIDS_GRID_FIELD, boolValue) ) {
-				bSpawnGrid = *boolValue;
-			}
 
 			if (retrieve<Config::DataType::INT, int>(GAMESTATE_SCOPE, GAMESTATE_NUMBER_OF_ASTEROIDS_FIELD, intValue)) {
 				nAsteroids = *intValue;
@@ -190,14 +195,6 @@ HRESULT GameState::configure(void) {
 
 	// Validation
 	// -----------
-	if (treeDepth <= 0) {
-		treeDepth = GAMESTATE_TREEDEPTH_DEFAULT;
-		logMessage(L"treeDepth cannot be zero or negative. Reverting to default value of " + std::to_wstring(treeDepth));
-	}
-	if (treeLength <= 0) {
-		treeLength = GAMESTATE_TREELENGTH_DEFAULT;
-		logMessage(L"treeLength cannot be zero or negative. Reverting to default value of " + std::to_wstring(treeLength));
-	}
 	if (nAsteroids < 0) {
 		nAsteroids = GAMESTATE_NUMBER_OF_ASTEROIDS_DEFAULT;
 		logMessage(L"nAsteroids cannot be zero or negative. Reverting to default value of " + std::to_wstring(nAsteroids));
@@ -220,13 +217,11 @@ HRESULT GameState::configure(void) {
 	}
 
 	// Initialization
-	m_bSpawnGrid = bSpawnGrid;
 	m_nAsteroids = nAsteroids;
 	m_asteroidGridSpacing = asteroidGridSpacing;
 	m_nAsteroidsX = nAsteroidsX;
 	m_nAsteroidsY = nAsteroidsY;
 	m_nAsteroidsZ = nAsteroidsZ;
-	m_tree = new Octtree(treeLocation, static_cast<float>(treeLength), treeDepth);
 
 	return result;
 }
@@ -364,70 +359,6 @@ HRESULT GameState::initializeAsteroid(ID3D11Device* device) {
 	return result;
 }
 
-HRESULT GameState::fillOctree(void) {
-	
-	if (m_bSpawnGrid) {
-		if (FAILED(spawnAsteroidsGrid(m_nAsteroidsX, m_nAsteroidsY, m_nAsteroidsZ))) {
-			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-		}
-	}
-	else {
-		if (FAILED(spawnAsteroids(m_nAsteroids))) {
-			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-		}
-	}
-	
-	return ERROR_SUCCESS;
-}
-
-HRESULT GameState::spawnAsteroids(const size_t n) {
-
-	if (m_asteroid == 0) {
-		logMessage(L"Cannot spawn asteroids before the asteroid has been constructed and configured.");
-		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
-	}
-
-	XMFLOAT3 offset(0.0f, 0.0f, 0.0f);
-	XMFLOAT3 southOffset(0.0f, -(asteroid_Radius), 0.0f);
-	XMFLOAT3 northOffset(0.0f, asteroid_Radius, 0.0f);
-
-	XMFLOAT3 scale(asteroid_Radius, asteroid_Radius, asteroid_Radius);
-	XMFLOAT3 scalesides(asteroid_Radius, asteroid_Radius, asteroid_Radius);
-	XMFLOAT4 orientation(0.0f, 0.0f, 0.0f, 1.0f);
-
-	ObjectModel* newObject = 0;
-	Transformable* bone = 0;
-	Transformable* parent = 0;
-
-	for (size_t i = 0; i < n; ++i){
-
-		newObject = new ObjectModel(m_asteroid);
-
-		offset = XMFLOAT3(static_cast<float>(i), static_cast<float>(i), static_cast<float>(i));
-
-		// Center
-		bone = new Transformable(scale, offset, orientation);
-		parent = bone;
-		newObject->addTransformable(bone);
-
-		// South pole
-		bone = new Transformable(scalesides, southOffset, orientation);
-		bone->setParent(parent);
-		newObject->addTransformable(bone);
-
-		// North pole
-		bone = new Transformable(scalesides, northOffset, orientation);
-		bone->setParent(parent);
-		newObject->addTransformable(bone);
-
-		if (m_tree->addObject(newObject) == -1){
-			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-		}
-	}
-
-	return ERROR_SUCCESS;
-}
-
 HRESULT GameState::spawnAsteroidsGrid(const size_t x, const size_t y, const size_t z) {
 
 	if (m_asteroid == 0) {
@@ -471,9 +402,8 @@ HRESULT GameState::spawnAsteroidsGrid(const size_t x, const size_t y, const size
 				newObject->addTransformable(bone);
 
 
-				if (m_tree->addObject(newObject) == -1){
-					return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
-				}
+				// Add the object to the list
+				m_objectList->emplace_back(newObject);
 			}
 		}
 	}
