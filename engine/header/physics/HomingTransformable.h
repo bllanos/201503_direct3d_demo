@@ -124,11 +124,6 @@ private:
 	/* The spline that this object is tracking. */
 	HomingSpline* m_spline;
 
-	/* Data not used by this class, but can be stored
-	   in this object by the client to facilitate collision detection.
-	 */
-	float* m_radius;
-
 	// Currently not implemented - will cause linker errors if called
 private:
 	HomingTransformable(const HomingTransformable& other);

@@ -4,13 +4,16 @@
 
 #include "GameState.h"
 #include <string>
-#include "fileUtil.h"
 #include <exception>
 #include <vector>
+#include "fileUtil.h"
+#include "RockingTransformable.h"
 
 using namespace DirectX;
 using std::wstring;
 using std::vector;
+
+#define GAMESTATE_NQUADBONES 4
 
 GameState::GameState(const bool configureNow) :
 ConfigUser(true, GAMESTATE_START_MSG_PREFIX,
@@ -23,7 +26,10 @@ CONFIGUSER_INPUT_FILE_PATH_FIELD
 ),
 m_camera(0), m_objectList(0), m_asteroid(0),
 m_asteroidRadius(0.0f), m_asteroidGridSpacing(1.0f),
-m_nAsteroidsX(0), m_nAsteroidsY(0), m_nAsteroidsZ(0)
+m_nAsteroidsX(0), m_nAsteroidsY(0), m_nAsteroidsZ(0),
+m_gridQuads(0), m_gridQuadParents(0), m_quadWidth(0.0f), m_quadHeight(0.0f),
+m_quadSpacing(0.0f, 0.0f, 0.0f, 0.0f),
+m_quadArrayOrigin(0.0f, 0.0f, 0.0f, 0.0f)
 {
 	if (configureNow) {
 		if( FAILED(configure()) ) {
@@ -51,6 +57,28 @@ GameState::~GameState(void) {
 		m_objectList = 0;
 	}
 
+	if( m_gridQuads != 0 ) {
+		for( size_t i = 0; i < GAMESTATE_GEOMETRY_N_QUAD; ++i ) {
+			if( m_gridQuads[i] != 0 ) {
+				delete m_gridQuads[i];
+				m_gridQuads[i] = 0;
+			}
+		}
+		delete m_gridQuads;
+		m_gridQuads = 0;
+	}
+
+	if( m_gridQuadParents != 0 ) {
+		for( size_t i = 0; i < GAMESTATE_GEOMETRY_N_QUAD; ++i ) {
+			if( m_gridQuadParents[i] != 0 ) {
+				delete m_gridQuadParents[i];
+				m_gridQuadParents[i] = 0;
+			}
+		}
+		delete m_gridQuadParents;
+		m_gridQuadParents = 0;
+	}
+
 	if (m_asteroid != 0) {
 		delete m_asteroid;
 		m_asteroid = 0;
@@ -75,6 +103,10 @@ HRESULT GameState::initialize(ID3D11Device* device, ID3D11Texture2D* backBuffer,
 
 	// Initialize models (geometry + spatial transformations)
 	if( FAILED(spawnAsteroidsGrid(m_nAsteroidsX, m_nAsteroidsY, m_nAsteroidsZ)) ) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	if( FAILED(spawnQuadRow(m_quadWidth, m_quadHeight, m_quadArrayOrigin, m_quadSpacing)) ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 
@@ -137,6 +169,11 @@ HRESULT GameState::configure(void) {
 	int nAsteroidsY = GAMESTATE_NUMBER_OF_ASTEROIDS_Y_DEFAULT;
 	int nAsteroidsZ = GAMESTATE_NUMBER_OF_ASTEROIDS_Z_DEFAULT;
 
+	double quadWidth = GAMESTATE_QUAD_WIDTH_DEFAULT;
+	double quadHeight = GAMESTATE_QUAD_HEIGHT_DEFAULT;
+	XMFLOAT4 quadSpacing = GAMESTATE_QUAD_SPACING_DEFAULT;
+	XMFLOAT4 quadArrayOrigin = GAMESTATE_QUAD_ORIGIN_DEFAULT;
+
 	if (hasConfigToUse()) {
 
 		// Configure base members
@@ -175,6 +212,22 @@ HRESULT GameState::configure(void) {
 				nAsteroidsZ = *intValue;
 			}
 
+			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_QUAD_WIDTH_FIELD, doubleValue) ) {
+				quadWidth = *doubleValue;
+			}
+
+			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATE_SCOPE, GAMESTATE_QUAD_HEIGHT_FIELD, doubleValue) ) {
+				quadHeight = *doubleValue;
+			}
+
+			if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(GAMESTATE_SCOPE, GAMESTATE_QUAD_SPACING_FIELD, float4Value) ) {
+				quadSpacing = *float4Value;
+			}
+
+			if( retrieve<Config::DataType::FLOAT4, DirectX::XMFLOAT4>(GAMESTATE_SCOPE, GAMESTATE_QUAD_ORIGIN_FIELD, float4Value) ) {
+				quadArrayOrigin = *float4Value;
+			}
+
 			// Initialize geometry members
 			// ---------------------------
 			if( FAILED(configureGeometry()) ) {
@@ -210,6 +263,14 @@ HRESULT GameState::configure(void) {
 		nAsteroidsZ = GAMESTATE_NUMBER_OF_ASTEROIDS_Z_DEFAULT;
 		logMessage(L"nAsteroidsZ cannot be zero or negative. Reverting to default value of " + std::to_wstring(nAsteroidsZ));
 	}
+	if( quadWidth <= 0.0 ) {
+		quadWidth = GAMESTATE_QUAD_WIDTH_DEFAULT;
+		logMessage(L"Quad width cannot be zero or negative. Reverting to default value of " + std::to_wstring(quadWidth));
+	}
+	if( quadHeight <= 0.0 ) {
+		quadHeight = GAMESTATE_QUAD_HEIGHT_DEFAULT;
+		logMessage(L"Quad height cannot be zero or negative. Reverting to default value of " + std::to_wstring(quadHeight));
+	}
 
 	// Initialization
 	m_asteroidRadius = static_cast<float>(asteroidRadius);
@@ -217,6 +278,11 @@ HRESULT GameState::configure(void) {
 	m_nAsteroidsX = nAsteroidsX;
 	m_nAsteroidsY = nAsteroidsY;
 	m_nAsteroidsZ = nAsteroidsZ;
+
+	m_quadWidth = static_cast<float>(quadWidth);
+	m_quadHeight = static_cast<float>(quadHeight);
+	m_quadSpacing = quadSpacing;
+	m_quadArrayOrigin = quadArrayOrigin;
 
 	return result;
 }
@@ -290,12 +356,30 @@ HRESULT GameState::configureGeometry(void) {
 		CONFIGUSER_INPUT_FILE_PATH_FIELD
 		);
 
+	m_gridQuads = new GridQuadTextured*[GAMESTATE_GEOMETRY_N_QUAD];
+	wstring quadScope;
+	for( size_t i = 0; i < GAMESTATE_GEOMETRY_N_QUAD; ++i ) {
+		quadScope = GAMESTATE_GEOMETRY_QUAD_SCOPE_PREFIX + std::to_wstring(i);
+		m_gridQuads[i] = new GridQuadTextured(
+			&configIO, // Used to load configuration file
+			&config, // Queried for location of configuration file
+			quadScope, // Configuration file location query parameters
+			CONFIGUSER_INPUT_FILE_NAME_FIELD,
+			quadScope,
+			CONFIGUSER_INPUT_FILE_PATH_FIELD
+			);
+	}
+
 	return result;
 }
 
 HRESULT GameState::initializeGeometry(ID3D11Device* device) {
 
 	if (FAILED(initializeAsteroid(device))) {
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+	}
+
+	if( FAILED(initializeQuads(device)) ) {
 		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 	}
 	
@@ -354,6 +438,108 @@ HRESULT GameState::initializeAsteroid(ID3D11Device* device) {
 	return result;
 }
 
+HRESULT GameState::initializeQuads(ID3D11Device* device) {
+	if( m_gridQuads == 0 ) {
+		logMessage(L"Initialization cannot proceed before the list of quads has been constructed and configured.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	// Temporary bones needed to initialize the quads
+	/* Note: The data used to initialize the bones is not arbitrary,
+	         even if the bones are only used temporarily!
+	 */
+	vector<Transformable*>* const bones = new vector<Transformable*>();
+	XMFLOAT3 scale(1.0f, 1.0f, 1.0f);
+	XMFLOAT3 cornerOffset(0.0f, 0.0f, 0.0f);
+	XMFLOAT4 orientation(0.0f, 0.0f, 0.0f, 1.0f);
+	getQuadCornerTranslation(cornerOffset, 0, m_quadWidth, m_quadHeight);
+	bones->push_back(new Transformable(
+		scale,
+		cornerOffset,
+		orientation
+		));
+	getQuadCornerTranslation(cornerOffset, 1, m_quadWidth, m_quadHeight);
+	bones->push_back(new Transformable(
+		scale,
+		cornerOffset,
+		orientation
+		));
+	getQuadCornerTranslation(cornerOffset, 2, m_quadWidth, m_quadHeight);
+	bones->push_back(new Transformable(
+		scale,
+		cornerOffset,
+		orientation
+		));
+	getQuadCornerTranslation(cornerOffset, 3, m_quadWidth, m_quadHeight);
+	bones->push_back(new Transformable(
+		scale,
+		cornerOffset,
+		orientation
+		));
+
+	HRESULT result = ERROR_SUCCESS;
+
+	for( size_t i = 0; i < GAMESTATE_GEOMETRY_N_QUAD; ++i ) {
+		GridQuadTextured* gridQuad = m_gridQuads[i];
+		if( gridQuad == 0 ) {
+			logMessage(L"Found null quad object at index " + std::to_wstring(i) + L" during initialization of the quad list.");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+		}
+
+		// Initialize the quad
+		result = gridQuad->initialize(device, bones, 0);
+		if( FAILED(result) ) {
+			logMessage(L"Failed to initialize quad geometry at index " + std::to_wstring(i) + L" during initialization of the quad list.");
+			result = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
+	// Delete temporary bones
+	if( bones != 0 ) {
+		vector<Transformable*>::size_type i = 0;
+		vector<Transformable*>::size_type size = bones->size();
+		for( i = 0; i < size; ++i ) {
+			if( (*bones)[i] != 0 ) {
+				delete (*bones)[i];
+				(*bones)[i] = 0;
+			}
+		}
+		delete bones;
+	}
+
+	return result;
+}
+
+void GameState::getQuadCornerTranslation(DirectX::XMFLOAT3& translation, size_t cornerIndex, const float width, const float height) {
+	if( cornerIndex >= GAMESTATE_NQUADBONES ) {
+		std::string msg = "Invalid corner index passed to GameState::getQuadCornerTranslation()."
+			" Expected a value from 0 to " + std::to_string(GAMESTATE_NQUADBONES) + ".";
+		throw std::exception(msg.c_str());
+	}
+
+	float halfWidth = width / 2.0f;
+	float halfHeight = height / 2.0f;
+	switch( cornerIndex ) {
+	case 0:
+		translation.x = halfWidth;
+		translation.y = halfHeight;
+		break;
+	case 1:
+		translation.x = -halfWidth;
+		translation.y = halfHeight;
+		break;
+	case 2:
+		translation.x = -halfWidth;
+		translation.y = -halfHeight;
+		break;
+	case 3:
+		translation.x = halfWidth;
+		translation.y = -halfHeight;
+		break;
+	}
+	translation.z = 0.0f;
+}
+
 HRESULT GameState::spawnAsteroidsGrid(const size_t x, const size_t y, const size_t z) {
 
 	if (m_asteroid == 0) {
@@ -401,6 +587,73 @@ HRESULT GameState::spawnAsteroidsGrid(const size_t x, const size_t y, const size
 				m_objectList->emplace_back(newObject);
 			}
 		}
+	}
+
+	return ERROR_SUCCESS;
+}
+
+HRESULT GameState::spawnQuadRow(const float width, const float height, const XMFLOAT4& origin, const XMFLOAT4& spacing) {
+	if( m_gridQuads == 0 ) {
+		logMessage(L"Initialization cannot proceed before the list of quads has been constructed and configured.");
+		return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_WRONG_STATE);
+	}
+
+	XMFLOAT3 cornerOffsets[GAMESTATE_NQUADBONES];
+	for( size_t j = 0; j < GAMESTATE_NQUADBONES; ++j ) {
+		getQuadCornerTranslation(cornerOffsets[j], j, width, height);
+	}
+
+	XMFLOAT3 scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	XMFLOAT3 cornerAxis = XMFLOAT3(0.0f, 1.0f, 0.0f);
+
+	float minPeriod = 5000.0f;
+	float maxPeriod = 10000.0f;
+
+	float minOrbit = 0.0f;
+	float maxOrbit = XM_2PI;
+
+	// Loop Variables
+	ObjectModel* newObject = 0;
+	Transformable* bone = 0;
+	Transformable* parent = 0;
+	float t = 0.0f; // Interpolation parameter
+	XMFLOAT3 parentPosition(0.0f, 0.0f, 0.0f);
+	XMVECTOR originVector = XMLoadFloat4(&origin);
+	XMVECTOR spacingVector = XMLoadFloat4(&spacing);
+
+	m_gridQuadParents = new Transformable*[GAMESTATE_GEOMETRY_N_QUAD];
+
+	for( size_t i = 0; i < GAMESTATE_GEOMETRY_N_QUAD; ++i ) {
+		if( GAMESTATE_GEOMETRY_N_QUAD > 1 ) {
+			t = static_cast<float>(i) / static_cast<float>(GAMESTATE_GEOMETRY_N_QUAD - 1);
+		} else {
+			t = 0.5f;
+		}
+
+		newObject = new ObjectModel(m_gridQuads[i]);
+
+		XMStoreFloat3(&parentPosition, XMVectorAdd(originVector,
+			XMVectorScale(spacingVector, static_cast<float>(i))));
+		m_gridQuadParents[i] = new Transformable(scale, parentPosition, orientation);
+		parent = m_gridQuadParents[i];
+
+		bone = new RockingTransformable(scale, cornerOffsets[0], orientation,
+			minPeriod + (maxPeriod - minPeriod) * t,
+			minOrbit + (maxOrbit - minOrbit) * t,
+			cornerAxis);
+		bone->setParent(parent);
+		newObject->addTransformable(bone);
+		for( size_t j = 1; j < GAMESTATE_NQUADBONES; ++j ) {
+			bone = new RockingTransformable(scale, cornerOffsets[j], orientation,
+				0.0f,
+				0.0f,
+				cornerAxis);
+			bone->setParent(parent);
+			newObject->addTransformable(bone);
+		}
+
+		m_objectList->emplace_back(newObject);
 	}
 
 	return ERROR_SUCCESS;

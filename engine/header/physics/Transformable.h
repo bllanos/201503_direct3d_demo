@@ -102,9 +102,6 @@ public:
 
 	virtual HRESULT update(const DWORD currentTime, const DWORD updateTimeInterval);
 
-	// override this function in the child and use it for matrix transformations
-	virtual HRESULT transformations(DirectX::XMFLOAT4X4& transform, const DWORD currentTime, const DWORD updateTimeInterval);
-
 	HRESULT setParent(Transformable* const parent);
 
 	void Move(float amount); // move forward and back (move forward, move backward)
@@ -144,6 +141,9 @@ public:
 	DirectX::XMFLOAT3 getLeftLocalDirection();
 
 protected:
+	// override this function in the child and use it for matrix transformations
+	virtual HRESULT transformations(DirectX::XMFLOAT4X4& transform, const DWORD currentTime, const DWORD updateTimeInterval);
+
 	virtual void computeLocalTransform(DirectX::XMFLOAT4X4& localTransformNoScale, const DWORD updateTimeInterval);
 	virtual void computeTransforms(DirectX::XMFLOAT4X4 newWorldTransform, const DWORD updateTimeInterval);
 	void updateTransformProperties();

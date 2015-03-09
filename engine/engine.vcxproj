@@ -16,6 +16,7 @@
     <ClCompile Include="cpp\physics\HomingTransformable.cpp" />
     <ClCompile Include="cpp\physics\HomingSpline.cpp" />
     <ClCompile Include="cpp\physics\BasicSpline.cpp" />
+    <ClCompile Include="cpp\physics\RockingTransformable.cpp" />
     <ClCompile Include="cpp\physics\WanderingLineSpline.cpp" />
     <ClCompile Include="cpp\geometry\UniformRandomSplineModel.cpp" />
     <ClCompile Include="cpp\physics\WanderingLineTransformable.cpp" />
@@ -70,6 +71,7 @@
     <ClInclude Include="header\physics\HomingSpline.h" />
     <ClInclude Include="header\geometry\UniformRandomSplineModel.h" />
     <ClInclude Include="header\physics\BasicSpline.h" />
+    <ClInclude Include="header\physics\RockingTransformable.h" />
     <ClInclude Include="header\physics\WanderingLineSpline.h" />
     <ClInclude Include="header\physics\WanderingLineTransformable.h" />
     <ClInclude Include="header\rendering\SplineParticlesRenderer.h" />

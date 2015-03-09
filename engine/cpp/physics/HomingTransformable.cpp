@@ -41,7 +41,7 @@ HomingTransformable::HomingTransformable(const size_t capacity,
 	XMFLOAT3(0.0f, 0.0f, 0.0f),
 	XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f)),
 	m_startTime(currentTime), m_speedT(speedT),
-	m_loop(loop), m_spline(0), m_radius(0), m_isAtEnd(false)
+	m_loop(loop), m_spline(0), m_isAtEnd(false)
 {
 	m_spline = new HomingSpline(capacity, initialSize, speed, start, end,
 		knotParameters, thresholdDistance);
@@ -60,10 +60,6 @@ HomingTransformable::~HomingTransformable(void) {
 	if( m_spline != 0 ) {
 		delete m_spline;
 		m_spline = 0;
-	}
-	if( m_radius != 0 ) {
-		delete m_radius;
-		m_radius = 0;
 	}
 }
 

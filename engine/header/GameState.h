@@ -1,16 +1,33 @@
 /*
-	GameState.h
+GameState.h
+-----------
+
+Created for: COMP3501A Project
+Fall 2014, Carleton University
+
+Authors:
+Brandon Keyes, ID: 100897196
+Bernard Llanos, ID: 100793648
+Mark Wilkes, ID: 100884169
+
+Adapted March 8, 2015 for a simpler graphics demo
+rather than a game-like demo.
+
+Description:
+- Container for the objects forming the visible scene
 */
 
 #pragma once
 
 #include <vector>
+#include <DirectXMath.h>
 #include "ObjectModel.h"
 #include "Transformable.h"
 #include "State.h"
 #include "ConfigUser.h"
 #include "Camera.h"
 #include "GridSphereTextured.h"
+#include "GridQuadTextured.h"
 #include "FlatAtomicConfigIO.h"
 
 // Logging message prefix
@@ -40,6 +57,18 @@
 #define GAMESTATE_NUMBER_OF_ASTEROIDS_Z_FIELD L"nAsteroidsZ"
 #define GAMESTATE_NUMBER_OF_ASTEROIDS_Z_DEFAULT 0 // 10
 
+#define GAMESTATE_QUAD_WIDTH_FIELD L"quadWidth"
+#define GAMESTATE_QUAD_WIDTH_DEFAULT 0
+
+#define GAMESTATE_QUAD_HEIGHT_FIELD L"quadHeight"
+#define GAMESTATE_QUAD_HEIGHT_DEFAULT 0
+
+#define GAMESTATE_QUAD_SPACING_FIELD L"quadSpacing"
+#define GAMESTATE_QUAD_SPACING_DEFAULT DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f)
+
+#define GAMESTATE_QUAD_ORIGIN_FIELD L"quadArrayOrigin"
+#define GAMESTATE_QUAD_ORIGIN_DEFAULT DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f)
+
 // LogUser and ConfigUser configuration parameters
 // Refer to LogUser.h and ConfigUser.h
 #define GAMESTATE_LOGUSER_SCOPE			L"GameState_LogUser"
@@ -47,6 +76,11 @@
 
 // Asteroid configuration
 #define GAMESTATE_GEOMETRY_ASTEROID_SCOPE L"asteroid"
+
+// Quad configuration
+#define GAMESTATE_GEOMETRY_QUAD_SCOPE_PREFIX L"quad"
+// Scope names will be "quad0" ... "quad8", for example
+#define GAMESTATE_GEOMETRY_N_QUAD 1
 
 #define GAMESTATE_CONFIGIO_CLASS FlatAtomicConfigIO
 
@@ -58,13 +92,20 @@ protected:
 
 private:
 	std::vector<ObjectModel*>* m_objectList;
-
 	GridSphereTextured* m_asteroid;
+	GridQuadTextured** m_gridQuads;
+	Transformable** m_gridQuadParents;
 
 	// Asteroid parameters
 	float m_asteroidRadius;
 	double m_asteroidGridSpacing;
 	size_t m_nAsteroidsX, m_nAsteroidsY, m_nAsteroidsZ;
+
+	// Quad parameters
+	float m_quadWidth;
+	float m_quadHeight;
+	DirectX::XMFLOAT4 m_quadSpacing;
+	DirectX::XMFLOAT4 m_quadArrayOrigin;
 
 public:
 	/* 'configureNow' allows derived classes to postpone configuration
@@ -102,7 +143,14 @@ protected:
 
 	virtual HRESULT initializeAsteroid(ID3D11Device* device);
 
+	virtual HRESULT initializeQuads(ID3D11Device* device);
+
+private:
+	void getQuadCornerTranslation(DirectX::XMFLOAT3& translation, size_t cornerIndex, const float width, const float height);
+
 protected:
 
 	virtual HRESULT spawnAsteroidsGrid(const size_t x, const size_t y, const size_t z);
+
+	virtual HRESULT spawnQuadRow(const float width, const float height, const DirectX::XMFLOAT4& origin, const DirectX::XMFLOAT4& spacing);
 };

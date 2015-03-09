@@ -217,6 +217,9 @@
     <ClCompile Include="cpp\ObjectModel.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="cpp\physics\RockingTransformable.cpp">
+      <Filter>source\physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\rendering\IGeometryRenderer.h">
@@ -392,6 +395,9 @@
     </ClInclude>
     <ClInclude Include="header\ObjectModel.h">
       <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="header\physics\RockingTransformable.h">
+      <Filter>header\physics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

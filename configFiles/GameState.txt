@@ -24,6 +24,13 @@ INT -- GameState::nAsteroidsX = 3
 INT -- GameState::nAsteroidsY = 3
 INT -- GameState::nAsteroidsZ = 3
 
+# Quads external configuration
+# ----------------------------
+DOUBLE -- GameState::quadWidth = 3.0
+DOUBLE -- GameState::quadHeight = 2.0
+FLOAT4 -- GameState::quadSpacing = (5.0, -2.0, 1.0, 0.0)
+FLOAT4 -- GameState::quadArrayOrigin = (-10.0, -10.0, 0.0, 0.0)
+
 # Allows the game state to provide a sharable config instance
 # -----------------------------------------------------------
 FILENAME -- GameState::inputConfigFileName = "GameState.txt"
@@ -33,6 +40,11 @@ DIRECTORY -- GameState::inputConfigFilePath = "..\configFiles"
 # --------------------------------
 FILENAME -- asteroid::inputConfigFileName = "asteroid.txt"
 DIRECTORY -- asteroid::inputConfigFilePath = "..\configFiles\geometry"
+
+# Quads internal configuration
+# --------------------------------
+FILENAME -- quad0::inputConfigFileName = "quad0.txt"
+DIRECTORY -- quad0::inputConfigFilePath = "..\configFiles\geometry\quads"
 
 # ///////////////////////////////////
 # Particle Systems

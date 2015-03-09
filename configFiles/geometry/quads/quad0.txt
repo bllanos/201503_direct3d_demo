@@ -1,0 +1,51 @@
+# Configuration file for a quad model
+# (a GridQuadTextured object)
+
+# GridQuadTextured LogUser configuration
+# -----------------------------------------------
+BOOL -- GridQuadTextured_LogUser::enableLogging = true
+WSTRING -- GridQuadTextured_LogUser::msgPrefix = L"Quad 0 Geometry"
+BOOL -- GridQuadTextured_LogUser::useGlobalLog = false
+BOOL -- GridQuadTextured_LogUser::allocConsole = false
+BOOL -- GridQuadTextured_LogUser::allocLogFile = true
+FILENAME -- GridQuadTextured_LogUser::logFileName = "GameStateLog.txt"
+DIRECTORY -- GridQuadTextured_LogUser::logFilePath = "..\logFiles"
+BOOL -- GridQuadTextured_LogUser::overwriteFile = false
+BOOL -- GridQuadTextured_LogUser::timestampEnable = true
+
+# GridQuadTextured ConfigUser configuration
+# -----------------------------------------
+BOOL -- GridQuadTextured_ConfigUser::enableConfigUseLogging = true
+
+# GridQuadTextured geometry configuration
+# -----------------------------------------------
+INT -- GridQuadTextured::nColumns = 10
+INT -- GridQuadTextured::nRows = 10
+DOUBLE -- GridQuadTextured::transparencyMultiplier = 1.0
+BOOL -- GridQuadTextured::debugWinding = false
+
+# GridQuadTextured material configuration
+# ---------------------------------------
+FLOAT4 -- GridQuadTextured::ambientAlbedo = (0.5, 0.6, 1.0, 1.0)
+FLOAT4 -- GridQuadTextured::diffuseAlbedo = (0.6, 0.8, 1.0, 1.0)
+FLOAT4 -- GridQuadTextured::specularAlbedo = (1.0, 1.0, 1.0, 1.0)
+DOUBLE -- GridQuadTextured::specularPower = 100.0
+
+# GridQuadTextured lighting configuration
+# ---------------------------------------
+BOOL -- GridQuadTextured::renderWithLighting = true
+
+# GridQuadTextured albedo texture controls
+# ----------------------------------------------
+BOOL -- GridQuadTextured::createAlbedoTexture = true
+BOOL -- GridQuadTextured::renderAlbedoTexture = true
+
+# GridQuadTextured albedo texture configuration
+# ----------------------------------------------
+BOOL -- GridQuadTextured::albedoTexture_enableLogging = true
+WSTRING -- GridQuadTextured::albedoTexture_msgPrefix = L"Quad Geometry Albedo Texture"
+WSTRING -- GridQuadTextured::albedoTextureScope = L"albedoTexture"
+WSTRING -- GridQuadTextured::albedoTextureScope_LogUser = L"albedoTexture_LogUser"
+WSTRING -- GridQuadTextured::albedoTextureScope_ConfigUser = L"albedoTexture_ConfigUser"
+FILENAME -- GridQuadTextured::albedoTexture_inputConfigFileName = "quadTexture.txt"
+DIRECTORY -- GridQuadTextured::albedoTexture_inputConfigFilePath = "..\configFiles\geometry\quads"
