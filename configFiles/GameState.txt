@@ -26,10 +26,10 @@ INT -- GameState::nAsteroidsZ = 3
 
 # Quads external configuration
 # ----------------------------
-DOUBLE -- GameState::quadWidth = 3.0
+DOUBLE -- GameState::quadWidth = 4.0
 DOUBLE -- GameState::quadHeight = 2.0
-FLOAT4 -- GameState::quadSpacing = (5.0, -2.0, 1.0, 0.0)
-FLOAT4 -- GameState::quadArrayOrigin = (-10.0, -10.0, 0.0, 0.0)
+FLOAT4 -- GameState::quadSpacing = (-3.0, -2.0, 0.0, 0.0)
+FLOAT4 -- GameState::quadArrayOrigin = (-10.0, 10.0, 20.0, 0.0)
 
 # Allows the game state to provide a sharable config instance
 # -----------------------------------------------------------
@@ -45,6 +45,20 @@ DIRECTORY -- asteroid::inputConfigFilePath = "..\configFiles\geometry"
 # --------------------------------
 FILENAME -- quad0::inputConfigFileName = "quad0.txt"
 DIRECTORY -- quad0::inputConfigFilePath = "..\configFiles\geometry\quads"
+FILENAME -- quad1::inputConfigFileName = "quad1.txt"
+DIRECTORY -- quad1::inputConfigFilePath = "..\configFiles\geometry\quads"
+FILENAME -- quad2::inputConfigFileName = "quad2.txt"
+DIRECTORY -- quad2::inputConfigFilePath = "..\configFiles\geometry\quads"
+FILENAME -- quad3::inputConfigFileName = "quad3.txt"
+DIRECTORY -- quad3::inputConfigFilePath = "..\configFiles\geometry\quads"
+FILENAME -- quad4::inputConfigFileName = "quad4.txt"
+DIRECTORY -- quad4::inputConfigFilePath = "..\configFiles\geometry\quads"
+FILENAME -- quad5::inputConfigFileName = "quad5.txt"
+DIRECTORY -- quad5::inputConfigFilePath = "..\configFiles\geometry\quads"
+FILENAME -- quad6::inputConfigFileName = "quad6.txt"
+DIRECTORY -- quad6::inputConfigFilePath = "..\configFiles\geometry\quads"
+FILENAME -- quad7::inputConfigFileName = "quad7.txt"
+DIRECTORY -- quad7::inputConfigFilePath = "..\configFiles\geometry\quads"
 
 # ///////////////////////////////////
 # Particle Systems

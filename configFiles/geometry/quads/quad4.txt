@@ -4,7 +4,7 @@
 # GridQuadTextured LogUser configuration
 # -----------------------------------------------
 BOOL -- GridQuadTextured_LogUser::enableLogging = true
-WSTRING -- GridQuadTextured_LogUser::msgPrefix = L"Quad 0 Geometry"
+WSTRING -- GridQuadTextured_LogUser::msgPrefix = L"Quad 4 Geometry"
 BOOL -- GridQuadTextured_LogUser::useGlobalLog = false
 BOOL -- GridQuadTextured_LogUser::allocConsole = false
 BOOL -- GridQuadTextured_LogUser::allocLogFile = true
@@ -37,8 +37,8 @@ BOOL -- GridQuadTextured::renderWithLighting = true
 
 # GridQuadTextured albedo texture controls
 # ----------------------------------------------
-BOOL -- GridQuadTextured::createAlbedoTexture = true
-BOOL -- GridQuadTextured::renderAlbedoTexture = true
+BOOL -- GridQuadTextured::createAlbedoTexture = false
+BOOL -- GridQuadTextured::renderAlbedoTexture = false
 
 # GridQuadTextured albedo texture configuration
 # ----------------------------------------------

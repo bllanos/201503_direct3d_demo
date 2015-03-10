@@ -80,7 +80,7 @@ Description:
 // Quad configuration
 #define GAMESTATE_GEOMETRY_QUAD_SCOPE_PREFIX L"quad"
 // Scope names will be "quad0" ... "quad8", for example
-#define GAMESTATE_GEOMETRY_N_QUAD 1
+#define GAMESTATE_GEOMETRY_N_QUAD 8
 
 #define GAMESTATE_CONFIGIO_CLASS FlatAtomicConfigIO
 

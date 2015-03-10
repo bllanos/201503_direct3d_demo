@@ -62,13 +62,14 @@ HRESULT RockingTransformable::transformations(XMFLOAT4X4& newWorldTransform, con
 
 		// Apply an orbit translation
 		XMVECTOR positionVector = XMLoadFloat3(&m_position);
-		XMMATRIX matrix = XMMatrixMultiply(XMLoadFloat4x4(&newWorldTransform),
-			XMMatrixTranslationFromVector(positionVector));
+		XMMATRIX matrix = XMMatrixTranslationFromVector(positionVector);
 		matrix = XMMatrixMultiply(matrix, XMMatrixRotationQuaternion(quaternion));
 		matrix = XMMatrixMultiply(matrix,
 			XMMatrixTranslationFromVector(
 			XMVectorScale(positionVector, -1.0f)
 			));
+
+		matrix = XMMatrixMultiply(matrix, XMLoadFloat4x4(&newWorldTransform));
 		XMStoreFloat4x4(&newWorldTransform, matrix);
 	}
 

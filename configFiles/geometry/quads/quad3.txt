@@ -4,7 +4,7 @@
 # GridQuadTextured LogUser configuration
 # -----------------------------------------------
 BOOL -- GridQuadTextured_LogUser::enableLogging = true
-WSTRING -- GridQuadTextured_LogUser::msgPrefix = L"Quad 0 Geometry"
+WSTRING -- GridQuadTextured_LogUser::msgPrefix = L"Quad 3 Geometry"
 BOOL -- GridQuadTextured_LogUser::useGlobalLog = false
 BOOL -- GridQuadTextured_LogUser::allocConsole = false
 BOOL -- GridQuadTextured_LogUser::allocLogFile = true
@@ -22,18 +22,18 @@ BOOL -- GridQuadTextured_ConfigUser::enableConfigUseLogging = true
 INT -- GridQuadTextured::nColumns = 10
 INT -- GridQuadTextured::nRows = 10
 DOUBLE -- GridQuadTextured::transparencyMultiplier = 1.0
-BOOL -- GridQuadTextured::debugWinding = false
+BOOL -- GridQuadTextured::debugWinding = true
 
 # GridQuadTextured material configuration
 # ---------------------------------------
-FLOAT4 -- GridQuadTextured::ambientAlbedo = (0.2, 0.2, 0.2, 1.0)
-FLOAT4 -- GridQuadTextured::diffuseAlbedo = (0.5, 0.5, 0.5, 1.0)
-FLOAT4 -- GridQuadTextured::specularAlbedo = (1.5, 1.5, 1.5, 1.0)
+FLOAT4 -- GridQuadTextured::ambientAlbedo = (0.5, 0.6, 1.0, 1.0)
+FLOAT4 -- GridQuadTextured::diffuseAlbedo = (0.6, 0.8, 1.0, 1.0)
+FLOAT4 -- GridQuadTextured::specularAlbedo = (1.0, 1.0, 1.0, 1.0)
 DOUBLE -- GridQuadTextured::specularPower = 100.0
 
 # GridQuadTextured lighting configuration
 # ---------------------------------------
-BOOL -- GridQuadTextured::renderWithLighting = true
+BOOL -- GridQuadTextured::renderWithLighting = false
 
 # GridQuadTextured albedo texture controls
 # ----------------------------------------------

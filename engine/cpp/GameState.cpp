@@ -137,6 +137,14 @@ HRESULT GameState::drawContents(ID3D11DeviceContext* const context, GeometryRend
 HRESULT GameState::update(const DWORD currentTime, const DWORD updateTimeInterval) {
 	HRESULT result = ERROR_SUCCESS;
 
+	for( size_t i = 0; i < GAMESTATE_GEOMETRY_N_QUAD; ++i ) {
+		result = m_gridQuadParents[i]->update(currentTime, updateTimeInterval);
+		if( FAILED(result) ) {
+			logMessage(L"Failed to update quad parent Transformable at index = " + std::to_wstring(i) + L".");
+			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
+		}
+	}
+
 	const vector<ObjectModel*>::size_type nObjects = m_objectList->size();
 	for( vector<ObjectModel*>::size_type i = 0; i < nObjects; ++i ) {
 		result = (*m_objectList)[i]->updateContainedTransforms(currentTime, updateTimeInterval);
@@ -607,11 +615,11 @@ HRESULT GameState::spawnQuadRow(const float width, const float height, const XMF
 	XMFLOAT4 orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 	XMFLOAT3 cornerAxis = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
-	float minPeriod = 5000.0f;
-	float maxPeriod = 10000.0f;
+	float minPeriod = 10000.0f;
+	float maxPeriod = 20000.0f;
 
-	float minOrbit = 0.0f;
-	float maxOrbit = XM_2PI;
+	float minOrbit = XM_PI;
+	float maxOrbit = XM_PI;
 
 	// Loop Variables
 	ObjectModel* newObject = 0;
@@ -639,19 +647,32 @@ HRESULT GameState::spawnQuadRow(const float width, const float height, const XMF
 		parent = m_gridQuadParents[i];
 
 		bone = new RockingTransformable(scale, cornerOffsets[0], orientation,
+			0.0f,
+			0.0f,
+			cornerAxis);
+		bone->setParent(parent);
+		newObject->addTransformable(bone);
+
+		bone = new RockingTransformable(scale, cornerOffsets[1], orientation,
+			0.0f,
+			0.0f,
+			cornerAxis);
+		bone->setParent(parent);
+		newObject->addTransformable(bone);
+
+		bone = new RockingTransformable(scale, cornerOffsets[2], orientation,
 			minPeriod + (maxPeriod - minPeriod) * t,
 			minOrbit + (maxOrbit - minOrbit) * t,
 			cornerAxis);
 		bone->setParent(parent);
 		newObject->addTransformable(bone);
-		for( size_t j = 1; j < GAMESTATE_NQUADBONES; ++j ) {
-			bone = new RockingTransformable(scale, cornerOffsets[j], orientation,
-				0.0f,
-				0.0f,
-				cornerAxis);
-			bone->setParent(parent);
-			newObject->addTransformable(bone);
-		}
+
+		bone = new RockingTransformable(scale, cornerOffsets[3], orientation,
+			0.0f,
+			0.0f,
+			cornerAxis);
+		bone->setParent(parent);
+		newObject->addTransformable(bone);
 
 		m_objectList->emplace_back(newObject);
 	}
