@@ -19,15 +19,15 @@ BOOL -- UniformRandomSplineModel_ConfigUser::enableConfigUseLogging = true
 
 # UniformRandomSplineModel geometry configuration
 # -----------------------------------------------
-INT -- UniformRandomSplineModel::nParticles = 10000
-FLOAT4 -- UniformRandomSplineModel::vertexPositionMin = (0.0, 0.0, 0.0, 0.0)
-FLOAT4 -- UniformRandomSplineModel::vertexPositionMax = (1.0, 0.1, 6.283185307, 0.0)
+INT -- UniformRandomSplineModel::nParticles = 100000
+FLOAT4 -- UniformRandomSplineModel::vertexPositionMin = (0.0, 0.5, 0.0, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexPositionMax = (1.0, 1.0, 6.283185307, 0.0)
 FLOAT4 -- UniformRandomSplineModel::vertexBillboardMin = (0.05, 0.05, 0.0002, 0.0)
 FLOAT4 -- UniformRandomSplineModel::vertexBillboardMax = (0.1, 0.1, 0.002, 0.0)
-FLOAT4 -- UniformRandomSplineModel::vertexLinearVelocityMin = (0.00001, 0.0005, 0.00001, 0.0)
-FLOAT4 -- UniformRandomSplineModel::vertexLinearVelocityMax = (0.0001, 0.002, 0.00005, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexLinearVelocityMin = (0.00001, 0.001, 0.000001, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexLinearVelocityMax = (0.0001, 0.002, 0.00001, 0.0)
 FLOAT4 -- UniformRandomSplineModel::vertexLifeMin = (0.0, 1.0, 0.00005, 0.0)
-FLOAT4 -- UniformRandomSplineModel::vertexLifeMax = (0.0, 1.0, 0.0005, 0.0)
+FLOAT4 -- UniformRandomSplineModel::vertexLifeMax = (1000.0, 1.0, 0.0005, 0.0)
 FLOAT4 -- UniformRandomSplineModel::vertexIndexMin = (1.0, 1.0, 1.0, 1.0)
 FLOAT4 -- UniformRandomSplineModel::vertexIndexMax = (1.0, 1.0, 1.0, 1.0)
 

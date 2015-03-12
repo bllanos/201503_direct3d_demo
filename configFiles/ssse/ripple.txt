@@ -19,7 +19,7 @@ BOOL -- OneTextureSSSE_ConfigUser::enableConfigUseLogging = true
 
 # Render target background colour
 # -------------------------------
-COLOR -- OneTextureSSSE::backgroundColor = (0, 0, 0, 255)
+COLOR -- OneTextureSSSE::backgroundColor = (5, 5, 50, 255)
 
 # Constant buffer parameters
 # --------------------------

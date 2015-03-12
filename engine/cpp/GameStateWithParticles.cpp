@@ -61,11 +61,10 @@ m_ballThresholdDistance(GAMESTATEWITHPARTICLES_BALL_THRESHOLDDISTANCE_DEFAULT),
 m_ballSplineParameterSpeed(GAMESTATEWITHPARTICLES_BALL_SPEEDT_DEFAULT),
 m_ballSplineParameterOffset(GAMESTATEWITHPARTICLES_BALL_OFFSETT_DEFAULT),
 m_ballLoopOverSpline(GAMESTATEWITHPARTICLES_BALL_LOOP_DEFAULT),
-m_ballRadius(GAMESTATEWITHPARTICLES_BALL_RADIUS_DEFAULT),
 m_currentTime(0), m_demo_enabled(GAMESTATEWITHPARTICLES_DEMO_DEFAULT),
 m_demo_nExplosions(GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_DEFAULT),
 m_demo_zoneRadius(GAMESTATEWITHPARTICLES_DEMO_SHOWAREA_DEFAULT),
-m_demoStart(0), m_demoEnd(0)
+m_demoStartLaser(0), m_demoEndLaser(0), m_demoStartBall(0), m_demoEndBall(0)
 {
 	if( configureNow ) {
 		if( FAILED(configure()) ) {
@@ -181,13 +180,21 @@ GameStateWithParticles::~GameStateWithParticles(void) {
 	}
 
 	if( m_demo_enabled ) {
-		if( m_demoStart != 0 ) {
-			delete m_demoStart;
-			m_demoStart = 0;
+		if( m_demoStartLaser != 0 ) {
+			delete m_demoStartLaser;
+			m_demoStartLaser = 0;
 		}
-		if( m_demoEnd != 0 ) {
-			delete m_demoEnd;
-			m_demoEnd = 0;
+		if( m_demoEndLaser != 0 ) {
+			delete m_demoEndLaser;
+			m_demoEndLaser = 0;
+		}
+		if( m_demoStartBall != 0 ) {
+			delete m_demoStartBall;
+			m_demoStartBall = 0;
+		}
+		if( m_demoEndBall != 0 ) {
+			delete m_demoEndBall;
+			m_demoEndBall = 0;
 		}
 	}
 }
@@ -626,7 +633,6 @@ HRESULT GameStateWithParticles::configure(void) {
 	m_ballSplineParameterSpeed = GAMESTATEWITHPARTICLES_BALL_SPEEDT_DEFAULT;
 	m_ballSplineParameterOffset = GAMESTATEWITHPARTICLES_BALL_OFFSETT_DEFAULT;
 	m_ballLoopOverSpline = GAMESTATEWITHPARTICLES_BALL_LOOP_DEFAULT;
-	m_ballRadius = GAMESTATEWITHPARTICLES_BALL_RADIUS_DEFAULT;
 
 	m_demo_enabled = GAMESTATEWITHPARTICLES_DEMO_DEFAULT;
 	m_demo_nExplosions = GAMESTATEWITHPARTICLES_DEMO_NEXPLOSIONS_DEFAULT;
@@ -793,10 +799,6 @@ HRESULT GameStateWithParticles::configure(void) {
 
 			if( retrieve<Config::DataType::BOOL, bool>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_LOOP_FIELD, boolValue) ) {
 				m_ballLoopOverSpline = *boolValue;
-			}
-
-			if( retrieve<Config::DataType::DOUBLE, double>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_BALL_RADIUS_FIELD, doubleValue) ) {
-				m_ballRadius = static_cast<float>(*doubleValue);
 			}
 
 			if( retrieve<Config::DataType::BOOL, bool>(GAMESTATEWITHPARTICLES_SCOPE, GAMESTATEWITHPARTICLES_DEMO_FIELD, boolValue) ) {
@@ -1031,36 +1033,42 @@ HRESULT GameStateWithParticles::updateDemo(void) {
 	}
 
 	if( m_lasers->size() < GAMESTATEWITHPARTICLES_DEMO_NLASERS ) {
-		if( m_demoStart == 0 && m_demoEnd == 0 ) {
-			m_demoStart = new Transformable(
+		if( m_demoStartLaser == 0 && m_demoEndLaser == 0 ) {
+			m_demoStartLaser = new Transformable(
 				XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
-				XMFLOAT3(-10.0f, -10.0f, 30.0f), // Position
+				XMFLOAT3(10.0f, 0.0f, -10.0f), // Position
 				XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
 				);
 
-			m_demoEnd = new Transformable(
+			m_demoEndLaser = new Transformable(
 				XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
-				XMFLOAT3(20.0f, 15.0f, 40.0f), // Position
+				XMFLOAT3(70.0f, 50.0f, 120.0f), // Position
 				XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
 				);
 		}
 
-		if( FAILED(spawnLaser(m_demoStart, m_demoEnd)) ) {
+		if( FAILED(spawnLaser(m_demoStartLaser, m_demoEndLaser)) ) {
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}
 
 	if( m_balls->size() < GAMESTATEWITHPARTICLES_DEMO_NBALLS ) {
 
-		if( m_demoStart == 0 ) {
-			m_demoStart = new Transformable(
+		if( m_demoStartBall == 0 && m_demoEndBall == 0 ) {
+			m_demoStartBall = new Transformable(
 				XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
-				XMFLOAT3(-10.0f, -10.0f, 30.0f), // Position
+				XMFLOAT3(-10.0f, 20.0f, -20.0f), // Position
+				XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
+				);
+
+			m_demoEndBall = new Transformable(
+				XMFLOAT3(1.0f, 1.0f, 1.0f), // Scale
+				XMFLOAT3(30.0f, 0.0f, 200.0f), // Position
 				XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) // Orientation
 				);
 		}
 
-		if( FAILED(spawnBall(m_demoStart, m_demoEnd, 0)) ) {
+		if( FAILED(spawnBall(m_demoStartBall, m_demoEndBall, 0)) ) {
 			return MAKE_HRESULT(SEVERITY_ERROR, FACILITY_BL_ENGINE, ERROR_FUNCTION_CALL);
 		}
 	}

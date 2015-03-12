@@ -18,18 +18,18 @@ BOOL -- GameState_ConfigUser::enableConfigUseLogging = true
 
 # Asteroids external configuration
 # --------------------------------
-DOUBLE -- GameState::radiAsteroids = 1.0
-DOUBLE -- GameState::asteroidGridSpacing = 5.0
-INT -- GameState::nAsteroidsX = 3
+DOUBLE -- GameState::radiAsteroids = 2.0
+DOUBLE -- GameState::asteroidGridSpacing = 16.0
+INT -- GameState::nAsteroidsX = 1
 INT -- GameState::nAsteroidsY = 3
-INT -- GameState::nAsteroidsZ = 3
+INT -- GameState::nAsteroidsZ = 16
 
 # Quads external configuration
 # ----------------------------
 DOUBLE -- GameState::quadWidth = 4.0
-DOUBLE -- GameState::quadHeight = 2.0
-FLOAT4 -- GameState::quadSpacing = (-3.0, -2.0, 0.0, 0.0)
-FLOAT4 -- GameState::quadArrayOrigin = (-10.0, 10.0, 20.0, 0.0)
+DOUBLE -- GameState::quadHeight = 3.0
+FLOAT4 -- GameState::quadSpacing = (-4.0, -0.5, 0.0, 0.0)
+FLOAT4 -- GameState::quadArrayOrigin = (17.0, 8.0, -10.0, 0.0)
 
 # Allows the game state to provide a sharable config instance
 # -----------------------------------------------------------
@@ -72,10 +72,10 @@ INT -- GameStateWithParticles::ballLife = 0
 # Detailed laser particle system external configuration
 # -----------------------------------------------------
 INT -- GameStateWithParticles::laser_nSplinesPerLaser = 1
-INT -- GameStateWithParticles::laser_nSegmentsPerSpline = 2
+INT -- GameStateWithParticles::laser_nSegmentsPerSpline = 7
 # Units are units per second (convention from the Transformable class)
-DOUBLE -- GameStateWithParticles::laser_controlPointSpeed = 20.0
-DOUBLE -- GameStateWithParticles::laser_maxRadius = 3.0
+DOUBLE -- GameStateWithParticles::laser_controlPointSpeed = 70.0
+DOUBLE -- GameStateWithParticles::laser_maxRadius = 30.0
 DOUBLE -- GameStateWithParticles::laser_linearSpeed = 0.001
 DOUBLE -- GameStateWithParticles::laser_maxRoll = 0.0
 DOUBLE -- GameStateWithParticles::laser_maxPitch = 0.0
@@ -87,18 +87,17 @@ DOUBLE -- GameStateWithParticles::laser_yawSpeed = 0.0
 # Detailed ball lightning particle system external configuration
 # --------------------------------------------------------------
 INT -- GameStateWithParticles::ball_nSegmentsMax = 64
-INT -- GameStateWithParticles::ball_nSegmentsInitial = 3
+INT -- GameStateWithParticles::ball_nSegmentsInitial = 15
 # Units are units per second (convention from the Transformable class)
-DOUBLE -- GameStateWithParticles::ball_controlPointSpeed = 100.0
-DOUBLE -- GameStateWithParticles::ball_maxRadius = 10.0
+DOUBLE -- GameStateWithParticles::ball_controlPointSpeed = 50.0
+DOUBLE -- GameStateWithParticles::ball_maxRadius = 30.0
 DOUBLE -- GameStateWithParticles::ball_maxRoll = 0.0
 DOUBLE -- GameStateWithParticles::ball_maxPitch = 0.0
 DOUBLE -- GameStateWithParticles::ball_maxYaw = 0.0
 DOUBLE -- GameStateWithParticles::ball_thresholdDistance = 100.0
-DOUBLE -- GameStateWithParticles::ball_splineParameterSpeed = 0.15
+DOUBLE -- GameStateWithParticles::ball_splineParameterSpeed = 0.02
 DOUBLE -- GameStateWithParticles::ball_splineParameterOffset = 0.0
 BOOL -- GameStateWithParticles::ball_loopOverSpline = false
-DOUBLE -- GameStateWithParticles::ball_radius = 1.5
 
 # Demo mode configuration
 # -----------------------
@@ -130,17 +129,17 @@ DIRECTORY -- ball::inputConfigFilePath = "..\configFiles\geometry"
 # Screen-Space Special Effects
 # ///////////////////////////////////
 
-# Night vision
+# Night vision (Unused)
 # --------------------------------
 FILENAME -- nightVision::inputConfigFileName = "nightVision.txt"
 DIRECTORY -- nightVision::inputConfigFilePath = "..\configFiles\ssse"
 
-# Horizontal wipe
+# Horizontal wipe (Unused)
 # --------------------------------
 FILENAME -- wipe::inputConfigFileName = "wipe.txt"
 DIRECTORY -- wipe::inputConfigFilePath = "..\configFiles\ssse"
 
-# Screen Tiling
+# Screen Tiling (Unused)
 # --------------------------------
 FILENAME -- tile::inputConfigFileName = "tile.txt"
 DIRECTORY -- tile::inputConfigFilePath = "..\configFiles\ssse"
@@ -150,7 +149,7 @@ DIRECTORY -- tile::inputConfigFilePath = "..\configFiles\ssse"
 FILENAME -- ripple::inputConfigFileName = "ripple.txt"
 DIRECTORY -- ripple::inputConfigFilePath = "..\configFiles\ssse"
 
-# Smear Effect
+# Smear Effect (Motion Blur)
 # --------------------------------
 FILENAME -- smear::inputConfigFileName = "smear.txt"
 DIRECTORY -- smear::inputConfigFilePath = "..\configFiles\ssse"

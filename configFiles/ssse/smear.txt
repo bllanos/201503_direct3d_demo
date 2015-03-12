@@ -19,7 +19,7 @@ BOOL -- TwoFrameSSSE_ConfigUser::enableConfigUseLogging = true
 
 # Render target background colour
 # -------------------------------
-COLOR -- TwoFrameSSSE::backgroundColor = (0, 0, 0, 255)
+COLOR -- TwoFrameSSSE::backgroundColor = (40, 5, 5, 255)
 
 # Past frame refresh rate [milliseconds]
 # --------------------------------------

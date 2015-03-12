@@ -126,9 +126,6 @@ Description
 #define GAMESTATEWITHPARTICLES_BALL_LOOP_DEFAULT false
 #define GAMESTATEWITHPARTICLES_BALL_LOOP_FIELD L"ball_loopOverSpline"
 
-#define GAMESTATEWITHPARTICLES_BALL_RADIUS_DEFAULT 0.0f
-#define GAMESTATEWITHPARTICLES_BALL_RADIUS_FIELD L"ball_radius"
-
 #define GAMESTATEWITHPARTICLES_BALL_MODELCLASS RandomBurstCone
 
 /* If true, a continual fireworks show will be produced. */
@@ -302,7 +299,6 @@ private:
 	float m_ballSplineParameterSpeed;
 	float m_ballSplineParameterOffset;
 	bool m_ballLoopOverSpline;
-	float m_ballRadius;
 
 	DWORD m_currentTime;
 
@@ -450,8 +446,10 @@ protected:
 	virtual HRESULT updateDemo(void);
 
 	/* Used only in demo mode */
-	Transformable* m_demoStart;
-	Transformable* m_demoEnd;
+	Transformable* m_demoStartLaser;
+	Transformable* m_demoEndLaser;
+	Transformable* m_demoStartBall;
+	Transformable* m_demoEndBall;
 
 	// Currently not implemented - will cause linker errors if called
 private:

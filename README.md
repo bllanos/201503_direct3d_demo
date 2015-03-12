@@ -207,5 +207,6 @@ Zoom Camera:
 
 ## Screen-Space Special Effects
 
-O: When in the game state with SSSEs, cycle between the shockwave SSSE,
-   the motion blur SSSE, and no SSSE.
+O: When in the game state with SSSEs, cycle between the shockwave SSSE
+   (dark blue background), the motion blur SSSE (dark red background),
+   and no SSSE (black background).
