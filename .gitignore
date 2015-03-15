@@ -4,10 +4,12 @@
 */Debug/
 UpgradeLog.htm
 Debug/
-logFiles/
-configFiles/output_gitIgnored/
+logFiles/*
+!logFiles/test
+logFiles/test/*
+configFiles/output_gitIgnored/*
+!about.txt
 win32_base/logger_output/
 win32_base/configuration/test/output/
 win32_base/configuration/output/
 DirectXTK/
-textures/

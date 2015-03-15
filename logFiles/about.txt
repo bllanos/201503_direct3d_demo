@@ -1,0 +1,1 @@
+As currently configured, logging output will appear in this folder.

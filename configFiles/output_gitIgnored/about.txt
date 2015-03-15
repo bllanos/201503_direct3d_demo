@@ -1,0 +1,1 @@
+As currently configured, a dump of the global configuration data store will appear in this folder.

@@ -1,0 +1,1 @@
+As currently configured, logging output for test code will appear in this folder.

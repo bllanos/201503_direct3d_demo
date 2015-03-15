@@ -1,89 +1,37 @@
-# COMP3501A Game Project
+# A Demo of Elementary Hardware-Accelerated Graphics Techniques
+**Using Direct3D 11 and Microsoft Visual Studio**
+**Bernard Llanos**
+**March 2015**
 
-**Fall 2014 (September - December)**
+## About
 
-### Authors
-- Brandon Keyes, ID: 100897196
-- Bernard Llanos, ID: 100793648
-- Mark Wilkes, ID: 100884169
+### Project History and Sources
 
-## Description
-An outer space-themed game. (Refer to project proposal for more details.)
+This demo is based on a final project for the Carleton University course
+_COMP3501A: Foundations of Game Programming and Computer Graphics_ (Fall 2014 offering).
 
-## Building and Operating Instructions
-The program should build and run with Visual Studio 2012 or higher,
-on Windows 7 or higher. Development was undertaken primarily on Windows 7
-with Visual Studio 2013.
+The team behind the COMP3501A project consisted of:
+- Brandon Keyes
+- Bernard Llanos
+- Mark Wilkes
 
-For Visual Studio 2012, it will be necessary to 'downgrade' the projects
-in the solution by changing their 'Platform Toolset' values (`Configuration Properties > General`).
+The main component of the projet, the Visual Studio 'engine' project (`engine/`),
+was adapted from a final project for the Carleton University course
+_COMP2501A: Computer Game Design and Development_ (Winter 2014 offering).
 
-Any broken links, “File not found”-type errors, (e.g. “Cannot open…”) can normally be resolved
-by removing the files in question from the project using the 'Solution Explorer' pane and then
-using the `Project > Add Existing Item` wizard to reinsert them into the project under the
-correct file paths.
+The team behind the COMP2501A project consisted of:
+- Bernard Llanos
+- Alec McGrail
+- Benjamin Smith,
 
-One group member uses the WARP software driver due to hardware limitations.
-This setting should not be pushed to the repository, but in the event
-that it makes its way in, it can be changed on Line 292 of d3dclass.cpp
-(in the call to `D3D11CreateDeviceAndSwapChain()`).
+The COMP2501A project was based on the course tutorials, which in turn
+were based on the Rastertek tutorials. (http://www.rastertek.com, currently unavailable)
 
-### Including the DirectX Toolkit
+The rendering engine relies on framework code, the Visual Studio 'win32_base' project
+(`win32_base/`), which was written by Bernard Llanos from May to September 2014 and is further
+described in `win32_base/README.md`. Presently, it is also available at https://github.com/bllanos/win32_base
 
-The DirectX Toolkit may not be included with the project code
-(and is certainly not in the repository). If it is absent,
-download it from https://directxtk.codeplex.com/ and extract it
-to the following location: `DirectXTK`.
-
-Presently, the 'engine' project (`engine\engine.vcxproj`) has been
-set up to reference `DirectXTK\DirectXTK_Desktop_2013.vcxproj`.
-If you are using Visual Studio 2012 instead of Visual Studio 2013,
-you may need to change the reference to `DirectXTK\DirectXTK_Desktop_2012.vcxproj`.
-
-### Running a clone of the repository
-_(Hopefully not applicable to any submitted versions of the code)_
-
-In the event that the code is a direct clone of the repository,
-you will need to obtain the DirectX Toolkit (see above) in order to build
-the project.
-
-Afterwards, the project should build properly,
-but will not execute normally. The reason for the abnormal execution is the lack
-of several folders which are not part of the repository, but which the program
-expects to exist (depending on the configuration data passed to it).
-
-To allow for normal execution, create the following folders:
-- Empty folders
-  - `logFiles`
-  - `logFiles\test`
-  - `configFiles\output_gitIgnored`
-- Non-empty folders
-  - `textures`: Insert textures for the project here.
-  - `textures\test`: Insert textures needed by test code here.
-
-Note that the above folder paths are relative to the solution directory
-(the directory containing `game.sln`).
-
-In contrast, with the current Visual Studio project settings,
-when the program is executed, its working directory is the `win32_base` folder.
-(All configuration data must be written with this in mind.)
-
-## Code References
-
-(Beyond COMP3501A course demos and assignment solutions)
-
-The main project code, the Visual Studio 'engine' project,
-was adapted from the following sources:
-- Bernard Llanos, Alec McGrail, Benjamin Smith,
-  group project for the course COMP2501A (Winter 2014)
-  - This was, in turn, based on the course tutorials,
-    which were based on the Rastertek tutorials.
-	(http://www.rastertek.com, currently unavailable)
-
-The game engine relies on framework code, the Visual Studio 'win32_base' project.
-This code was written by Bernard Llanos from May to September 2014 and is further
-described in `win32_base\README.md`.
-Presently, it is also available at https://github.com/bllanos/win32_base
+### Additional Sources
 
 The following works were consulted for ideas during development:
 - Luna, Frank D. _3D Game Programming with DirectX 11._
@@ -115,98 +63,109 @@ The following works were consulted for ideas during development:
     _Practical Rendering and Computation with Direct 3D 11._
     Boca Raton: CRC Press Taylor & Francis Group, 2011. (Chapter 12)
 
-## Sources of Assets
+### Sources of Assets
 
-- "Mars Rock 'Windjana' After Examination" (`textures\pia18092_mahli-sol627-windjana.jpg`)
+- "Mars Rock 'Windjana' After Examination" (`textures/pia18092_mahli_sol627_windjana_500x537.dds`)
   - Downloaded from http://www.nasa.gov/jpl/msl/pia18092/#.VFOWALHBGnw
   - Image Credit: NASA/JPL-Caltech/MSSS
   - Retrieved October 31, 2014
   - Usage terms: Permissive (http://www.nasa.gov/audience/formedia/features/MP_Photo_Guidelines.html#.VEQBixaDbfc)
 
-- "Clouds and Sun" (`textures\IMG_3317.JPG`)
+- "Clouds and Sun" (`textures/IMG_3317_512x313.dds`)
   - Image Source: Bernard Llanos
 
-- "Fifteen Years of NASA's Chandra X-ray Observatory" (`textures\0087_xray.jpg`)
+- "Fifteen Years of NASA's Chandra X-ray Observatory" (`textures/0087_xray_512x595.dds`)
   - Downloaded from http://www.nasa.gov/sites/default/files/thumbnails/image/0087_xray.jpg
   - Image Credit: NASA/CXC/SAO
   - Retrieved November 17, 2014
   - Usage terms: Permissive (http://www.nasa.gov/audience/formedia/features/MP_Photo_Guidelines.html#.VEQBixaDbfc)
 
-- "MSH 11-62 Supernova Remnant" (`textures\msh1162.jpg`)
+- "MSH 11-62 Supernova Remnant" (`textures/msh1162_512x445.dds`)
   - Downloaded from http://www.nasa.gov/sites/default/files/msh1162.jpg
   - Image Credit: NASA/CXC/SAO/P. Slane et al.
   - Retrieved November 26, 2014
   - Usage terms: Permissive (http://www.nasa.gov/audience/formedia/features/MP_Photo_Guidelines.html#.VEQBixaDbfc)
 
-- "Orchid" (`textures\IMG_1931.JPG`)
+- "Orchid" (`textures/IMG_1931.dds`)
   - Image Source: Bernard Llanos
 
-### Textures used by test code only
+#### Assets used by test code only
 
-- "King Fire in California, False-Color Infrared" (`textures\test\kingfire_oli_2014262_swir_lrg.jpg`)
+- "King Fire in California, False-Color Infrared" (`textures/test/kingfire_oli_2014262_swir_lrg_512x512.dds`)
   - Downloaded from http://www.nasa.gov/sites/default/files/thumbnails/image/kingfire_oli_2014262_swir_lrg.jpg
   - Image Credit: NASA Earth Observatory image by Jesse Allen, using Landsat data from the U.S. Geological Survey
   - Retrieved October 19, 2014
   - Usage terms: Permissive (http://www.nasa.gov/audience/formedia/features/MP_Photo_Guidelines.html#.VEQBixaDbfc)
 
-## Development Policies
-- Please add each new file to the system under a path that is relative to the
-  containing Visual Studio project's folder. File paths used by Visual Studio
-  can be adjusted manually by modifying `*.vcxproj` and `*.vcxproj.filters`
-  with a text editor.
+## How to Run a Clone of the Repository
 
-- Please push work frequently to the repository so that others can see
-  progress made between project milestones. However, do not
-  alter the 'master' branch except to merge in code from working
-  branches that has been tested at least superficially.
-  (i.e. Keep features not yet fully developed on branches
-  other than 'master'.) The 'master' branch should ideally be demo-worthy at
-  all times.
+### Including the DirectX Toolkit
 
-- Before merging code into the 'master' branch, merge the 'master' branch
-  into your working branch and ensure that the merged code works properly.
+Download the DirectX Toolkit from https://directxtk.codeplex.com/ and extract it
+to the following location: `DirectXTK/` (create this folder in the root folder of the repository).
 
-- All shaders will be compiled for shader model 4.0 (as determined by the
-  rendering configuration files). The Direct3D device will be created
-  with a feature level of 10.0, and will be set to use a hardware driver.
+The 'engine' project (`engine/engine.vcxproj`) has been
+set up to reference `DirectXTK/DirectXTK_Desktop_2013.vcxproj`.
+If you are using Visual Studio 2012 instead of Visual Studio 2013,
+you may need to change the reference to `DirectXTK/DirectXTK_Desktop_2012.vcxproj`.
 
+### Building and Executing the Project
+
+The program should build and run with Visual Studio 2012 or higher on a system running
+Windows 7 or higher. Development was undertaken primarily on Windows 7
+with Visual Studio 2013 and DirectX 11-compatible graphics hardware.
+
+To allow the program to run on a system with graphics hardware supporting up to DirectX 10, a software
+driver for DirectX 11 may be used by changing "D3D_DRIVER_TYPE_HARDWARE" to "D3D_DRIVER_TYPE_WARP"
+on Line 295 of `engine/cpp/d3dclass.cpp` (in the call to `D3D11CreateDeviceAndSwapChain()`).
+
+For Visual Studio 2012, it will be necessary to 'downgrade' the projects
+in the solution by changing their 'Platform Toolset' values (`Configuration Properties > General`).
+
+Any broken links, “File not found”-type errors, (e.g. “Cannot open…”) can normally be resolved
+by removing the files in question from the project using the 'Solution Explorer' pane and then
+using the `Project > Add Existing Item` wizard to reinsert them into the project under the
+correct file paths.
+
+### User Interaction
+
+#### Quitting the program
+
+Press `ESCAPE` or click the window's close button.
+
+#### Free Camera Controls
+
+| Camera Action | Corresponding User Input |
+| :------------ |:---------------|
+| Fine control over camera panning and tilting motion | CTRL + Move Mouse |
+| Move left | Left Arrow Key |
+| Move right | Right Arrow Key |
+| Move forward | Up Arrow Key |
+| Move backwards | Down Arrow Key |
+| Pan left | CTRL + Left Arrow Key |
+| Pan right | CTRL + Right Arrow Key |
+| Tilt up | CTRL + Down Arrow Key |
+| Tilt down | CTRL + Up Arrow Key |
+| Move up | C + Up Arrow Key |
+| Move down | C + Down Arrow Key |
+| Roll left | R + Left Arrow Key |
+| Roll right | R + Right Arrow Key |
+| Zoom in | Z + Up Arrow Key |
+| Zoom out | Z + Down Arrow Key |
+
+#### Screen-Space Special Effects Selection
+
+Press the `o` key to cycle between the motion blur effect (dark red background),
+the shockwave effect (dark blue background) and no effect (black background).
+
+## Development Tips
+
+- In contrast, with the current Visual Studio project settings,
+  when the program is executed, its working directory is the `win32_base` folder.
+  (All configuration data must be written with this in mind.)
+- All shaders are currently compiled for shader model 4.0 (as determined by the
+  rendering configuration files).
+- The Direct3D device is presently created
+  with a feature level of 10.0, and set to use a hardware driver.
 - Use Visual Studio's image editor to generate MIP maps for textures,
   as mip maps will not be generated at runtime.
-
-## Camera Controls
-  
-## Free Camera Controls
-Use the mouse for small panning and tilting motion:
-- CTRL + Move Mouse
-    
-Move Camera:
-- Left:     LEFT ARROW
-- Right:    Right ARROW
-- Forward:  UP ARROW
-- Backward: DOWN ARROW
-    
-Pan Camera:
-- Left:  CTRL + LEFT ARROW
-- Right: CTRL + RIGHT ARROW
-    
-Tilt Camera:
-- Up:   CTRL + DOWN ARROW
-- Down: CTRL + UP ARROW
-    
-Crane Camera:
-- Up:   C + UP ARROW
-- Down: C + DOWN ARROW
-    
-Roll Camera:
-- Left:  R + LEFT ARROW
-- Right: R + RIGHT ARROW
-    
-Zoom Camera:
-- In:  Z + UP ARROW
-- Out: Z + DOWN ARROW
-
-## Screen-Space Special Effects
-
-O: When in the game state with SSSEs, cycle between the shockwave SSSE
-   (dark blue background), the motion blur SSSE (dark red background),
-   and no SSSE (black background).
