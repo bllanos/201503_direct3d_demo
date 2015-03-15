@@ -1,6 +1,9 @@
 # A Demo of Elementary Hardware-Accelerated Graphics Techniques
+
 **Using Direct3D 11 and Microsoft Visual Studio**
+
 **Bernard Llanos**
+
 **March 2015**
 
 ## About
@@ -108,10 +111,14 @@ The 'engine' project (`engine/engine.vcxproj`) has been
 set up to reference `DirectXTK/DirectXTK_Desktop_2013.vcxproj`.
 If you are using Visual Studio 2012 instead of Visual Studio 2013,
 you may need to change the reference to `DirectXTK/DirectXTK_Desktop_2012.vcxproj`.
+(Similar steps will need to be followed for versions of Visual Studio other than 2012.)
 
 ### Building and Executing the Project
 
-The program should build and run with Visual Studio 2012 or higher on a system running
+Open the Visual Studio solution file `game.sln` and examine the 'Solution Explorer' pane
+to check that all projects have been loaded properly.
+
+The solution should build and run with Visual Studio 2012 or higher on a system running
 Windows 7 or higher. Development was undertaken primarily on Windows 7
 with Visual Studio 2013 and DirectX 11-compatible graphics hardware.
 
@@ -122,7 +129,7 @@ on Line 295 of `engine/cpp/d3dclass.cpp` (in the call to `D3D11CreateDeviceAndSw
 For Visual Studio 2012, it will be necessary to 'downgrade' the projects
 in the solution by changing their 'Platform Toolset' values (`Configuration Properties > General`).
 
-Any broken links, “File not found”-type errors, (e.g. “Cannot open…”) can normally be resolved
+Any broken links, "File not found"-type errors, (e.g. "Cannot open...") can normally be resolved
 by removing the files in question from the project using the 'Solution Explorer' pane and then
 using the `Project > Add Existing Item` wizard to reinsert them into the project under the
 correct file paths.
