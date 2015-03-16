@@ -6,6 +6,10 @@
 
 **March 2015**
 
+## What you should see
+
+A walkthrough of the demo is described in the repository's [Wiki pages](https://github.com/bllanos/201503_direct3d_demo/wiki).
+
 ## About
 
 ### Project History and Sources
@@ -28,7 +32,7 @@ The team behind the COMP2501A project consisted of:
 - Benjamin Smith,
 
 The COMP2501A project was based on the course tutorials, which in turn
-were based on the Rastertek tutorials. (http://www.rastertek.com, currently unavailable)
+were based on the [Rastertek tutorials](http://www.rastertek.com).
 
 The rendering engine relies on framework code, the Visual Studio 'win32_base' project
 (`win32_base/`), which was written by Bernard Llanos from May to September 2014 and is further
@@ -164,6 +168,9 @@ Press `ESCAPE` or click the window's close button.
 
 Press the `o` key to cycle between the motion blur effect (dark red background),
 the shockwave effect (dark blue background) and no effect (black background).
+
+The shockwave effect is centered around the current mouse position.
+Move the mouse around inside the window to move the shockwave ring.
 
 ## Development Tips
 
