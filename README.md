@@ -6,9 +6,10 @@
 
 **March 2015**
 
-## What you should see
+## What You Should See
 
-A walkthrough of the demo is described in the repository's [Wiki pages](https://github.com/bllanos/201503_direct3d_demo/wiki).
+A walkthrough of the demo (with screenshots) is provided in the repository's
+[Wiki pages](https://github.com/bllanos/201503_direct3d_demo/wiki).
 
 ## About
 
