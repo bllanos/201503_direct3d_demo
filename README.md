@@ -173,6 +173,13 @@ the shockwave effect (dark blue background) and no effect (black background).
 The shockwave effect is centered around the current mouse position.
 Move the mouse around inside the window to move the shockwave ring.
 
+#### Configuration Files
+
+While not an in-game control, all files in the `configFiles` folder can be modified to influence the
+behaviour of the project when it is next run. The most useful customization for running a demo
+of the project is window size, which can be adjusted on Lines 20 and 21 of
+`configFiles/globalConfig.txt`.
+
 ## Development Tips
 
 - In contrast, with the current Visual Studio project settings,
