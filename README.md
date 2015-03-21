@@ -139,6 +139,14 @@ by removing the files in question from the project using the 'Solution Explorer'
 using the `Project > Add Existing Item` wizard to reinsert them into the project under the
 correct file paths.
 
+#### Note concerning build configurations
+
+The Visual Studio projects have different include directories defined for the "Debug" and "Release"
+build configurations. The Debug configuration is active by default.
+Currently, the Release configuration cannot be used to build the project because `#include` directives
+for test code will not be resolved successfully. (I never had a need to run the project
+outside of Visual Studio and therefore ignored this issue.)
+
 ### User Interaction
 
 #### Quitting the program
