@@ -5,9 +5,9 @@ IWinMessageHandler.h
 Fall 2014, Carleton University
 
 Authors:
-Brandon Keyes, ID: 100897196
-Bernard Llanos, ID: 100793648
-Mark Wilkes, ID: 100884169
+Brandon Keyes
+Bernard Llanos
+Mark Wilkes
 
 Incorporated September 27, 2014
 

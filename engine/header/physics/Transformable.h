@@ -10,8 +10,8 @@ Created for: COMP3501A Game
 Fall 2014, Carleton University
 
 Authors:
-Brandon Keyes, ID: 100897196
-Bernard Llanos, ID: 100793648
+Brandon Keyes
+Bernard Llanos
 
 Created October 2, 2014
 

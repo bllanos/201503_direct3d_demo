@@ -6,7 +6,7 @@ Created for: COMP3501A Assignment 6
 Fall 2014, Carleton University
 
 Authors:
-Bernard Llanos, ID: 100793648
+Bernard Llanos
 
 Created November 7, 2014
 

@@ -6,9 +6,9 @@ Created for: COMP3501A Assignment 5
 Fall 2014, Carleton University
 
 Authors:
-Brandon Keyes, ID: 100897196
-Bernard Llanos, ID: 100793648
-Mark Wilkes, ID: 100884169
+Brandon Keyes
+Bernard Llanos
+Mark Wilkes
 
 Created October 19, 2014
 Adapted for COMP3501A Project on October 27, 2014
